@@ -1,0 +1,4 @@
+cerad_project:
+    resource: "@CeradProjectBundle/Resources/config/routing.yml"
+    prefix:   /
+

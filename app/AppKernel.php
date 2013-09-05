@@ -16,12 +16,19 @@ class AppKernel extends Kernel
             new Symfony\Bundle\AsseticBundle\AsseticBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
           //new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
+            new Cerad\Bundle\ProjectBundle\CeradProjectBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
+            
+            // Web tool bar
             $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
-          //$bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
-          //$bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
+            
+            // Not sure yet
+            $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
+            
+            // Generate Bundle
+            $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
         }
 
         return $bundles;
