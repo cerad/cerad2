@@ -2,6 +2,15 @@ parameters:
 #    cerad_project.example.class: Cerad\Bundle\ProjectBundle\Example
 
 services:
-#    cerad_project.example:
-#        class: %cerad_project.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+
+    cerad_project.repository.in_memory:
+        class:  Cerad\Bundle\ProjectBundle\Repository\ProjectInMemoryRepository
+        arguments:  
+            - '%cerad_projects%'
+
+    cerad_project.find_default.in_memory:
+        class:  Cerad\Bundle\ProjectBundle\Repository\ProjectFind
+        arguments:  
+            - '@cerad_project.repository.in_memory'
+            - '%cerad_project_default%'
+      

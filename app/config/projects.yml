@@ -1,0 +1,46 @@
+parameters:
+
+    cerad_project_default: CeradTest13
+    
+    cerad_projects:
+    
+        AYSONatGames2014:
+            
+            info:
+                id: AYSONatGames2014
+              
+        USSF_AL_HFC_Kicks2013:
+          
+            info:
+                title:   "HFC Kicks 2013"
+                desc:    "USSF HFC Kicks 2013 - Huntsville, Alabama - October 18, 19, 20"
+          
+        CeradTest13:
+            info:
+                id:       CeradTest13
+                slug:     ceradtest
+                slugx:    ceradtest2013
+                status:   Active
+                verified: Yes
+                
+                fedId:    AYSO
+                fedOffId: AYSOV
+                
+                title:   "Cerad Test 13 2013"
+                desc:    "USSF Cerad Test 2013 - Huntsville, Alabama - October 18, 19, 20"
+                
+        CeradTest12:
+            info:
+                id:       CeradTest12
+                slug:     ceradtest2012
+                slugx:    ceradtest2012
+                status:   Completed
+                verified: Yes
+                
+                fedId:    AYSO
+                fedOffId: AYSOV
+                
+                title:   "Cerad Test 02 2012"
+                desc:    "USSF Cerad Test 2012 - Huntsville, Alabama - October 18, 19, 20"
+                
+          
