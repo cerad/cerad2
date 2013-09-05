@@ -37,11 +37,10 @@ class Person extends BaseModel
     protected $plans;
     protected $persons;
     
-    const ID_PREFIX = 'CPER';
-    
     public function __construct()
     {
-        $this->id = $this->genId(self::ID_PREFIX); // Does the model really need these?
+        $this->id = $this->genId(); // Does the model really need these?
+        
         $this->fedOffs = array();
     }
     

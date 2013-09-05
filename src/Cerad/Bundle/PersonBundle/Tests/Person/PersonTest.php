@@ -20,9 +20,7 @@ class PersonTest extends WebTestCase
         $id = $person->getId();
         $this->assertInternalType('string',$id);
         
-        $this->assertEquals('CPER',substr($id,0,4));
-        
-        $this->assertTrue($person->isIdNew());
+        $this->assertEquals(36,strlen($id));
         
         $this->assertInternalType('array', $person->getFedOffs()); 
         
