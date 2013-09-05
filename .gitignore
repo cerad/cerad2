@@ -1,7 +1,7 @@
 /web/bundles/
 /web/info.php
 
-/app/sessions/
+/app/sessions/*
 /app/bootstrap*
 /app/cache/*
 /app/logs/*
