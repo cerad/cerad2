@@ -23,48 +23,48 @@ class PersonNameTest extends WebTestCase
         $person = new Person();
         
         // Getting back a value object created with the constructor
-        $personName1 = $person->getName();
-        $this->assertTrue($personName1 instanceOf PersonName);
+        $name1 = $person->getName();
+        $this->assertTrue($name1 instanceOf PersonName);
        
-        $personName2 = new PersonName('Art Hundiak','Arthur','Hundiak','Hondo');
-        $person->setName($personName2);
+        $name2 = new PersonName('Art Hundiak','Arthur','Hundiak','Hondo');
+        $person->setName($name2);
         
         // New PersonName object was created because values changed
-        $personName3 = $person->getName();
-        $this->assertFalse($personName1 === $personName3);
+        $name3 = $person->getName();
+        $this->assertFalse($name1 === $name3);
         
         // This shows that even though the values are different, have different object
-        $this->assertEquals ($personName2,$personName3);
-        $this->assertNotSame($personName2,$personName3);
+        $this->assertEquals ($name2,$name3);
+        $this->assertNotSame($name2,$name3);
         
-        $this->assertTrue ($personName2 ==  $personName3);
-        $this->assertFalse($personName2 === $personName3);
+        $this->assertTrue ($name2 ==  $name3);
+        $this->assertFalse($name2 === $name3);
         
         // Verify some values
-        $this->assertEquals ('Arthur',$personName3->firstName);
-        $this->assertEquals ('Hondo', $personName3->nickName);
+        $this->assertEquals ('Arthur',$name3->first);
+        $this->assertEquals ('Hondo', $name3->nick);
         
         /* =================================================
          * Normally you would not do this but forms will
          * So verify that the person's name object is not impacted
          */
-        $personName3->firstName = 'Art';
-        $personName4 = $person->getName();
+        $name3->first = 'Art';
+        $name4 = $person->getName();
 
-        $this->assertNotEquals($personName3,$personName4);
-        $this->assertNotSame  ($personName3,$personName4);
+        $this->assertNotEquals($name3,$name4);
+        $this->assertNotSame  ($name3,$name4);
         
-        $this->assertFalse($personName3 ==  $personName4);
-        $this->assertFalse($personName3 === $personName4);       
+        $this->assertFalse($name3 ==  $name4);
+        $this->assertFalse($name3 === $name4);       
     }
     public function testPersonNameCreate()
     {
         $person = new Person();
-        $name1 = $person->createName(array('fullName' => 'Art Hundiak','nickName' => 'Hondo'));
+        $name1 = $person->createName(array('full' => 'Art Hundiak','nick' => 'Hondo'));
         $this->assertTrue($name1 instanceOf PersonName);
         
-        $this->assertEquals ('Art Hundiak',$name1->fullName);
-        $this->assertEquals ('Hondo',      $name1->nickName);
+        $this->assertEquals ('Art Hundiak',$name1->full);
+        $this->assertEquals ('Hondo',      $name1->nick);
         
     }
 }

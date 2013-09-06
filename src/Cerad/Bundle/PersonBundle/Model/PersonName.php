@@ -9,24 +9,24 @@ namespace Cerad\Bundle\PersonBundle\Model;
  */
 class PersonName extends BaseValueObject
 {   
-    public $fullName;
-    public $firstName;
-    public $lastName;
-    public $nickName;
-    public $middleName;
+    public $full;
+    public $first;
+    public $last;
+    public $nick;
+    public $middle;
     
     public function __construct(
-        $fullName   = null, 
-        $firstName  = null, 
-        $lastName   = null, 
-        $nickName   = null, 
-        $middleName = null)
+        $full   = null, 
+        $first  = null, 
+        $last   = null, 
+        $nick   = null, 
+        $middle = null)
     {
         // Suppose could use reflection?
-        $this->propNames = array('fullName','firstName','lastName','nickName','middleName');
+        $this->propNames = array('full','first','last','nick','middle');
         
         // config passed
-        if ($this->hydrate($fullName)) return;
+        if ($this->hydrate($full)) return;
         
         // Just scaler
         foreach($this->propNames as $propName)

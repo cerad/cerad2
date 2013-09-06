@@ -77,5 +77,11 @@ class BaseModel implements NotifyPropertyChanged
             mt_rand(16384, 20479), mt_rand(32768, 49151), mt_rand(0, 65535), 
             mt_rand(0,     65535), mt_rand(0,     65535));  
     }
+    /* ==========================================
+     * Not really sure if this shoud go here or not
+     * It's basically for database versioning
+     * But it might be useful after commits and stuff
+     */
+    protected $version;
 }
 ?>

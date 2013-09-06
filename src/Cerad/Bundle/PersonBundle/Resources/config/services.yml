@@ -1,7 +1,21 @@
+# PersonBundle Services
 parameters:
-#    cerad_person.example.class: Cerad\Bundle\PersonBundle\Example
+    # cerad_person.example.class: Cerad\Bundle\PersonBundle\Example
+
+    # Did not work for alias
+    cerad_person.entity_manager.doctrine.service: doctrine.orm.default_entity_manager
 
 services:
 #    cerad_person.example:
 #        class: %cerad_person.example.class%
 #        arguments: [@service_id, "plain_value", %parameter%]
+
+    cerad_person.entity_manager.doctrine:
+        alias: doctrine.orm.default_entity_manager
+
+    cerad_person.repository.doctrine:
+        class:  Cerad\Bundle\PersonBundle\Repository\PersonRepositoryDoctrine
+        factory_service: 'cerad_person.entity_manager.doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\PersonBundle\Entity\Person'

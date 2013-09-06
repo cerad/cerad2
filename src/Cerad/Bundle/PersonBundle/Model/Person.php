@@ -10,7 +10,8 @@ class Person extends BaseModel
 
     protected $id;
     protected $name;   // VO PersonName
-        
+    protected $icon;
+    
     protected $dob;    // DateTime
     protected $gender;
     
@@ -21,7 +22,7 @@ class Person extends BaseModel
 
     protected $address; // VO PersonAddress
     
-    protected $notes;   // Not sure,
+    protected $notes;
         
     protected $verified  = 'No';
     protected $status    = 'Active';
@@ -38,10 +39,11 @@ class Person extends BaseModel
         $this->address = $this->createAddress();
     }
     /* ======================================================================
-     * Standard getter/setters
+     * Standard getters/setters/creators
      */
     public function getId       () { return $this->id;     }
     public function getDob      () { return $this->dob;    }
+    public function getIcon     () { return $this->icon;   }
     public function getNotes    () { return $this->notes;  }
     public function getEmail    () { return $this->email;  }
     public function getPhone    () { return $this->phone;  }
@@ -54,11 +56,15 @@ class Person extends BaseModel
     public function getName     () { return clone $this->name;    }
     public function getAddress  () { return clone $this->address; }
     
-    public function createName   ($params = null) { return new PersonName   ($params); }
-    public function createAddress($params = null) { return new PersonAddress($params); }
+    // Not sure
+    static function createPerson ($params = null) { return new Person       ($params); }
+    static function createName   ($params = null) { return new PersonName   ($params); }
+    static function createAddress($params = null) { return new PersonAddress($params); }
     
+    // Setters
     public function setId       ($value) { $this->onPropertySet('id',       $value); }
     public function setDob      ($value) { $this->onPropertySet('dob',      $value); }
+    public function setIcon     ($value) { $this->onPropertySet('icon',     $value); }
     public function setName     ($value) { $this->onPropertySet('name',     $value); }
     public function setNotes    ($value) { $this->onPropertySet('notes',    $value); }
     public function setEmail    ($value) { $this->onPropertySet('email',    $value); }

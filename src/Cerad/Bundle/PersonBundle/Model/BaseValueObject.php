@@ -3,6 +3,8 @@ namespace Cerad\Bundle\PersonBundle\Model;
 
 /* ====================================================================
  * See if majic can be used to limit access to only declared properties
+ * 
+ * These are muttable objects suitable for use as dto's for form processing
  */
 class BaseValueObject
 {
