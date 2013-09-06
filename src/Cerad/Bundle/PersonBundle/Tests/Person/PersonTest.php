@@ -89,6 +89,20 @@ class PersonTest extends WebTestCase
         $this->assertEquals('AL',        $address3->state);
         
     }
+    /* ============================================================
+     * Really just a test to verify a method can be both static and dynamic
+     * Static properties cannot be accessed through an instance
+     * But it's okay for methods
+     */
+    public function testGenders()
+    {
+        $genders1 = Person::getGenderTypes();
+        $this->assertEquals('Female',$genders1[Person::GenderFemale]);
+        
+        $person = new Person();
+        $genders2 = $person->getGenderTypes();
+        $this->assertEquals('Male',$genders2[Person::GenderMale]);
+    }
     public function testPersonFedOff()
     {
         $person = new Person();

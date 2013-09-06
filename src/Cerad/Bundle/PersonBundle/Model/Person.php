@@ -9,12 +9,10 @@ class Person extends BaseModel
     const GenderUnknown = 'U';
 
     protected $id;
-    protected $name; // VO PersonName
-    protected $note;
+    protected $name;   // VO PersonName
         
+    protected $dob;    // DateTime
     protected $gender;
-    
-    protected $dob; // DateTime
     
     protected $email;
 
@@ -22,6 +20,8 @@ class Person extends BaseModel
     protected $phoneProvider; // For texting?
 
     protected $address; // VO PersonAddress
+    
+    protected $notes;   // Not sure,
         
     protected $verified  = 'No';
     protected $status    = 'Active';
@@ -42,12 +42,12 @@ class Person extends BaseModel
      */
     public function getId       () { return $this->id;     }
     public function getDob      () { return $this->dob;    }
-    public function getNote     () { return $this->note;   }
+    public function getNotes    () { return $this->notes;  }
     public function getEmail    () { return $this->email;  }
     public function getPhone    () { return $this->phone;  }
+    public function getGender   () { return $this->gender; }
 
     public function getStatus   () { return $this->status;    }
-    public function getGender   () { return $this->gender;    }
     public function getVerified () { return $this->verified;  }
 
     // Value Objects
@@ -57,7 +57,7 @@ class Person extends BaseModel
     public function setId       ($value) { $this->onPropertySet('id',       $value); }
     public function setDob      ($value) { $this->onPropertySet('dob',      $value); }
     public function setName     ($value) { $this->onPropertySet('name',     $value); }
-    public function setNote     ($value) { $this->onPropertySet('note',     $value); }
+    public function setNotes    ($value) { $this->onPropertySet('notes',    $value); }
     public function setEmail    ($value) { $this->onPropertySet('email',    $value); }
     public function setPhone    ($value) { $this->onPropertySet('phone',    $value); }
     public function setGender   ($value) { $this->onPropertySet('gender',   $value); }
@@ -65,6 +65,14 @@ class Person extends BaseModel
     public function setAddress  ($value) { $this->onPropertySet('address',  $value); }
     public function setVerified ($value) { $this->onPropertySet('verified', $value); }
 
+    static function getGenderTypes()
+    {
+        return array(
+            self::GenderMale    => 'Male',
+            self::GenderFemale  => 'Female',
+            self::GenderUnknown => 'Unknown',
+        );
+    }
     /* =============================================================
      * The feds stuff
      */
