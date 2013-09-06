@@ -8,7 +8,7 @@ namespace Cerad\Bundle\PersonBundle\Model;
  * Seems to work okay, need some doctrine event listeners
  */
 class PersonName extends BaseValueObject
-{
+{   
     public $fullName;
     public $firstName;
     public $lastName;
@@ -22,11 +22,17 @@ class PersonName extends BaseValueObject
         $nickName   = null, 
         $middleName = null)
     {
-        $this->fullName   = $fullName;
-        $this->firstName  = $firstName;
-        $this->lastName   = $lastName;
-        $this->nickName   = $nickName;
-        $this->middleName = $middleName;
+        // Suppose could use reflection?
+        $this->propNames = array('fullName','firstName','lastName','nickName','middleName');
+        
+        // config passed
+        if ($this->hydrate($fullName)) return;
+        
+        // Just scaler
+        foreach($this->propNames as $propName)
+        {
+            $this->$propName = $$propName;
+        }
     }
 }
 ?>

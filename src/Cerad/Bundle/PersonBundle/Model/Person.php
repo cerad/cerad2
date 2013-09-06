@@ -26,16 +26,16 @@ class Person extends BaseModel
     protected $verified  = 'No';
     protected $status    = 'Active';
     
-    protected $fedOffs = array();
-    protected $plans;
-    protected $persons;
+    protected $feds    = array();
+    protected $plans   = array();
+    protected $persons = array();
     
     public function __construct()
     {
         $this->id = $this->genId(); // Does the model really need these?
         
-        $this->name    = new PersonName();
-        $this->address = new PersonAddress();
+        $this->name    = $this->createName();
+        $this->address = $this->createAddress();
     }
     /* ======================================================================
      * Standard getter/setters
@@ -53,6 +53,9 @@ class Person extends BaseModel
     // Value Objects
     public function getName     () { return clone $this->name;    }
     public function getAddress  () { return clone $this->address; }
+    
+    public function createName   ($params = null) { return new PersonName   ($params); }
+    public function createAddress($params = null) { return new PersonAddress($params); }
     
     public function setId       ($value) { $this->onPropertySet('id',       $value); }
     public function setDob      ($value) { $this->onPropertySet('dob',      $value); }
@@ -76,9 +79,17 @@ class Person extends BaseModel
     /* =============================================================
      * The feds stuff
      */
-    public function createFedOff() { return new PersonFedOff(); }
+    public function createFed($params = null) { return new PersonFed($params); }
     
-    public function getFedOffs() { return  $this->fedOffs; }
+    public function getFeds() { return  $this->feds; }
     
+    public function addFed(PersonFed $item)
+    {
+        
+    }
+    public function findFed($id, $autoCreate = true, $autoAdd = true)
+    {
+        
+    }
 }
 ?>

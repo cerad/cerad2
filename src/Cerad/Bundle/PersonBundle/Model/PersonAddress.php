@@ -19,12 +19,11 @@ class PersonAddress extends BaseValueObject
         $zipcode = null
     )
     {
-        $this->street1 = $street1;
-        $this->street2 = $street2;
-        $this->city    = $city;
-        $this->state   = $state;
-        $this->country = $country;
-        $this->zipcode = $zipcode;
+        $this->propNames = array('street1','street2','city','state','country','zipcode');
+        
+        if ($this->hydrate($street1)) return;
+        
+        foreach($this->propNames as $propName) { $this->$propName = $$propName; } 
     }
 }
 ?>
