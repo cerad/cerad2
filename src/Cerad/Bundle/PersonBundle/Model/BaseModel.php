@@ -33,9 +33,31 @@ class BaseModel implements NotifyPropertyChanged
      */
     protected function onPropertySet($name,$newValue)
     {
-        if ($this->$name === $newValue) return;
-        
         $oldValue = $this->$name;
+        
+        // If both are objects
+        if (is_object($oldValue) && is_object($newValue))
+        {
+            // Same instance, trigger a clone to prevent side effects
+            // No change trigger
+            if ($oldValue === $newValue) 
+            {
+                // Copies parameters only
+                // Then calls __clone();
+                $this->$name = clone $newValue;
+                return;
+            }
+            // Check props and same class
+            if ($oldValue == $newValue)
+            {
+                // Same values but new object
+                // Save but don't trigger a change
+                $this->$name = $newValue;
+                return;
+            }
+        }
+        // At least one is not an object
+        if ($this->$name === $newValue) return;
         
         $this->$name = $newValue;
         
