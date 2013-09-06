@@ -15,8 +15,13 @@ Cerad\Bundle\PersonBundle\Entity\Person:
             length: 40
             generator: { strategy: NONE }
             
-   #version: version
-            
+    oneToMany:     
+        feds:
+            targetEntity: PersonFed
+            mappedBy:     person
+            indexBy:      fedId
+            cascade:      ['all']
+             
     fields:
       
         # ===================================

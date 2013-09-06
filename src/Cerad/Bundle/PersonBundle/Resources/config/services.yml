@@ -19,3 +19,28 @@ services:
         factory_method:  'getRepository'
         arguments:  
             - 'Cerad\Bundle\PersonBundle\Entity\Person'
+
+# ====================================================
+# Data transformers
+    cerad_person.aysor_id.data_transformer:
+        class: Cerad\Bundle\PersonBundle\DataTransformer\AYSO\RegionIdTransformer
+                        
+    cerad_person.aysov_id.data_transformer:
+        class: Cerad\Bundle\PersonBundle\DataTransformer\AYSO\VolunteerIdTransformer
+        
+    cerad_person.aysov_id.data_transformer.fake:
+        class: Cerad\Bundle\PersonBundle\DataTransformer\AYSO\VolunteerIdTransformer
+        arguments: [true]
+        
+    cerad_person.ussfs_id.data_transformer:
+        class: Cerad\Bundle\PersonBundle\DataTransformer\USSF\StateIdTransformer
+                        
+    cerad_person.ussfc_id.data_transformer:
+        class: Cerad\Bundle\PersonBundle\DataTransformer\USSF\ContractorIdTransformer
+        
+    cerad_person.ussfc_id.data_transformer.fake:
+        class: Cerad\Bundle\PersonBundle\DataTransformer\USSF\ContractorIdTransformer
+        arguments: [true]
+        
+    cerad_person.phone.datatransformer:
+        class: Cerad\Bundle\PersonBundle\DataTransformer\PhoneTransformer

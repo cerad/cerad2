@@ -5,7 +5,7 @@ namespace Cerad\Bundle\PersonBundle\Model;
  * This is really a link to a FedPersonType but
  * works fine in the person context
  */
-class PersonFed
+class PersonFed extends BaseModel
 {   
     const FedAYSO = 'AYSO';
     const FedUSSF = 'USSF';
@@ -23,7 +23,6 @@ class PersonFed
     const RoleOfficial   = 'Official';
     
     protected $id;
-    protected $role;
     protected $fedId;
     protected $person;
     protected $status   = 'Active';
@@ -38,14 +37,12 @@ class PersonFed
         $this->certs = array();
     }
     public function getId      () { return $this->id;       }
-    public function getRole    () { return $this->role;     }
     public function getFedId   () { return $this->fedId;    }
     public function getPerson  () { return $this->person;   }
     public function getStatus  () { return $this->status;   }
     public function getVerified() { return $this->verified; }
     
     public function setId      ($value) { $this->onPropertySet('id',      $value); }
-    public function setRole    ($value) { $this->onPropertySet('role',    $value); }
     public function setFedId   ($value) { $this->onPropertySet('fedId',   $value); }
     public function setPerson  ($value) { $this->onPropertySet('person',  $value); }
     public function setStatus  ($value) { $this->onPropertySet('status',  $value); }

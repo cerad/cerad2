@@ -3,7 +3,7 @@ namespace Cerad\Bundle\PersonBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Cerad\Bundle\PersonBundle\Model\Person as PersonModel;;
+use Cerad\Bundle\PersonBundle\Model\Person as PersonModel;
 
 class Person extends PersonModel
 {   
@@ -28,6 +28,8 @@ class Person extends PersonModel
         $this->plans   = new ArrayCollection();
         $this->persons = new ArrayCollection(); 
     }
+    public function createFed($params = null) { return new PersonFed($params); }
+    
     /* ======================================================
      * Value objects hydration stuff
      * Currently assume actual objects

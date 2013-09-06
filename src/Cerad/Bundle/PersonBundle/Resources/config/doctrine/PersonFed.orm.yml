@@ -1,0 +1,46 @@
+Cerad\Bundle\PersonBundle\Entity\PersonFed:
+    type:  entity
+    table: person_fed
+    changeTrackingPolicy: NOTIFY
+    
+    id:
+       id:
+           type:   string
+           length: 40
+           generator: { strategy: NONE }
+                
+    manyToOne:
+        person:
+            targetEntity: Person
+            inversedBy:   feds
+            
+    oneToMany:
+                  
+       #orgs:
+       #    targetEntity: PersonOrg
+       #    mappedBy:     fed
+       #    cascade:      ['all']
+            
+       #certs:
+       #    targetEntity: PersonCert
+       #    mappedBy:     fed
+       #    cascade:      ['all']
+                        
+    fields:
+      
+        fedId:
+            column:   fed_id
+            type:     string
+            length:   20
+            nullable: false
+                                    
+        status:
+            type:     string
+            length:   20
+            nullable: false
+            
+        verified:
+            type:     string
+            length:   20
+            nullable: true
+    

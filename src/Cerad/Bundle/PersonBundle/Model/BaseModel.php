@@ -30,45 +30,30 @@ class BaseModel implements NotifyPropertyChanged
     }
     /* ===============================================
      * TODO: Verify value objects work properly
+     * VO want to clone
+     * If the relations are the same then just ignore
      */
     protected function onPropertySet($name,$newValue)
     {
         $oldValue = $this->$name;
         
-        // If both are objects
-        if (is_object($oldValue) && is_object($newValue))
-        {
-            // Same instance, trigger a clone to prevent side effects
-            // No change trigger
-            if ($oldValue === $newValue) 
-            {
-                // Copies parameters only
-                // Then calls __clone();
-                $this->$name = clone $newValue;
-                return;
-            }
-            // Check props and same class
-            if ($oldValue == $newValue)
-            {
-                // Same values but new object
-                // Save but don't trigger a change
-                $this->$name = $newValue;
-                return;
-            }
-        }
-        // At least one is not an object
-        if ($this->$name === $newValue) return;
+        // Same object instance or scaler value
+        if ($oldValue === $newValue) return;
         
+        /* ===================================
+         * Different instance but same values
+         * Cloned for VO
+         * Need to setup some tests
+         */
+        if ($oldValue ==  $newValue) return;
+        
+        // Value changed
         $this->$name = $newValue;
         
         $this->onPropertyChanged($name,$oldValue,$newValue);    
     }
     /* ========================================================
-     * Want to track just to make sure have a good id when persisting
-     * The reason for shortening the guids is to make the url's prettier
-     * Integers would also be a bit faster
-     * 
-     * Probably not very good reasons.
+     * Simple guid format
      */
     protected function genId() 
     { 
