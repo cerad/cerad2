@@ -5,6 +5,7 @@ namespace Cerad\Bundle\UserBundle\Entity;
 use Doctrine\ORM\EntityRepository;
 
 // Even though the class name is available through the manager
+use Cerad\Bundle\UserBundle\Model\UserInterface;
 use Cerad\Bundle\UserBundle\Model\UserRepositoryInterface;
 
 use Cerad\Bundle\UserBundle\Entity\User as UserEntity;
@@ -14,7 +15,7 @@ use Cerad\Bundle\UserBundle\Entity\User as UserEntity;
  * FOSUser actually injects an object manager and then wraps the relavant methods
  * Could be a refactor for later
  */
-class UserRepositoryDoctrine extends EntityRepository implements UserRepositoryInterface
+class UserRepository extends EntityRepository implements UserRepositoryInterface
 {
     /* ==========================================================
      * Find stuff
@@ -34,8 +35,10 @@ class UserRepositoryDoctrine extends EntityRepository implements UserRepositoryI
      * 
      * Note that clear is already implemented and uses person as a root entity
      */
-    public function save(UserEntity $entity)
+    public function save(UserInterface $entity)
     {
+        if (!($entity instanceOf UserEntity)) throw new \Exception('Tried to persist invalid entity type');
+        
         $em = $this->getEntityManager();
 
         return $em->persist($entity);

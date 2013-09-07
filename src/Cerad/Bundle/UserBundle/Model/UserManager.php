@@ -25,20 +25,16 @@ class UserManager implements UserManagerInterface
     }
     protected function updateCanonicalFields(UserInterface $user)
     {
-        $this->canonicalizeEmail   ($user);
-        $this->canonicalizeUsername($user);
+        $user->setEmailCanonical   ($this->canonicalizeEmail   ($user->getEmail()));
+        $user->setUsernameCanonical($this->canonicalizeUsername($user->getUsername()));
     }
-    protected function canonicalizeEmail(UserInterface $user)
+    protected function canonicalizeEmail($email)
     {
-        $email  = $user->getEmail();
-        $emailx = strtolower($email);
-        $user->setEmailCanonical($emailx);
+        return strtolower($email);
     }
-    protected function canonicalizeUsername(UserInterface $user)
+    protected function canonicalizeUsername($username)
     {
-        $username  = $user->getUsername();
-        $usernamex = strtolower($username);
-        $user->setUsernameCanonical($usernamex);
+        return strtolower($username);
     }
     protected function updatePassword(UserInterface $user)
     {

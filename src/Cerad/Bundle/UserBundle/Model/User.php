@@ -12,7 +12,7 @@ class User extends BaseModel implements UserInterface
     
     protected $email;
     protected $emailCanonical;
-    protected $emailConfirmed;
+    protected $emailConfirmed = false;
     
     protected $username;
     protected $usernameCanonical;
@@ -24,13 +24,13 @@ class User extends BaseModel implements UserInterface
     
     // Wants to be a value object
     protected $personId;
-    protected $personName;
     protected $personStatus    = 'Active';
     protected $personVerified  = 'No';
     protected $personConfirmed = false;
     
     protected $identifiers; // User Identifiers
     
+    protected $accountName;
     protected $accountEnabled     = true;  // After first created
     protected $accountLocked      = false;
     protected $accountExpired     = false;
@@ -91,15 +91,12 @@ class User extends BaseModel implements UserInterface
     /* =======================================================
      * My person link
      */
-    public function getName()           { return $this->personName;     }
     public function getPersonId()       { return $this->personId;       }
-    public function getPersonName()     { return $this->personName;     }
     public function getPersonStatus()   { return $this->personStatus;   }
     public function getPersonVerified() { return $this->personVerified; }
     
     public function setName          ($value) { $this->onPropertySet('personName',    $value); }
     public function setPersonId      ($value) { $this->onPropertySet('personId',      $value); }
-    public function setPersonName    ($value) { $this->onPropertySet('personName',    $value); }
     public function setPersonStatus  ($value) { $this->onPropertySet('personStatus',  $value); }
     public function setPersonVerified($value) { $this->onPropertySet('personVerified',$value); }
     
@@ -114,17 +111,24 @@ class User extends BaseModel implements UserInterface
         return array_merge(array(self::ROLE_DEFAULT),$this->roles);
     }
     
-    // AdvancedUserInterface
+    // Account - AdvancedUserInterface
+    public function getAccountName()          { return $this->accountName;     }
+   
     public function isEnabled()               { return  $this->accountEnabled;     }
     public function isAccountEnabled()        { return !$this->accountEnabled;     }
     public function isAccountNonExpired()     { return !$this->accountExpired;     }
     public function isAccountNonLocked()      { return !$this->accountLocked;      }
     public function isCredentialsNonExpired() { return !$this->credentialsExpired; }
     
+    public function setAccountName          ($name) { $this->onPropertySet('accountName',       $name); }
     public function setAccountEnabled       ($flag) { $this->onPropertySet('accountEnabled',    $flag); }
     public function setAccountNonExpired    ($flag) { $this->onPropertySet('accountExpired',    $flag); }
     public function setAccountNonLocked     ($flag) { $this->onPropertySet('accountLocked',     $flag); }
     public function setCredentialsNonExpired($flag) { $this->onPropertySet('credentialsExpired',$flag); }
 
+    /* =========================================================================
+     * Identifiers stuff
+     */
+    public function getIdentifiers() { return $this->identifiers; }
 }
 ?>

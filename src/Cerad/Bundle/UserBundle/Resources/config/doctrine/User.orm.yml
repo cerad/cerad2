@@ -25,12 +25,6 @@ Cerad\Bundle\UserBundle\Entity\User:
             length:   40
             nullable: true
             
-        personName:
-            column:   person_name
-            type:     string
-            length:   80
-            nullable: true
-            
         personStatus:
             column:   person_status
             type:     string
@@ -80,6 +74,12 @@ Cerad\Bundle\UserBundle\Entity\User:
                     
         # ===============================================
         # Account security stuff
+        accountName:
+            column:   account_name
+            type:     string
+            length:   80
+            nullable: true
+            
         accountEnabled:
             column: account_enabled
             type: boolean

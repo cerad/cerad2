@@ -40,9 +40,9 @@ class UserManagerTest extends \PHPUnit_Framework_TestCase
         
         $user = $userManager->createUser();
         
-        $user->setName    ('Billy The Kid');
-        $user->setEmail   ('Bill@Gmail.com');
-        $user->setUsername('Bill');
+        $user->setEmail        ('Bill@Gmail.com');
+        $user->setUsername     ('Bill');
+        $user->setAccountName  ('Billy The Kid');
         $user->setPlainPassword('fake');
         
         $userManager->updateUser($user);

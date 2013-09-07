@@ -24,18 +24,16 @@ interface UserInterface extends AdvancedUserInterface
     public function getConfirmationToken();
     public function setConfirmationToken($value);
     
+    // Account Stuff
     public function isEnabled();
     public function setAccountEnabled($bool);
     
-    // Basic person
-    public function getName();
-    public function setName($value);
+    public function getAccountName();
+    public function setAccountName($value);
     
+    // Person Stuff
     public function getPersonId();
     public function setPersonId($value);
-    
-    public function getPersonName();
-    public function setPersonName($value);
 
     public function getPersonStatus();
     public function setPersonStatus($value);
