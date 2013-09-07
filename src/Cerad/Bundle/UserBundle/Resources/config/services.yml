@@ -2,6 +2,25 @@ parameters:
 #    cerad_user.example.class: Cerad\Bundle\UserBundle\Example
 
 services:
-#    cerad_user.example:
-#        class: %cerad_user.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+
+    cerad_user.entity_manager.doctrine:
+        alias: doctrine.orm.default_entity_manager
+
+    cerad_user.user_repository.doctrine:
+        class:  Cerad\Bundle\UserBundle\Entity\UserRepository
+        factory_service: 'cerad_user.entity_manager.doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\UserBundle\Entity\User'
+            
+    cerad_user.user_manager.doctrine:
+        class:  Cerad\Bundle\UserBundle\Entity\UserManager
+        arguments:
+            - '@security.encoder_factory'
+            - '@cerad_user.user_repository.doctrine'
+            
+    cerad_user.user_encoder:
+        class:  Cerad\Bundle\UserBundle\Security\UserEncoder
+        arguments:
+            - '%cerad_user_master_password%'
+      

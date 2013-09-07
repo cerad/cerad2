@@ -13,7 +13,7 @@ services:
     cerad_person.entity_manager.doctrine:
         alias: doctrine.orm.default_entity_manager
 
-    cerad_person.repository.doctrine:
+    cerad_person.user_repository.doctrine:
         class:  Cerad\Bundle\PersonBundle\Repository\PersonRepositoryDoctrine
         factory_service: 'cerad_person.entity_manager.doctrine'
         factory_method:  'getRepository'
