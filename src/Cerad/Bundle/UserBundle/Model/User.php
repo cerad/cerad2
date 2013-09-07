@@ -7,36 +7,54 @@ class User extends BaseModel implements UserInterface
 {
     const ROLE_DEFAULT = 'ROLE_USER';
     
+    protected $id;
     protected $salt;
+    
     protected $email;
     protected $emailCanonical;
+    protected $emailConfirmed;
+    
     protected $username;
     protected $usernameCanonical;
+    
     protected $password;
     protected $passwordPlain;
-    protected $confirmationToken;
-    
+        
     protected $roles = array();
     
     // Wants to be a value object
     protected $personId;
     protected $personName;
-    protected $personStatus   = 'Active';
-    protected $personVerified = 'No';
+    protected $personStatus    = 'Active';
+    protected $personVerified  = 'No';
+    protected $personConfirmed = false;
     
     protected $identifiers; // User Identifiers
     
-    protected $enabled            = true;  // UserEnables
+    protected $accountEnabled     = true;  // After first created
     protected $accountLocked      = false;
     protected $accountExpired     = false;
-    protected $accountExpiresAt;    // DateTime
-    protected $credentialsExpired  = false;
-    protected $credentialsExpireAt; // DateTime
+    protected $accountExpiresAt;
+    protected $credentialsExpired = false;
+    protected $credentialsExpireAt;
     
-    protected $passwordRequestedAt;
-    protected $passwordRequestExpired; // bool
+    // More value objects
+    protected $passwordResetToken;
+    protected $passwordResetRequestedAt;
+    protected $passwordResetRequestExpiresAt;
     
-    protected $loginLast;
+    protected $emailConfirmToken;
+    protected $emailConfirmRequestedAt;
+    protected $emailConfirmRequestExpiresAt;
+    
+    protected $personConfirmToken;
+    protected $personConfirmRequestedAt;
+    protected $personConfirmRequestExpiresAt;
+       
+    // These are just events
+    protected $accountCreatedOn;
+    protected $accountUpdatedOn;
+    protected $accountLastLoginOn;
     
     public function __construct()
     {
@@ -97,17 +115,16 @@ class User extends BaseModel implements UserInterface
     }
     
     // AdvancedUserInterface
-    public function isEnabled()               { return  $this->enabled;        }
+    public function isEnabled()               { return  $this->accountEnabled;     }
+    public function isAccountEnabled()        { return !$this->accountEnabled;     }
     public function isAccountNonExpired()     { return !$this->accountExpired;     }
     public function isAccountNonLocked()      { return !$this->accountLocked;      }
     public function isCredentialsNonExpired() { return !$this->credentialsExpired; }
     
-    public function setEnabled              ($flag) { $this->onPropertySet('userEnabled',       $flag); }
+    public function setAccountEnabled       ($flag) { $this->onPropertySet('accountEnabled',    $flag); }
     public function setAccountNonExpired    ($flag) { $this->onPropertySet('accountExpired',    $flag); }
     public function setAccountNonLocked     ($flag) { $this->onPropertySet('accountLocked',     $flag); }
     public function setCredentialsNonExpired($flag) { $this->onPropertySet('credentialsExpired',$flag); }
-   
 
-    
 }
 ?>

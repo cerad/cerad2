@@ -25,7 +25,7 @@ interface UserInterface extends AdvancedUserInterface
     public function setConfirmationToken($value);
     
     public function isEnabled();
-    public function setEnabled($value);
+    public function setAccountEnabled($bool);
     
     // Basic person
     public function getName();
