@@ -16,6 +16,15 @@ use Cerad\Bundle\UserBundle\Entity\User           as UserEntity;
 use Cerad\Bundle\UserBundle\Entity\UserManager    as UserEntityManager;
 //  Cerad\Bundle\UserBundle\Entity\UserRepository as UserEntityRepository;
 
+use Cerad\Bundle\UserBundle\Validator\Constraints\EmailUnique    as EmailUniqueConstraint;
+use Cerad\Bundle\UserBundle\Validator\Constraints\EmailExists    as EmailExistsConstraint;
+
+use Cerad\Bundle\UserBundle\Validator\Constraints\UsernameUnique as UsernameUniqueConstraint;
+use Cerad\Bundle\UserBundle\Validator\Constraints\UsernameExists as UsernameExistsConstraint;
+
+use Cerad\Bundle\UserBundle\Validator\Constraints\UsernameAndEmailUnique as UsernameAndEmailUniqueConstraint;
+use Cerad\Bundle\UserBundle\Validator\Constraints\UsernameOrEmailExists  as UsernameOrEmailExistsConstraint;
+
 class UserManagerTest extends WebTestCase
 {
     protected $managerServiceId = 'cerad_user.user_manager.doctrine';
@@ -121,5 +130,86 @@ class UserManagerTest extends WebTestCase
         
         $users = $userManager->findUsers();
         $this->assertEquals(1,count($users));
+    }
+    /**
+     * @depends testCreateUser
+     */
+    public function testUserValidators()
+    {   
+        $validator = self::$container->get('validator');
+        
+        $dto = $this->getUserDto();
+        $email  = $dto->email;
+        $emailx = $dto->email . 'x';
+        
+        $username  = $dto->username;
+        $usernamex = $dto->username . 'x';
+        
+        // === Email Unique ==============================
+        $c1 = new EmailUniqueConstraint();
+        
+        $c1Pass = $validator->validateValue($emailx,$c1);
+        $this->assertEquals(0,count($c1Pass));
+        
+        $c1Fail = $validator->validateValue($email,$c1);
+        $this->assertEquals(1,count($c1Fail));
+        
+        // === Username Unique ==========================
+        $c2 = new UsernameUniqueConstraint();
+        
+        $c2Pass = $validator->validateValue($dto->username . 'x',$c2);
+        $this->assertEquals(0,count($c2Pass));
+        
+        $c2Fail = $validator->validateValue($dto->username, $c2);
+        $this->assertEquals(1,count($c2Fail));
+        
+       // === Email Exists ================================
+        $c3 = new EmailExistsConstraint();
+        
+        $c3Pass = $validator->validateValue($email,$c3);
+        $this->assertEquals(0,count($c3Pass));
+        
+        $c3Fail = $validator->validateValue($emailx,$c3);
+        $this->assertEquals(1,count($c3Fail));
+        
+       // === Username Exists ================================
+        $c4 = new UsernameExistsConstraint();
+        
+        $c4Pass = $validator->validateValue($username,$c4);
+        $this->assertEquals(0,count($c4Pass));
+        
+        $c4Fail = $validator->validateValue($usernamex,$c4);
+        $this->assertEquals(1,count($c4Fail));
+        
+        // === UsernameAndEmail are Unique ==============================
+        $c5 = new UsernameAndEmailUniqueConstraint();
+        
+        $c5Pass1 = $validator->validateValue($emailx,$c5);
+        $this->assertEquals(0,count($c5Pass1));
+        
+        $c5Pass2 = $validator->validateValue($usernamex,$c5);
+        $this->assertEquals(0,count($c5Pass2));
+        
+        $c5Fail1 = $validator->validateValue($email,$c5);
+        $this->assertEquals(1,count($c5Fail1));
+        
+        $c5Fail2 = $validator->validateValue($username,$c5);
+        $this->assertEquals(1,count($c5Fail2));
+        
+        // === Username Or Email Exist ==============================
+        $c6 = new UsernameOrEmailExistsConstraint();
+        
+        $c6Pass1 = $validator->validateValue($email,$c6);
+        $this->assertEquals(0,count($c6Pass1));
+        
+        $c6Pass2 = $validator->validateValue($username,$c6);
+        $this->assertEquals(0,count($c6Pass2));
+        
+        $c6Fail1 = $validator->validateValue($emailx,$c6);
+        $this->assertEquals(1,count($c6Fail1));
+        
+        $c6Fail2 = $validator->validateValue($usernamex,$c6);
+        $this->assertEquals(1,count($c6Fail2));
+
     }
 }

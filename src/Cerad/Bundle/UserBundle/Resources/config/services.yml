@@ -2,7 +2,9 @@ parameters:
 #    cerad_user.example.class: Cerad\Bundle\UserBundle\Example
 
 services:
-
+  
+    # ======================================================
+    # Security stuff
     cerad_user.entity_manager.doctrine:
         alias: doctrine.orm.default_entity_manager
 
@@ -24,3 +26,47 @@ services:
         arguments:
             - '%cerad_user_master_password%'
       
+    # ======================================================
+    # Validators
+    cerad_user.email_unique.validator:
+        class:  Cerad\Bundle\UserBundle\Validator\Constraints\EmailUniqueValidator
+        arguments:
+            - '@cerad_user.user_manager.doctrine'
+        tags:
+            - { name: validator.constraint_validator, alias: cerad_user_email_unique } 
+            
+    cerad_user.email_exists.validator:
+        class:  Cerad\Bundle\UserBundle\Validator\Constraints\EmailExistsValidator
+        arguments:
+            - '@cerad_user.user_manager.doctrine'
+        tags:
+            - { name: validator.constraint_validator, alias: cerad_user_email_exists }  
+            
+    cerad_user.username_unique.validator:
+        class:  Cerad\Bundle\UserBundle\Validator\Constraints\UsernameUniqueValidator
+        arguments:
+            - '@cerad_user.user_manager.doctrine'
+        tags:
+            - { name: validator.constraint_validator, alias: cerad_user_username_unique } 
+            
+    cerad_user.username_and_email_unique.validator:
+        class:  Cerad\Bundle\UserBundle\Validator\Constraints\UsernameAndEmailUniqueValidator
+        arguments:
+            - '@cerad_user.user_manager.doctrine'
+        tags:
+            - { name: validator.constraint_validator, alias: cerad_user_username_and_email_unique }   
+            
+    cerad_user.username_exists.validator:
+        class:  Cerad\Bundle\UserBundle\Validator\Constraints\UsernameExistsValidator
+        arguments:
+            - '@cerad_user.user_manager.doctrine'
+        tags:
+            - { name: validator.constraint_validator, alias: cerad_user_username_exists }   
+            
+    cerad_user.username_or_email_exists.validator:
+        class:  Cerad\Bundle\UserBundle\Validator\Constraints\UsernameOrEmailExistsValidator
+        arguments:
+            - '@cerad_user.user_manager.doctrine'
+        tags:
+            - { name: validator.constraint_validator, alias: cerad_user_username_or_email_exists }   
+            
