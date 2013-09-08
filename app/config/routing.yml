@@ -1,16 +1,27 @@
-cerad_tourn:
-    resource: "@CeradTournBundle/Resources/config/routing.yml"
-    prefix:   /
+# =================================================
+# Top pages
+cerad_tourn_index:
+    pattern:  /
+    defaults: { _controller: CeradTournBundle:Tourn/Index:index }
+    
+cerad_tourn_welcome:
+    pattern:  /welcome
+    defaults: { _controller: CeradTournBundle:Tourn/TournWelcome:welcome }
+    
+cerad_tourn_home:
+    pattern:  /home
+    defaults: { _controller: CeradTournBundle:Tourn/TournHome:home }
+    
+cerad_tourn_contact:
+    pattern:  /contact
+    defaults: { _controller: CeradTournBundle:Tourn/TournContact:contact }
 
-cerad_user:
-    resource: "@CeradUserBundle/Resources/config/routing.yml"
-    prefix:   /
+cerad_tourn_help:
+    pattern:  /help
+    defaults: { _controller: CeradTournBundle:Tourn/TournHelp:help }
 
-cerad_person:
-    resource: "@CeradPersonBundle/Resources/config/routing.yml"
-    prefix:   /
+cerad_tourn_test:
+    pattern:  /test
+    defaults: { _controller: CeradTournBundle:Tourn/TournTest:test }
 
-cerad_project:
-    resource: "@CeradProjectBundle/Resources/config/routing.yml"
-    prefix:   /
-
+    
