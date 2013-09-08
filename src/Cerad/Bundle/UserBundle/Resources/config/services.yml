@@ -69,4 +69,26 @@ services:
             - '@cerad_user.user_manager.doctrine'
         tags:
             - { name: validator.constraint_validator, alias: cerad_user_username_or_email_exists }   
+
+    # ====================================================
+    # Form Types
+    cerad_user.username_unique.form_type:
+        class:  Cerad\Bundle\UserBundle\Form\Type\UsernameUniqueFormType
+        tags:
+            - { name: form.type, alias: cerad_user_username_unique } 
+            
+    cerad_user.username_exists.form_type:
+        class:  Cerad\Bundle\UserBundle\Form\Type\UsernameExistsFormType
+        tags:
+            - { name: form.type, alias: cerad_user_username_exists } 
+            
+    cerad_user.email_unique.form_type:
+        class:  Cerad\Bundle\UserBundle\Form\Type\EmailUniqueFormType
+        tags:
+            - { name: form.type, alias: cerad_user_email_unique } 
+            
+    cerad_user.email_exists.form_type:
+        class:  Cerad\Bundle\UserBundle\Form\Type\EmailExistsFormType
+        tags:
+            - { name: form.type, alias: cerad_user_email_exists } 
             
