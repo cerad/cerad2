@@ -90,22 +90,9 @@ class Person extends BaseModel
     
     public function getFeds() { return  $this->feds; }
     
-    /*
-     * 1) Cerad\Bundle\PersonBundle\Tests\PersonRepository\Doctrine\PersonRepositoryTest::testFed
-     * Doctrine\ORM\ORMInvalidArgumentException: 
-     * A new entity was found through the relationship 
-     * 'Cerad\Bundle\PersonBundle\Entity\PersonFed#person' 
-     * that was not configured to cascade persist operations for entity: 
-     * Cerad\Bundle\PersonBundle\Entity\Person@0000000060d251e9000000004b4ca6e5. 
-     * To solve this issue: Either explicitly call EntityManager#persist() 
-     * on this unknown entity or configure cascade persist  
-     * this association in the mapping for example @ManyToOne(..,cascade={"persist"}). 
-     * If you cannot find out which entity causes the problem implement 
-     * 'Cerad\Bundle\PersonBundle\Entity\Person#__toString()' to get a clue.
-     */
     public function addFed(PersonFed $fed)
     {
-        $fedRoleId = $fed->getFedId();
+        $fedRoleId = $fed->getFedRoleId();
         
         if (isset($this->feds[$fedRoleId])) return;
         
@@ -122,7 +109,7 @@ class Person extends BaseModel
         if (!$autoCreate) return null;
         
         $fed = $this->createFed();
-        $fed->setFedId($fedRoleId);
+        $fed->setFedRoleId($fedRoleId);
         
         if (!$autoAdd) return $fed;
         

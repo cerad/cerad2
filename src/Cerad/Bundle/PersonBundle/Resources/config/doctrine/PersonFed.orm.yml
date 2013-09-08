@@ -28,10 +28,10 @@ Cerad\Bundle\PersonBundle\Entity\PersonFed:
                         
     fields:
       
-        fedId:
-            column:   fed_id
+        fedRoleId:
+            column:   fed_role_id
             type:     string
-            length:   20
+            length:   40
             nullable: false
                                     
         status:

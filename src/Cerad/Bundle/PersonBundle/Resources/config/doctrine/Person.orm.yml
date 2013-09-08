@@ -1,7 +1,7 @@
 Cerad\Bundle\PersonBundle\Entity\Person:
     type:  entity
     table: persons
-    repositoryClass: Cerad\Bundle\PersonBundle\Repository\PersonRepositoryDoctrine
+    repositoryClass: Cerad\Bundle\PersonBundle\Entity\PersonRepository
     changeTrackingPolicy: NOTIFY
     
     lifecycleCallbacks:
@@ -19,7 +19,7 @@ Cerad\Bundle\PersonBundle\Entity\Person:
         feds:
             targetEntity: PersonFed
             mappedBy:     person
-            indexBy:      fedId
+            indexBy:      fedRoleId
             cascade:      ['all']
              
     fields:

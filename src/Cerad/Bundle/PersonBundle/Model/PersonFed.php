@@ -11,10 +11,10 @@ class PersonFed extends BaseModel
     const FedUSSF = 'USSF';
     const FedNFHS = 'NFHS';
     
-    const FedAYSOV = 'AYSOV'; // Volunteer
-    const FedAYSOP = 'AYSOP'; // Player
-    const FedUSSFC = 'USSFC'; // Contractor
-    const FedNFHSC = 'NFHSC'; // Contractor
+    const FedRoleAYSOV = 'AYSOV'; // Volunteer
+    const FedRoleAYSOP = 'AYSOP'; // Player
+    const FedRoleUSSFC = 'USSFC'; // Contractor
+    const FedRoleNFHSC = 'NFHSC'; // Contractor
     
     // Roles are not redundant
     const RoleVolunteer  = 'Volunteer';
@@ -23,7 +23,7 @@ class PersonFed extends BaseModel
     const RoleOfficial   = 'Official';
     
     protected $id;
-    protected $fedId;
+    protected $fedRoleId;
     protected $person;
     protected $status   = 'Active';
     protected $verified = 'No';
@@ -36,17 +36,17 @@ class PersonFed extends BaseModel
         $this->orgs  = array();
         $this->certs = array();
     }
-    public function getId      () { return $this->id;       }
-    public function getFedId   () { return $this->fedId;    }
-    public function getPerson  () { return $this->person;   }
-    public function getStatus  () { return $this->status;   }
-    public function getVerified() { return $this->verified; }
+    public function getId       () { return $this->id;        }
+    public function getFedRoleId() { return $this->fedRoleId; }
+    public function getPerson   () { return $this->person;    }
+    public function getStatus   () { return $this->status;    }
+    public function getVerified () { return $this->verified;  }
     
-    public function setId      ($value) { $this->onPropertySet('id',      $value); }
-    public function setFedId   ($value) { $this->onPropertySet('fedId',   $value); }
-    public function setPerson  ($value) { $this->onPropertySet('person',  $value); }
-    public function setStatus  ($value) { $this->onPropertySet('status',  $value); }
-    public function setVerified($value) { $this->onPropertySet('verified',$value); }
+    public function setId       ($value) { $this->onPropertySet('id',       $value); }
+    public function setFedRoleId($value) { $this->onPropertySet('fedRoleId',$value); }
+    public function setPerson   ($value) { $this->onPropertySet('person',   $value); }
+    public function setStatus   ($value) { $this->onPropertySet('status',   $value); }
+    public function setVerified ($value) { $this->onPropertySet('verified', $value); }
     
     /* ====================================================
      * Certification
