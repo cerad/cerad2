@@ -1,7 +1,7 @@
 <?php
 namespace Cerad\Library\CommonLibrary\Model;
 
-use Cerad\Library\CommonLibrary\Functions\Guid;
+use Cerad\Library\CommonLibrary\Util\GuidUtil;
 
 /* ==================================================
  * Was hping to avoid this but no easy way to inject this sort of stuff
@@ -59,7 +59,7 @@ class BaseModel implements NotifyPropertyChanged
      */
     protected function genId() 
     { 
-        return Guid::gen();
+        return GuidUtil::gen();
     }
     /* ==========================================
      * Not really sure if this shoud go here or not

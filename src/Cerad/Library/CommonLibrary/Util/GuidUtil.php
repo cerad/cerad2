@@ -1,12 +1,12 @@
 <?php
-namespace Cerad\Library\CommonLibrary\Functions;
+namespace Cerad\Library\CommonLibrary\Util;
 
 /* ==================================
  * Copied from the php manual which in turn copied from some package
  * Returns 36 char string
  * 5BBD0493-8C84-4036-829F-046E230F7225
  */
-class Guid
+class GuidUtil
 {
     static public function gen()
     {        

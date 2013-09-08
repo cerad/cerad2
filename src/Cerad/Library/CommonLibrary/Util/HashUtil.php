@@ -1,11 +1,11 @@
 <?php
-namespace Cerad\Library\CommonLibrary\Functions;
+namespace Cerad\Library\CommonLibrary\Util;
 
 /* ==================================
  * Aliasing/Importing a function is not supported for ssome reason
  * Hence the static function isdie of a class
  */
-class Hash
+class HashUtil
 {
     static public function exe($value, $crc = false)
     {
