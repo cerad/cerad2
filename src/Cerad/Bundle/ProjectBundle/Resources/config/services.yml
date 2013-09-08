@@ -9,7 +9,7 @@ services:
             - '%cerad_projects%'
 
     cerad_project.find_default.in_memory:
-        class:  Cerad\Bundle\ProjectBundle\Repository\ProjectFind
+        class:  Cerad\Bundle\ProjectBundle\InMemory\ProjectFind
         arguments:  
             - '@cerad_project.repository.in_memory'
             - '%cerad_project_default%'
