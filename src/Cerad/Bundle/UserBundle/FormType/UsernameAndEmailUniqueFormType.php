@@ -1,5 +1,5 @@
 <?php
-namespace Cerad\Bundle\UserBundle\Form\Type;
+namespace Cerad\Bundle\UserBundle\FormType;
 
 use Symfony\Component\Form\AbstractType;
 /// Symfony\Component\Form\FormBuilderInterface;
@@ -8,21 +8,20 @@ use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Symfony\Component\Validator\Constraints as Assert;
 
-use Cerad\Bundle\UserBundle\Validator\Constraints\EmailUnique;
+use Cerad\Bundle\UserBundle\ValidatorConstraint\UsernameAndEmailUniqueConstraint;
 
-class EmailUniqueFormType extends AbstractType
+class UsernameAndEmailUniqueFormType extends AbstractType
 {
-    public function getName()   { return 'cerad_user_email_unique'; }
+    public function getName()   { return 'cerad_user_username_and_email_unique'; }
     public function getParent() { return 'text'; }
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'label'           => 'Email',
+            'label'           => 'User Name',
             'attr'            => array('size' => 30),
             'constraints'     => array(
-                new Assert\NotNull(array('message' => 'Email is required')), 
-                new Assert\Email  (array('message' => 'Email is invalid' )), 
-                new EmailUnique(),
+                new Assert\NotNull(array('message' => 'User Name/Email is required')), 
+                new UsernameAndEmailUniqueConstraint(),
             )
         ));
     }

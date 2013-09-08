@@ -29,42 +29,42 @@ services:
     # ======================================================
     # Validators
     cerad_user.email_unique.validator:
-        class:  Cerad\Bundle\UserBundle\Validator\Constraints\EmailUniqueValidator
+        class:  Cerad\Bundle\UserBundle\ValidatorConstraint\EmailUniqueValidator
         arguments:
             - '@cerad_user.user_manager.doctrine'
         tags:
             - { name: validator.constraint_validator, alias: cerad_user_email_unique } 
             
     cerad_user.email_exists.validator:
-        class:  Cerad\Bundle\UserBundle\Validator\Constraints\EmailExistsValidator
+        class:  Cerad\Bundle\UserBundle\ValidatorConstraint\EmailExistsValidator
         arguments:
             - '@cerad_user.user_manager.doctrine'
         tags:
             - { name: validator.constraint_validator, alias: cerad_user_email_exists }  
             
     cerad_user.username_unique.validator:
-        class:  Cerad\Bundle\UserBundle\Validator\Constraints\UsernameUniqueValidator
+        class:  Cerad\Bundle\UserBundle\ValidatorConstraint\UsernameUniqueValidator
         arguments:
             - '@cerad_user.user_manager.doctrine'
         tags:
             - { name: validator.constraint_validator, alias: cerad_user_username_unique } 
             
     cerad_user.username_and_email_unique.validator:
-        class:  Cerad\Bundle\UserBundle\Validator\Constraints\UsernameAndEmailUniqueValidator
+        class:  Cerad\Bundle\UserBundle\ValidatorConstraint\UsernameAndEmailUniqueValidator
         arguments:
             - '@cerad_user.user_manager.doctrine'
         tags:
             - { name: validator.constraint_validator, alias: cerad_user_username_and_email_unique }   
             
     cerad_user.username_exists.validator:
-        class:  Cerad\Bundle\UserBundle\Validator\Constraints\UsernameExistsValidator
+        class:  Cerad\Bundle\UserBundle\ValidatorConstraint\UsernameExistsValidator
         arguments:
             - '@cerad_user.user_manager.doctrine'
         tags:
             - { name: validator.constraint_validator, alias: cerad_user_username_exists }   
             
     cerad_user.username_or_email_exists.validator:
-        class:  Cerad\Bundle\UserBundle\Validator\Constraints\UsernameOrEmailExistsValidator
+        class:  Cerad\Bundle\UserBundle\ValidatorConstraint\UsernameOrEmailExistsValidator
         arguments:
             - '@cerad_user.user_manager.doctrine'
         tags:
@@ -73,22 +73,32 @@ services:
     # ====================================================
     # Form Types
     cerad_user.username_unique.form_type:
-        class:  Cerad\Bundle\UserBundle\Form\Type\UsernameUniqueFormType
+        class:  Cerad\Bundle\UserBundle\FormType\UsernameUniqueFormType
         tags:
             - { name: form.type, alias: cerad_user_username_unique } 
             
+    cerad_user.username_and_email_unique.form_type:
+        class:  Cerad\Bundle\UserBundle\FormType\UsernameAndEmailUniqueFormType
+        tags:
+            - { name: form.type, alias: cerad_user_username_and_email_unique } 
+            
     cerad_user.username_exists.form_type:
-        class:  Cerad\Bundle\UserBundle\Form\Type\UsernameExistsFormType
+        class:  Cerad\Bundle\UserBundle\FormType\UsernameExistsFormType
         tags:
             - { name: form.type, alias: cerad_user_username_exists } 
             
+    cerad_user.username_or_email_exists.form_type:
+        class:  Cerad\Bundle\UserBundle\FormType\UsernameOrEmailExistsFormType
+        tags:
+            - { name: form.type, alias: cerad_user_username_or_email_exists } 
+            
     cerad_user.email_unique.form_type:
-        class:  Cerad\Bundle\UserBundle\Form\Type\EmailUniqueFormType
+        class:  Cerad\Bundle\UserBundle\FormType\EmailUniqueFormType
         tags:
             - { name: form.type, alias: cerad_user_email_unique } 
             
     cerad_user.email_exists.form_type:
-        class:  Cerad\Bundle\UserBundle\Form\Type\EmailExistsFormType
+        class:  Cerad\Bundle\UserBundle\FormType\EmailExistsFormType
         tags:
             - { name: form.type, alias: cerad_user_email_exists } 
             

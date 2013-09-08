@@ -18,6 +18,7 @@ class User extends BaseModel implements UserInterface
     protected $usernameCanonical;
     
     protected $password;
+    protected $passwordHint;
     protected $passwordPlain;
         
     protected $roles = array();
@@ -75,6 +76,8 @@ class User extends BaseModel implements UserInterface
     public function getUsername()          { return $this->username;          }
     public function getUsernameCanonical() { return $this->usernameCanonical; }
     public function getPassword()          { return $this->password;          }
+    public function getPasswordHint()      { return $this->passwordHint;      }
+    public function getPasswordPlain()     { return $this->passwordPlain;     }
     public function getPlainPassword()     { return $this->passwordPlain;     }
     public function getConfirmationToken() { return $this->confirmationToken; }
     
@@ -85,6 +88,8 @@ class User extends BaseModel implements UserInterface
     public function setUsername         ($value) { $this->onPropertySet('username',         $value); }
     public function setUsernameCanonical($value) { $this->onPropertySet('usernameCanonical',$value); }
     public function setPassword         ($value) { $this->onPropertySet('password',         $value); }
+    public function setPasswordHint     ($value) { $this->onPropertySet('passwordHint',     $value); }
+    public function setPasswordPlain    ($value) { $this->onPropertySet('passwordPlain',    $value); }
     public function setPlainPassword    ($value) { $this->onPropertySet('passwordPlain',    $value); }
     public function setConfirmationToken($value) { $this->onPropertySet('confirmationToken',$value); }
     

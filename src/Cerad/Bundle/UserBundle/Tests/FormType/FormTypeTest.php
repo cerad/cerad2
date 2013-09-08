@@ -40,5 +40,12 @@ class FormTest extends WebTestCase
         
         $form4 = $formFactory->create($container->get('cerad_user.email_exists.form_type'));
         $this->assertTrue($form4 instanceOf Form);
+        
+        $form5 = $formFactory->create($container->get('cerad_user.username_and_email_unique.form_type'));
+        $this->assertTrue($form5 instanceOf Form);
+        
+        $form6 = $formFactory->create($container->get('cerad_user.username_or_email_exists.form_type'));
+        $this->assertTrue($form6 instanceOf Form);
+        
     }
 }

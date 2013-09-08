@@ -69,6 +69,12 @@ Cerad\Bundle\UserBundle\Entity\User:
         password:
             type: string
             
+        passwordHint:
+            column:   password_hint
+            type:     string
+            length:   20
+            nullable: true
+            
         roles:
             type: array
                     
