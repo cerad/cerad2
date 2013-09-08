@@ -4,13 +4,13 @@ parameters:
 services:
 
     cerad_project.repository.in_memory:
-        class:  Cerad\Bundle\ProjectBundle\Repository\ProjectInMemoryRepository
+        class:  Cerad\Bundle\ProjectBundle\InMemory\ProjectRepository
         arguments:  
-            - '%cerad_projects%'
+            - '%cerad_project_project_files%'
 
     cerad_project.find_default.in_memory:
         class:  Cerad\Bundle\ProjectBundle\InMemory\ProjectFind
         arguments:  
             - '@cerad_project.repository.in_memory'
-            - '%cerad_project_default%'
+            - '%cerad_project_project_default%'
       
