@@ -145,4 +145,9 @@ cerad_tourn_person_plan_update:
 #                           @CeradTourn/PersonPlan/Update/PersonPlanUpdateIndex.html.twig
 #                                                        /PersonPlanUpdateForm.html.twig
 #                                                        /PersonPlanUpdateHelp.html.twig
- 
+
+# ===============================================
+# Internal controllers
+# header:
+#   defaults: { _controller: CeradTournBundle:Tourn/Header/TournHeader:render }
+#                            CeradTourn/Tourn/Header/TournHeaderIndex.html.twig

@@ -15,7 +15,13 @@
 </head>
 
 <body>
-{% block body %}       {%endblock %}     
+{% block layout_body %}   
+  {% block layout_header   %}{%endblock %}     
+  {% block layout_topmenu  %}{%endblock %}     
+  {% block layout_userinfo %}{%endblock %}
+  {% block layout_content  %}{%endblock %}
+{%endblock %}
+        
 {% block javascripts %}{% endblock %}
 </body>
 

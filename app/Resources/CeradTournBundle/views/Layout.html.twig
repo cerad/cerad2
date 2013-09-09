@@ -5,9 +5,12 @@
 <link rel="stylesheet" href="{# asset('bundles/ceradtourns/css/tourns.css') #}" media="all" />
 {% endblock %}
 
-{% block body %}
+{% block layout_body %}
 <div id="layout-body">
     
+{% render(controller('CeradTournBundle:Tourn/TournHeader:render')) %}
+
+<div id="layout-topmenu"> {# render(controller('CeradTournBundle:Tourn/UserInfo:show')) #}</div>
 <div id="layout-userinfo">{# render(controller('CeradTournBundle:Tourn/UserInfo:show')) #}</div>
 
 <div id="layout-content">{% block content %}{% endblock %}</div>

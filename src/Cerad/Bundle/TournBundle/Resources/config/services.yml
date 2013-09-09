@@ -2,3 +2,10 @@ parameters:
 #    cerad_tourn.example.class: Cerad\Bundle\TournBundle\Example
 
 services:
+    cerad_tourn.twig_extension:
+        class:  Cerad\Bundle\TournBundle\TwigExtension\TournExtension
+        arguments:  
+            - '@cerad_project.find_default.in_memory'
+            - '%cerad_tourn_show_configs%'
+        tags:
+            - { name: twig.extension }
