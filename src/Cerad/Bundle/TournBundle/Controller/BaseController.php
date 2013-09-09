@@ -80,6 +80,40 @@ class BaseController extends Controller
         }
 
     }
+    /* =================================================
+     * Shared between login controllers
+     */
+    protected function getAuthenticationInfo(Request $request)
+    {
+        $error = null;
+        
+        // Check request for error
+        if ($request->attributes->has(SecurityContextInterface::AUTHENTICATION_ERROR)) 
+        {
+            $error = $request->attributes->get(SecurityContextInterface::AUTHENTICATION_ERROR);
+        }
+        // Then look in session
+        $session = $request->getSession();
+        if (!$session)
+        {
+            $info['lastUsername'] = null;
+            $info['error'] = $error ? $error->getMessage() : null;
+            return $info;
+        }
+        
+        // Pull user name
+        $info['lastUsername'] = $session ? $session->get(SecurityContextInterface::LAST_USERNAME) : null;
+        
+        // Check for error in context
+        if (!$error && $session->has(SecurityContextInterface::AUTHENTICATION_ERROR)) 
+        {
+            $error = $session->get(SecurityContextInterface::AUTHENTICATION_ERROR);
+            $session->remove      (SecurityContextInterface::AUTHENTICATION_ERROR);
+       }
+       $info['error'] = $error ? $error->getMessage() : null;
+       return $info; 
+    }    
+    
     /* ===================================================
      * Always have a default project
      */

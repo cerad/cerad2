@@ -10,7 +10,6 @@ use Cerad\Bundle\UserBundle\Event\UserEvent;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 
-
 use Cerad\Bundle\UserBundle\ValidatorConstraint\UsernameAndEmailUniqueConstraint;
 
 use Symfony\Component\Validator\Constraints\Email     as EmailConstraint;
