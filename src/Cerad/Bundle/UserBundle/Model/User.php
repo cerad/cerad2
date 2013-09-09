@@ -4,7 +4,7 @@ namespace Cerad\Bundle\UserBundle\Model;
 use Cerad\Bundle\UserBundle\Model\UserInterface as CeradUserInterface;
 //  FOS         \UserBundle\Model\UserInterface as FOSUserInterface;
 
-class User extends BaseModel implements CeradUserInterface //, FOSUserInterface
+class User extends BaseModel implements CeradUserInterface, \Serializable //, FOSUserInterface
 {
     const ROLE_DEFAULT = 'ROLE_USER'; // From FOSUserInterface
     
@@ -134,6 +134,63 @@ class User extends BaseModel implements CeradUserInterface //, FOSUserInterface
     public function setAccountNonLocked     ($flag) { $this->onPropertySet('accountLocked',     $flag); }
     public function setCredentialsNonExpired($flag) { $this->onPropertySet('credentialsExpired',$flag); }
 
+    /* =========================================================================
+     * Serialization
+     * This is called by the securoty manager when addind the token to the session
+     * Copied the basics from FOSUserBundle
+     * 
+     * Need the credential stuff because authentication takes place before refresh use is called
+     */
+    public function serialize()
+    {
+        return serialize(array(
+            $this->id,         // For refreshing
+            $this->salt,
+            $this->password,
+            $this->username,   // Debugging
+        ));
+        
+       return serialize(array(
+            $this->password,
+            $this->salt,
+            $this->usernameCanonical,
+            $this->username,
+            $this->expired,
+            $this->locked,
+            $this->credentialsExpired,
+            $this->enabled,
+            $this->id,
+        ));
+    }
+    public function unserialize($serialized)
+    {
+        $data = unserialize($serialized);
+        
+        // add a few extra elements in the array to ensure that we have enough keys when unserializing
+        // older data which does not include all properties.
+        // $data = array_merge($data, array_fill(0, 2, null));
+
+        list(
+            $this->id,
+            $this->salt,
+            $this->password,
+            $this->username
+        ) = $data;
+        
+        return;
+        
+        list(
+            $this->password,
+            $this->salt,
+            $this->usernameCanonical,
+            $this->username,
+            $this->expired,
+            $this->locked,
+            $this->credentialsExpired,
+            $this->enabled,
+            $this->id
+        ) = $data;
+    }
     /* =========================================================================
      * Identifiers stuff
      */

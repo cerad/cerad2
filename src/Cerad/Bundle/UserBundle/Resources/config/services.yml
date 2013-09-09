@@ -24,6 +24,16 @@ services:
     cerad_user.user_manager:
         alias: cerad_user.user_manager.doctrine
         
+    cerad_user.user_provider.doctrine:
+        class:  Cerad\Bundle\UserBundle\Security\UserProvider
+        arguments:
+            - '@cerad_user.user_manager.doctrine'
+            - '@event_dispatcher'
+            - '@logger'
+            
+    cerad_user.user_provider:
+        alias: cerad_user.user_provider.doctrine
+        
     cerad_user.user_encoder:
         class:  Cerad\Bundle\UserBundle\Security\UserEncoder
         arguments:

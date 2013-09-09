@@ -21,8 +21,8 @@ security:
                     user:  { password: userpass,  roles: [ 'ROLE_USER' ] }
                     admin: { password: adminpass, roles: [ 'ROLE_ADMIN' ] }
                     
-#       cerad_tourn_account_user_provider:
-#           id: cerad_tourn.account_user_provider
+        cerad_tourn_account_user_provider:
+            id: cerad_user.user_provider
 
     firewalls:
         dev:
@@ -34,7 +34,7 @@ security:
             anonymous: ~
             
             form_login:
-                provider:            in_memory_user_provider
+                provider:            cerad_tourn_account_user_provider
                 login_path:          cerad_tourn_account_user_login
                 check_path:          cerad_tourn_account_user_login_check
                 default_target_path: cerad_tourn_home

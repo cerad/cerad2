@@ -1,9 +1,13 @@
 <?php
 namespace Cerad\Bundle\TournBundle\Controller;
 
-//  Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\SecurityContextInterface;
+use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
+use Cerad\Bundle\UserBundle\Model\UserInterface;
 
 class BaseController extends Controller
 {
@@ -37,6 +41,44 @@ class BaseController extends Controller
     protected function hasRoleAssignor($projectId = null)
     {
         return $this->get('security.context')->isGranted('ROLE_ASSIGNOR');
+    }
+    /* ===================================================
+     * This is similiar to what the authentication listener does on success
+     * This should me moved to some sort of user service
+     */
+    public function loginUser(Request $request, UserInterface $user)
+    {
+        $token = new UsernamePasswordToken($user, null, 'main', $user->getRoles());
+
+        $securityContext = $this->get('security.context');
+        
+        $securityContext->setToken($token);
+        
+        $session = $request->getSession();
+        $session->remove(SecurityContextInterface::AUTHENTICATION_ERROR);
+        $session->remove(SecurityContextInterface::LAST_USERNAME);
+
+        /* ============================================================
+         * Lots of other good stuff
+         * AbstractAuthenticationListener
+         */
+        return;
+        
+        if (null !== $this->dispatcher) {
+            $loginEvent = new InteractiveLoginEvent($request, $token);
+            $this->dispatcher->dispatch(SecurityEvents::INTERACTIVE_LOGIN, $loginEvent);
+        }
+
+        $response = $this->successHandler->onAuthenticationSuccess($request, $token);
+
+        if (!$response instanceof Response) {
+            throw new \RuntimeException('Authentication Success Handler did not return a Response.');
+        }
+
+        if (null !== $this->rememberMeServices) {
+            $this->rememberMeServices->loginSuccess($request, $response, $token);
+        }
+
     }
     /* ===================================================
      * Always have a default project

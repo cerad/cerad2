@@ -67,6 +67,9 @@ class AccountCreateController extends MyBaseController
             $user = $model['user'];
             $request->getSession()->getFlashBag()->add(self::FLASHBAG_ACCOUNT_CREATED,$user->getUsername());;
 
+            // Log the user in
+            $this->loginUser($request,$user);
+            
             // And done
             // return $response;
         }        
