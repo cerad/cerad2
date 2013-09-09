@@ -71,7 +71,7 @@ class AccountCreateController extends MyBaseController
             $this->loginUser($request,$user);
             
             // And done
-            // return $response;
+            return $response;
         }        
         
         $tplData = array();

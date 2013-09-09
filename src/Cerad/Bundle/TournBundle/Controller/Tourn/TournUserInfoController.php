@@ -19,6 +19,8 @@ class TournUserInfoController extends MyBaseController
         }
         $tplData['user'] = $this->getUser();
         
+        // Have a person?
+        
         // Regular user
         if (!$this->hasRoleAdmin())
         {
