@@ -10,7 +10,7 @@ parameters:
             
         default:
             layout_header:  true
-            layout_topmenu: true
+            layout_topmenu: false
             janrain:        true
             wordpress:      false
             

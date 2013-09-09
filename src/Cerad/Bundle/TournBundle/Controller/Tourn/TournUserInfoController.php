@@ -9,9 +9,23 @@ class TournUserInfoController extends MyBaseController
 {
     public function renderAction(Request $request)
     {
-        $tplData = array();
         $tplData['user']    = $this->getUser();
         $tplData['project'] = $this->getProject();
-        return $this->render('@CeradTourn/Tourn/UserInfo/TournUserInfoIndex.html.twig', $tplData);
-    }
+        
+        // Guest
+        if (!$this->hasRoleUser())
+        {
+            return $this->render('@CeradTourn/Tourn/UserInfo/TournGuestInfo.html.twig',$tplData);
+        }
+        $tplData['user'] = $this->getUser();
+        
+        // Regular user
+        if (!$this->hasRoleAdmin())
+        {
+            return $this->render('@CeradTourn/Tourn/UserInfo/TournUserInfo.html.twig',$tplData);
+        }
+        
+        // Admin
+        return $this->render('@CeradTourn/Tourn/UserInfo/TournAdminInfo.html.twig',$tplData);
+     }
 }
