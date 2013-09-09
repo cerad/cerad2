@@ -1,17 +1,20 @@
   
-AYSONationalGames2014:
-    info:     
-      key:       AYSONationalGames2014
-      keySearch: AYSOS5Games2013       # Normally matches key but can be different for testing
-      status:    Active
-      season:    SU2014
-      sport:     Soccer
-      domain:    AYSO
-      domainSub: NatGames
-             
-      title:   "AYSO National Games 2014"
-      desc:    "AYSO National Games 2014 - Torrence, Califorina - June 30 to July 6"
-          
+AYSONationalGames2014:  
+    info:
+        id: AYSONationalGames2014
+        slugs:
+            - natgames
+            - natgames2014
+            
+        status:   Active
+        verified: Yes
+                
+        fedId:     AYSO
+        fedRoleId: AYSOV
+                
+        title:   "AYSO National Games 2014"
+        desc:    "AYSO National Games 2014 - Torrence, Califorina - June 30 to July 6"
+                          
     # ==============================================
     # For the schedule search form
     searches:

@@ -38,5 +38,13 @@ class BaseController extends Controller
     {
         return $this->get('security.context')->isGranted('ROLE_ASSIGNOR');
     }
+    /* ===================================================
+     * Always have a default project
+     */
+    protected function getProject()
+    {
+        $find = self::$container->get('cerad_project.find_default.in_memory');
+        return $find->project;
+    }
 }
 ?>
