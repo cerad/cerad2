@@ -9,6 +9,8 @@ interface PersonRepositoryInterface
     public function find($id);
     public function findAll();
     
+    public function findFed($id);
+    
     public function clear();
     
     public function save(PersonModel $item);

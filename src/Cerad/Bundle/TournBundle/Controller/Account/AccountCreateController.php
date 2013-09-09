@@ -6,15 +6,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
 
 use FOS\UserBundle\FOSUserEvents;
-use FOS\UserBundle\Event\UserEvent;
+use Cerad\Bundle\UserBundle\Event\UserEvent;
 use FOS\UserBundle\Event\FormEvent;
 use FOS\UserBundle\Event\FilterUserResponseEvent;
 
+
+use Cerad\Bundle\UserBundle\ValidatorConstraint\UsernameAndEmailUniqueConstraint;
+
 use Symfony\Component\Validator\Constraints\Email     as EmailConstraint;
 use Symfony\Component\Validator\Constraints\NotBlank  as NotBlankConstraint;
-
-use Cerad\Bundle\PersonBundle\ValidatorConstraint\AYSO\VolunteerIdConstraint  as AYSOVIdConstraint;
-use Cerad\Bundle\PersonBundle\ValidatorConstraint\USSF\ContractorIdConstraint as USSFCIdConstraint;
 
 class AccountCreateController extends MyBaseController
 {
@@ -34,7 +34,7 @@ class AccountCreateController extends MyBaseController
         $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, new UserEvent($model['user'], $request));
          
         // Simple custom form
-        $form = $this->createFormBuilderForModel($request, $model)->getForm();
+        $form = $this->createFormBuilderForModel($project, $model)->getForm();
         
         $form->handleRequest($request);
 
@@ -45,29 +45,30 @@ class AccountCreateController extends MyBaseController
              * The event is poorly named
              * Should be REGISTRATION_SUBMITTED or something
              */
-            $formEvent = new FormEvent($form, $request);
-            $dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $formEvent);
+          //$formEvent = new FormEvent($form, $request);
+          //$dispatcher->dispatch(FOSUserEvents::REGISTRATION_SUCCESS, $formEvent);
 
             $model = $form->getData();
             
-            $model = $this->processModel($request,$model);
+            $model = $this->processModel($project,$model);
             
             // If all went well then user and person were created and persisted
-            $response = $formEvent->getResponse();
+            $response = null; //$formEvent->getResponse();
             if (!$response) $response = $this->redirect('cerad_tourn_home');
             
             // This will log the user in
-            $dispatcher->dispatch(
-                    FOSUserEvents::REGISTRATION_COMPLETED, 
-                    new FilterUserResponseEvent($model['user'], $request, $response)
-            );
+            // If I had the service running
+          //$dispatcher->dispatch(
+          //        FOSUserEvents::REGISTRATION_COMPLETED, 
+          //        new FilterUserResponseEvent($model['user'], $request, $response)
+          //);
             
             // Flag as just having created an account
             $user = $model['user'];
             $request->getSession()->getFlashBag()->add(self::FLASHBAG_ACCOUNT_CREATED,$user->getUsername());;
 
             // And done
-            return $response;
+            // return $response;
         }        
         
         $tplData = array();
@@ -75,7 +76,7 @@ class AccountCreateController extends MyBaseController
         
         return $this->render('@CeradTourn/Account/Create/AccountCreateIndex.html.twig',$tplData);   
     }  
-    protected function processModel($model)
+    protected function processModel($project,$model)
     {
         // Unpack
         $user     = $model['user'    ];
@@ -88,19 +89,23 @@ class AccountCreateController extends MyBaseController
         /* =================================================
          * Process the person first
          */
-        $personRepo = $this->get('cerad_person.repository');
+        $personRepo = $this->get('cerad_person.person_repository');
         
         $personFed = $personRepo->findFed($fedId);
         
         if (!$personFed)
         {
             // Build a complete person record
-            $person = $personRepo->newPerson();
-            $person->setName ($name);
+            $person = $personRepo->createPerson();
+            
+            // A value object
+            $personNameVO = $person->createName();
+            $personNameVO->full = $name;
+            $person->setName($personNameVO);
+            
             $person->setEmail($email);
-            $person->getPersonPersonPrimary();
            
-            $personFed = $person->getFedUSSFC();
+            $personFed = $person->findFed($project->getFedRoleId());
             $personFed->setId($fedId);
         }
         else
@@ -119,16 +124,14 @@ class AccountCreateController extends MyBaseController
          * Now take care of the account
          * Already checked for duplicate emails/user names
          */
-        $userManager = $this->get('cerad_account.user_manager');
+        $userManager = $this->get('cerad_user.user_manager');
 
-      // Already made
-      //$user = $userManager->createUser();
-        
-        $user->setUsername($email);
-        $user->setEmail   ($email);
-        $user->setName    ($name);
-        $user->setPlainPassword($password);
-        $user->setEnabled (true);
+        // Fill in the user
+        $user->setEmail         ($email);
+        $user->setUsername      ($email);
+        $user->setAccountName   ($name);
+        $user->setAccountEnabled(true);
+        $user->setPasswordPlain($password);
         $user->setPersonId($person->getId());
         
         $model['user'] = $user;
@@ -138,8 +141,8 @@ class AccountCreateController extends MyBaseController
          */
         $userManager->updateUser($user);
         
-        $personRepo->persist($person);
-        $personRepo->flush();
+        $personRepo->save($person);
+        $personRepo->commit();
         
         // Done
         return $model;
@@ -166,37 +169,31 @@ class AccountCreateController extends MyBaseController
     /* ================================================
      * Create the form
      */
-    protected function createFormBuilderForModel($model)
+    protected function createFormBuilderForModel($project,$model)
     {
-        $project = $model['project'];
         
-        /* =============================================
-         * Constraints and validation groupd need refining
-         */
-        $formOptions = array(
-          //'validation_groups'  => array('basic'),
-            'cascade_validation' => true,
-        );
-        $constraintOptions = array(); // array('groups' => 'basic');
-
         /* ==================================================================
          * Make form type based on AYSOV or USSF
          * Be nice if the constraibnt type could come along with the form
          * Need to see how to inject the constraint options
          */
         $fedRoleId = $project->getFedRoleId();
-        $fedIdTypeService  = sprintf('cerad_person.%s_id_fake.form_type',strtolower($fedRoleId));
-        $fedIdType = $this->get($fedIdTypeService);
+        $fedIdTypeService  = sprintf('cerad_person_%s_id_fake',strtolower($fedRoleId));
         
-        $fedIdConstraintClass = sprintf('%sIdConstraint',strtoupper($fedRoleId));
-             
-        // Start building
+        /* ======================================================
+         * Start building
+         */
+        $formOptions = array(
+          //'validation_groups'  => array('basic'),
+            'cascade_validation' => true,
+          //'fake_fed_id' => true,
+        );
+        $constraintOptions = array(); // array('groups' => 'basic');
+        
         $builder = $this->createFormBuilder($model,$formOptions);
         
-        $builder->add('fedId',$fedIdType, array(
-            'constraints' => array(
-                new $fedIdConstraintClass($constraintOptions),
-            ),
+        $builder->add('fedId',$fedIdTypeService, array(
+            'required' => false,
         ));
         $builder->add('email','email', array(
             'required' => true,
@@ -205,6 +202,7 @@ class AccountCreateController extends MyBaseController
             'constraints' => array(
                 new NotBlankConstraint($constraintOptions),
                 new EmailConstraint   ($constraintOptions),
+                new UsernameAndEmailUniqueConstraint($constraintOptions),
             ),
             'attr' => array('size' => 30),
          ));

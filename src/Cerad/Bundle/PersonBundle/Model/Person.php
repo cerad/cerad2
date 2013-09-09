@@ -2,7 +2,7 @@
 
 namespace Cerad\Bundle\PersonBundle\Model;
 
-class Person extends BaseModel
+class Person extends BaseModel implements PersonInterface
 {
     const GenderMale    = 'M';
     const GenderFemale  = 'F';
@@ -56,9 +56,9 @@ class Person extends BaseModel
     public function getName     () { return clone $this->name;    }
     public function getAddress  () { return clone $this->address; }
     
-    public function setName     ($value) { $this->onPropertySet('name',   clone $value); }
-    public function setAddress  ($value) { $this->onPropertySet('address',clone $value); }
-   
+    public function setName     (PersonName    $value) { $this->onPropertySet('name',   clone $value); }
+    public function setAddress  (PersonAddress $value) { $this->onPropertySet('address',clone $value); }
+       
     // Not sure
     public function createPerson ($params = null) { return new Person       ($params); }
     public function createName   ($params = null) { return new PersonName   ($params); }

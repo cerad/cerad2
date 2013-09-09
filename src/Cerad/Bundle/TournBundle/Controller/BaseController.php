@@ -41,9 +41,9 @@ class BaseController extends Controller
     /* ===================================================
      * Always have a default project
      */
-    protected function getProject()
+    protected function getProject($slug = null)
     {
-        $find = self::$container->get('cerad_project.find_default.in_memory');
+        $find = $this->get('cerad_project.find_default.in_memory');
         return $find->project;
     }
 }

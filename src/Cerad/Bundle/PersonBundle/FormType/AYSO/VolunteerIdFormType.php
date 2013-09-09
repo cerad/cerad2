@@ -13,8 +13,11 @@ class VolunteerIdFormType extends AbstractType
 {
     protected $fake;
     
-    public function getName()   { return 'cerad_person_ayso_volunteer_id'; }
     public function getParent() { return 'text'; }
+    public function getName()   
+    { 
+        return $this->fake ? 'cerad_person_aysov_id_fake' : 'cerad_person_aysov_id'; 
+    }
 
     public function __construct($fake = false)
     {
@@ -32,7 +35,7 @@ class VolunteerIdFormType extends AbstractType
         $resolver->setDefaults(array(
             'label' => 'AYSO Volunteer ID (8-digits)',
             'attr'  => array('size' => 10),
-          //'constraints' => new IdConstraint(),
+            'constraints' => new IdConstraint(),
         ));
     }
 }

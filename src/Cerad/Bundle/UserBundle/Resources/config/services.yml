@@ -21,6 +21,9 @@ services:
             - '@security.encoder_factory'
             - '@cerad_user.user_repository.doctrine'
             
+    cerad_user.user_manager:
+        alias: cerad_user.user_manager.doctrine
+        
     cerad_user.user_encoder:
         class:  Cerad\Bundle\UserBundle\Security\UserEncoder
         arguments:

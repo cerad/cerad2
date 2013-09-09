@@ -2,5 +2,3 @@ parameters:
 #    cerad_tourn.example.class: Cerad\Bundle\TournBundle\Example
 
 services:
-    cerad_tourn.user_manager:
-        alias: cerad_user.user_repository.doctrine

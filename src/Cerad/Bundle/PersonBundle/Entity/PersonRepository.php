@@ -22,8 +22,13 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
      */
     public function find($id)
     {
+        return $id ? parent::find($id) : null;
+    }
+    public function findFed($id)
+    {
         if (!$id) return null;
-        return parent::find($id);
+        $repo = $this->_em->getRepository('CeradPersonBundle:PersonFed');
+        return $repo->find($id);        
     }
     /* ==========================================================
      * Allow creating objects via static methods

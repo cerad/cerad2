@@ -15,6 +15,9 @@ services:
         factory_method:  'getRepository'
         arguments:  
             - 'Cerad\Bundle\PersonBundle\Entity\Person'
+            
+    cerad_person.person_repository:
+        alias: cerad_person.person_repository.doctrine
 
 # ====================================================
 # Data transformers
@@ -40,20 +43,16 @@ services:
         
     cerad_person.phone.datatransformer:
         class: Cerad\Bundle\PersonBundle\DataTransformer\PhoneTransformer
-        
-# ====================================================
-# Constraints
-    cerad_person.aysov_id.constraint:
-        class: Cerad\Bundle\PersonBundle\ValidatorConstraint\AYSO\VolunteerIdConstraint
-        
-    cerad_person.ussfc_id.constraint:
-        class: Cerad\Bundle\PersonBundle\ValidatorConstraint\USSF\ContractorIdConstraint
-        
+                
 # ====================================================
 # Form Types
     cerad_person.aysov_id.form_type:
-        class: Cerad\Bundle\PersonBundle\DataTransformer\AYSO\VolunteerIdFormType
+        class: Cerad\Bundle\PersonBundle\FormType\AYSO\VolunteerIdFormType
+        tags:
+            - { name: form.type, alias: cerad_person_aysov_id } 
         
     cerad_person.aysov_id.form_type.fake:
-        class: Cerad\Bundle\PersonBundle\DataTransformer\AYSO\VolunteerIdFormType
+        class: Cerad\Bundle\PersonBundle\FormType\AYSO\VolunteerIdFormType
         arguments: [true]
+        tags:
+            - { name: form.type, alias: cerad_person_aysov_id_fake } 

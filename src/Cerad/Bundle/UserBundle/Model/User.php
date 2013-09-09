@@ -1,11 +1,12 @@
 <?php
 namespace Cerad\Bundle\UserBundle\Model;
 
-use Cerad\Bundle\UserBundle\Model\UserInterface;
+use Cerad\Bundle\UserBundle\Model\UserInterface as CeradUserInterface;
+//  FOS         \UserBundle\Model\UserInterface as FOSUserInterface;
 
-class User extends BaseModel implements UserInterface
+class User extends BaseModel implements CeradUserInterface //, FOSUserInterface
 {
-    const ROLE_DEFAULT = 'ROLE_USER';
+    const ROLE_DEFAULT = 'ROLE_USER'; // From FOSUserInterface
     
     protected $id;
     protected $salt;
@@ -115,6 +116,7 @@ class User extends BaseModel implements UserInterface
         
         return array_merge(array(self::ROLE_DEFAULT),$this->roles);
     }
+    public function hasRole($role) { }
     
     // Account - AdvancedUserInterface
     public function getAccountName()          { return $this->accountName;     }
@@ -125,6 +127,7 @@ class User extends BaseModel implements UserInterface
     public function isAccountNonLocked()      { return !$this->accountLocked;      }
     public function isCredentialsNonExpired() { return !$this->credentialsExpired; }
     
+    public function setEnabled              ($flag) { $this->onPropertySet('accountEnabled',    $flag); }
     public function setAccountName          ($name) { $this->onPropertySet('accountName',       $name); }
     public function setAccountEnabled       ($flag) { $this->onPropertySet('accountEnabled',    $flag); }
     public function setAccountNonExpired    ($flag) { $this->onPropertySet('accountExpired',    $flag); }
