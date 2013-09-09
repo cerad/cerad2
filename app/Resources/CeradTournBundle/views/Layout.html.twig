@@ -8,11 +8,31 @@
 {% block layout_body %}
 <div id="layout-body">
     
-{% render(controller('CeradTournBundle:Tourn/TournHeader:render')) %}
+{% if cerad_tourn_show('layout_header') %}
+{% block layout_header %}
+<div id="layout-header">
+    {% render(controller('CeradTournBundle:Tourn/TournHeader:render')) %}
+</div>
+{% endblock %}
+{% endif %}
+    
+{# if cerad_tourn_show('layout_userinfo') #}
+{% block layout_userinfo %}
+<div id="layout-userinfo">
+    {% render(controller('CeradTournBundle:Tourn/TournUserInfo:render')) %}
+</div>
+{% endblock %}
+{# endif #}
+    
+{% if cerad_tourn_show('layout_topmenu') %}
+{% block layout_topmenu %}
+<div id="layout-topmenu">
+    {% render(controller('CeradTournBundle:Tourn/TournTopMenu:render')) %}
+</div>
+{% endblock %}
+{% endif %}
 
-<div id="layout-topmenu"> {# render(controller('CeradTournBundle:Tourn/UserInfo:show')) #}</div>
-<div id="layout-userinfo">{# render(controller('CeradTournBundle:Tourn/UserInfo:show')) #}</div>
-
+    
 <div id="layout-content">{% block content %}{% endblock %}</div>
 
 </div>
