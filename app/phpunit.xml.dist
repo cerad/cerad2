@@ -19,7 +19,7 @@
             <directory>../src/Cerad/Bundle/UserBundle/Tests</directory>
             <directory>../src/Cerad/Bundle/ProjectBundle/Tests</directory>
             <directory>../src/Cerad/Bundle/PersonBundle/Tests</directory>
-            <directory>../src/Cerad/Bundle/ToutnBundle/Tests</directory>
+            <directory>../src/Cerad/Bundle/TournBundle/Tests</directory>
         </testsuite>
     </testsuites>
 
