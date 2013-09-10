@@ -19,7 +19,28 @@ class TournHomeController extends MyBaseController
             return $this->redirect('cerad_tourn_person_update');
         }
         
+        // Always need project
+        $project = $this->getProject();
+        
+        // Pass user and main userPerson to the listing
+        $user = $this->getUser();
+        $personId = $user->getPersonId();
+        $personRepo = $this->get('cerad_person.person_repository');
+        $person = $personRepo->find($personId);
+        
+        if (!$person) 
+        {
+            $person = $personRepo->createPerson();
+            $person->getPersonPersonPrimary();
+        }
         $tplData = array();
+        $tplData['user']       = $user;
+        $tplData['userPerson'] = $person;
+        
+        $tplData['project']   = $project;
+        $tplData['project']   = $project;
+        $tplData['fedRoleId'] = $project->getFedRoleId(); // AYSOV
+        
         return $this->render('@CeradTourn/Tourn/Home/TournHomeIndex.html.twig', $tplData);
     }
 }
