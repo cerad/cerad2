@@ -11,6 +11,21 @@ use Symfony\Component\Validator\Constraints\NotBlank  as NotBlankConstraint;
 
 class AccountUserLoginController extends MyBaseController
 {
+    public function loginFormAction(Request $request)
+    {
+        $model = $this->createAccountUserLoginModel($request);
+        
+        $form = $this->createFormForModel($model); //->createForm();
+        
+        // The actual login is done by the login-chack listener
+        
+        // Render
+        $tplData = array();
+        $tplData['form'] = $form->createView();
+        $tplData['error'] = $model['loginError'];
+        
+        return $this->render('@CeradTourn/AccountUser/Login/AccountUserLoginForm.html.twig',$tplData);      
+    }
     public function loginAction(Request $request)
     {
         
