@@ -33,7 +33,7 @@ class AccountCreateController extends MyBaseController
         $dispatcher->dispatch(FOSUserEvents::REGISTRATION_INITIALIZE, new UserEvent($model['user'], $request));
          
         // Simple custom form
-        $form = $this->createFormBuilderForModel($project, $model)->getForm();
+        $form = $this->createModelForm($project, $model);
         
         $form->handleRequest($request);
 
@@ -99,6 +99,7 @@ class AccountCreateController extends MyBaseController
         {
             // Build a complete person record
             $person = $personRepo->createPerson();
+            $person->getPersonPersonPrimary();
             
             // A value object
             $personNameVO = $person->createName();
@@ -107,7 +108,7 @@ class AccountCreateController extends MyBaseController
             
             $person->setEmail($email);
            
-            $personFed = $person->findFed($project->getFedRoleId());
+            $personFed = $person->getFed($project->getFedRoleId());
             $personFed->setId($fedId);
         }
         else
@@ -171,7 +172,7 @@ class AccountCreateController extends MyBaseController
     /* ================================================
      * Create the form
      */
-    protected function createFormBuilderForModel($project,$model)
+    protected function createModelForm($project,$model)
     {
         
         /* ==================================================================
@@ -231,6 +232,6 @@ class AccountCreateController extends MyBaseController
             'first_name'  => 'pass1',
             'second_name' => 'pass2',
         ));
-        return $builder;
+        return $builder->getForm();
     }
 }

@@ -22,7 +22,17 @@ class PersonUpdateController extends MyBaseController
         // Simple model
         $model = $this->createModel($project,$personId);
 
-        $form = $this->createFormForModel($project,$model);
+        $form = $this->createModelForm($project,$model);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) 
+        {   
+            $model1 = $form->getData();
+            
+            $model2 = $this->processModel($project,$model1);
+  
+            $this->redirect('cerad_tourn_person_update');
+        }
         
         $tplData = array();
         $tplData['form']    = $form->createView();
@@ -30,8 +40,44 @@ class PersonUpdateController extends MyBaseController
         $tplData['project'] = $project;
         return $this->render('@CeradTourn/Person/Update/PersonUpdateIndex.html.twig', $tplData);
     }
+    protected function processModel($project,$model)
+    { 
+        // Update person
+        $person = $model['person'];
+        $name = $person->getName();
+        $name->full  = $model['personNameFull'];
+        $name->first = $model['personNameFirst'];
+        $name->last  = $model['personNameLast'];
+        $name->nick  = $model['personNameNick'];
+        $person->setName($name);
+        
+        $person->setEmail($model['personEmail']);
+        $person->setPhone($model['personPhone']);
+        
+        // Certs
+      //$fedId     = $model['fedId'    ];
+        $orgId     = $model['orgId'    ];
+        $badge     = $model['badge'    ];
+        $upgrading = $model['upgrading'];
+        
+        $personFed     = $person->getFed($project->getFedRoleId());
+        $personOrg     = $personFed->getOrg();
+        $personCertRef = $personFed->getCertReferee();
+        
+        $personOrg->setOrgId($orgId);
+        $personCertRef->setBadgex($badge);
+        $personCertRef->setUpgrading($upgrading);
+        
+        // And persist
+        $personRepo = $this->get('cerad_person.person_repository');
+        $personRepo->save($person);
+        $personRepo->commit();
+        
+        // Done
+        return $model;
+    }
     /* ===============================================
-     * Model is just the person
+     * Person + cert + org
      */
     protected function createModel($project,$personId)
     {
@@ -59,19 +105,19 @@ class PersonUpdateController extends MyBaseController
         {
             throw new \Exception('No person in cerad_tourn_person_edit');
         }
-        $personFed = $person->findFed($project->getFedRoleId());
+        $personFed = $person->getFed($project->getFedRoleId());
  
-        //$personOrg = $personFed->getOrgState();
-        //$personCertRef = $personFed->getCertReferee();
+        $personOrg     = $personFed->getOrg();
+        $personCertRef = $personFed->getCertReferee();
         
         // Simple model
         $model['person']    = $person;
         $model['fedId']     = $personFed->getId();
-      //$model['orgId']     = $personOrg->getOrgId();
-      //$model['badge']     = $personCertRef->getBadgex();
-        $model['upgrading'] = 'No';
+        $model['orgId']     = $personOrg->getOrgId();
+        $model['badge']     = $personCertRef->getBadgex();
+        $model['upgrading'] = $personCertRef->getUpgrading();
         
-        // Value object
+        // Value object, just flatten for now
         $name = $person->getName();
         $model['personName']      = $name;
         $model['personNameFull']  = $name->full;
@@ -88,14 +134,18 @@ class PersonUpdateController extends MyBaseController
      * Hand crafted form
      */
 
-    public function createFormForModel($project,$model = null)
+    public function createModelForm($project,$model = null)
     {
         $fedRoleId = $project->getFedRoleId();
-        $fedIdTypeService  = sprintf('cerad_person_%s_id_fake',strtolower($fedRoleId));
- 
-      //$orgIdType     = $this->get('cerad_person.ussf_org_state.form_type');
-      //$badgeType     = $this->get('cerad_person.ussf_referee_badge.form_type');
-      //$upgradingType = $this->get('cerad_person.ussf_referee_upgrading.form_type');
+        
+        // Service id's are not case sensitive
+        $fedIdTypeServiceId = sprintf('cerad_person.%s_id_Fake.form_type',      $fedRoleId);
+        $orgIdTypeServiceId = sprintf('cerad_person.%s_org_id.form_type',       $fedRoleId);
+        $badgeTypeServiceId = sprintf('cerad_person.%s_referee_badge.form_type',$fedRoleId);
+        
+        $fedIdTypeService   = $this->get($fedIdTypeServiceId);
+        $orgIdTypeService   = $this->get($orgIdTypeServiceId);
+        $badgeTypeService   = $this->get($badgeTypeServiceId);
         
         $formOptions = array(
           //'validation_groups'  => array('basic'),
@@ -108,6 +158,19 @@ class PersonUpdateController extends MyBaseController
         $builder->add('fedId',$fedIdTypeService, array(
             'required' => false,
             'disabled' => true,
+        ));
+        $builder->add('orgId',$orgIdTypeService, array(
+            'required' => true,
+        ));
+        $builder->add('badge',$badgeTypeService, array(
+            'required' => true,
+        ));
+        $builder->add('fedId',$fedIdTypeService, array(
+            'required' => false,
+            'disabled' => true,
+        ));
+        $builder->add('upgrading','cerad_person_upgrading', array(
+            'required' => false,
         ));
        
         $builder->add('personNameFull','text', array(
@@ -155,7 +218,7 @@ class PersonUpdateController extends MyBaseController
             ),
             'attr' => array('size' => 30),
          ));
-        $builder->add('personPhone','text', array(
+        $builder->add('personPhone','cerad_person_phone', array(
             'required' => false,
             'label'    => 'Cell Phone',
             'trim'     => true,

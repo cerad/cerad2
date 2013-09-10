@@ -1,6 +1,8 @@
 <?php
 namespace Cerad\Bundle\PersonBundle\Model;
 
+use Cerad\Bundle\PersonBundle\Model\PersonFed;
+
 class PersonFedCert extends BaseModel
 {       
     const RoleReferee    = 'Referee';
@@ -48,17 +50,20 @@ class PersonFedCert extends BaseModel
     public function getDateExpires()         { return $this->dateExpires;         }
     public function getUpgrading()           { return $this->upgrading;           }
     
-    public function setFed     ($value) { $this->onPropertySet('fed',       $value); }
     public function setRole    ($value) { $this->onPropertySet('role',      $value); }
     public function setBadge   ($value) { $this->onPropertySet('badge',     $value); }
     public function setStatus  ($value) { $this->onPropertySet('status',    $value); }
     public function setVerified($value) { $this->onPropertySet('verified',  $value); }
+    
+    public function setFed(PersonFed $fed) { $this->onPropertySet('fed',    $fed);   }
     
     public function setDateFirstCertified($value) { $this->onPropertySet('dateFirstCertified',$value); }
     public function setDateLastUpgraded  ($value) { $this->onPropertySet('dateLastUpgraded',  $value); }
     public function setDateExpires       ($value) { $this->onPropertySet('dateExpires',       $value); }
     public function setUpgrading         ($value) { $this->onPropertySet('upgrading',         $value); }
     
+    public function __construct() {}
+
     public function setBadgex($badge) 
     { 
         $this->onPropertySet('badgex',$badge); 

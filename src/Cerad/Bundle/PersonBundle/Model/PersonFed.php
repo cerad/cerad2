@@ -69,7 +69,7 @@ class PersonFed extends BaseModel
         
         if (isset($this->certs[$role])) return;
         
-        $this->certs[$role] = $role;
+        $this->certs[$role] = $cert;
          
         $cert->setFed($this);
         
@@ -77,8 +77,8 @@ class PersonFed extends BaseModel
     }
     public function getCert($role, $autoCreate = true)
     {
-        if (isset($this->certs[$role])) return $this->certs[$role];
-
+        if (isset($this->certs[$role])) { return $this->certs[$role]; }
+        
         if (!$autoCreate) return null;
         
         $cert = $this->createCert();
@@ -121,8 +121,8 @@ class PersonFed extends BaseModel
         {
             switch($this->fedRoleId)
             {
-                case FedRoleAYSOV: $role = PersonFedOrg::RoleRegion; break;
-                case FedRoleUSSFC: $role = PersonFedOrg::RoleState;  break;
+                case self::FedRoleAYSOV: $role = PersonFedOrg::RoleRegion; break;
+                case self::FedRoleUSSFC: $role = PersonFedOrg::RoleState;  break;
                 default: throw new \Exception('No role for personFed.findOrg');
             }
         }

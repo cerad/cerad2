@@ -42,8 +42,8 @@ class Person extends BaseModel implements PersonInterface
     {
         $this->id = $this->genId(); // Does the model really need these?
         
-        $this->name    = $this->createName();
-        $this->address = $this->createAddress();
+        $this->setName   ($this->createName());
+        $this->setAddress($this->createAddress());
     }
     /* ======================================================================
      * Standard getters/setters/creators
@@ -187,7 +187,7 @@ class Person extends BaseModel implements PersonInterface
         
         // Loop and check role and pp.child
         $this->persons[] = $personPerson;
-        $personPerson->setMaster($this);
+        $personPerson->setParent($this);
         $this->onPropertyChanged('persons');
     }
     public function getPersonPersonPrimary($autoCreate = true)
@@ -212,6 +212,6 @@ class Person extends BaseModel implements PersonInterface
         $this->addPersonPerson($personPerson);
             
         return $personPerson;
-    } 
+    }
 }
 ?>

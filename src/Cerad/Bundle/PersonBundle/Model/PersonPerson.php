@@ -1,6 +1,8 @@
 <?php
 namespace Cerad\Bundle\PersonBundle\Model;
 
+use Cerad\Bundle\PersonBundle\Model\Person;
+
 /* =================================================
  * One person (the master) can have some controll over their slaves
  * For example, the master can sign slaves up for games so they slaves will not need an account
@@ -25,16 +27,19 @@ class PersonPerson extends BaseModel
     
     public function getId      () { return $this->id;       }
     public function getRole    () { return $this->role;     }
-    public function getParent  () { return $this->parent;   }
-    public function getChild   () { return $this->child;    }
+    public function getParent  () { return $this->parent;   } // Person
+    public function getChild   () { return $this->child;    } // Person
     public function getStatus  () { return $this->status;   }
     public function getVerified() { return $this->verified; }
     
     public function setRole    ($value) { $this->onPropertySet('role',    $value); }
-    public function setParent  ($value) { $this->onPropertySet('parent',  $value); }
-    public function setChild   ($value) { $this->onPropertySet('child',   $value); }
     public function setStatus  ($value) { $this->onPropertySet('status',  $value); }
     public function setVerified($value) { $this->onPropertySet('verified',$value); }
+    
+    public function setParent  (Person $parent) { $this->onPropertySet('parent',  $parent); }
+    public function setChild   (Person $child ) { $this->onPropertySet('child',   $child);  }
+    
+    public function __construct() {}
     
     public function isRolePrimary()
     {

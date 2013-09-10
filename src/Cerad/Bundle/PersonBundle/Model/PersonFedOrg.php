@@ -1,6 +1,8 @@
 <?php
 namespace Cerad\Bundle\PersonBundle\Model;
 
+use Cerad\Bundle\PersonBundle\Model\PersonFed;
+
 class PersonFedOrg extends BaseModel
 {
     const RoleState   = 'State';
@@ -46,11 +48,12 @@ class PersonFedOrg extends BaseModel
     public function getBcFirst   () { return $this->bcFirst;    }
     public function getBcExpires () { return $this->bcExpires;  }
              
-    public function setFed       ($value) { $this->onPropertySet('fed',       $value); }
     public function setRole      ($value) { $this->onPropertySet('role',      $value); }
     public function setOrgId     ($value) { $this->onPropertySet('orgId',     $value); }
     public function setStatus    ($value) { $this->onPropertySet('status',    $value); }
     public function setVerified  ($value) { $this->onPropertySet('verified',  $value); }  
+    
+    public function setFed(PersonFed $fed) { $this->onPropertySet('fed',      $fed);   }
     
     public function setMemYear   ($value) { $this->onPropertySet('memYear',   $value); }
     public function setMemLast   ($value) { $this->onPropertySet('memLast',   $value); }
@@ -61,5 +64,8 @@ class PersonFedOrg extends BaseModel
     public function setBcLast    ($value) { $this->onPropertySet('bcLast',    $value); }
     public function setBcFirst   ($value) { $this->onPropertySet('bcFirst',   $value); }
     public function setBcExpires ($value) { $this->onPropertySet('bcExpires', $value); }
+    
+    public function __construct() {}
+
 }
 ?>
