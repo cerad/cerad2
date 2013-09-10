@@ -14,5 +14,7 @@ class PersonFed extends PersonFedModel
         $this->orgs  = new ArrayCollection();
         $this->certs = new ArrayCollection(); 
     }
+    public function createOrg ($params = null) { return new PersonFedOrg ($params); }
+    public function createCert($params = null) { return new PersonFedCert($params); }
 }
 ?>

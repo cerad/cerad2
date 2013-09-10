@@ -21,6 +21,11 @@ Cerad\Bundle\PersonBundle\Entity\Person:
             mappedBy:     person
             indexBy:      fedRoleId
             cascade:      ['all']
+            
+        persons:
+            targetEntity: PersonPerson
+            mappedBy:     person
+            cascade:      ['all']
              
     fields:
       

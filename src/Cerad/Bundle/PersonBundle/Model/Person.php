@@ -117,5 +117,62 @@ class Person extends BaseModel implements PersonInterface
         
         return $fed;
     }
+    /* ========================================================
+     * PersonToPerson relation
+     */
+    /* ====================================================
+     * Persons
+     * WIP
+     * Name is confusing still
+     * Have multiple Family members
+     * 
+     * Might also have project property later
+     */
+    public function createPersonPerson($params = null) { return new PersonPerson($params); }
+    
+    public function getPersonPersons() { return  $this->persons; }
+
+    public function addPersonPerson(PersonPerson $personPerson)
+    {
+        $role = $personPerson->getRole();
+        $childId = $personPerson->getChild()->getId();
+        
+        foreach($this->persons as $personPersonx)
+        {
+            if (($role    == $personPersonx->getRole()) &&
+                ($childId == $personPersonx->getChild()->getId()))
+            {
+                return null;
+            }
+        }
+        
+        // Loop and check role and pp.child
+        $this->persons[] = $personPerson;
+        $personPerson->setMaster($this);
+        $this->onPropertyChanged('persons');
+    }
+    public function findPersonPersonPrimary($autoCreate = true)
+    {
+        $role = PersonPerson::RolePrimary;
+        foreach($this->persons as $personPerson)
+        {
+            if ($role == $personPerson->getRole())
+            {
+                // Should only be one primary
+                return $personPerson;
+            }
+        }
+
+        if (!$autoCreate) return null;
+            
+        $personPerson = $this->createPersonPerson();
+        $personPerson->setParent($this);
+        $personPerson->setChild ($this);
+        $personPerson->setRole  (PersonPerson::RolePrimary);
+            
+        $this->addPersonPerson($personPerson);
+            
+        return $personPerson;
+    } 
 }
 ?>

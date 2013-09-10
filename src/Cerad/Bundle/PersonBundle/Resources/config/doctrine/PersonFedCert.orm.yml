@@ -1,0 +1,63 @@
+Cerad\Bundle\PersonBundle\Entity\PersonFedCert:
+    type:  entity
+    table: person_fed_certs
+    changeTrackingPolicy: NOTIFY
+    
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+            
+    manyToOne:
+                  
+        fed:
+            targetEntity: PersonFed
+            inversedBy:   certs
+             
+    fields:
+            
+        role:
+            column:   role
+            type:     string
+            length:   20
+            nullable: false
+             
+        badge:
+            type:     string
+            length:   20
+            nullable: true
+            
+        badgex:
+            type:     string
+            length:   20
+            nullable: true
+            
+        dateFirstCertified:
+            column:   date_cert
+            type:     date
+            nullable: true
+            
+        dateLastUpgraded:
+            column:   date_upgraded
+            type:     date
+            nullable: true
+            
+        dateExpires:
+            column:   date_expires
+            type:     date
+            nullable: true
+           
+        upgrading:
+            type:     string
+            length:   20
+            nullable: true
+                      
+        status:
+            type:     string
+            length:   20
+            nullable: false
+            
+        verified:
+            type:     string
+            length:   20
+            nullable: true

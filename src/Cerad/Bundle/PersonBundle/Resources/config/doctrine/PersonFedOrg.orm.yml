@@ -1,0 +1,88 @@
+Cerad\Bundle\PersonBundle\Entity\PersonFedOrg:
+    type:  entity
+    table: person_fed_orgs
+    changeTrackingPolicy: NOTIFY
+   
+   #uniqueConstraints:
+   #   person_league_identifier_index:
+   #       columns: identifier
+    
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+            
+    manyToOne:
+      
+        fed:
+            targetEntity: PersonFed
+            inversedBy:   orgs
+             
+    fields:
+            
+        role:
+            column:   role
+            type:     string
+            length:   20
+            nullable: false
+            
+        orgId:
+            column:   org_id
+            type:     string
+            length:   40
+            nullable: false
+            
+      # =======================
+        memYear:
+            column:   mem_year
+            type:     string
+            length:   20
+            nullable: true
+            
+        memLast:
+            column:   mem_last
+            type:     date
+            nullable: true
+            
+        memFirst:
+            column:   mem_first
+            type:     date
+            nullable: true
+            
+        memExpires:
+            column:   mem_expires
+            type:     date
+            nullable: true
+            
+      # =======================
+        bcYear:
+            column:   bc_year
+            type:     string
+            length:   20
+            nullable: true
+            
+        bcLast:
+            column:   bc_last
+            type:     date
+            nullable: true
+
+        bcFirst:
+            column:   bc_first
+            type:     date
+            nullable: true
+            
+        bcExpires:
+            column:   bc_expires
+            type:     date
+            nullable: true
+                       
+      # =======================
+        status:
+            type:     string
+            length:   20
+            nullable: false
+            
+        verified:
+            type:     string
+            length:   20
+            nullable: true

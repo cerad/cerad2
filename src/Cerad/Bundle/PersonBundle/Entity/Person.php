@@ -28,7 +28,10 @@ class Person extends PersonModel
         $this->plans   = new ArrayCollection();
         $this->persons = new ArrayCollection(); 
     }
-    public function createFed($params = null) { return new PersonFed($params); }
+    public function createFed ($params = null) { return new PersonFed ($params); }
+    public function createPlan($params = null) { return new PersonPlan($params); }
+    
+    public function createPersonPerson($params = null) { return new PersonPerson($params); }
     
     /* ======================================================
      * Value objects hydration stuff

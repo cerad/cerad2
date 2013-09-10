@@ -51,87 +51,89 @@ class PersonFed extends BaseModel
     /* ====================================================
      * Certification
      */
-    public function newCert() { return new PersonCert(); }
-
-    public function addCert($item)
-    {
-        $role = $item->getRole();
-        foreach($this->certs as $itemx)
-        {
-            if ($itemx->getRole() == $role) return $this;
-        }
-        $this->certs[] = $item;
-        $item->setFed($this);
-        $this->onPropertyChanged('certs');
-    }
+    public function createCert($params) { return new PersonFedCert($params); }
+    
     public function getCerts() { return $this->certs; }
     
-    public function getCert($role,$autoCreate = true)
+    public function addCert($cert)
     {
-        foreach($this->certs as $item)
-        {
-            if ($item->getRole() == $role) return $item;
-        }
+        $role = $cert->getRole();
+        
+        if (isset($this->certs[$role])) return;
+        
+        $this->certs[$role] = $role;
+         
+        $cert->setFed($this);
+        
+        $this->onPropertyChanged('certs');
+    }
+    public function findCert($role,$autoCreate = true)
+    {
+        if (isset($this->certs[$role])) return $this->certs[$role];
+
         if (!$autoCreate) return null;
         
-        $item = $this->newCert();
-        $item->setRole($role);
-        $this->addCert($item);
-        return $item;
+        $cert = $this->createCert();
+        $cert->setRole($role);
+        $this->addCert($cert);
+        return $cert;
     }
-    public function getCertReferee($autoCreate = true)
+    public function findCertReferee($autoCreate = true)
     {
-        return $this->getCert(PersonCert::RoleReferee,$autoCreate);
+        return $this->findCert(PersonFedCert::RoleReferee,$autoCreate);
     }
-    public function getCertSafeHaven($autoCreate = true)
+    public function findCertSafeHaven($autoCreate = true)
     {
-        return $this->getCert(PersonCert::RoleSafeHaven,$autoCreate);
+        return $this->findCert(PersonFedCert::RoleSafeHaven,$autoCreate);
     }
-    // Keep forms happy
-    public function setCertReferee  ($value) { return $this; }
-    public function setCertSafeHaven($value) { return $this; }
     
     /* ====================================================
      * Organizations
      */
-    public function newOrg() { return new PersonOrg(); }
+    public function createOrg($params) { return new PersonFedOrg($params); }
     
-    public function addOrg($item)
+    public function getOrgs() { return $this->orgs; }
+ 
+    public function addOrg($org)
     {
-        $role = $item->getRole();
-        foreach($this->orgs as $itemx)
-        {
-            if ($itemx->getRole() == $role) return $this;
-        }
-        $this->orgs[] = $item;
-        $item->setFed($this);
+        $role = $org->getRole();
+        
+        if (isset($this->orgs[$role])) return;
+ 
+        $this->orgs[$role] = $org;
+        
+        $org->setFed($this);
+        
         $this->onPropertyChanged('orgs');
     }
-    public function getOrgs() { return $this->orgs; }
-    
-    public function getOrg($role = null, $autoCreate = true)
+    public function findOrg($role = null, $autoCreate = true)
     {
-        foreach($this->orgs as $item)
+        // Default role based on Fed Role
+        if ($role == null)
         {
-            if ($item->getRole() == $role) return $item;
+            switch($this->fedRoleId)
+            {
+                case FedRoleAYSOV: $role = PersonFedOrg::RoleRegion; break;
+                case FedRoleUSSFC: $role = PersonFedOrg::RoleState;  break;
+                default: throw new \Exception('No role for personFed.findOrg');
+            }
         }
+        if (isset($this->orgs[$role])) return $this->orgs[$role];
+ 
         if (!$autoCreate) return null;
         
-        $item = $this-> newOrg();
-        $item->setRole($role);
-        $this->addOrg ($item);
-        return $item;
+        $org = $this->createOrg();
+        $org->setRole($role);
+        $this->addOrg($org);
+        return $org;
     }
-    public function getOrgState($autoCreate = true)
+    public function findOrgState($autoCreate = true)
     {
-        return $this->getOrg(PersonOrg::RoleState,$autoCreate);
+        return $this->findOrg(PersonFedOrg::RoleState,$autoCreate);
     }
-    public function getOrgRegion($autoCreate = true)
+    public function findOrgRegion($autoCreate = true)
     {
-        return $this->getOrg(PersonOrg::RoleRegion,$autoCreate);
+        return $this->findOrg(PersonFedOrg::RoleRegion,$autoCreate);
     }
-    // Keep forms happy
-    public function setOrgState ($value) { return $this; }
-    public function setOrgRegion($value) { return $this; }
 }
 ?>
