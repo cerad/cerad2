@@ -162,7 +162,9 @@ class PersonUpdateController extends MyBaseController
         ));
         $builder->add('orgId',$orgIdTypeService, array(
             'required' => true,
-        ));
+            'constraints' => array(
+                new NotBlankConstraint($constraintOptions),
+        )));
         $builder->add('badge',$badgeTypeService, array(
             'required' => true,
         ));
