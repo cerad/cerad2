@@ -2,6 +2,13 @@
 
 namespace Cerad\Bundle\PersonBundle\Model;
 
+use Cerad\Bundle\PersonBundle\Model\PersonName;
+use Cerad\Bundle\PersonBundle\Model\PersonAddress;
+
+use Cerad\Bundle\PersonBundle\Model\PersonFed;
+use Cerad\Bundle\PersonBundle\Model\PersonPlan;
+use Cerad\Bundle\PersonBundle\Model\PersonPerson;
+
 class Person extends BaseModel implements PersonInterface
 {
     const GenderMale    = 'M';
@@ -88,7 +95,7 @@ class Person extends BaseModel implements PersonInterface
      */
     public function createFed($params = null) { return new PersonFed($params); }
     
-    public function getFeds() { return  $this->feds; }
+    public function getFeds() { return $this->feds; }
     
     public function addFed(PersonFed $fed)
     {
@@ -102,7 +109,7 @@ class Person extends BaseModel implements PersonInterface
         
         $this->onPropertyChanged('feds');
     }
-    public function findFed($fedRoleId, $autoCreate = true, $autoAdd = true)
+    public function getFed($fedRoleId, $autoCreate = true, $autoAdd = true)
     {
         if (isset($this->feds[$fedRoleId])) return $this->feds[$fedRoleId];
         
@@ -117,11 +124,43 @@ class Person extends BaseModel implements PersonInterface
         
         return $fed;
     }
+    /* =============================================================
+     * The plans
+     */
+    public function createPlan($params = null) { return new PersonPlan($params); }
+    
+    public function getPlans() { return $this->plans; }
+    
+    public function addPlan(PersonPlan $plan)
+    {
+        $projectId = $plan->getProjectId();
+        
+        if (isset($this->plans[$projectId])) return;
+        
+        $this->plans[$projectId] = $plan;
+        
+        $plan->setPerson($this);
+        
+        $this->onPropertyChanged('plans');
+    }
+    public function getPlan($projectId, $autoCreate = true, $autoAdd = true)
+    {
+        if (isset($this->plans[$projectId])) return $this->plans[$projectId];
+        
+        if (!$autoCreate) return null;
+        
+        $plan = $this->createPlan();
+        $plan->setProjectId($projectId);
+        
+        if (!$autoAdd) return $plan;
+        
+        $this->addPlan($plan);
+        
+        return $plan;
+    }
     /* ========================================================
      * PersonToPerson relation
-     */
-    /* ====================================================
-     * Persons
+     *
      * WIP
      * Name is confusing still
      * Have multiple Family members
@@ -134,7 +173,7 @@ class Person extends BaseModel implements PersonInterface
 
     public function addPersonPerson(PersonPerson $personPerson)
     {
-        $role = $personPerson->getRole();
+        $role    = $personPerson->getRole();
         $childId = $personPerson->getChild()->getId();
         
         foreach($this->persons as $personPersonx)
@@ -151,7 +190,7 @@ class Person extends BaseModel implements PersonInterface
         $personPerson->setMaster($this);
         $this->onPropertyChanged('persons');
     }
-    public function findPersonPersonPrimary($autoCreate = true)
+    public function getPersonPersonPrimary($autoCreate = true)
     {
         $role = PersonPerson::RolePrimary;
         foreach($this->persons as $personPerson)

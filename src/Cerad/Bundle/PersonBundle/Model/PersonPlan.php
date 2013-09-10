@@ -1,12 +1,16 @@
 <?php
-namespace Cerad\Bundle\PersonBundle\Entity;
+namespace Cerad\Bundle\PersonBundle\Model;
+
+use Cerad\Bundle\PersonBundle\Model\BaseModel;
+
+use Cerad\Bundle\PersonBundle\Model\Person;
 
 /* =======================================
  * Refactored to make the project key the actual project id
  * 
  * plan.plan
  */
-class PersonPlan extends BaseEntity
+class PersonPlan extends BaseModel
 {
     protected $id;
     protected $person;
@@ -36,10 +40,11 @@ class PersonPlan extends BaseEntity
     public function setId       ($value) { $this->id        = $value; }
     public function setPlan     ($value) { $this->basic     = $value; }
     public function setBasic    ($value) { $this->basic     = $value; }
-    public function setPerson   ($value) { $this->person    = $value; }
     public function setStatus   ($value) { $this->status    = $value; }
     public function setVerified ($value) { $this->verified  = $value; }
     public function setProjectId($value) { $this->projectId = $value; }
+    
+    public function setPerson(Person $person) { $this->onPropertySet('person',$person); }
     
     // TODO: Make this an array_merge
     public function setPlanProperties($props)
@@ -72,6 +77,7 @@ class PersonPlan extends BaseEntity
         if (array_key_exists($name,$this->basic)) 
         {
             $this->basic[$name] = $value;
+            $this->onPropertyChanged('basic'); // TODO: Refine
         }
     }
 }

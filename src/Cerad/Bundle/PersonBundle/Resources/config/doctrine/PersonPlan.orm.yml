@@ -1,0 +1,54 @@
+Cerad\Bundle\PersonBundle\Entity\PersonPlan:
+    type:  entity
+    table: person_plans
+    changeTrackingPolicy: NOTIFY
+   
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+            
+    manyToOne:
+      
+        person:
+            targetEntity: Person
+            inversedBy:   plans
+             
+    fields:
+      
+        projectId:
+            column:   project_id
+            type:     string
+            length:   40
+            nullable: false
+            
+        status:
+            type:     string
+            length:   20
+            nullable: false
+            
+        verified:
+            type:     string
+            length:   20
+            nullable: true
+            
+        basic:
+            column:   basic
+            type:     array
+            nullable: false
+            
+        level:
+            column:   level
+            type:     array
+            nullable: true
+            
+        avail:
+            column:   avail
+            type:     array
+            nullable: true
+            
+        notes:
+            column:   notes
+            type:     text
+            nullable: true
+

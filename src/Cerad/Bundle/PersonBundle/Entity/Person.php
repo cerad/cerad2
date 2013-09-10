@@ -5,6 +5,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Cerad\Bundle\PersonBundle\Model\Person as PersonModel;
 
+use Cerad\Bundle\PersonBundle\Entity\PersonFed;
+use Cerad\Bundle\PersonBundle\Entity\PersonPlan;
+use Cerad\Bundle\PersonBundle\Entity\PersonPerson;
+
 class Person extends PersonModel
 {   
     /* =========================================

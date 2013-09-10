@@ -1,6 +1,13 @@
 <?php
 namespace Cerad\Bundle\PersonBundle\Model;
 
+use Cerad\Bundle\PersonBundle\Model\BaseModel;
+
+use Cerad\Bundle\PersonBundle\Model\Person;
+
+use Cerad\Bundle\PersonBundle\Model\PersonFedOrg;
+use Cerad\Bundle\PersonBundle\Model\PersonFedCert;
+
 /* ================================================
  * This is really a link to a FedPersonType but
  * works fine in the person context
@@ -44,9 +51,10 @@ class PersonFed extends BaseModel
     
     public function setId       ($value) { $this->onPropertySet('id',       $value); }
     public function setFedRoleId($value) { $this->onPropertySet('fedRoleId',$value); }
-    public function setPerson   ($value) { $this->onPropertySet('person',   $value); }
     public function setStatus   ($value) { $this->onPropertySet('status',   $value); }
     public function setVerified ($value) { $this->onPropertySet('verified', $value); }
+    
+    public function setPerson(Person $person) { $this->onPropertySet('person',$person); }
     
     /* ====================================================
      * Certification
@@ -55,7 +63,7 @@ class PersonFed extends BaseModel
     
     public function getCerts() { return $this->certs; }
     
-    public function addCert($cert)
+    public function addCert(PersonFedCert $cert)
     {
         $role = $cert->getRole();
         
@@ -67,7 +75,7 @@ class PersonFed extends BaseModel
         
         $this->onPropertyChanged('certs');
     }
-    public function findCert($role,$autoCreate = true)
+    public function getCert($role, $autoCreate = true)
     {
         if (isset($this->certs[$role])) return $this->certs[$role];
 
@@ -78,13 +86,13 @@ class PersonFed extends BaseModel
         $this->addCert($cert);
         return $cert;
     }
-    public function findCertReferee($autoCreate = true)
+    public function getCertReferee($autoCreate = true)
     {
-        return $this->findCert(PersonFedCert::RoleReferee,$autoCreate);
+        return $this->getCert(PersonFedCert::RoleReferee,$autoCreate);
     }
-    public function findCertSafeHaven($autoCreate = true)
+    public function getCertSafeHaven($autoCreate = true)
     {
-        return $this->findCert(PersonFedCert::RoleSafeHaven,$autoCreate);
+        return $this->getCert(PersonFedCert::RoleSafeHaven,$autoCreate);
     }
     
     /* ====================================================
@@ -94,7 +102,7 @@ class PersonFed extends BaseModel
     
     public function getOrgs() { return $this->orgs; }
  
-    public function addOrg($org)
+    public function addOrg(PersonFedOrg $org)
     {
         $role = $org->getRole();
         
@@ -106,7 +114,7 @@ class PersonFed extends BaseModel
         
         $this->onPropertyChanged('orgs');
     }
-    public function findOrg($role = null, $autoCreate = true)
+    public function getOrg($role = null, $autoCreate = true)
     {
         // Default role based on Fed Role
         if ($role == null)
@@ -127,11 +135,11 @@ class PersonFed extends BaseModel
         $this->addOrg($org);
         return $org;
     }
-    public function findOrgState($autoCreate = true)
+    public function getOrgState($autoCreate = true)
     {
         return $this->findOrg(PersonFedOrg::RoleState,$autoCreate);
     }
-    public function findOrgRegion($autoCreate = true)
+    public function getOrgRegion($autoCreate = true)
     {
         return $this->findOrg(PersonFedOrg::RoleRegion,$autoCreate);
     }

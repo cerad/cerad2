@@ -148,11 +148,11 @@ class PersonRepositoryTest extends WebTestCase
         $person1 = $repo->createPerson();
         
         $fedRoleId = PersonFedEntity::FedRoleUSSFC;
-        $fed1 = $person1->findFed($fedRoleId);
+        $fed1 = $person1->getFed($fedRoleId);
         
-        $this->assertTrue($fed1 instanceOf PersonFedEntity);
+        $this->assertTrue  ($fed1 instanceOf PersonFedEntity);
         $this->assertEquals($fedRoleId,$fed1->getFedRoleId());
-        $this->assertTrue($fed1->getPerson() instanceOf PersonEntity);
+        $this->assertTrue  ($fed1->getPerson() instanceOf PersonEntity);
       
         // Set the real id
         $fedIdTransformer = self::$container->get('cerad_person.ussfc_id.data_transformer.fake');
@@ -166,7 +166,7 @@ class PersonRepositoryTest extends WebTestCase
         
         // Load it back
         $person2 = $repo->find($person1->getId());
-        $fed2 = $person2->findFed($fedRoleId,false);
+        $fed2 = $person2->getFed($fedRoleId,false);
         
         $this->assertEquals($fed1->getId(),$fed2->getId());
     }
