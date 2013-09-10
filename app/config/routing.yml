@@ -128,7 +128,7 @@ cerad_tourn_person_person_create:
     
 cerad_tourn_person_person_update:
     pattern:  /person-person/update/{id}
-    defaults: { _controller: CeradTournBundle:PersonPerson/PersonPersonUpdate:update }
+    defaults: { _controller: CeradTournBundle:PersonPerson/PersonPersonUpdate:update, id : 0 }
 #                           @CeradTourn/PersonPerson/Update/PersonPersonUpdateIndex.html.twig
 #                                                          /PersonPersonUpdateForm.html.twig
 #                                                          /PersonPersonUpdateHelp.html.twig
@@ -141,7 +141,7 @@ cerad_tourn_person_persons_list:
 # 
 cerad_tourn_person_plan_update:
     pattern:  /person-plan/update/{id}
-    defaults: { _controller: CeradTournBundle:PersonPlan/PersonPlanUpdate:update }
+    defaults: { _controller: CeradTournBundle:PersonPlan/PersonPlanUpdate:update, id : 0 }
 #                           @CeradTourn/PersonPlan/Update/PersonPlanUpdateIndex.html.twig
 #                                                        /PersonPlanUpdateForm.html.twig
 #                                                        /PersonPlanUpdateHelp.html.twig

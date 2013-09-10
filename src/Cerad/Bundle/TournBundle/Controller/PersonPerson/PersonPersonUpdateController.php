@@ -1,5 +1,5 @@
 <?php
-namespace Cerad\Bundle\TournBundle\Controller\Person;
+namespace Cerad\Bundle\TournBundle\Controller\PersonPerson;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -8,16 +8,26 @@ use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
 use Symfony\Component\Validator\Constraints\Email     as EmailConstraint;
 use Symfony\Component\Validator\Constraints\NotBlank  as NotBlankConstraint;
 
-class PersonUpdateController extends MyBaseController
+class PersonPersonUpdateController extends MyBaseController
 {
     public function updateAction(Request $request, $id = 0)
     {
         // Document
-        $personId = $id;
+        $personPersonId = $id;
         $project = $this->getProject();
         
         // Security
-        if (!$this->hasRoleUser()) { return $this->redirect('cerad_tourn_welcome'); }
+        if (!$this->hasRoleUser()) return $this->redirect('cerad_tourn_welcome');
+        
+        // Should have an id
+        if (!$personPersonId) return $this->redirect('cerad_tourn_home');
+        
+        // Cheat for now and just redirect to the person updater
+        $personRepo = $this->get('cerad_person.person_repository');
+        $personPerson = $personRepo->findPersonPerson($personPersonId);
+        $person = $personPerson->getChild();
+        
+        return $this->redirect('cerad_tourn_person_update',array('id' => $person->getId()));
         
         // Simple model
         $model = $this->createModel($project,$personId);
@@ -30,9 +40,8 @@ class PersonUpdateController extends MyBaseController
             $model1 = $form->getData();
             
             $model2 = $this->processModel($project,$model1);
-            $person2 = $model2['person'];
-            
-            return $this->redirect('cerad_tourn_person_update',array('id' => $person2->getId()));
+  
+            $this->redirect('cerad_tourn_person_update');
         }
         
         $tplData = array();
