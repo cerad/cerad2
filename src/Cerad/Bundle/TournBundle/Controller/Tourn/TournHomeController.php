@@ -33,11 +33,18 @@ class TournHomeController extends MyBaseController
             $person = $personRepo->createPerson();
             $person->getPersonPersonPrimary();
         }
+        // Check that the plan was setup
+        $personPlan = $person->getPlan($project->getId());
+        $basic = $personPlan->getBasic();
+        if (!isset($basic['attending'])) 
+        {
+            return $this->redirect('cerad_tourn_person_plan_update');
+        }
+        // Good to go
         $tplData = array();
         $tplData['user']       = $user;
         $tplData['userPerson'] = $person;
         
-        $tplData['project']   = $project;
         $tplData['project']   = $project;
         $tplData['fedRoleId'] = $project->getFedRoleId(); // AYSOV
         
