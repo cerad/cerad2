@@ -76,8 +76,7 @@ AYSONationalGames2014:
     
     # ==================================================
     # Basic volunteer plan
-    plan:
-         
+    basic:
       attending:
         type:    select
         label:   I will attend the games
@@ -88,13 +87,13 @@ AYSONationalGames2014:
           yes:   Yes - For Sure
           yesx:  Yes - If my team is selected
           maybe: Maybe
-           
+                    
       refereeing:
         type:    select
         label:   I will referee
         default: no
         choices: { no: No, yes: Yes, maybe: Not Sure }
-      
+        
       venue:
         type:    select
         label:   I will work at
@@ -217,6 +216,13 @@ AYSONationalGames2014:
         type:  text
         label: Hotel staying at
         size:  30
+        
+      notes:
+        type:  textarea
+        label: Notes
+        rows:  5
+        cols:  40
+        
     # Break out availability
     avail:
       

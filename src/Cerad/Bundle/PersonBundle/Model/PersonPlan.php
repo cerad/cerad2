@@ -30,55 +30,32 @@ class PersonPlan extends BaseModel
     //    $this->setPlanProperties($planProps);
     }
     public function getId()        { return $this->id;        }
-    public function getPlan()      { return $this->basic;     }
     public function getBasic()     { return $this->basic;     }
+    public function getNotes()     { return $this->notes;     }
     public function getPerson()    { return $this->person;    }
     public function getStatus()    { return $this->status;    }
     public function getVerified()  { return $this->verified;  }
     public function getProjectId() { return $this->projectId; }
     
-    public function setId       ($value) { $this->id        = $value; }
-    public function setPlan     ($value) { $this->basic     = $value; }
-    public function setBasic    ($value) { $this->basic     = $value; }
-    public function setStatus   ($value) { $this->status    = $value; }
-    public function setVerified ($value) { $this->verified  = $value; }
-    public function setProjectId($value) { $this->projectId = $value; }
+    public function setBasic    ($value) { $this->onPropertySet('basic',     $value); }
+    public function setNotes    ($value) { $this->onPropertySet('notes',     $value); }
+    public function setStatus   ($value) { $this->onPropertySet('status',    $value); }
+    public function setVerified ($value) { $this->onPropertySet('verified',  $value); }
+    public function setProjectId($value) { $this->onPropertySet('projectId', $value); }
     
     public function setPerson(Person $person) { $this->onPropertySet('person',$person); }
     
-    // TODO: Make this an array_merge
-    public function setPlanProperties($props)
+    // Initializ from project->basic
+    public function mergeBasicProps($props)
     {
-        $plan = $this->basic; 
+        $propx = array();
         foreach($props as $name => $prop)
         {
             $default = array_key_exists('default',$prop) ? $prop['default'] : null;
-          
-            if (!isset($plan[$name])) $plan[$name] = $default;
+            $propx[$name] = $default;
         }
-        $this->basic = $plan;
-    }
-    public function __isset($name)
-    {
-        return array_key_exists($name,$this->basic);
+        $this->basic = array_merge($propx,$this->basic);
         
-        // Difference is that isset fails on null
-        return isset($this->basic[$name]);
-    }
-    public function __get($name)
-    {
-        if (array_key_exists($name,$this->basic)) return $this->basic[$name];
-    }
-    /* =========================================
-     * Maybe should trigger the notify routine?
-     */
-    public function __set($name,$value)
-    {
-        if (array_key_exists($name,$this->basic)) 
-        {
-            $this->basic[$name] = $value;
-            $this->onPropertyChanged('basic'); // TODO: Refine
-        }
     }
 }
 ?>

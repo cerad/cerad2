@@ -28,14 +28,20 @@ class Project
     public function getDesc () { return $this->desc;  }
     public function getTitle() { return $this->title; }
     
+    public function getBasic() { return $this->basic; }
+    
     public function __construct($config)
     {   
         $info = $config['info'];
-        
         // Take whatever we have and apply it
         foreach($info as $propName => $propValue)
         {
             $this->$propName = $propValue;
+        }
+        unset($config['info']);
+        foreach($config as $name => $value)
+        {
+            $this->$name = $value;
         }
     }
 }

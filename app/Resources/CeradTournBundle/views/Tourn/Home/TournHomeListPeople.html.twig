@@ -28,9 +28,9 @@
             <tr><td>Relation:</td><td>{{ personPerson.role }}</td></tr>
             {% if personPerson.isRolePrimary %}
             <tr><td>Account:</td><td>
-                <a href="{{ path('cerad_tourn_account_update') }}">
+              {#<a href="{{ path('cerad_tourn_account_update') }}">#}
                     {{ user.username }}
-                </a>
+              {#</a>#}
             </td></tr>
             {% for identifier in user.identifiers %}
                 <tr><td>Social:</td><td>{{ identifier.source }}</td></tr>
@@ -46,8 +46,8 @@
         </table></td>
         <td><table>
         {% if plan.id %}
-           <tr><td>Will Attend: </td><td>{{ plan.attending   }}</td></tr>
-           <tr><td>Will Referee:</td><td>{{ plan.refereeing  }}</td></tr>             
+           <tr><td>Will Attend: </td><td>{{ plan.basic.attending   }}</td></tr>
+           <tr><td>Will Referee:</td><td>{{ plan.basic.refereeing  }}</td></tr>             
            <tr><td colspan="2"><a href="{{ path('cerad_tourn_person_plan_update',{ id: person.id }) }}">Update Your Plans.</td></tr>
         {% else %}
            <tr><td colspan="2"><a href="{{ path('cerad_tourn_person_plan_update',{ id: person.id }) }}">Please Set Your Plans.</td></tr>
