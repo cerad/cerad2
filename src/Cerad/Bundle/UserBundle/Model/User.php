@@ -195,5 +195,32 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
      * Identifiers stuff
      */
     public function getIdentifiers() { return $this->identifiers; }
+    
+    /* =========================================================================
+     * Password token stuff
+     */
+    public function getPasswordResetToken()            { return $this->passwordResetToken;            }
+    public function getPasswordResetRequestedAt()      { return $this->passwordResetRequestedAt;      }
+    public function getPasswordResetRequestExpiresAt() { return $this->passwordResetRequestExpiresAt; }
+    
+    public function setPasswordResetToken($token)
+    {
+        $now = new \DateTime();
+        $expires = clone $now;
+        $expires->add(new \DateInterval('P10D'));
+        
+        $this->onPropertySet('passwordResetToken',$token);
+        
+        $this->setPasswordResetRequestedAt     ($now);
+        $this->setPasswordResetRequestExpiresAt($expires);
+    }
+    public function setPasswordResetRequestedAt(\DateTime $date)
+    {
+        $this->onPropertySet('passwordResetRequestedAt',$date);
+    }
+    public function setPasswordResetRequestExpiresAt(\DateTime $date)
+    {
+        $this->onPropertySet('passwordResetRequestExpiresAt',$date);
+    }
 }
 ?>

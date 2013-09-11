@@ -24,6 +24,8 @@ class UserProvider implements UserProviderInterface
         $this->logger = $logger;
         
     }
+    public function getUserManager() { return $this->userManager; }
+    
     public function loadUserByUsername($username)
     {
         // The basic way
