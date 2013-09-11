@@ -18,7 +18,7 @@ class TwigCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName       ('cerad:tourn:twig')
+            ->setName       ('twig:paths')
             ->setDescription('Register')
             ->addArgument   ('username', InputArgument::OPTIONAL, 'username')
        ;
@@ -38,7 +38,8 @@ class TwigCommand extends ContainerAwareCommand
             $paths = $loader->getPaths($namespace);
             foreach($paths as $path)
             {
-                if (substr($namespace,0,5) == 'Cerad') echo sprintf("NS %-12s %s\n",$namespace,$path);
+              //if (substr($namespace,0,5) == 'Cerad') echo sprintf("NS %-12s %s\n",$namespace,$path);
+                echo sprintf("NS %-12s %s\n",$namespace,$path);
             }
         }
         return;

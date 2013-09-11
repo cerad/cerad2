@@ -29,6 +29,12 @@ framework:
 twig:
     debug:            %kernel.debug%
     strict_variables: %kernel.debug%
+    paths: 
+        "%kernel.root_dir%/Resources/views"                                                   : CeradPersonx
+        "%kernel.root_dir%/Resources/CeradPersonBundle/views"                                 : CeradPersonx
+        "%kernel.root_dir%/../src/Cerad/Bundle/TournBundle/Resources/CeradPersonBundle/views" : CeradPersonx
+        "%kernel.root_dir%/../src/Cerad/Bundle/TournBundle/Resources/views"                   : CeradPersonx
+        "%kernel.root_dir%/../src/Cerad/Bundle/PersonBundle/Resources/views"                  : CeradPersonx
 
 # Assetic Configuration
 assetic:
