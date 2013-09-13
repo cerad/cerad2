@@ -5,19 +5,19 @@ namespace Cerad\Bundle\TournBundle\Controller\AccountPassword;
 use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Symfony\Component\Validator\Constraints\EqualTo  as EqualToConstraint;
 use Symfony\Component\Validator\Constraints\NotBlank as NotBlankConstraint;
 
 class AccountPasswordResetRequestedController extends MyBaseController
 {
-    public function requestedFormAction(Request $request, $id)
+    public function requestedAction(Request $request, $id = null, $token = null)
     {
-        $userId = $id;
+      //$userId = $id;
         
-        if (!$userId) return $this->redirect('cerad_tourn_home');
-        
-        $model = $this->getModel($userId);
+        $model = $this->getModel($id,$token);
+        if ($model instanceOf Response) return $model;
         
         $form  = $this->getModelForm($model);
                 
@@ -27,61 +27,59 @@ class AccountPasswordResetRequestedController extends MyBaseController
         {   
             $model1 = $form->getData();
             
-            //$model2 = $this->processRequestModel($model1);
+            $model2 = $this->processModel($model1);
             
-            //$this->sendEmail($model2);
-            
-            //$user = $model2['user'];
-            
-            //return $this->redirect('cerad_tourn_password_reset_requested',array('id' => $user->getId()));
+            // Log the user in
+            $this->loginUser($request,$model2['user']);
+             
+            return $this->redirect('cerad_tourn_home');
         }
         
         // Render
         $tplData = array();
         $tplData['form'] = $form->createView();
-        
+        $tplData['user'] = $model['user'];
+        $tplData['userToken'] = $model['userToken'];
         return $this->render('@CeradTourn/AccountPassword/ResetRequested/AccountPasswordResetRequestedIndex.html.twig',$tplData);      
     }
     protected function processModel($model)
     {
-        $username = $model['username'];
+        $user = $model['user'];
         
-        $userProvider = $this->get('cerad_user.user_provider');
+        $user->setPesswordResetToken(null);
         
-        $user = $userProvider->loadUserByUsername($username);
+        $user->setPasswordPlan($model['password']);
         
-        // Make a key 
-        $token = rand(1000,9999);
-        $user->setPasswordResetToken($token);
+        $userManager = $this->get('cerad_user.user_manager');
         
-        $userManager = $userProvider->getUserManager();
         $userManager->updateUser($user);
-        
-        $model['user']     = $user;
-        $model['token']    = $token;
-        $model['tokenx']   = $token;
-        $model['password'] = null;
-        
+                
         return $model;
     }
-    protected function getModel($userId)
+    protected function getModel($userId,$token)
     {
+        if (!$userId) return $this->redirect('cerad_tourn_welcome');
+ 
         $userManager = $this->get('cerad_user.user_manager');
-        $user = $userManager->find($userId);
+        $user = $userManager->findUser($userId);
         
-        if (!$user) throw new \Exception("User not found for password reset requested");
+        if (!$user) return $this->redirect('cerad_tourn_welcome');
+ 
+        $userToken = $user->getPasswordResetToken();
+        if (!$userToken) return $this->redirect('cerad_tourn_welcome');
         
         $model = array();
-        $model['user']     = $user;
-        $model['token']    = null;
-        $model['password'] = null;
+        $model['user']      = $user;
+        $model['userToken'] = $userToken;
+        $model['token']     = $token;
+        $model['password']  = null;
         
         return $model;
     }
     protected function getModelForm($model)
     {
         $equalToConstraintOptions = array(
-            'value' => $user->getPasswordResetToken(),
+            'value'   => $model['userToken'],
             'message' => 'Invalid token value',
         );
         

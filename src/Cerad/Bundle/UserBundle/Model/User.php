@@ -205,9 +205,17 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     
     public function setPasswordResetToken($token)
     {
-        $now = new \DateTime();
-        $expires = clone $now;
-        $expires->add(new \DateInterval('P10D'));
+        if ($token)
+        {
+            $now = new \DateTime();
+            $expires = clone $now;
+            $expires->add(new \DateInterval('P10D'));
+        }
+        else
+        {
+            $now     = null;
+            $expires = null;
+        }
         
         $this->onPropertySet('passwordResetToken',$token);
         
