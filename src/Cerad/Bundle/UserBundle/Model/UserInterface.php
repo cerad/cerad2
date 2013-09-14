@@ -20,10 +20,7 @@ interface UserInterface extends AdvancedUserInterface
     
     public function getPlainPassword();
     public function setPlainPassword($value);
-    
-    public function getConfirmationToken();
-    public function setConfirmationToken($value);
-    
+        
     // Account Stuff
     public function isEnabled();
     public function setAccountEnabled($bool);

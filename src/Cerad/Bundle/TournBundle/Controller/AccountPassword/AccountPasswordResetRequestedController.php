@@ -42,13 +42,17 @@ class AccountPasswordResetRequestedController extends MyBaseController
         $tplData['userToken'] = $model['userToken'];
         return $this->render('@CeradTourn/AccountPassword/ResetRequested/AccountPasswordResetRequestedIndex.html.twig',$tplData);      
     }
+    protected function fakeEmail($model)
+    {
+        
+    }
     protected function processModel($model)
     {
         $user = $model['user'];
         
-        $user->setPesswordResetToken(null);
+        $user->setPasswordResetToken(null);
         
-        $user->setPasswordPlan($model['password']);
+        $user->setPasswordPlain($model['password']);
         
         $userManager = $this->get('cerad_user.user_manager');
         

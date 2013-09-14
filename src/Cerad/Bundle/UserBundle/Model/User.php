@@ -80,7 +80,6 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     public function getPasswordHint()      { return $this->passwordHint;      }
     public function getPasswordPlain()     { return $this->passwordPlain;     }
     public function getPlainPassword()     { return $this->passwordPlain;     }
-    public function getConfirmationToken() { return $this->confirmationToken; }
     
     public function setId               ($value) { $this->onPropertySet('id',               $value); }
     public function setSalt             ($value) { $this->onPropertySet('salt',             $value); }
@@ -92,7 +91,6 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     public function setPasswordHint     ($value) { $this->onPropertySet('passwordHint',     $value); }
     public function setPasswordPlain    ($value) { $this->onPropertySet('passwordPlain',    $value); }
     public function setPlainPassword    ($value) { $this->onPropertySet('passwordPlain',    $value); }
-    public function setConfirmationToken($value) { $this->onPropertySet('confirmationToken',$value); }
     
     /* =======================================================
      * My person link
@@ -222,12 +220,22 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
         $this->setPasswordResetRequestedAt     ($now);
         $this->setPasswordResetRequestExpiresAt($expires);
     }
-    public function setPasswordResetRequestedAt(\DateTime $date)
+    public function setPasswordResetRequestedAt(\DateTime $date = null)
     {
+        if ($date and !($date instanceOf \DateTime)) 
+        {
+            $msg = 'User.setPasswordResetRequestedAt only takes DateTime argument';
+            throw new \InvalidArgumentException($msg);
+        }
         $this->onPropertySet('passwordResetRequestedAt',$date);
     }
-    public function setPasswordResetRequestExpiresAt(\DateTime $date)
+    public function setPasswordResetRequestExpiresAt(\DateTime $date = null)
     {
+        if ($date and !($date instanceOf \DateTime)) 
+        {
+            $msg = 'User.setPasswordResetExpiresAt only takes DateTime argument';
+            throw new \InvalidArgumentException($msg);
+        }
         $this->onPropertySet('passwordResetRequestExpiresAt',$date);
     }
 }
