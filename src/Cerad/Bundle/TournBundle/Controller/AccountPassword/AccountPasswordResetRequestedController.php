@@ -2,7 +2,8 @@
 
 namespace Cerad\Bundle\TournBundle\Controller\AccountPassword;
 
-use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
+//  Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
+use Cerad\Bundle\TournBundle\Controller\AccountPassword\AccountPasswordResetEmailController as MyBaseController;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,9 +15,9 @@ class AccountPasswordResetRequestedController extends MyBaseController
 {
     public function requestedAction(Request $request, $id = null, $token = null)
     {
-      //$userId = $id;
+        $userId = $id;
         
-        $model = $this->getModel($id,$token);
+        $model = $this->getModel($userId,$token);
         if ($model instanceOf Response) return $model;
         
         $form  = $this->getModelForm($model);
@@ -35,11 +36,18 @@ class AccountPasswordResetRequestedController extends MyBaseController
             return $this->redirect('cerad_tourn_home');
         }
         
+        // Pass on email information for testing
+        $emailModel = $this->getEmailModel($userId);
+        
         // Render
         $tplData = array();
         $tplData['form'] = $form->createView();
         $tplData['user'] = $model['user'];
         $tplData['userToken'] = $model['userToken'];
+        
+        $tplData['emailBody']    = $emailModel['emailBody'];
+        $tplData['emailSubject'] = $emailModel['emailSubject'];
+        
         return $this->render('@CeradTourn/AccountPassword/ResetRequested/AccountPasswordResetRequestedIndex.html.twig',$tplData);      
     }
     protected function fakeEmail($model)
