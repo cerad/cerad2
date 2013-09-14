@@ -2,7 +2,8 @@
 
 namespace Cerad\Bundle\TournBundle\Controller\AccountPassword;
 
-use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
+//  Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
+use Cerad\Bundle\TournBundle\Controller\AccountPassword\AccountPasswordResetEmailController as MyBaseController;
 
 use Symfony\Component\HttpFoundation\Request;
 
@@ -35,9 +36,9 @@ class AccountPasswordResetRequestController extends MyBaseController
             
             $model2 = $this->processModel($model1);
             
-            $this->sendEmail($model2);
+            $model3 = $this->sendEmail($model2);
             
-            $user = $model2['user'];
+            $user = $model3['user'];
             
             return $this->redirect('cerad_tourn_account_password_reset_requested',array('id' => $user->getId()));
         }
@@ -47,10 +48,6 @@ class AccountPasswordResetRequestController extends MyBaseController
         $tplData['form'] = $form->createView();
         
         return $this->render('@CeradTourn/AccountPassword/ResetRequest/AccountPasswordResetRequestIndex.html.twig',$tplData);      
-    }
-    protected function sendEmail($model)
-    {
-        return $model;
     }
     protected function processModel($model)
     {

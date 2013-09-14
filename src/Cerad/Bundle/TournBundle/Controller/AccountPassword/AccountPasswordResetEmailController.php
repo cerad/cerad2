@@ -14,6 +14,37 @@ use Cerad\Bundle\UserBundle\ValidatorConstraint\UsernameOrEmailExistsConstraint;
  */
 class AccountPasswordResetEmailController extends MyBaseController
 {
+    protected function sendEmail($model)
+    {
+        $user = $model['user'];
+        
+        $emailModel   = $this->getEmailModel($user->getId());
+        $emailBody    = $emailModel['emailBody'];
+        $emailSubject = $emailModel['emailSubject'];
+        
+        $fromName =  'Zayso Password Reset';
+        $fromEmail = 'noreply@zayso.org';
+        
+        $adminName =  'Art Hundiak';
+        $adminEmail = 'ahundiak@gmail.com';
+        
+        $userName  = $user->getAccountName();
+        $userEmail = $user->getEmail();
+       
+        $message = \Swift_Message::newInstance();
+        $message->setSubject($emailSubject);
+        $message->setBody($emailBody);
+        $message->setFrom(array($fromEmail  => $fromName ));
+        $message->setBcc (array($adminEmail => $adminName));
+        $message->setTo  (array($userEmail  => $userName ));
+
+        $this->get('mailer')->send($message);
+        
+        return $model;
+    }
+    /* ==========================================================
+     * Returns email subject and body based on templates
+     */
     public function getEmailModel($userId)
     {
         if (!$userId) return $this->redirect('cerad_tourn_welcome');
