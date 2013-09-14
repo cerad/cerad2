@@ -32,6 +32,7 @@ class PersonUpdateController extends MyBaseController
             $model2 = $this->processModel($project,$model1);
             $person2 = $model2['person'];
             
+            return $this->redirect('cerad_tourn_home');
             return $this->redirect('cerad_tourn_person_update',array('id' => $person2->getId()));
         }
         

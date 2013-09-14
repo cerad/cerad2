@@ -39,6 +39,7 @@ class PersonPlanUpdateController extends MyBaseController
             // Notify email system
             $person2 = $model2['person'];
             
+            return $this->redirect('cerad_tourn_home');
             return $this->redirect('cerad_tourn_person_plan_update',array('id' => $person2->getId()));
             
         }
