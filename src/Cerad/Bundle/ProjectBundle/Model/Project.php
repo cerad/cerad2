@@ -44,5 +44,7 @@ class Project
             $this->$name = $value;
         }
     }
+    // Just retrun first slug in list
+    public function getSlug() { return $this->slugs[0]; }
 }
 ?>

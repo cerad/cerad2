@@ -119,8 +119,21 @@ class BaseController extends Controller
      */
     protected function getProject($slug = null)
     {
+        if ($slug)
+        {
+            $projectRepo = $this->get('cerad_project.project_repository');
+            $project = $projectRepo->findBySlug($slug);
+            if ($project) return $project;
+            
+            throw new \Exception('No project for: ' . $slug);
+        }
         $find = $this->get('cerad_project.find_default.in_memory');
         return $find->project;
+    }
+    protected function getProjects()
+    {
+        $projectRepo = $this->get('cerad_project.project_repository');
+        return $projectRepo->findAllByStatus('Active');   
     }
 }
 ?>

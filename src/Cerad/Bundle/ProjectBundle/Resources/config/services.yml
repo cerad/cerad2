@@ -13,4 +13,6 @@ services:
         arguments:  
             - '@cerad_project.repository.in_memory'
             - '%cerad_project_project_default%'
-      
+            
+    cerad_project.project_repository:
+        alias: cerad_project.repository.in_memory

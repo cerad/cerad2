@@ -151,3 +151,16 @@ cerad_tourn_person_plan_update:
 # header:
 #   defaults: { _controller: CeradTournBundle:Tourn/Header/TournHeader:render }
 #                            CeradTourn/Tourn/Header/TournHeaderIndex.html.twig
+
+# =============================================================================
+# Got this far then it must be a slug type deal
+
+cerad_tourns_index:
+    pattern:  /{slug}
+    defaults: { _controller: CeradTournBundle:Tourns/TournsIndex:index }
+    
+cerad_tourns_welcome:
+    pattern:  /{slug}/welcome
+    defaults: { _controller: CeradTournBundle:Tourns/TournsWelcome:welcome }
+
+ 
