@@ -29,8 +29,8 @@ interface UserInterface extends AdvancedUserInterface
     public function setAccountName($value);
     
     // Person Stuff
-    public function getPersonId();
-    public function setPersonId($value);
+    public function getPersonFedId();
+    public function setPersonFedId($value);
 
     public function getPersonStatus();
     public function setPersonStatus($value);

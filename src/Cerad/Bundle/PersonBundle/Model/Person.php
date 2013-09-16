@@ -15,7 +15,7 @@ class Person extends BaseModel implements PersonInterface
     const GenderFemale  = 'F';
     const GenderUnknown = 'U';
 
-    protected $id;
+  //protected $id;
     protected $name;   // VO PersonName
     protected $icon;
     
@@ -40,7 +40,7 @@ class Person extends BaseModel implements PersonInterface
     
     public function __construct()
     {
-        $this->id = $this->genId(); // Does the model really need these?
+      //$this->id = $this->genId(); // Does the model really need these?
         
         $this->setName   ($this->createName());
         $this->setAddress($this->createAddress());
@@ -48,7 +48,7 @@ class Person extends BaseModel implements PersonInterface
     /* ======================================================================
      * Standard getters/setters/creators
      */
-    public function getId       () { return $this->id;     }
+  //public function getId       () { return $this->id;     }
     public function getDob      () { return $this->dob;    }
     public function getIcon     () { return $this->icon;   }
     public function getNotes    () { return $this->notes;  }
@@ -72,7 +72,7 @@ class Person extends BaseModel implements PersonInterface
     public function createAddress($params = null) { return new PersonAddress($params); }
     
     // Setters
-    public function setId       ($value) { $this->onPropertySet('id',       $value); }
+  //public function setId       ($value) { $this->onPropertySet('id',       $value); }
     public function setDob      ($value) { $this->onPropertySet('dob',      $value); }
     public function setIcon     ($value) { $this->onPropertySet('icon',     $value); }
     public function setNotes    ($value) { $this->onPropertySet('notes',    $value); }

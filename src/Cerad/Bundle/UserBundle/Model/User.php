@@ -25,7 +25,7 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     protected $roles = array();
     
     // Wants to be a value object
-    protected $personId;
+    protected $personFedId;   // AYSOV12341234
     protected $personStatus    = 'Active';
     protected $personVerified  = 'No';
     protected $personConfirmed = false;
@@ -95,12 +95,12 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     /* =======================================================
      * My person link
      */
-    public function getPersonId()       { return $this->personId;       }
+    public function getPersonFedId()    { return $this->personFedId;    }
     public function getPersonStatus()   { return $this->personStatus;   }
     public function getPersonVerified() { return $this->personVerified; }
     
     public function setName          ($value) { $this->onPropertySet('personName',    $value); }
-    public function setPersonId      ($value) { $this->onPropertySet('personId',      $value); }
+    public function setPersonFedId   ($value) { $this->onPropertySet('personFedId',   $value); }
     public function setPersonStatus  ($value) { $this->onPropertySet('personStatus',  $value); }
     public function setPersonVerified($value) { $this->onPropertySet('personVerified',$value); }
     

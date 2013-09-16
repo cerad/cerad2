@@ -19,8 +19,8 @@ Cerad\Bundle\UserBundle\Entity\User:
            
     fields:
               
-        personId:
-            column:   person_id
+        personFedId:
+            column:   person_fed_id
             type:     string
             length:   40
             nullable: true

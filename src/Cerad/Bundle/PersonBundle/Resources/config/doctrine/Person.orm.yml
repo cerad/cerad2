@@ -11,9 +11,8 @@ Cerad\Bundle\PersonBundle\Entity\Person:
     
     id:
         id:
-            type:   string
-            length: 40
-            generator: { strategy: NONE }
+            type: integer
+            generator: { strategy: AUTO }
             
     oneToMany:     
         feds:

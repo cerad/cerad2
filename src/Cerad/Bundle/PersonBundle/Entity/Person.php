@@ -13,6 +13,8 @@ use Cerad\Bundle\PersonBundle\Entity\PersonPerson;
 
 class Person extends PersonModel
 {   
+    protected $id;
+    
     /* =========================================
      * Value objects
      */
@@ -25,6 +27,8 @@ class Person extends PersonModel
     private $addressCity;
     private $addressState;
     private $addressZipcode;
+    
+    public function getId() { return $this->id; }
     
     public function __construct()
     {

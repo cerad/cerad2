@@ -13,10 +13,10 @@ class PersonTest extends \PHPUnit_Framework_TestCase
         $person = new Person();
         $this->assertTrue($person instanceOf Person);
                 
-        $id = $person->getId();
-        $this->assertInternalType('string',$id);
+      //$id = $person->getId();
+      //$this->assertInternalType('string',$id);
         
-        $this->assertEquals(36,strlen($id));
+      //$this->assertEquals(36,strlen($id));
         
         $this->assertInternalType('array', $person->getFeds()); 
         
