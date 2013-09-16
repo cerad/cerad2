@@ -6,8 +6,8 @@ use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 interface UserInterface extends AdvancedUserInterface
 {
     // Basic account
-    public function getId();
-    public function setId($value); // For imports and merging
+  //public function getId();
+  //public function setId($value); // For imports and merging
     
     public function getEmail();
     public function setEmail($value);

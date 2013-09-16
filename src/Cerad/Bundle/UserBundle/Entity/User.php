@@ -7,11 +7,15 @@ use Cerad\Bundle\UserBundle\Model\User as UserModel;
 
 class User extends UserModel
 {   
+    protected $id;
+    
+    public function getId() { return $this->id;                }
+
     public function __construct()
     {
         parent::__construct();
 
-        $this->identifiers = new ArrayCollection();
+        $this->authens = new ArrayCollection();
     }
 }
 ?>

@@ -30,7 +30,7 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     protected $personVerified  = 'No';
     protected $personConfirmed = false;
     
-    protected $identifiers; // User Identifiers
+    protected $authens; // User Authentications
     
     protected $accountName;
     protected $accountEnabled     = true;  // After first created
@@ -60,17 +60,17 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     
     public function __construct()
     {
-        $this->id   = $this->genId();
+        //$this->id   = $this->genId();
         
         $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
         
-        $this->identifiers = array();
+        $this->authens = array();
         
     }
     /* =====================================================
      * Basic account getter/setters
      */
-    public function getId()                { return $this->id;                }
+  //public function getId()                { return $this->id;                }
     public function getSalt()              { return $this->salt;              }
     public function getEmail()             { return $this->email;             }
     public function getEmailCanonical()    { return $this->emailCanonical;    }
@@ -81,7 +81,7 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     public function getPasswordPlain()     { return $this->passwordPlain;     }
     public function getPlainPassword()     { return $this->passwordPlain;     }
     
-    public function setId               ($value) { $this->onPropertySet('id',               $value); }
+  //public function setId               ($value) { $this->onPropertySet('id',               $value); }
     public function setSalt             ($value) { $this->onPropertySet('salt',             $value); }
     public function setEmail            ($value) { $this->onPropertySet('email',            $value); }
     public function setEmailCanonical   ($value) { $this->onPropertySet('emailCanonical',   $value); }
@@ -192,7 +192,7 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     /* =========================================================================
      * Identifiers stuff
      */
-    public function getIdentifiers() { return $this->identifiers; }
+    public function getAuthens() { return $this->authens; }
     
     /* =========================================================================
      * Password token stuff

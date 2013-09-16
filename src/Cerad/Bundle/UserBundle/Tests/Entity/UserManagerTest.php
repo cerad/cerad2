@@ -73,8 +73,8 @@ class UserManagerTest extends WebTestCase
         $this->assertTrue($user instanceOf UserModel);
         $this->assertTrue($user instanceOf UserModelInterface);
         
-        $identifiers = $user->getIdentifiers();
-        $this->assertTrue($identifiers instanceOf ArrayCollection);
+        $authens = $user->getAuthens();
+        $this->assertTrue($authens instanceOf ArrayCollection);
         
         $dto = $this->getUserDto();
         $user->setEmail        ($dto->email);

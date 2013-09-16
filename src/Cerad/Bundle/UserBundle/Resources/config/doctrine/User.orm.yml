@@ -6,16 +6,16 @@ Cerad\Bundle\UserBundle\Entity\User:
     
     id:
         id:
-            type:   string
-            length: 40
-            generator: { strategy: NONE }
+            type:   integer
+            generator: { strategy: AUTO }
     
     oneToMany:
 
-       #identifiers:
-       #    targetEntity: UserIdentifier
-       #    mappedBy:     user
-       #    cascade:      ['all']
+       authens:
+           targetEntity: UserAuthen
+           mappedBy:     user
+           indexBy:      id
+           cascade:      ['all']
            
     fields:
               
