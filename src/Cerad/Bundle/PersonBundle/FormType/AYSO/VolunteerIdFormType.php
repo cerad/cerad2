@@ -34,7 +34,7 @@ class VolunteerIdFormType extends AbstractType
     {
         $resolver->setDefaults(array(
             'label' => 'AYSO Volunteer ID (8-digits)',
-            'attr'  => array('size' => 10),
+            'attr'  => array('placeholder' => 'AYSO ID', 'size' => 10),
             'constraints' => new IdConstraint(),
         ));
     }

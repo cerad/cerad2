@@ -79,3 +79,29 @@ services:
             
     cerad_person.aysov_org_id.form_type:
         alias: cerad_person.aysov_org_region_id.form_type
+    
+    # USSF
+    cerad_person.ussfc_id.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\USSF\ContractorIdFormType
+        arguments: [false]
+        tags:
+            - { name: form.type, alias: cerad_person_ussfc_id }
+            
+    cerad_person.ussfc_id_fake.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\USSF\ContractorIdFormType
+        arguments: [true]
+        tags:
+            - { name: form.type, alias: cerad_person_ussfc_id_fake } 
+            
+    cerad_person.ussfc_org_state_id.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\USSF\StateIdFormType
+        tags:
+            - { name: form.type, alias: cerad_person_ussf_state_id } 
+            
+    cerad_person.ussfc_org_id.form_type:
+        alias: cerad_person.ussfc_org_state_id.form_type
+
+    cerad_person.ussfc_referee_badge.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\USSF\RefereeBadgeFormType
+        tags:
+            - { name: form.type, alias: cerad_person_ussfc_referee_badge } 
