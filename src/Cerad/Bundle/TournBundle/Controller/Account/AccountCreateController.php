@@ -81,13 +81,25 @@ class AccountCreateController extends MyBaseController
     protected function processModel($project,$model)
     {
         // Unpack
-        $user     = $model['user'    ];
-        $name     = $model['name'    ];
-        $fedId    = $model['fedId'   ];
-        $email    = $model['email'   ];
-        $password = $model['password'];
-      //$social   = $model['social'  ];
- 
+        $user      = $model['user'     ];
+        $name      = $model['name'     ];
+        $fedId     = $model['fedId'    ];
+        $fedRoleId = $model['fedRoleId'];
+        $email     = $model['email'    ];
+        $password  = $model['password' ];
+
+        // If they left it blank
+        if (!$fedId)
+        {
+            $fedIdTransformerServiceId = sprintf('cerad_person.%s_id_fake.data_transformer',$fedRoleId);
+
+            $fedIdTransformer = $this->get($fedIdTransformerServiceId);
+            
+            $fedId = $fedIdTransformer->reverseTransform('99');
+            
+            $model['fedId'] = $fedId;
+        }
+
         /* =================================================
          * Process the person first
          */
@@ -160,12 +172,13 @@ class AccountCreateController extends MyBaseController
         $user = $userManager->createUser();
 
         $model = array(
-            'fedId'    => null,
-            'user'     => $user,
-            'name'     => null,
-            'email'    => null,
-            'password' => null,
-            'project'  => $project,
+            'fedId'     => null,
+            'fedRoleId' => $project->getFedRoleId(),
+            'user'      => $user,
+            'name'      => null,
+            'email'     => null,
+            'password'  => null,
+            'project'   => $project,
         );
         return $model;
     }
@@ -180,8 +193,11 @@ class AccountCreateController extends MyBaseController
          * Be nice if the constraibnt type could come along with the form
          * Need to see how to inject the constraint options
          */
-        $fedRoleId = $project->getFedRoleId();
-        $fedIdTypeService  = sprintf('cerad_person_%s_id_fake',strtolower($fedRoleId));
+        $fedRoleId = $model['fedRoleId'];
+        
+        $fedIdTypeServiceId = sprintf('cerad_person.%s_id_Fake.form_type',$fedRoleId);
+
+        $fedIdTypeService = $this->get($fedIdTypeServiceId);
         
         /* ======================================================
          * Start building
