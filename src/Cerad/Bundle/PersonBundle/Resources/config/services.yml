@@ -31,6 +31,10 @@ services:
         class: Cerad\Bundle\PersonBundle\DataTransformer\AYSO\VolunteerIdTransformer
         arguments: [true]
         
+    cerad_person.aysov_id_fake.data_transformer:
+        class: Cerad\Bundle\PersonBundle\DataTransformer\AYSO\VolunteerIdTransformer
+        arguments: [true]
+        
     cerad_person.ussfs_id.data_transformer:
         class: Cerad\Bundle\PersonBundle\DataTransformer\USSF\StateIdTransformer
                         
@@ -38,6 +42,10 @@ services:
         class: Cerad\Bundle\PersonBundle\DataTransformer\USSF\ContractorIdTransformer
         
     cerad_person.ussfc_id.data_transformer.fake:
+        class: Cerad\Bundle\PersonBundle\DataTransformer\USSF\ContractorIdTransformer
+        arguments: [true]
+        
+    cerad_person.ussfc_id_fake.data_transformer:
         class: Cerad\Bundle\PersonBundle\DataTransformer\USSF\ContractorIdTransformer
         arguments: [true]
         
