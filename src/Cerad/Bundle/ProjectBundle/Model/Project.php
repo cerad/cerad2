@@ -16,6 +16,10 @@ class Project
     protected $title;
     protected $desc;
     
+    protected $submit;
+    protected $prefix;
+    protected $assignor;
+    
     public function getId      () { return $this->id;       }
     public function getSlugs   () { return $this->slugs;    }
     public function getStatus  () { return $this->status;   }
@@ -27,6 +31,10 @@ class Project
     
     public function getDesc () { return $this->desc;  }
     public function getTitle() { return $this->title; }
+    
+    public function getSubmit()   { return $this->submit; }
+    public function getPrefix()   { return $this->prefix; }
+    public function getAssignor() { return $this->assignor; }
     
     public function getBasic() { return $this->basic; }
     
