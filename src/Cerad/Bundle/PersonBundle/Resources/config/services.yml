@@ -45,17 +45,26 @@ services:
         class: Cerad\Bundle\PersonBundle\DataTransformer\PhoneTransformer
                 
 # ====================================================
-# Form Types
+# Person Form Types
+
     cerad_person.phone.form_type:
         class: Cerad\Bundle\PersonBundle\FormType\PhoneFormType
         tags:
             - { name: form.type, alias: cerad_person_phone }
             
+    cerad_person.state.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\StateFormType
+        tags:
+            - { name: form.type, alias: cerad_person_state }
+            
     cerad_person.upgrading.form_type:
         class: Cerad\Bundle\PersonBundle\FormType\UpgradingFormType
         tags:
             - { name: form.type, alias: cerad_person_upgrading }
-            
+       
+# ==========================================================
+# AYSO Form Types
+
     cerad_person.aysov_id.form_type:
         class: Cerad\Bundle\PersonBundle\FormType\AYSO\VolunteerIdFormType
         tags:
@@ -79,8 +88,10 @@ services:
             
     cerad_person.aysov_org_id.form_type:
         alias: cerad_person.aysov_org_region_id.form_type
-    
-    # USSF
+
+# ====================================================
+# USSF Form Types
+
     cerad_person.ussfc_id.form_type:
         class: Cerad\Bundle\PersonBundle\FormType\USSF\ContractorIdFormType
         arguments: [false]
