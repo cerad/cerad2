@@ -65,11 +65,9 @@ class PersonPlanUpdateController extends MyBaseController
         if ($personId) $person = $personRepo->find($personId);
         else
         {
-            $user = $this->getUser();
-            $personId = $user->getPersonId();
-            $person = $personRepo->find($personId);
+            $person = $this->getUserPerson(false);
         }
-        if (!$person) throw new \Exception('Person not found in lan update');
+        if (!$person) throw new \Exception('Person not found in plan update');
         
         $plan = $person->getPlan($project->getId());
         $plan->mergeBasicProps($project->getBasic());
@@ -128,46 +126,6 @@ class PersonPlanUpdateController extends MyBaseController
         $personRepo->commit();
        
         return $model;
-    }
-
-    public function registerActionx(Request $request, $slug, $op = null)
-    {
-        // Get the project
-        $projectRepo = $this->get('cerad_tourns.project.repository');
-        $project = $projectRepo->findBySlug($slug);
-        if (!$project) return $this->redirect($this->generateUrl('cerad_tourns_welcome'));
-               
-        // This could be passed in or pull from a dispatch?
-        $dto = $this->createDto($request,$project);
-                        
-        // This could also be passed in
-        $form = $this->createFormBuilderDto($dto)->getForm();
-        $form->handleRequest($request);
-
-        if ($form->isValid()) 
-        {             
-            // Maybe dispatch something to adjust form
-            $dto = $form->getData();
-            
-            // Handled with a dispatch
-            $this->processDto($dto);
-            
-            // Send processedDto message to kick off email?
-            
-            // Store plan id in session
-            //$plan = $dto['plan'];die('Plan ' . self::SESSION_PLAN_ID . ' ' . $plan->getId());
-            //$request->getSession()->set(self::SESSION_PLAN_ID, $plan->getId());
-            
-            //return $this->redirect($this->generateUrl('cerad_tourns_project',array('slug' => $slug)));
-        }
-        
-        // Template stuff
-        $tplData = array();
-        $tplData['msg'    ] = null; // $msg; from flash bag
-        $tplData['form'   ] = $form->createView();
-        $tplData['project'] = $project;
-
-        return $this->render('CeradTournsBundle:Register:index.html.twig',$tplData);        
     }
     protected function sendRefereeEmail($tourn,$plans)
     {   

@@ -11,8 +11,7 @@ use Cerad\Bundle\UserBundle\Model\UserInterface;
 
 class BaseController extends Controller
 {
-    const SESSION_PERSON_PLAN_ID    = 'cerad_tourns_person_plan_id';
-    const FLASHBAG_TYPE             = 'cerad_tourns';
+    const FLASHBAG_TYPE             = 'cerad_tourn';
     const FLASHBAG_ACCOUNT_CREATED  = 'cerad_tourn_account_created';
     
     protected function punt($request,$reason = null)
@@ -113,20 +112,32 @@ class BaseController extends Controller
        $info['error'] = $error ? $error->getMessage() : null;
        return $info; 
     }    
-    
+    /* ==============================================================
+     * Get the currently signed in user's person
+     * Could add auto create function
+     */
+    protected function getUserPerson($autoCreate = false)
+    {
+        $user  = $this->getUser();
+        $fedId = $user->getPersonFedId();
+        if ($fedId)
+        {
+            $personRepo = $this->get('cerad_person.person_repository');
+            $person = $personRepo->findByFed($fedId);
+            if ($person) return $person;
+        }
+        if (!$autoCreate) return null;
+        
+        $person = $personRepo->createPerson();
+        $person->getPersonPersonPrimary();
+       
+        return $person;
+    }
     /* ===================================================
      * Always have a default project
      */
-    protected function getProject($slug = null)
+    protected function getProject()
     {
-        if ($slug)
-        {
-            $projectRepo = $this->get('cerad_project.project_repository');
-            $project = $projectRepo->findBySlug($slug);
-            if ($project) return $project;
-            
-            throw new \Exception('No project for: ' . $slug);
-        }
         $find = $this->get('cerad_project.find_default.in_memory');
         return $find->project;
     }

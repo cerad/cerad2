@@ -32,8 +32,8 @@
                     {{ user.username }}
               {#</a>#}
             </td></tr>
-            {% for identifier in user.identifiers %}
-                <tr><td>Social:</td><td>{{ identifier.source }}</td></tr>
+            {% for authens in user.authens %}
+                <tr><td>Social:</td><td>{{ authens.source }}</td></tr>
             {% endfor %}
             {% endif %}
         </table></td>

@@ -7,8 +7,8 @@ use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
 
 use FOS\UserBundle\FOSUserEvents;
 use Cerad\Bundle\UserBundle\Event\UserEvent;
-use FOS\UserBundle\Event\FormEvent;
-use FOS\UserBundle\Event\FilterUserResponseEvent;
+//  FOS\UserBundle\Event\FormEvent;
+//  FOS\UserBundle\Event\FilterUserResponseEvent;
 
 use Cerad\Bundle\UserBundle\ValidatorConstraint\UsernameAndEmailUniqueConstraint;
 
@@ -135,7 +135,7 @@ class AccountCreateController extends MyBaseController
         $user->setAccountName   ($name);
         $user->setAccountEnabled(true);
         $user->setPasswordPlain($password);
-        $user->setPersonId($person->getId());
+        $user->setPersonFedId  ($fedId);
         
         $model['user'] = $user;
         

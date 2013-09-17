@@ -22,19 +22,12 @@ class TournUserInfoController extends MyBaseController
         }
         
         // Pass user and main userPerson to the listing
-        $user = $this->getUser();
-        $personId = $user->getPersonId();
-        $personRepo = $this->get('cerad_person.person_repository');
-        $person = $personRepo->find($personId);
+        $user   = $this->getUser();
+        $person = $this->getUserPerson(true);
         
-        if (!$person) 
-        {
-            $person = $personRepo->createPerson();
-            $person->getPersonPersonPrimary();
-        }
         $personFed = $person->getFed($project->getFedRoleId());
         
-        $tplData['user']      = $this->getUser();
+        $tplData['user']      = $user;
         $tplData['person']    = $person;
         $tplData['personFed'] = $personFed;
 

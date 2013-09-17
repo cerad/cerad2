@@ -91,18 +91,10 @@ class PersonUpdateController extends MyBaseController
         $person = null;
         
         // If passed an id then use it
-        if ($personId)
-        {
-            $person = $personRepo->find($personId);
-        }
+        if ($personId) $person = $personRepo->find($personId);
         
         // Use the account person
-        if (!$person)
-        {
-            $user = $this->getUser();
-            $personId = $user->getPersonId();
-            $person = $personRepo->find($personId);
-        }
+        if (!$person) $person = $this->getUserPerson(false);
         if (!$person)
         {
             throw new \Exception('No person in cerad_tourn_person_edit');
