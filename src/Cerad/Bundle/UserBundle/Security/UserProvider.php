@@ -37,7 +37,7 @@ class UserProvider implements UserProviderInterface
         // See if a fed person exists
         
         // Bail
-        throw new UsernameNotFoundException('User Not Fouund ' . $username);
+        throw new UsernameNotFoundException('User Not Found: ' . $username);
     }
 
     public function refreshUser(UserInterface $user)
