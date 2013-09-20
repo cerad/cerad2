@@ -19,9 +19,9 @@
         
     "autoload": {
         "psr-0": {
-            "Cerad": ""
+            "Cerad": "src"
         }
     },
 
-    "target-dir": "src"
+    "target-dir": ""
 }
