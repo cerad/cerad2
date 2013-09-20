@@ -15,33 +15,30 @@ class PersonPlanUpdateController extends MyBaseController
 {   
     public function updateAction(Request $request, $id = null)
     {
+        // Security
+        if (!$this->hasRoleUser()) return $this->redirect('cerad_tourn_welcome');
+
         // Document
         $personId = $id;
         $project = $this->getProject();
         
-        // Security
-        if (!$this->hasRoleUser()) return $this->redirect('cerad_tourn_welcome');
-        
         // Simple model
-        $model = $this->createModel($project,$personId);
+        $model1 = $this->createModel($project,$personId);
                       
         // This could also be passed in
-        $form = $this->createModelForm($project,$model);
+        $form = $this->createModelForm($model1);
         $form->handleRequest($request);
 
         if ($form->isValid()) 
         {             
             // Maybe dispatch something to adjust form
-            $model1 = $form->getData();
+            $model2 = $form->getData();
             
-            $model2 = $this->processModel($project,$model1);
+            $model3 = $this->processModel($model2);
             
-            // Notify email system
-            $person2 = $model2['person'];
+            $this->sendEmail($model3);
             
             return $this->redirect('cerad_tourn_home');
-            return $this->redirect('cerad_tourn_person_plan_update',array('id' => $person2->getId()));
-            
         }
 
         // Template stuff
@@ -49,9 +46,9 @@ class PersonPlanUpdateController extends MyBaseController
         $tplData['msg'    ] = null; // $msg; from flash bag
         $tplData['form'   ] = $form->createView();
         
-        $tplData['plan'   ] = $model['plan'];
-        $tplData['person' ] = $model['person'];
-        $tplData['project'] = $project;
+        $tplData['plan'   ] = $model1['plan'];
+        $tplData['person' ] = $model1['person'];
+        $tplData['project'] = $model1['project'];
 
         return $this->render('@CeradTourn\PersonPlan\Update\PersonPlanUpdateIndex.html.twig',$tplData);        
     }
@@ -74,15 +71,18 @@ class PersonPlanUpdateController extends MyBaseController
         
         // Pack it up
         $model = array();
-        $model['plan'  ] = $plan;
-        $model['basic' ] = $plan->getBasic();
-        $model['notes' ] = $plan->getNotes();
-        $model['person'] = $person;
+        $model['plan'  ]  = $plan;
+        $model['basic' ]  = $plan->getBasic();
+        $model['notes' ]  = $plan->getNotes();
+        $model['person']  = $person;
+        $model['project'] = $project;
         
         return $model;
     }
-    protected function createModelForm($project, $model)
+    protected function createModelForm($model)
     {   
+        $project = $model['project'];
+        
         $basicType = new DynamicFormType('basic',$project->getBasic());
         
         $formOptions = array(
@@ -108,18 +108,18 @@ class PersonPlanUpdateController extends MyBaseController
      * Lot's of possible processing to do
      * All ends with a plan
      */
-    protected function processModel($project,$model)
+    protected function processModel($model)
     {
         $personRepo = $this->get('cerad_person.person_repository');
          
         // Unpack dto
         $plan   = $model['plan'];
         $basic  = $model['basic'];
-        $notes  = $model['notes'];
         $person = $model['person'];
         
+        $basic['notes'] = strip_tags($basic['notes']);
+       
         $plan->setBasic($basic);
-        $plan->setNotes($notes);
                 
         // And save
         $personRepo->save($person);
@@ -127,51 +127,75 @@ class PersonPlanUpdateController extends MyBaseController
        
         return $model;
     }
-    protected function sendRefereeEmail($tourn,$plans)
+    /* ============================================
+     * Should probably be moved to a listener
+     */
+    protected function sendEmail($model)
     {   
-        $prefix = $tourn['prefix']; // OpenCup2013
+        $project = $model['project'];
+        $person  = $model['person'];
+        $plan    = $model['plan'];
         
-        $assignorName  = $tourn['assignor']['name'];
-        $assignorEmail = $tourn['assignor']['email'];
+        $personFed = $person->getFed($project->getFedRoleId());
         
-      //$assignorEmail = 'ahundiak@nasoa.org';
+        $prefix = $project->getPrefix(); // OpenCup2013
+        
+        $assignor = $project->getAssignor();
+        
+        $assignorName  = $assignor['name'];
+        $assignorEmail = $assignor['email'];
         
         $adminName =  'Art Hundiak';
         $adminEmail = 'ahundiak@gmail.com';
         
-        $refereeName  = $plans->getPerson()->getFirstName() . ' ' . $plans->getPerson()->getLastName();
-        $refereeEmail = $plans->getPerson()->getEmail();
+        $personName = $person->getName();
         
-        $tplData = $tourn;
-        $tplData['plans'] = $plans; 
-        $body = $this->renderView('CeradTournBundle:Tourn:email.txt.twig',$tplData);
-    
-        $subject = sprintf("[%s] Ref App %s",$prefix,$refereeName);
+        $refereeName  = $personName->full;
+        $refereeEmail = $person->getEmail();
+        
+        /* =================================================
+         * Use templates for email subject and body
+         */
+        $tplData = array();
+        $tplData['plan']        = $plan;
+        $tplData['person']      = $person;
+        
+        $tplData['fed']         = $personFed;
+        $tplData['org']         = $personFed->getOrg();
+        $tplData['certReferee'] = $personFed->getCertReferee();
+        
+        $tplData['project']  = $project;
+        $tplData['assignor'] = $assignor;
+        
+        $subject = $this->renderView('@CeradTourn\PersonPlan\Update\PersonPlanUpdateEmailSubject.html.twig',$tplData);       
+        $body    = $this->renderView('@CeradTourn\PersonPlan\Update\PersonPlanUpdateEmailBody.html.twig',   $tplData);
        
-        // This goes to the assignor
-        $message = \Swift_Message::newInstance();
-        $message->setSubject($subject);
-        $message->setBody($body);
-        $message->setFrom(array('admin@zayso.org' => $prefix));
-        $message->setBcc (array($adminEmail => $adminName));
+        // die(nl2br($body));
         
-        $message->setTo     (array($assignorEmail  => $assignorName));
-        $message->setReplyTo(array($refereeEmail   => $refereeName));
+        // This goes to the assignor
+        $message1 = \Swift_Message::newInstance();
+        $message1->setSubject($subject);
+        $message1->setBody($body);
+        $message1->setFrom(array('admin@zayso.org' => $prefix));
+        $message1->setBcc (array($adminEmail => $adminName));
+        
+        $message1->setTo     (array($assignorEmail => $assignorName));
+        $message1->setReplyTo(array($refereeEmail  => $refereeName));
 
-        $this->get('mailer')->send($message);
-      //return;
+        $this->get('mailer')->send($message1);
         
         // This goes to the referee
-        $message = \Swift_Message::newInstance();
-        $message->setSubject($subject);
-        $message->setBody($body);
-        $message->setFrom(array('admin@zayso.org' => $prefix));
-      //$message->setBcc (array($adminEmail => $adminName));
-        
-        $message->setTo     (array($refereeEmail  => $refereeName));
-        $message->setReplyTo(array($assignorEmail => $assignorName));
+        $message2 = \Swift_Message::newInstance();
+        $message2->setSubject($subject);
+        $message2->setBody($body);
+        $message2->setFrom(array('admin@zayso.org' => $prefix));
+      
+        $message2->setTo     (array($refereeEmail  => $refereeName));
+        $message2->setReplyTo(array($assignorEmail => $assignorName));
 
-        $this->get('mailer')->send($message);
+        $this->get('mailer')->send($message2);
+        
+        return $model;
     }
 }
 ?>
