@@ -180,7 +180,7 @@ class PersonPlanUpdateController extends MyBaseController
         $message1->setBcc (array($adminEmail => $adminName));
         
         $message1->setTo     (array($assignorEmail => $assignorName));
-        $message1->setReplyTo(array($refereeEmail  => $refereeName));
+      //$message1->setReplyTo(array($refereeEmail  => $refereeName));
 
         $this->get('mailer')->send($message1);
         
@@ -191,7 +191,7 @@ class PersonPlanUpdateController extends MyBaseController
         $message2->setFrom(array('admin@zayso.org' => $prefix));
       
         $message2->setTo     (array($refereeEmail  => $refereeName));
-        $message2->setReplyTo(array($assignorEmail => $assignorName));
+      //$message2->setReplyTo(array($assignorEmail => $assignorName));
 
         $this->get('mailer')->send($message2);
         
