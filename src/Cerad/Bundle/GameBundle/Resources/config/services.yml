@@ -1,0 +1,7 @@
+parameters:
+#    cerad_game.example.class: Cerad\Bundle\GameBundle\Example
+
+services:
+#    cerad_game.example:
+#        class: %cerad_game.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
