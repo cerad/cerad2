@@ -1,7 +1,18 @@
-parameters:
-#    cerad_game.example.class: Cerad\Bundle\GameBundle\Example
-
 services:
-#    cerad_game.example:
-#        class: %cerad_game.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+
+# =============================================================
+# Game Field
+
+    cerad_game.entity_manager.doctrine:
+        alias: doctrine.orm.default_entity_manager
+        
+    cerad_game.game_field_repository.doctrine:
+        class:  Cerad\Bundle\GameBundle\EntityRepository\GameFieldRepository
+        factory_service: 'cerad_game.entity_manager.doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\GameBundle\Entity\GameField'
+            
+    cerad_game.game_field_repository:
+        alias: cerad_game.game_field_repository.doctrine
+        

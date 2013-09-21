@@ -1,0 +1,41 @@
+Cerad\Bundle\GameBundle\Entity\GameField:
+    type:  entity
+    table: game_fields
+    repositoryClass: Cerad\Bundle\GameBundle\EntityRepository\GameFieldRepository
+    changeTrackingPolicy: NOTIFY
+
+    uniqueConstraints:
+       game_field_project_name_index:
+           columns: project_id, name
+
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+    
+    fields:
+            
+        projectId:
+            column:   project_id
+            type:     string
+            length:   80
+            nullable: false
+                  
+        name:
+            column:   name
+            type:     string
+            length:   40
+            nullable: false
+            
+        venue:
+            column:   venue
+            type:     string
+            length:   40
+            nullable: true
+                        
+        status:
+            column:   status
+            type:     string
+            length:   20
+            nullable: false
+            
