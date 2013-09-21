@@ -1,10 +1,20 @@
 services:
 
 # =============================================================
-# Game Field
+# Game Stuff
 
     cerad_game.entity_manager.doctrine:
         alias: doctrine.orm.default_entity_manager
+        
+    cerad_game.game_repository.doctrine:
+        class:  Cerad\Bundle\GameBundle\EntityRepository\GameRepository
+        factory_service: 'cerad_game.entity_manager.doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\GameBundle\Entity\Game'
+            
+    cerad_game.game_repository:
+        alias: cerad_game.game_repository.doctrine
         
     cerad_game.game_field_repository.doctrine:
         class:  Cerad\Bundle\GameBundle\EntityRepository\GameFieldRepository

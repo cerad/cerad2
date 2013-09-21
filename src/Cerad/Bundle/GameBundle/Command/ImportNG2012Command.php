@@ -29,15 +29,17 @@ class ImportNG2012Command extends ContainerAwareCommand
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $projectId = self::PROJECT_ID;
+        $projectId  = self::PROJECT_ID;
+        $projectIdx = self::PROJECT_IDX;
         
         $conn = $this->getService('doctrine.dbal.ng2012_connection');
+        
+        $gameRepo      = $this->getService('cerad_game.game_repository');
+        $gameFieldRepo = $this->getService('cerad_game.game_field_repository');
         
         /* =======================================================================
          * Fields
          */
-        $gameFieldRepo = $this->getService('cerad_game.game_field_repository');
-        
         $rows = $conn->fetchAll('SELECT * FROM project_field where project_id = 52;');
 
         foreach($rows as $row)
@@ -60,72 +62,88 @@ class ImportNG2012Command extends ContainerAwareCommand
         /* =====================================================================
          * Games
          */
-        return;
-        
-        $importFile = $input->getArgument('importFile');
-        $truncate   = $input->getArgument('truncate');
-        
-        if ($truncate) $truncate = true;
-        
-        $this->loadFile($importFile,$truncate);
+        $gameSql = <<<EOT
+SELECT event.* ,field.key1 AS field_name FROM event 
+LEFT JOIN project_field AS field ON event.field_id = field.id 
+WHERE event.project_id = $projectIdx;
+EOT;
+        $gameRows = $conn->fetchAll($gameSql);
 
-    }
-    /* =========================================================
-     * gws/TEST_Fall2013_GamesWithSlots_20130917.xml
-     * 
-     * pathInfo
-     *  [dirname]   => gws
-     *  [basename]  => TEST_Fall2013_GamesWithSlots_20130917.xml
-     *  [extension] => xml
-     *  [filename]  => TEST_Fall2013_GamesWithSlots_20130917
-     * 
-     * parts
-     * [0] => domain => TEST
-     * [1] => season => Fall2013
-     * [2] => format => GamesWithSlots
-     * [3] => suffix => 20130917
-     */
-    protected function loadFile($filePath, $truncate)
-    {   
-        // Add in default directory and make sure it exists
-        $datax  = $this->getParameter('cerad_datax');
-        
-        $filePath = $datax . $filePath;
-        
-        if (!file_exists($filePath)) 
+        foreach($gameRows as $row)
         {
-            echo sprintf("*** File does not exist: %s\n",$filePath);
-            return;
+            $num = $row['num'];
+            $game = $gameRepo->findOneByProjectNum($projectId,$num);
+            if (!$game)
+            {
+                $game = $gameRepo->createGame();
+                $game->setNum($num);
+                $game->setProjectId($projectId);
+            }
+            $pool = $row['pool'];
+            $levelId = 'AYSO_' . substr($pool,0,4) . '_Core';
+            $game->setLevelId($levelId);
+            $game->setGroup(substr($pool,5));
+                
+            $gameField = $gameFieldRepo->findOneByProjectName($projectId,$row['field_name']);
+            $game->setField($gameField);
+                
+                $datex = $row['datex'];
+                $timex = $row['timex'];
+                $dt = sprintf('%s-%s-%s %s:%s:00',
+                    substr($datex,0,4),substr($datex,4,2),substr($datex,6,2),
+                    substr($timex,0,2),substr($timex,2,2));
+                
+                $dtBeg = \DateTime::createFromFormat('Y-m-d H:i:s',$dt);
+                $dtEnd = clone($dtBeg);
+                $dtEnd->add(new \DateInterval('PT55M'));
+                
+                $game->setDtBeg($dtBeg);
+                $game->setDtEnd($dtEnd);
+                
+                $gameRepo->save($game);
         }
+        $gameRepo->commit();
         
-        $pathInfo = pathinfo($filePath);
+        /* =====================================================================
+         * Games
+         */
+        $gameTeamSql = <<<EOT
+SELECT 
+    team.*,
+    gameTeam.type  AS gameTeamRole, 
+    gameTeam.datax AS gameTeamReport,
+    game.num       AS gameNum
+FROM event_team AS gameTeam 
+LEFT JOIN event AS game ON game.id = gameTeam.event_id 
+LEFT JOIN team  AS team ON team.id = gameTeam.team_id
+WHERE game.project_id = $projectIdx;
+EOT;
+        $gameTeamRows = $conn->fetchAll($gameTeamSql);
         
-        $parts = explode('_',$pathInfo['filename']);
-        
-        if (count($parts) < 4)
+        foreach($gameTeamRows as $row)
         {
-            echo sprintf("*** %d File Name Format: DOMAIN_Season_Format_Date\n",count($parts));
-            return;
+            $num = $row['gameNum'];
+            $game = $gameRepo->findOneByProjectNum($projectId,$num);
+ 
+            switch($row['gameTeamRole'])
+            {
+                case 'Home': $gameTeam = $game->getHomeTeam(); break;
+                case 'Away': $gameTeam = $game->getAwayTeam(); break;
+                default: die('bad gameTeam role ' . $role);
+            }
+            $gameTeam->setLevelId($game->getLevelId());
+            $gameTeam->setReport($row['gameTeamReport']);
+            $gameTeam->setOrgId ($row['org_id']);
+            
+            $name  = $row['desc1'];
+            $gameTeam->setName (substr($name,3));
+            $gameTeam->setGroup(substr($name,0,2));
+            
+            //print_r($row); die();
         }
+        $gameRepo->commit();
         
-        $paramsx = array();
-        
-        $paramsx['filepath'] = $filePath;
-        
-        $params = array_merge($paramsx,$pathInfo);
-        
-        $params['sport']  = 'Soccer';
-        $params['domain'] = $parts[0];
-        $params['season'] = $parts[1];
-        $params['format'] = $parts[2];
-        $params['suffix'] = $parts[3];
-        
-        $importServiceId = sprintf('cerad_game.schedule_Arbiter%s.import',$params['format']);
-        $importService = $this->getService($importServiceId);
-        
-        $results = $importService->import($params);
-        
-        print_r($results);
+        return;
         
     }
 }
