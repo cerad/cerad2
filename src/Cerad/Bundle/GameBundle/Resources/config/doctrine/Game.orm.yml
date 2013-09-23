@@ -21,11 +21,11 @@ Cerad\Bundle\GameBundle\Entity\Game:
            indexBy:      slot
            cascade:      ['all']
             
-       #persons:
-       #    targetEntity: V4GamePerson
-       #    mappedBy:     game
-       #    indexBy:      slot
-       #    cascade:      ['all']     
+       officials:
+           targetEntity: GameOfficial
+           mappedBy:     game
+           indexBy:      slot
+           cascade:      ['all']     
     
     manyToOne:
                 

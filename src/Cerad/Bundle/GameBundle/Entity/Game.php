@@ -32,7 +32,7 @@ class Game extends AbstractEntity
     protected $reportStatus;
     
     protected $teams;
-    protected $persons;
+    protected $officials;
     
     public function getId()      { return $this->id;      }
     public function getNum()     { return $this->num;     }
@@ -73,8 +73,8 @@ class Game extends AbstractEntity
      */
     public function __construct()
     {
-        $this->teams   = new ArrayCollection();
-        $this->persons = new ArrayCollection();
+        $this->teams     = new ArrayCollection();
+        $this->officials = new ArrayCollection();
     }
     /* =======================================
      * Team stuff
@@ -116,52 +116,30 @@ class Game extends AbstractEntity
     public function getAwayTeam($autoCreate = true) { return $this->getTeamForSlot(GameTeam::SlotAway,$autoCreate); }
     
     /* =======================================
-     * Person stuff
+     * Officials
      */
-    public function getPersons($sort = true) 
+    public function createGameOfficials($config = null) { return new GameOfficial($config); }
+   
+    public function getOfficials($sort = true) 
     { 
         if (!$sort) return $this->persons;
         
-        $items = $this->persons->toArray();
+        $items = $this->officials->toArray();
         
         ksort ($items);
         return $items; 
     }
-    public function addPerson($person)
+    public function addOfficial($official)
     {
-        $this->persons[$person->getSlot()] = $person;
+        $this->officials[$official->getSlot()] = $official;
         
-        $person->setGame($this);
+        $official->setGame($this);
     }
-    public function getPersonForSlot($slot)
+    // Autocreate does not really make sense here
+    public function getOfficialForSlot($slot)
     {
-        if (isset($this->persons[$slot])) return $this->persons[$slot];
-        
+        if (isset($this->officials[$slot])) return $this->officials[$slot];
         return null;
-    }
-    /* =========================================
-     * Debugging
-     * TODO: Fix Up
-     */
-    public function __toString()
-    {
-        ob_start();
-
-        echo sprintf("Game %-6s %-4s %6s %-8s %s   %-8s %-10s %s\n",
-            $this->status,
-            $this->role,
-            $this->num,
-            $this->projectId,
-            $this->dtBeg->format('d M Y H:i:s A'),
-            $this->level->getDomainSub(),
-            $this->level->getName(),
-            $this->field->getName()
-        );
-        foreach($this->teams as $team)
-        {
-            echo $team . "\n";
-        }
-        return ob_get_clean();
     }
 }
 ?>

@@ -40,11 +40,16 @@ class ImportNG2012Command extends ContainerAwareCommand
         /* =======================================================================
          * Fields
          */
-        $rows = $conn->fetchAll('SELECT * FROM project_field where project_id = 52;');
+        $gameFieldSql = <<<EOT
+SELECT gameField.key1 AS name, gameField.venue AS venue
+FROM   project_field AS gameField
+WHERE  gameField.project_id = $projectIdx;
+EOT;
+        $gameFieldRows = $conn->fetchAll($gameFieldSql);
 
-        foreach($rows as $row)
+        foreach($gameFieldRows as $row)
         {
-            $name  = $row['key1'];
+            $name  = $row['name'];
             $venue = $row['venue'];
             
             $gameField = $gameFieldRepo->findOneByProjectName($projectId,$name);
