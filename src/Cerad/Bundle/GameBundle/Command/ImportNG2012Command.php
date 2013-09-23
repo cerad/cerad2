@@ -63,7 +63,8 @@ EOT;
             }
         }
         $gameFieldRepo->commit();
- 
+        echo sprintf("Commited Fields: %4d\n",count($gameFieldRows));
+        
         /* =====================================================================
          * Games
          */
@@ -108,9 +109,10 @@ EOT;
                 $gameRepo->save($game);
         }
         $gameRepo->commit();
+        echo sprintf("Commited Games : %4d\n",count($gameRows));
         
         /* =====================================================================
-         * Games
+         * Game Teams
          */
         $gameTeamSql = <<<EOT
 SELECT 
@@ -147,6 +149,68 @@ EOT;
             //print_r($row); die();
         }
         $gameRepo->commit();
+        echo sprintf("Commited Teams : %4d\n",count($gameTeamRows));
+        
+        /* =====================================================================
+         * Game Officials
+         */
+        $gameOfficialSql = <<<EOT
+SELECT 
+    person.*,
+    personReg.reg_key  AS fedId,
+    personReg.org_id   AS orgId,
+    personReg.datax    AS regData,
+    gameOfficial.type  AS gameOfficialRole, 
+    gameOfficial.state AS gameOfficialState, 
+    game.num           AS gameNum
+FROM event_person      AS gameOfficial 
+LEFT JOIN event        AS game      ON game.id   = gameOfficial.event_id 
+LEFT JOIN person       AS person    ON person.id = gameOfficial.person_id
+LEFT JOIN person_reg   AS personReg ON personReg.person_id = person.id
+                
+WHERE game.project_id = $projectIdx;
+EOT;
+        $gameOfficialRows = $conn->fetchAll($gameOfficialSql);
+        
+        foreach($gameOfficialRows as $row)
+        {
+            $num = $row['gameNum'];
+            $game = $gameRepo->findOneByProjectNum($projectId,$num);
+            
+            $slot = null;
+            $role = $row['gameOfficialRole'];
+            switch($role)
+            {
+                case 'CR':   $slot = 1; break;
+                case 'AR 1': $slot = 2; break;
+                case 'AR 2': $slot = 3; break;
+                default: die('Game Official Role: ' . $role);
+            }
+            $gameOfficial = $game->getOfficialForSlot($slot);
+            if (!$gameOfficial)
+            {
+                $gameOfficial = $game->createGameOfficial();
+                $gameOfficial->setSlot($slot);
+                $gameOfficial->setRole($role);
+                $game->addOfficial($gameOfficial);
+            }
+            $gameOfficial->setState($row['gameOfficialState']);
+            
+            $gameOfficial->setPersonNameFirst($row['first_name']);
+            $gameOfficial->setPersonNameLast ($row['last_name']);
+            $gameOfficial->setPersonEmail    ($row['email']);
+            $gameOfficial->setPersonPhone    ($row['cell_phone']);
+            
+            $gameOfficial->setPersonFedId($row['fedId']);
+            $gameOfficial->setPersonOrgId($row['orgId']);
+            
+            $data= unserialize($row['regData']);
+            $gameOfficial->setPersonBadge($data['ref_badge']);
+            
+          //print_r($data); die();
+        }
+        $gameRepo->commit();
+        echo sprintf("Commited Offs  : %4d\n",count($gameOfficialRows));
         
         return;
         

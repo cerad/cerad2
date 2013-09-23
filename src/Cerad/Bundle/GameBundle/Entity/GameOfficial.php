@@ -23,8 +23,12 @@ class GameOfficial extends AbstractEntity
     protected $personOrgId;
     
     protected $report;
-    protected $status = 'Created'; // Created, published, notified, accepted
-    protected $statusUpdatedOn;
+    protected $status = 'Active';
+   
+    protected $state;           // Workflow
+    protected $stateUpdatedOn;
+    protected $stateUpdatedBy;
+    
     
     public function getId  () { return $this->id;     }
     public function getGame() { return $this->game;   }
@@ -43,7 +47,10 @@ class GameOfficial extends AbstractEntity
     
     public function getReport()          { return $this->report;          }
     public function getStatus()          { return $this->status;          }
-    public function getStatusUpdatedOn() { return $this->statusUpdatedOn; }
+    
+    public function getState()          { return $this->state;          }
+    public function getStateUpdatedOn() { return $this->stateUpdatedOn; }
+    public function getStateUpdatedBy() { return $this->stateUpdatedBy; }
 
     public function setGame($value) { $this->onPropertySet('game',  $value); }
     public function setSlot($value) { $this->onPropertySet('slot',  $value); } 
@@ -61,7 +68,10 @@ class GameOfficial extends AbstractEntity
     
     public function setReport         ($value) { $this->onPropertySet('report',         $value); }
     public function setStatus         ($value) { $this->onPropertySet('status',         $value); }
-    public function setStatusUpdatedOn($value) { $this->onPropertySet('statusUpdatedOn',$value); }
+    
+    public function setState          ($value) { $this->onPropertySet('state',          $value); }
+    public function setStateUpdatedOn ($value) { $this->onPropertySet('stateUpdatedOn', $value); }
+    public function setStateUpdatedBy ($value) { $this->onPropertySet('stateUpdatedBy', $value); }
     
     /* =========================================
      * Used to highlite objects

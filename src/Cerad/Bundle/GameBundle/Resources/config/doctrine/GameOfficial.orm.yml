@@ -88,9 +88,21 @@ Cerad\Bundle\GameBundle\Entity\GameOfficial:
             length:   20
             nullable: true
             
-        statusUpdatedOn:
-            column:   status_updated_on
+        state:
+            column:   state
+            type:     string
+            length:   20
+            nullable: true
+            
+        stateUpdatedOn:
+            column:   state_updated_on
             type:     datetime
+            nullable: true
+            
+        stateUpdatedBy:
+            column:   state_updated_by
+            type:     string
+            length:   40
             nullable: true
                          
         report:

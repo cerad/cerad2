@@ -118,7 +118,7 @@ class Game extends AbstractEntity
     /* =======================================
      * Officials
      */
-    public function createGameOfficials($config = null) { return new GameOfficial($config); }
+    public function createGameOfficial($config = null) { return new GameOfficial($config); }
    
     public function getOfficials($sort = true) 
     { 
@@ -134,6 +134,8 @@ class Game extends AbstractEntity
         $this->officials[$official->getSlot()] = $official;
         
         $official->setGame($this);
+        
+        $this->onPropertyChanged('officials');
     }
     // Autocreate does not really make sense here
     public function getOfficialForSlot($slot)
