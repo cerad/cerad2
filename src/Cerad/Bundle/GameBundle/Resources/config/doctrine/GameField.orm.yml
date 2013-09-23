@@ -21,6 +21,11 @@ Cerad\Bundle\GameBundle\Entity\GameField:
             length:   80
             nullable: false
                   
+        sort:
+            column:   sortx
+            type:     integer
+            nullable: true
+            
         name:
             column:   name
             type:     string
