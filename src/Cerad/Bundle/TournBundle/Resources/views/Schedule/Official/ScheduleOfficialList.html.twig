@@ -1,0 +1,66 @@
+{# @CeradTourn/Schedule/Official/ScheduleOfficialList.html.twig #}
+
+<div class="schedule-game-list">
+    <table id="schedule" border="1" style="max-width: 850px;">
+    <thead>
+        <tr><th colspan="20">Referee Game Schedule - Count: {{ games | length }}</th></tr>
+        <tr>
+            <th>Game</th>
+            <th>DOW</th>
+            <th>Time</th>
+            <th>Field</th>
+            <th>Div</th>
+            <th>Pool</th>
+            <th>Home / Away Teams</th>
+            <th>Officials</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for game in games %}
+        <tr id="ref-sched-{{game.num}}" class="game-status-{{game.status}}">
+            <td>
+                {% if 0 %}
+                <a href="{{ path('zayso_core_schedule_game_edit', { 'id': game.id })}}">{{ game.getNum() }}</a>
+                {% else %}
+                {{ game.num }}
+                {% endif %}
+            </td>
+            <td>{{ game.dtBeg.format('D'    ) }}</td>
+            <td>{{ game.dtBeg.format('H:i A') }}</td> 
+            
+            <td>{{ game.field.name }}</td>
+            <td>{{ game.levelId    }}</td>
+            <td>{{ game.group      }}</td>
+            
+            <td><table>
+                {% for gameTeam in game.teams %}
+                    <tr><td>{{ gameTeam.group | slice(8) }}:&nbsp;</td><td>{{ gameTeam.name }}</td></tr>
+                {% endfor %}
+            </table></td>
+            <td><table>
+                {% for gameOfficial in game.officials %}
+                    <tr><td>{{ gameOfficial.role }}:&nbsp;</td><td>{{ gameOfficial.personNameFull }}</td></tr>
+                {% endfor %}
+            </table></td>
+       </tr>
+        {% endfor %}{# games #}
+    </tbody>
+    </table>
+</div>
+{% block javascripts %}
+<script type="text/javascript">
+    $(document).ready(function() 
+    {
+        $('#schedule').dataTable(
+        {
+            "bPaginate": false,
+            "bLengthChange": false,
+            "bFilter": false,
+            "bSort": true,
+            "bInfo": false,
+            "bAutoWidth": false,
+            "aaSorting": [[ 2, "asc" ],[ 5, "asc" ],[ 4, "asc" ]]
+        });
+    });
+</script>
+{% endblock %}

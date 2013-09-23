@@ -45,9 +45,10 @@ class GameRepository extends EntityRepository
      */
     public function queryGameSchedule($criteria)
     {
-        $nums       = $this->getArrayValue($criteria,'nums');
-        $levelIds   = $this->getArrayValue($criteria,'levelIds');
-        $projectIds = $this->getArrayValue($criteria,'projectIds');
+        $nums     = $this->getArrayValue($criteria,'nums');
+        $dates    = $this->getArrayValue($criteria,'dates');
+        $levels   = $this->getArrayValue($criteria,'levels');
+        $projects = $this->getArrayValue($criteria,'projects');
         
         $teamNames  = $this->getArrayValue($criteria,'teams');
         $fieldNames = $this->getArrayValue($criteria,'fields');
@@ -85,22 +86,28 @@ class GameRepository extends EntityRepository
         $qb = $this->createQueryBuilder('game');
      
         $qb->select('distinct game.id');
+        $qb->leftJoin ('game.field','gameField');
         $qb->leftJoin ('game.teams','gameTeam');
         
-        if ($projectIds)
+        if ($projects)
         {
             $qb->andWhere('game.projectId IN (:projectIds)');
-            $qb->setParameter('projectIds',$projectIds);
+            $qb->setParameter('projectIds',$projects);
         }
         if ($fieldNames)
         {
-            $qb->andWhere('game.field IN (:fieldNames)');
+            $qb->andWhere('gameField.name IN (:fieldNames)');
             $qb->setParameter('fieldNames',$fieldNames);
         }
-        if ($levelIds)
+        if ($levels)
         {
             $qb->andWhere('gameTeam.levelId IN (:levelIds)');
-            $qb->setParameter('levelIds',$levelIds);
+            $qb->setParameter('levelIds',$levels);
+        }
+        if ($dates)
+        {
+            $qb->andWhere('DATE(game.dtBeg) IN (:dates)');
+            $qb->setParameter('dates',$dates);
         }
         /* ============================================
          * This is what makes me grab gamesIds first

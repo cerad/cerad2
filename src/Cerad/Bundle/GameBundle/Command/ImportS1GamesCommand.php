@@ -124,11 +124,11 @@ class ImportS1GamesCommand extends ContainerAwareCommand
             $pool = $rowx['home_pool'];
             if ($pool)
             {
-                $gameGroup = sprintf('PP %s %d',$div,substr($pool,0,1));
+                $gameGroup = sprintf('%s PP %d',$div,substr($pool,0,1));
                 $game->setGroup($gameGroup);
                 
-                $homeTeamGroup = sprintf('PP %s %s',$div,$rowx['home_pool']);
-                $awayTeamGroup = sprintf('PP %s %s',$div,$rowx['away_pool']);
+                $homeTeamGroup = sprintf('%s PP %s',$div,$rowx['home_pool']);
+                $awayTeamGroup = sprintf('%s PP %s',$div,$rowx['away_pool']);
                 
                 $homeTeam->setGroup($homeTeamGroup);
                 $awayTeam->setGroup($awayTeamGroup);
@@ -141,11 +141,11 @@ class ImportS1GamesCommand extends ContainerAwareCommand
                     case 'Cham': $type = 'FM'; break;
                     case 'Cons': $type = 'CM'; break;
                 }
-                $gameGroup = sprintf('%s %s',$type,$div);
+                $gameGroup = sprintf('%s %s',$div,$type);
                 $game->setGroup($gameGroup);
                 
-                $homeTeamGroup = sprintf('%s %s',$type,$div);
-                $awayTeamGroup = sprintf('%s %s',$type,$div);
+                $homeTeamGroup = sprintf('%s %s',$div,$type);
+                $awayTeamGroup = sprintf('%s %s',$div,$type);
                 
                 $homeTeam->setGroup($homeTeamGroup);
                 $awayTeam->setGroup($awayTeamGroup);

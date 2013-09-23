@@ -145,7 +145,12 @@ cerad_tourn_person_plan_update:
 #                           @CeradTourn/PersonPlan/Update/PersonPlanUpdateIndex.html.twig
 #                                                        /PersonPlanUpdateForm.html.twig
 #                                                        /PersonPlanUpdateHelp.html.twig
-
+# ===============================================
+# Schedule and results
+cerad_tourn_schedule_official_list:
+    pattern:  /schedule/official
+    defaults: { _controller: CeradTournBundle:Schedule/ScheduleOfficialList:list }
+    
 # ===============================================
 # Internal controllers
 # header:

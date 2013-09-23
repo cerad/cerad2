@@ -30,4 +30,15 @@ doctrine:
 
     orm:
         auto_generate_proxy_classes: %kernel.debug%
-        auto_mapping: true
+        entity_managers:
+            default:
+                connection: default
+                mappings: 
+                  CeradUserBundle: ~
+                  CeradPersonBundle: ~
+                  CeradGameBundle: ~
+                dql:
+                    datetime_functions:
+                        date:  Cerad\Bundle\GameBundle\Doctrine\DQL\Date
+                        time:  Cerad\Bundle\GameBundle\Doctrine\DQL\Time
+                        month: Cerad\Bundle\GameBundle\Doctrine\DQL\Month
