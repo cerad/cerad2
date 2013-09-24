@@ -22,10 +22,10 @@ AYSOS1GamesUpperFall2013:
       dates:
         type:     checkbox
         label:    Days
-        default: ['2006-11-23','2006-11-24']
+        default: ['2013-11-23','2013-11-24']
         choices:
-          '2006-11-23': Sat
-          '2006-11-24': Sun
+          '2013-11-23': Sat
+          '2013-11-24': Sun
           
       levels:
         type:     checkbox

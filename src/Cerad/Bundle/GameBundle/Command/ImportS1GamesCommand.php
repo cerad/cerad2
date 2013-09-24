@@ -36,7 +36,7 @@ class ImportS1GamesCommand extends ContainerAwareCommand
         $gameFieldRepo = $this->getService('cerad_game.game_field_repository');
 
         // Just hard code for now
-        $inputFileName = '../../../datax/s1games/Schedule20130922.xlsx';
+        $inputFileName = '../../../datax/s1games/Schedule20130924.xlsx';
         
         $excel = new Excel();
         

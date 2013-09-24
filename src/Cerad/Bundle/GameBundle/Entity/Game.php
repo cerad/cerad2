@@ -48,7 +48,6 @@ class Game extends AbstractEntity
     public function getLevelId()   { return $this->levelId;   }
     public function getProjectId() { return $this->projectId; }
     
-    public function getReport()       { return $this->report;       }
     public function getReportStatus() { return $this->reportStatus; }
     
     public function setNum      ($value) { $this->onPropertySet('num',      $value); }
@@ -64,7 +63,6 @@ class Game extends AbstractEntity
     public function setLevelId  ($value) { $this->onPropertySet('levelId',  $value); }
     public function setProjectId($value) { $this->onPropertySet('projectId',$value); }
     
-    public function setReport      ($value) { $this->onPropertySet('report',      $value); }
     public function setReportStatus($value) { $this->onPropertySet('reportStatus',$value); }
     
     /* =======================================
@@ -142,6 +140,22 @@ class Game extends AbstractEntity
     {
         if (isset($this->officials[$slot])) return $this->officials[$slot];
         return null;
+    }
+    /* ============================================================
+     * Game Team Report
+     * All stored in an array
+     */
+    public function createGameReport($config = null) { return new GameReport($config); }
+    
+    public function getReport()  
+    { 
+        $report = new GameReport($this->report);
+        $report->setGame($this);
+        return $report;
+    }
+    public function setReport(GameReport $report) 
+    { 
+        $this->onPropertySet('report',$report->getData()); 
     }
 }
 ?>

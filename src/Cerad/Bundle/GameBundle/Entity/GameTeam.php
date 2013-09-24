@@ -49,7 +49,6 @@ class GameTeam extends AbstractEntity
     public function getLevelId() { return $this->levelId; }
     public function getScore()   { return $this->score;   }
     public function getStatus()  { return $this->status;  }
-    public function getReport()  { return $this->report;  }
     
     public function setSlot    ($value) { $this->onPropertySet('slot',    $value); }
     public function setRole    ($value) { $this->onPropertySet('role',    $value); }
@@ -61,7 +60,6 @@ class GameTeam extends AbstractEntity
     public function setLevelId ($value) { $this->onPropertySet('levelId', $value); }
     public function setScore   ($value) { $this->onPropertySet('score',   $value); }
     public function setStatus  ($value) { $this->onPropertySet('status',  $value); }
-    public function setReport  ($value) { $this->onPropertySet('report',  $value); }
     
     public function getRoleForSlot($slot)
     {
@@ -71,6 +69,22 @@ class GameTeam extends AbstractEntity
             case self::SlotAway: return self::RoleAway;
         }
         return self::RoleSlot . $slot;
+    }
+    /* ============================================================
+     * Game Team Report
+     * All stored in an array
+     */
+    public function createGameTeamReport($config = null) { return new GameTeamReport($config); }
+    
+    public function getReport()  
+    { 
+        $report = new GameTeamReport($this->report);
+        $report->setTeam($this);
+        return $report;
+    }
+    public function setReport(GameTeamReport $report) 
+    { 
+        $this->onPropertySet('report',$report->getData()); 
     }
 }
 ?>
