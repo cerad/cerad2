@@ -25,11 +25,13 @@ class GameFormType extends AbstractType
             'InProgress' => 'In Progress',
             'Played'     => 'Played',
             
-            'Forfeited'  => 'Forfeited', 
+            'ForfeitByHomeTeam' => 'Forfeit By Home Team', 
+            'ForfeitByAwayTeam' => 'Forfeit By Away Team', 
             'Cancelled'  => 'Cancelled', 
             'Suspended'  => 'Suspended', 
             'Terminated' => 'Terminated',
-            'StormedOut' => 'Stormed Out',
+          //'StormedOut' => 'Stormed Out',
+          //'HeatedOut'  => 'Heated Out',
             ),
         ));
         return;

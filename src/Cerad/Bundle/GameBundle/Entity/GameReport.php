@@ -37,6 +37,13 @@ class GameReport extends AbstractEntity
             if (isset($config[$propName])) $this->$propName = $config[$propName];
         }
     }
+    public function clear()
+    {
+        foreach(self::getPropNames() as $propName)
+        {
+            $this->$propName = null;
+        }
+    }
     public function getData()
     {
         $data = array();

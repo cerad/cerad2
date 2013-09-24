@@ -14,3 +14,9 @@ services:
         class: Cerad\Bundle\TournBundle\FormType\Schedule\Official\SearchFormType
         tags:
             - { name: form.type, alias: cerad_schedule_official_search }
+            
+    cerad_tourn.s5games_results:
+        class: Cerad\Bundle\TournBundle\Results\S5GamesResults
+        arguments:  
+            - '@cerad_game.game_repository'
+

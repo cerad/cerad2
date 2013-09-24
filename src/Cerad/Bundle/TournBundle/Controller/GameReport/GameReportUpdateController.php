@@ -48,11 +48,34 @@ class GameReportUpdateController extends MyBaseController
         $awayTeam = $game->getAwayTeam();
         
         // Is it a clear operation?
-        
+        $gameReportStatus = $gameReport->getStatus();
+        if ($gameReportStatus == 'Clear')
+        {
+            $gameReport->clear();
+            $homeTeamReport->clear();
+            $awayTeamReport->clear();
+            $gameReportStatus = null;
+            
+            // Should be okay to let this fall through
+        }
         // Calculate points earned
+        $results = $this->get('cerad_tourn.s5games_results');
+        $results->calcPointsEarnedForTeam($game,$homeTeamReport,$awayTeamReport);
+        $results->calcPointsEarnedForTeam($game,$awayTeamReport,$homeTeamReport);
         
         // Update status if goals were entered
-        
+        if ($homeTeamReport->getGoalsScored() !== null)
+        {
+            if ($gameReportStatus == 'Pending') $gameReport->setStatus('Submitted');
+            
+            switch($game->getStatus())
+            {
+                case 'Normal':
+                case 'In Progress':
+                    $game->setStatus('Played');
+                    break;
+            }
+        }
         // Save the results
         $game->setReport    ($gameReport);
         $homeTeam->setReport($homeTeamReport);

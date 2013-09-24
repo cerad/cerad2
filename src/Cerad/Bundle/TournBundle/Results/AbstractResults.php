@@ -4,8 +4,86 @@
  */
 namespace Cerad\Bundle\TournBundle\Results;
 
-class S5GamesResults extends AbstractResults
+class AbstractResults
 {
+    protected $gameRepo;
+    
+    public function __construct($gameRepo)
+    {
+        $this->gameRepo = $gameRepo;
+    }
+
+    /* ==========================================================
+     * For calculating points
+     */
+    protected $pointsEarnedForWin     = 6;
+    protected $pointsEarnedForTie     = 3;
+    protected $pointsEarnedForLoss    = 0;
+    protected $pointsEarnedForShutout = 0;
+    
+    protected $pointsEarnedForGoalsMax = 3;
+    
+    protected $pointsMinusForPlayerWarning  = 0;
+    protected $pointsMinusForCoachWarning   = 0;
+    protected $pointsMinusForSpecWarning    = 0;
+    
+    protected $pointsMinusForPlayerEjection = 2;
+    protected $pointsMinusForCoachEjection  = 3;
+    protected $pointsMinusForSpecEjection   = 0;
+    
+    /* =========================================================
+     * Called by game report controller
+     * Game is for future use, maybe not all games count?
+     * Maybe also for forfeits?
+     */
+    public function calcPointsEarnedForTeam($game,$team1,$team2)
+    {
+        // Make scores are set
+        $team1Goals = $team1->getGoalsScored();
+        $team2Goals = $team2->getGoalsScored();
+        if (($team1Goals === null) || ($team2Goals === null)) 
+        {
+            $team1->clear();
+            $team2->clear();
+            return;
+        }
+        $team1->setGoalsAllowed($team2Goals);
+        $team2->setGoalsAllowed($team1Goals);
+   
+        $pointsMinus  = 0;
+        $pointsEarned = 0;
+        
+        if ($team1Goals  > $team2Goals) $pointsEarned += $this->pointsEarnedForWin;
+        if ($team1Goals == $team2Goals) $pointsEarned += $this->pointsEarnedForTie;
+        if ($team1Goals  < $team2Goals) $pointsEarned += $this->pointsEarnedForLoss;
+        
+        if ($team2Goals == 0) $pointsEarned += $this->pointsEarnedForShutout;
+        
+        $maxGoals = $team1Goals;
+        if ($maxGoals > $this->pointsEarnedForGoalsMax) $maxGoals = $this->pointsEarnedForGoalsMax;
+        $pointsEarned += $maxGoals;
+      
+        $fudgeFactor   = $team1->getFudgeFactor();
+        $pointsEarned += $fudgeFactor;
+         
+        $pointsMinus  += ($team1->getPlayerWarnings()* $this->pointsMinusForPlayerWarning);
+        $pointsMinus  += ($team1->getCoachWarnings() * $this->pointsMinusForCoachWarning);
+        $pointsMinus  += ($team1->getSpecWarnings()  * $this->pointsMinusForSpecWarning);
+        
+        $pointsMinus  += ($team1->getPlayerEjections()* $this->pointsMinusForPlayerEjection);
+        $pointsMinus  += ($team1->getCoachEjections() * $this->pointsMinusForCoachEjection);
+        $pointsMinus  += ($team1->getSpecEjections()  * $this->pointsMinusForSpecEjection);
+             
+        $pointsEarned -= $pointsMinus;
+              
+        // Sportsmanship?
+        
+        // Save
+        $team1->setPointsMinus ($pointsMinus);
+        $team1->setPointsEarned($pointsEarned);
+        
+        return;     
+    }
     // Points earned during a game
     public function calcPointsEarnedForGame($game)
     {
