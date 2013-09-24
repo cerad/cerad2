@@ -30,11 +30,15 @@ class GameTeamReport extends AbstractEntity
     protected $specWarnings;
     protected $specEjections;
  
-    const propNames = array(
-        'status','goalsScored','goalsAllowed','pointsEarned','pointsMinus','sportsmanship','fudgeFactor',
-        'playerWarnings','playerEjections','coachWarnings','coachEjections',
-        'benchWarnings','benchEjections','specWarnings','specEjections',
-    );
+    static function getPropNames()
+    {
+        return array(
+            'status','goalsScored','goalsAllowed','pointsEarned','pointsMinus',
+            'sportsmanship','fudgeFactor',
+            'playerWarnings','playerEjections','coachWarnings','coachEjections',
+            'benchWarnings','benchEjections','specWarnings','specEjections',
+        );
+    }
     
     public function getId()     { return $this->id;     }
     public function getTeam()   { return $this->team;   }
@@ -81,15 +85,22 @@ class GameTeamReport extends AbstractEntity
     {
         if (!is_array($config)) return;
         
-        foreach(self::$propNames as $propName)
+        foreach(self::getPropNames() as $propName)
         {
             if (isset($config[$propName])) $this->$propName = $config[$propName];
+        }
+    }
+    public function clear()
+    {
+        foreach(self::getPropNames() as $propName)
+        {
+            $this->$propName = null;
         }
     }
     public function getData()
     {
         $data = array();
-        foreach(self::$propNames as $propName)
+        foreach(self::getPropNames() as $propName)
         {
             if (isset($this->$propName)) $data[$propName] = $this->$propName;
         }

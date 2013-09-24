@@ -26,3 +26,7 @@ services:
     cerad_game.game_field_repository:
         alias: cerad_game.game_field_repository.doctrine
         
+    cerad_game.game_report_update_master.form_type:
+        class: Cerad\Bundle\GameBundle\FormType\GameReport\Update\MasterFormType
+        tags:
+            - { name: form.type, alias: cerad_game_report_update_master } 
