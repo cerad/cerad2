@@ -12,7 +12,7 @@ Cerad\Bundle\GameBundle\Entity\GameOfficial:
           
         game:
             targetEntity: Game
-            inversedBy:   teams
+            inversedBy:   officials
             nullable:     false
       
     fields:
