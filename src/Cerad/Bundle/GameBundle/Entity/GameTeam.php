@@ -75,6 +75,7 @@ class GameTeam extends AbstractEntity
      * All stored in an array
      */
     public function createGameTeamReport($config = null) { return new GameTeamReport($config); }
+    public function createPoolTeamReport($config = null) { return new PoolTeamReport($config); }
     
     public function getReport()  
     { 

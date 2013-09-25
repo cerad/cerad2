@@ -31,13 +31,17 @@ class AbstractResults
     protected $pointsMinusForCoachEjection  = 3;
     protected $pointsMinusForSpecEjection   = 0;
     
+    // This if for the pool play results
+    protected $maxGoalsScoredPerGame  = 3;
+    protected $maxGoalsAllowedPerGame = 5;
+    
     /* =========================================================
      * Called by game report controller
      * Game is for future use, maybe not all games count?
      * Maybe also for forfeits?
      */
-    public function calcPointsEarnedForTeam($game,$team1,$team2)
-    {
+    public function calcPointsEarnedForTeam($team1,$team2)
+    {   
         // Make scores are set
         $team1Goals = $team1->getGoalsScored();
         $team2Goals = $team2->getGoalsScored();
@@ -84,84 +88,23 @@ class AbstractResults
         
         return;     
     }
-    // Points earned during a game
-    public function calcPointsEarnedForGame($game)
+    /* ===========================================================
+     * Internal routine to allow recalculating points earned if needed
+     */
+    protected function calcPointsEarnedForGame($game)
     {
-        $gameReport = $game->getReport();
-        
         $homeTeamReport = $game->getHomeTeam()->getReport();
         $awayTeamReport = $game->getAwayTeam()->getReport();
         
-        // Might be handy
-        if ($gameReport->getStatus() == 'Clear')
-        {
-            $gameReport->clear();
-            $homeTeamReport->clear();
-            $awayTeamReport->clear();
-            return;
-        }
-        $this->calcPointsEarnedForTeam($game,$homeTeamReport,$awayTeamReport);
-        $this->calcPointsEarnedForTeam($game,$awayTeamReport,$homeTeamReport);
-    }
-    /* =====================================================
-     * The extraction portion
-     */
-    protected $pools;
-    
-    protected function getPoolTeamReport($pool,$name)
-    {
-        if (isset($this->pools[$pool]['teams'][$name])) return $this->pools[$pool]['teams'][$name];
-        
-        $report = $this->gameManager->newTeamReport();
-        $report->setTeamName($name);
-        $this->pools[$pool]['teams'][$name] = $report;
-        
-        return $report;
-    }
-    protected function processPoolGame($game,$pool,$poolFilter)
-    {
-        // Never have a filter for now
-        if ($poolFilter && $poolFilter != substr($pool,8,1)) return;
-
-        $this->pools[$pool]['games'][$game->getId()] = $game;
-        
-        $homeGameTeam = $game->getHomeTeam();
-        $awayGameTeam = $game->getAwayTeam();
-        
-        $homeGameTeamReport = $game->getHomeTeam()->getReport();
-        $awayGameTeamReport = $game->getAwayTeam()->getReport();
-        
-        $homePoolTeamReport = $this->getPoolTeamReport($pool,$homeGameTeam->getName());;
-        $awayPoolTeamReport = $this->getPoolTeamReport($pool,$awayGameTeam->getName());;
-
-        /* ====================================================
-         * Not sure need this, games is scored but points not applied?
-        $pointsAppiled = true;
-        if ($homeGameTeamReport->getGoalsScored() == null) $pointsApplied = false;
-        if ($awayGameTeamReport->getGoalsScored() == null) $pointsApplied = false;
-        if (!$pointsApplied) return;
-        */
-        
-        $this->calcPoolTeamPoints($game,$homePoolTeamReport,$homeGameTeamReport);
-        $this->calcPoolTeamPoints($game,$awayPoolTeamReport,$awayGameTeamReport);
-        
-        /* =====================================================
-         * The national games had a few other tests here
-         */
+        $this->calcPointsEarnedForTeam($homeTeamReport,$awayTeamReport);
+        $this->calcPointsEarnedForTeam($awayTeamReport,$homeTeamReport);
     }
     /* =============================================================
      * Transfers data from game team to pool team
+     * Summarizing the results
      */
-    protected function calcPoolTeamPoints($game,$poolTeamReport,$gameTeamReport)
-    {
-        /* ======================================================
-         * Look at this later, something abut cross bracket play
-         * and not processing the same team twice?
-         * team in this case was the pool team not the game team
-         */
-        //if (isset($this->gameTeams[$game->getId()][$team->getId()])) return;
-        //$this->gameTeams[$game->getId()][$team->getId()] = true;
-        
+    protected function calcPoolTeamPoints($poolTeamReport,$gameTeamReport)
+    {   
         $poolTeamReport->addPointsEarned($gameTeamReport->getPointsEarned());   
         $poolTeamReport->addPointsMinus ($gameTeamReport->getPointsMinus());
         
@@ -172,11 +115,11 @@ class AbstractResults
          * Tie breaking rule for goals allowed
          */
         $goalsScored = $gameTeamReport->getGoalsScored();
-        if ($goalsScored > 3) $goalsScored = 3;
+        if ($goalsScored > $this->maxGoalsScoredPerGame) $goalsScored = $this->maxGoalsScoredPerGame;
         $poolTeamReport->addGoalsScoredMax($goalsScored);
         
         $goalsAllowed = $gameTeamReport->getGoalsAllowed();
-        if ($goalsAllowed > 5) $goalsAllowed = 5;
+        if ($goalsAllowed > $this->maxGoalsAllowedPerGame) $goalsAllowed = $this->maxGoalsAllowedPerGame;
         $poolTeamReport->addGoalsAllowedMax($goalsAllowed);
         
         // Conduct
@@ -200,27 +143,112 @@ class AbstractResults
             if ($gameTeamReport->getGoalsScored() > $gameTeamReport->getGoalsAllowed()) $poolTeamReport->addGamesWon(1);
         }
         
+        /* ===========================================================
+         * Keep for now as documentation
+         */
         // WPF
         if ($poolTeamReport->getGamesPlayed())
         {
             // The 6 comes from the six soccer fest points
-            $spf = 6;
+            $spf = 0; // 6;
             $wpf = $poolTeamReport->getPointsEarned() / (($poolTeamReport->getGamesPlayed() * 10) + $spf);
-            $wpf = sprintf('%.3f',$wpf);
+            
+            $winPercent = sprintf('%.3f',$wpf);
         }
-        else $wpf = null;
+        else $winPercent = null;
         
-        $poolTeamReport->setWinPercent($wpf);
-
+        $poolTeamReport->setWinPercent($winPercent);
     }
     /* =====================================================
-     * Standings sort
+     * The extraction portion
+     */
+    protected $pools;
+    
+    protected function getPoolTeamReport($pool,$team)
+    {
+        $group = $team->getGroup();
+        
+        if (isset($this->pools[$pool]['teams'][$group])) return $this->pools[$pool]['teams'][$group];
+        
+        $report = $team->createPoolTeamReport();
+        
+        $report->setTeam($team);
+        
+        $this->pools[$pool]['teams'][$group] = $report;
+        
+        return $report;
+    }
+    /* ===========================================================
+     * Processing one game here
+     */
+    protected function processPoolGame($game,$pool,$poolFilter)
+    {
+        // Hack to filter non pool games
+        if (strpos($pool,' PP ') === false) return;
+        
+        // Never have a filter for now
+        if ($poolFilter && $poolFilter != substr($pool,8,1)) return;
+
+        $this->pools[$pool]['games'][$game->getId()] = $game;
+        
+        $homeGameTeam = $game->getHomeTeam();
+        $awayGameTeam = $game->getAwayTeam();
+        
+        $homeGameTeamReport = $homeGameTeam->getReport();
+        $awayGameTeamReport = $awayGameTeam->getReport();
+        
+        $homePoolTeamReport = $this->getPoolTeamReport($pool,$homeGameTeam);
+        $awayPoolTeamReport = $this->getPoolTeamReport($pool,$awayGameTeam);
+        
+        // Summarizes results from individual games
+        $this->calcPoolTeamPoints($homePoolTeamReport,$homeGameTeamReport);
+        $this->calcPoolTeamPoints($awayPoolTeamReport,$awayGameTeamReport);
+    }
+    /* ================================================================
+     * Given a list of games, pull the pool information from them
+     */
+    public function getPools($games, $poolFilter = null)
+    {
+        $this->games = $games;
+        $this->pools = array();
+        
+        foreach($games as $game)
+        {
+            // Recalc? Only if formula changes
+            //$this->calcPointsEarnedForGame($game);
+            
+            // 
+            $pool = $game->getGroup();
+            
+            $this->processPoolGame($game,$pool,$poolFilter);
+        } // die();
+        
+        $pools = $this->pools;
+        
+        ksort($pools);
+        
+        
+        // Sort the teams by standing within each pool
+        foreach($pools as $poolKey => $pool)
+        {
+            // Used for head to head
+            $this->poolGames = $pools[$poolKey]['games'];
+            
+            // The teamReports
+            $teams = $pool['teams'];
+            
+            //sort
+            usort($teams,array($this,'compareTeamStandings'));
+            
+            $pools[$poolKey]['teams'] = $teams;
+        }
+        return $pools;
+    }
+    /* =====================================================
+     * Standings sort based on PoolTeamReports
      */
     protected function compareTeamStandings($team1,$team2)
-    {
-        //$team1 = $team1x->getReport();
-        //$team2 = $team2x->getReport();
-        
+    {   
         // Points earned
         $pe1 = $team1->getPointsEarned();
         $pe2 = $team2->getPointsEarned();
@@ -240,8 +268,8 @@ class AbstractResults
         // Sportsmanship deductions
         $pm1 = $team1->getPointsMinus();
         $pm2 = $team2->getPointsMinus();
-        if ($pm1 < $pm2) return  1;
-        if ($pm1 > $pm2) return -1;
+        if ($pm1 < $pm2) return -1;
+        if ($pm1 > $pm2) return  1;
          
         // Goals Allowed
         $ga1 = $team1->getGoalsAllowedMax();
@@ -256,8 +284,8 @@ class AbstractResults
         if ($gd1 > $gd2) return  1;
         
         // Just the key
-        $key1 = $team1->getTeamName();
-        $key2 = $team2->getTeamName();
+        $key1 = $team1->getTeam()->getName();
+        $key2 = $team2->getTeam()->getName();
         
         if ($key1 < $key2) return -1;
         if ($key1 > $key2) return  1;
@@ -275,11 +303,12 @@ class AbstractResults
         
         foreach($this->poolGames as $game)
         {
+            // Should probably use group and not name
             $homeTeamName = $game->getHomeTeam()->getName();
             $awayTeamName = $game->getAwayTeam()->getName();
             
-            $team1Name = $team1->getTeamName();
-            $team2Name = $team2->getTeamName();
+            $team1Name = $team1->getTeam()->getName();
+            $team2Name = $team2->getTeam()->getName();
             
             if ($homeTeamName == $team1Name && ($awayTeamName == $team2Name))
             {
@@ -299,45 +328,6 @@ class AbstractResults
         if ($team1Wins < $team2Wins) return  1;
         if ($team1Wins > $team2Wins) return -1;
         return 0;
-    }
-    /* ================================================================
-     * Given a list of games, pull the pool information from them
-     */
-    public function getPools($games, $poolFilter = null)
-    {
-        $this->games = $games;
-        $this->pools = array();
-        
-        foreach($games as $game)
-        {
-            // Recalc? Only if formula changes
-            //$this->calcPointsEarnedForGame($game);
-            
-            // 
-            $pool = $game->getLevel()->getName();
-            
-            $this->processPoolGame($game,$pool,$poolFilter);
-        } // die();
-        
-        $pools = $this->pools;
-        ksort($pools);
-        
-        
-        // Sort the teams by standing within each pool
-        foreach($pools as $poolKey => $pool)
-        {
-            // Used for head to head
-            $this->poolGames = $pools[$poolKey]['games'];
-            
-            // The teamReports
-            $teams = $pool['teams'];
-            
-            //sort
-            usort($teams,array($this,'compareTeamStandings'));
-            
-            $pools[$poolKey]['teams'] = $teams;
-        }
-        return $pools;
     }
 }
 ?>

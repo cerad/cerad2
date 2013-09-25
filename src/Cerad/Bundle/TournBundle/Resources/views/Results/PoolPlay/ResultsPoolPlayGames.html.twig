@@ -1,0 +1,67 @@
+{# @CeradTourn/ResultsPoolPlay/ResultsPoolPlayTeams.html.twig #}
+<table border = "1">
+<tr><th colspan="16">Game Pool Scores - {{ poolKey }}</th></tr>
+<tr><td colspan="16">GS=Goals Scored, SP=Sportsmanship, YC=Caution, RC=Sendoff, CE=Coach Expelled, PE=Points Earned</td></tr>
+<tr>
+    <td>Num</td>
+    <td>Game</td>
+    <td>Report</td>
+    <td>DOW Time</td>
+    <td>Field</td>
+    <td>Pool</td>
+    <td>Home/Away Team</td>
+    <td>GS</td>
+    <td>SP</td>
+    <td>YC</td>
+    <td>RC</td>
+    <td>CE</td>
+    <td>PE</td>
+</tr>
+{% set even = false %}
+{% for game in pool.games %}
+        
+    {% if even %}
+        <tr id="ref-sched-{{game.num}}" class="game-status-{{game.status}}" style="background-color: cyan;">
+    {% else %}
+        <tr id="ref-sched-{{game.num}}" class="game-status-{{game.status}}">
+    {% endif %}
+            
+{# if is_granted('ROLE_ADMIN') #}
+{% if true %}
+    <td rowspan="2"><a href="{{ path('cerad_tourn_game_report_update', { num: game.num }) }}">{{ game.num }}</a></td>
+{% else %}
+    <td rowspan="2">{{ game.num }}</td>
+{%endif %}
+    <td rowspan="2">{{ game.status         }}</td>
+    <td rowspan="2">{{ game.report.status  }}</td>
+    <td rowspan="2">{{ game.dtBeg.format('D') }} {{ game.dtBeg.format('g:i A') }}</td>
+    <td rowspan="2">{{ game.field.name     }}</td>
+    <td rowspan="2">{{ game.group          }}</td>
+            
+    {% set homeTeam = game.homeTeam %}
+    {% set awayTeam = game.awayTeam %}
+            
+    {% set homeTeamReport = homeTeam.report %}
+    {% set awayTeamReport = awayTeam.report %}
+            
+    <td>{{ homeTeam.name }}</td>
+    <td align="center">{{ homeTeamReport.goalsScored     }}</td>
+    <td align="center">{{ homeTeamReport.sportsmanship   }}</td>
+    <td align="center">{{ homeTeamReport.playerWarnings  }}</td>
+    <td align="center">{{ homeTeamReport.playerEjections }}</td>
+    <td align="center">{{ homeTeamReport.coachEjections  }}</td>
+    <td align="center">{{ homeTeamReport.pointsEarned    }}</td>
+  </tr>
+    {% if even %}<tr style="background-color: cyan;">{% else %}<tr>{% endif %}
+    <td>{{ awayTeam.name }}</td>
+    <td align="center">{{ awayTeamReport.goalsScored     }}</td>
+    <td align="center">{{ awayTeamReport.sportsmanship   }}</td>
+    <td align="center">{{ awayTeamReport.playerWarnings  }}</td>
+    <td align="center">{{ awayTeamReport.playerEjections }}</td>
+    <td align="center">{{ awayTeamReport.coachEjections  }}</td>
+    <td align="center">{{ awayTeamReport.pointsEarned    }}</td>
+  </tr>
+{% if even %}{% set even = false %}{% else %}{%set even = true %}{%endif%}
+{% endfor %}       
+</table>
+

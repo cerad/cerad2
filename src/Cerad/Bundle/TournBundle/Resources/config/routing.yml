@@ -166,7 +166,11 @@ cerad_tourn_game_update:
 cerad_tourn_game_report_update:
     pattern:  /game-report/update/{num}
     defaults: { _controller: CeradTournBundle:GameReport/GameReportUpdate:update }
-    
+
+cerad_tourn_results_poolplay:
+    pattern:  /results/poolplay
+    defaults: { _controller: CeradTournBundle:Results/PoolPlayResults:results }
+  
 # ===============================================
 # Internal controllers
 # header:

@@ -1,37 +1,27 @@
 <?php
-namespace Cerad\Bundle\TournBundle\Controller\GameReport;
+namespace Cerad\Bundle\TournBundle\Controller\Results;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
 
-class GameReportUpdateController extends MyBaseController
+class PoolPlayResultsController extends MyBaseController
 {
-    public function updateAction(Request $request)
+    const SESSION_RESULTS_POOLPLAY_DIV  = 'results_poolplay_div';
+    const SESSION_RESULTS_POOLPLAY_POOL = 'results_poolplay_pool';
+    
+    public function resultsAction(Request $request)
     {
         // Simple model
         $model = $this->createModel($request);
         if ($model['response']) return $model['response'];
-        
-        $form = $this->createModelForm($model);
-        $form->handleRequest($request);
-
-        if ($form->isValid()) 
-        {   
-            $model = $form->getData();
-            
-            $this->processModel($model);
-            
-            return $this->redirect('cerad_tourn_game_report_update',array('num' => $model['game']->getNum()));
-        }
-        
+                
         $tplData = array();
-        $tplData['form']    = $form->createView();
         
-        $tplData['game']    = $model['game'];
+        $tplData['pools']   = $model['pools'];
         $tplData['project'] = $model['project'];
         
-        return $this->render('@CeradTourn/GameReport/Update/GameReportUpdateIndex.html.twig', $tplData);
+        return $this->render('@CeradTourn/Results/PoolPlay/ResultsPoolPlayIndex.html.twig', $tplData);
     }
     protected function processModel($model)
     { 
@@ -57,8 +47,8 @@ class GameReportUpdateController extends MyBaseController
         }
         // Calculate points earned
         $results = $this->get('cerad_tourn.s5games_results');
-        $results->calcPointsEarnedForTeam($homeTeamReport,$awayTeamReport);
-        $results->calcPointsEarnedForTeam($awayTeamReport,$homeTeamReport);
+        $results->calcPointsEarnedForTeam($game,$homeTeamReport,$awayTeamReport);
+        $results->calcPointsEarnedForTeam($game,$awayTeamReport,$homeTeamReport);
         
         // Update status if goals were entered
         if ($homeTeamReport->getGoalsScored() !== null)
@@ -99,33 +89,37 @@ class GameReportUpdateController extends MyBaseController
         $project = $this->getProject();
         $model['project'] = $project;
         
-        // Game comes from request
-        $num = $request->get('num');
-        
-        $gameRepo = $this->get('cerad_game.game_repository');
-        $game = $gameRepo->findOneByProjectNum($project->getId(),$num);
-        if (!$game)
+        // Division comes from request or session
+        $session = $request->getSession();
+        $div = $request->get('div');
+        if (!$div) 
         {
-            $model = array();
-            $model['response'] = $this->redirect('cerad_tourn_welcome');
+            // Maybe should do a redirect here?
+            $div = $session->get('SESSION_RESULTS_POOLPLAY_DIV');
+        }
+        if (!$div)
+        {
+            $model['pools'] = array();
             return $model;
         }
-        // Assorted report sections
-        $model['game']       = $game;
-        $model['gameReport'] = $game->getReport();
+        $session->set('SESSION_RESULTS_POOLPLAY_DIV',$div);
         
-        $model['homeTeamReport'] = $game->getHomeTeam()->getReport();
-        $model['awayTeamReport'] = $game->getAwayTeam()->getReport();
+        // Pull the games
+        $gameRepo = $this->get('cerad_game.game_repository');
+        $criteria = array();
+        $criteria['projects' ] = $project->getId();
+        $criteria['levels'   ] = $div;
+        $criteria['isPool'   ] = true; // Implement Later
+        $criteria['groupType'] = 'PP'; // Implement Later
+        
+        $games = $gameRepo->queryGameSchedule($criteria);
+        
+        $results = $this->get('cerad_tourn.s5games_results');
+        
+        $pools = $results->getPools($games);
+        
+        $model['pools'] = $pools;
         
         return $model;
-    }
-    /* ==========================================
-     * Hand crafted form
-     */
-
-    public function createModelForm($model)
-    {
-        $form = $this->createForm('cerad_game_report_update_master',$model);
-        return $form;        
     }
 }

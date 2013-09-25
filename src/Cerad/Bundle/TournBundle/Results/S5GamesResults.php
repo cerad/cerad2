@@ -6,25 +6,6 @@ namespace Cerad\Bundle\TournBundle\Results;
 
 class S5GamesResults extends AbstractResults
 {
-    // Points earned during a game
-    public function calcPointsEarnedForGame($game)
-    {
-        $gameReport = $game->getReport();
-        
-        $homeTeamReport = $game->getHomeTeam()->getReport();
-        $awayTeamReport = $game->getAwayTeam()->getReport();
-        
-        // Might be handy
-        if ($gameReport->getStatus() == 'Clear')
-        {
-            $gameReport->clear();
-            $homeTeamReport->clear();
-            $awayTeamReport->clear();
-            return;
-        }
-        $this->calcPointsEarnedForTeam($game,$homeTeamReport,$awayTeamReport);
-        $this->calcPointsEarnedForTeam($game,$awayTeamReport,$homeTeamReport);
-    }
     /* =====================================================
      * The extraction portion
      */
