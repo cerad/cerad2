@@ -11,7 +11,7 @@ class Project
     protected $fedId;     // AYSO
     protected $fedRoleId;  // AYSOV
     
-    protected $modelId;  // ayso_natgames, ussf_alabama
+    protected $results;  // s1games, s5games, natgames etc
     
     protected $title;
     protected $desc;
@@ -30,7 +30,7 @@ class Project
     
     public function getFedId     () { return $this->fedId;     }
     public function getFedRoleId () { return $this->fedRoleId; }
-    public function getModelId   () { return $this->modelId;   }
+    public function getResults   () { return $this->results;   }
     
     public function getDesc () { return $this->desc;  }
     public function getTitle() { return $this->title; }

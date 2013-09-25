@@ -4,7 +4,7 @@
  */
 namespace Cerad\Bundle\TournBundle\Results;
 
-class S5GamesResults extends AbstractResults
+class S1GamesResults extends AbstractResults
 {
 }
 ?>

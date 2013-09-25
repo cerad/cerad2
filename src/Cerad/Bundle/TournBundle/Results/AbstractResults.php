@@ -1,18 +1,15 @@
 <?php
 /* =========================================================
  * Focuses on calculating pool play results
+ * 
+ * 1. Calc points earned for game
+ * 2. Calc points earned for pool team
+ * 3. Apply tie breaking rules
  */
 namespace Cerad\Bundle\TournBundle\Results;
 
 class AbstractResults
 {
-    protected $gameRepo;
-    
-    public function __construct($gameRepo)
-    {
-        $this->gameRepo = $gameRepo;
-    }
-
     /* ==========================================================
      * For calculating points
      */

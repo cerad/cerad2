@@ -46,7 +46,10 @@ class PoolPlayResultsController extends MyBaseController
             // Should be okay to let this fall through
         }
         // Calculate points earned
-        $results = $this->get('cerad_tourn.s5games_results');
+        $project = $this->getProject();
+        $resultsServiceId = sprintf('cerad_tourn.%s_results',$project->getResults());
+        $results = $this->get($resultsServiceId);
+        
         $results->calcPointsEarnedForTeam($game,$homeTeamReport,$awayTeamReport);
         $results->calcPointsEarnedForTeam($game,$awayTeamReport,$homeTeamReport);
         
