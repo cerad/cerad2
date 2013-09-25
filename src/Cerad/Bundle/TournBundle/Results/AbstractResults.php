@@ -180,9 +180,6 @@ class AbstractResults
      */
     protected function processPoolGame($game,$pool,$poolFilter)
     {
-        // Hack to filter non pool games
-        if (strpos($pool,' PP ') === false) return;
-        
         // Never have a filter for now
         if ($poolFilter && $poolFilter != substr($pool,8,1)) return;
 

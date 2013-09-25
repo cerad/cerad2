@@ -16,6 +16,7 @@ class Game extends AbstractEntity
     protected $num;   // Unique within project
     protected $role = self::RoleGame;
     protected $group;  // == play? == group?
+    protected $groupType; // Pool Play, semi final etc
     protected $link;   // Maybe to link crews?
     
     protected $dtBeg; // DateTime begin
@@ -28,32 +29,31 @@ class Game extends AbstractEntity
     
     protected $status = 'Active';
     
-    protected $report;
-    protected $reportStatus;
+    protected $report; // Array of properties
     
     protected $teams;
     protected $officials;
     
-    public function getId()      { return $this->id;      }
-    public function getNum()     { return $this->num;     }
-    public function getRole()    { return $this->role;    }
-    public function getGroup()   { return $this->group;   }
-    public function getLink()    { return $this->link;    }
-    public function getDtBeg()   { return $this->dtBeg;   }
-    public function getDtEnd()   { return $this->dtEnd;   }
-    public function getStatus()  { return $this->status;  }
+    public function getId()        { return $this->id;        }
+    public function getNum()       { return $this->num;       }
+    public function getRole()      { return $this->role;      }
+    public function getGroup()     { return $this->group;     }
+    public function getGroupType() { return $this->groupType; }
+    public function getLink()      { return $this->link;      }
+    public function getDtBeg()     { return $this->dtBeg;     }
+    public function getDtEnd()     { return $this->dtEnd;     }
+    public function getStatus()    { return $this->status;    }
     
     public function getOrgId()     { return $this->orgId;     }
     public function getField()     { return $this->field;     }
     public function getLevelId()   { return $this->levelId;   }
     public function getProjectId() { return $this->projectId; }
     
-    public function getReportStatus() { return $this->reportStatus; }
-    
     public function setNum      ($value) { $this->onPropertySet('num',      $value); }
     public function setLink     ($value) { $this->onPropertySet('link',     $value); }
     public function setRole     ($value) { $this->onPropertySet('role',     $value); }
     public function setGroup    ($value) { $this->onPropertySet('group',    $value); }
+    public function setGroupType($value) { $this->onPropertySet('groupType',$value); }
     public function setField    ($value) { $this->onPropertySet('field',    $value); }
     public function setDtBeg    ($value) { $this->onPropertySet('dtBeg',    $value); }
     public function setDtEnd    ($value) { $this->onPropertySet('dtEnd',    $value); }
@@ -62,8 +62,6 @@ class Game extends AbstractEntity
     public function setOrgId    ($value) { $this->onPropertySet('orgId',    $value); }
     public function setLevelId  ($value) { $this->onPropertySet('levelId',  $value); }
     public function setProjectId($value) { $this->onPropertySet('projectId',$value); }
-    
-    public function setReportStatus($value) { $this->onPropertySet('reportStatus',$value); }
     
     /* =======================================
      * Create factory

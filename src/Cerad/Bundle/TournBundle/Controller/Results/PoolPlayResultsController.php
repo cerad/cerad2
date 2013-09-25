@@ -23,62 +23,6 @@ class PoolPlayResultsController extends MyBaseController
         
         return $this->render('@CeradTourn/Results/PoolPlay/ResultsPoolPlayIndex.html.twig', $tplData);
     }
-    protected function processModel($model)
-    { 
-        // Extract
-        $game           = $model['game'];
-        $gameReport     = $model['gameReport'];
-        $homeTeamReport = $model['homeTeamReport'];
-        $awayTeamReport = $model['awayTeamReport'];
-        
-        $homeTeam = $game->getHomeTeam();
-        $awayTeam = $game->getAwayTeam();
-        
-        // Is it a clear operation?
-        $gameReportStatus = $gameReport->getStatus();
-        if ($gameReportStatus == 'Clear')
-        {
-            $gameReport->clear();
-            $homeTeamReport->clear();
-            $awayTeamReport->clear();
-            $gameReportStatus = null;
-            
-            // Should be okay to let this fall through
-        }
-        // Calculate points earned
-        $project = $this->getProject();
-        $resultsServiceId = sprintf('cerad_tourn.%s_results',$project->getResults());
-        $results = $this->get($resultsServiceId);
-        
-        $results->calcPointsEarnedForTeam($game,$homeTeamReport,$awayTeamReport);
-        $results->calcPointsEarnedForTeam($game,$awayTeamReport,$homeTeamReport);
-        
-        // Update status if goals were entered
-        if ($homeTeamReport->getGoalsScored() !== null)
-        {
-            if ($gameReportStatus == 'Pending') $gameReport->setStatus('Submitted');
-            
-            switch($game->getStatus())
-            {
-                case 'Normal':
-                case 'In Progress':
-                    $game->setStatus('Played');
-                    break;
-            }
-        }
-        // Save the results
-        $game->setReport    ($gameReport);
-        $homeTeam->setReport($homeTeamReport);
-        $awayTeam->setReport($awayTeamReport);
-        
-        // And persist
-        $gameRepo = $this->get('cerad_game.game_repository');
-        $gameRepo->save($game);
-        $gameRepo->commit();
-        
-        // Done
-        return $model;
-    }
     /* ===============================================
      * Assorted report objects
      */
@@ -110,10 +54,9 @@ class PoolPlayResultsController extends MyBaseController
         // Pull the games
         $gameRepo = $this->get('cerad_game.game_repository');
         $criteria = array();
-        $criteria['projects' ] = $project->getId();
-        $criteria['levels'   ] = $div;
-        $criteria['isPool'   ] = true; // Implement Later
-        $criteria['groupType'] = 'PP'; // Implement Later
+        $criteria['projects' ]  = $project->getId();
+        $criteria['levels'   ]  = $div;
+        $criteria['groupTypes'] = 'PP';
         
         $games = $gameRepo->queryGameSchedule($criteria);
         

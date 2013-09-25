@@ -50,6 +50,8 @@ class GameRepository extends EntityRepository
         $levels   = $this->getArrayValue($criteria,'levels');
         $projects = $this->getArrayValue($criteria,'projects');
         
+        $groupTypes = $this->getArrayValue($criteria,'groupTypes');
+        
         $teamNames  = $this->getArrayValue($criteria,'teams');
         $fieldNames = $this->getArrayValue($criteria,'fields');
         
@@ -101,8 +103,14 @@ class GameRepository extends EntityRepository
         }
         if ($levels)
         {
+            // Really should be an OR with game.levelId
             $qb->andWhere('gameTeam.levelId IN (:levelIds)');
             $qb->setParameter('levelIds',$levels);
+        }
+        if ($groupTypes)
+        {
+            $qb->andWhere('game.groupType IN (:groupTypes)');
+            $qb->setParameter('groupTypes',$groupTypes);
         }
         if ($dates)
         {

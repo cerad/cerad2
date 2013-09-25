@@ -63,6 +63,12 @@ Cerad\Bundle\GameBundle\Entity\Game:
             type:     string
             length:   20
             nullable: true
+            
+        groupType:
+            column:   groupx_type
+            type:     string
+            length:   20
+            nullable: true
                     
         dtBeg:
             column:   dt_beg
