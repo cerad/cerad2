@@ -22,13 +22,15 @@ class AbstractResults
     
     protected $pointsMinusForPlayerWarning  = 0;
     protected $pointsMinusForCoachWarning   = 0;
+    protected $pointsMinusForBenchWarning   = 0;
     protected $pointsMinusForSpecWarning    = 0;
     
     protected $pointsMinusForPlayerEjection = 2;
     protected $pointsMinusForCoachEjection  = 3;
+    protected $pointsMinusForBenchEjection  = 0;
     protected $pointsMinusForSpecEjection   = 0;
     
-    // This if for the pool play results
+    // This is for the pool play results
     protected $maxGoalsScoredPerGame  = 3;
     protected $maxGoalsAllowedPerGame = 5;
     
@@ -69,10 +71,12 @@ class AbstractResults
          
         $pointsMinus  += ($team1->getPlayerWarnings()* $this->pointsMinusForPlayerWarning);
         $pointsMinus  += ($team1->getCoachWarnings() * $this->pointsMinusForCoachWarning);
+        $pointsMinus  += ($team1->getBenchWarnings() * $this->pointsMinusForBenchWarning);
         $pointsMinus  += ($team1->getSpecWarnings()  * $this->pointsMinusForSpecWarning);
         
         $pointsMinus  += ($team1->getPlayerEjections()* $this->pointsMinusForPlayerEjection);
         $pointsMinus  += ($team1->getCoachEjections() * $this->pointsMinusForCoachEjection);
+        $pointsMinus  += ($team1->getBenchEjections() * $this->pointsMinusForBenchEjection);
         $pointsMinus  += ($team1->getSpecEjections()  * $this->pointsMinusForSpecEjection);
              
         $pointsEarned -= $pointsMinus;
@@ -120,11 +124,17 @@ class AbstractResults
         $poolTeamReport->addGoalsAllowedMax($goalsAllowed);
         
         // Conduct
-        $poolTeamReport->addPlayerWarnings ($gameTeamReport->getPlayerWarnings());
+        $poolTeamReport->addPlayerWarnings ($gameTeamReport->getPlayerWarnings ());
         $poolTeamReport->addPlayerEjections($gameTeamReport->getPlayerEjections());
         
+        $poolTeamReport->addCoachWarnings ($gameTeamReport->getCoachWarnings ());
         $poolTeamReport->addCoachEjections($gameTeamReport->getCoachEjections());
-        $poolTeamReport->addSpecEjections ($gameTeamReport->getSpecEjections ());
+        
+        $poolTeamReport->addBenchWarnings ($gameTeamReport->getBenchWarnings ());
+        $poolTeamReport->addBenchEjections($gameTeamReport->getBenchEjections());
+        
+        $poolTeamReport->addSpecWarnings ($gameTeamReport->getSpecWarnings ());
+        $poolTeamReport->addSpecEjections($gameTeamReport->getSpecEjections());
         
         $poolTeamReport->addSportsmanship($gameTeamReport->getSportsmanship());
         
@@ -297,21 +307,21 @@ class AbstractResults
         
         foreach($this->poolGames as $game)
         {
-            // Should probably use group and not name
-            $homeTeamName = $game->getHomeTeam()->getName();
-            $awayTeamName = $game->getAwayTeam()->getName();
+            // Group will be unique within a pool
+            $homeTeamGroup = $game->getHomeTeam()->getGroup();
+            $awayTeamGroup = $game->getAwayTeam()->getGroup();
             
-            $team1Name = $team1->getTeam()->getName();
-            $team2Name = $team2->getTeam()->getName();
+            $team1Group = $team1->getTeam()->getGroup();
+            $team2Group = $team2->getTeam()->getGroup();
             
-            if ($homeTeamName == $team1Name && ($awayTeamName == $team2Name))
+            if (($homeTeamGroup == $team1Group) && ($awayTeamGroup == $team2Group))
             {
                 $score1 = $game->getHomeTeam()->getReport()->getGoalsScored();
                 $score2 = $game->getAwayTeam()->getReport()->getGoalsScored();
                 if ($score1 > $score2) $team1Wins++;
                 if ($score1 < $score2) $team2Wins++;
             }
-            if ($homeTeamName == $team2Name && ($awayTeamName == $team1Name))
+            if ($homeTeamGroup == $team2Group && ($awayTeamGroup == $team1Group))
             {
                 $score2 = $game->getHomeTeam()->getReport()->getGoalsScored();
                 $score1 = $game->getAwayTeam()->getReport()->getGoalsScored();

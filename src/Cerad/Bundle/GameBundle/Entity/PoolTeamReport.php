@@ -37,7 +37,7 @@ class PoolTeamReport extends GameTeamReport
     public function addBenchEjections ($value) { $this->benchEjections   += $value; }
     public function addSpecEjections  ($value) { $this->specEjections    += $value; }
     
-    public function addSportsmanship  ($value) { $this->sportmanship     += $value; }
+    public function addSportsmanship  ($value) { $this->sportsmanship    += $value; }
     
     public function addGamesTotal ($value) { $this->gamesTotal  += $value; }
     public function addGamesPlayed($value) { $this->gamesPlayed += $value; }

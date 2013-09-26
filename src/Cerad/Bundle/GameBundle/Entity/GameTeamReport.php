@@ -81,6 +81,20 @@ class GameTeamReport extends AbstractEntity
     public function setSpecWarnings   ($value)  { return $this->onPropertySet('specWarnings',   $value);  }
     public function setSpecEjections  ($value)  { return $this->onPropertySet('specEjections',  $value);  }
     
+    public function getTotalWarnings()  
+    { 
+        $total = $this->playerWarnings + $this->coachWarnings + $this->benchWarnings + $this->specWarnings;  
+        
+        return $total ? $total : null;
+        
+    }
+    public function getTotalEjections()  
+    { 
+        $total = $this->playerEjections + $this->coachEjections + $this->benchEjections + $this->specEjections;
+        
+        return $total ? $total : null;
+   }
+   
     public function __construct($config = null)
     {
         if (!is_array($config)) return;

@@ -29,8 +29,12 @@ class GameTeamReportFormType extends AbstractType
         
         $builder->add('coachWarnings', 'integer', array('attr' => array('size' => 4)));
         $builder->add('coachEjections','integer', array('attr' => array('size' => 4)));
+        
+        $builder->add('benchEjections','integer', array('attr' => array('size' => 4)));
+        $builder->add('specEjections', 'integer', array('attr' => array('size' => 4)));
 
         $builder->add('pointsEarned', 'integer',  array('attr' => array('size' => 4),'read_only' =>  true));
+        $builder->add('pointsMinus',  'integer',  array('attr' => array('size' => 4),'read_only' =>  true));
     }
 }
 ?>
