@@ -34,6 +34,12 @@ Cerad\Bundle\PersonBundle\Entity\Person:
              
     fields:
       
+        guid:
+            column:   guid
+            type:     string
+            length:   40
+            nullable: true
+      
         # ===================================
         # PersonName
         nameFull:
