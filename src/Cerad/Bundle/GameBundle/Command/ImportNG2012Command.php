@@ -27,8 +27,14 @@ class ImportNG2012Command extends ContainerAwareCommand
     const PROJECT_ID  = 'AYSONationalGames2012';
     const PROJECT_IDX = 52;
     
+    protected $persons;
+    
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->processPersons();
+        
+        return;
+        
         $projectId  = self::PROJECT_ID;
         $projectIdx = self::PROJECT_IDX;
         
@@ -303,5 +309,102 @@ EOT;
             die('Extra Report Data');
         }        
     }
+    /* ===============================================================
+     * Build up an array of people
+     */
+    protected function processPersons()
+    {
+        // Map of personId to person/personGuid
+        $this->persons = array();
+        
+        $projectId  = self::PROJECT_ID;
+        $projectIdx = self::PROJECT_IDX;
+        
+        $conn = $this->getService('doctrine.dbal.ng2012_connection');
+        
+        $personRepo = $this->getService('cerad_person.person_repository');
+        $personRepo->truncate();
+        
+        $personSql = <<<EOT
+SELECT person.*
+FROM   person;
+EOT;
+        $personRows = $conn->fetchAll($personSql);
+
+        foreach($personRows as $row)
+        {
+            $this->processPersonDatax($row,$row['datax']);
+            
+            $personId = $row['id'];
+            
+            $person = $personRepo->createPerson();
+
+            /* ======================================================
+             * The name stuff using wonderful value object
+             */
+            $name = $person->getName();
+            $name->first = $row['first_name'];
+            $name->last  = $row['last_name'];
+            $name->nick  = $row['nick_name'];
+            
+            $nameLast = $name->last ? ' ' . $name->last : null;
+            
+            $name->full = $nameLast;
+            
+            if ($name->first) $name->full = $name->first . $nameLast;
+            if ($name->nick ) $name->full = $name->nick  . $nameLast;
+            
+            $person->setName($name);
+            
+            /* =======================================================
+             * Misc stuff
+             */
+            $person->setStatus  ($row['status'  ]);
+            $person->setVerified($row['verified']);
+            
+            $person->setEmail ($row['email']);
+            $person->setPhone ($row['cell_phone']);
+            $person->setGender($row['gender']);
+            
+            $dob1 = $row['dob'];
+            $dob2 = sprintf('%s-%s-%s',
+                substr($dob1,0,4),substr($dob1,4,2),substr($dob1,6,2));
+                
+            $dob3 = \DateTime::createFromFormat('Y-m-d',$dob2);
+            $person->setDob($dob3);
+            
+            // Persist
+            $personRepo->save($person);
+            
+            // Stash
+            $this->persons[$personId] = $person->getGuid();
+        }
+        $personRepo->commit();
+        
+        echo sprintf("Commited Pers  : %4d\n",count($personRows));
+   }
+    /* ====================================================================
+     * There is a datax but looks to be empty
+     */
+    protected function processPersonDatax($row,$datax)
+    {
+        if (!$datax) return;
+        
+        $data = unserialize($row['datax']);
+        if (is_array($data))
+        {
+            if (count($data))
+            {
+                print_r($row);
+                print_r($data);
+                die();
+            }
+            return;
+        }
+        // One record with bool false
+        if (is_bool($data)) return;
+        
+        echo sprintf("datax: %s\n",$datax);
+    }        
 }
 ?>

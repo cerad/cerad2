@@ -24,6 +24,12 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
     {
         return $id ? parent::find($id) : null;
     }
+    public function findOneByGuid($id)
+    {
+        if (!$id) return null;
+        
+        return $this->findOneBy(array('guid' => $id));
+    }
     public function findByFed($id)
     {
         if (!$id) return null;
@@ -78,6 +84,18 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
     {
        $em = $this->getEntityManager();
        return $em->flush();
+    }
+    
+    public function truncate()
+    {
+        $conn = $this->_em->getConnection();
+        $conn->executeUpdate('DELETE FROM person_persons;');
+        $conn->executeUpdate('DELETE FROM person_plans;'  );
+        $conn->executeUpdate('DELETE FROM persons;'       );
+        
+        $conn->executeUpdate('ALTER TABLE person_persons AUTO_INCREMENT = 1;');
+        $conn->executeUpdate('ALTER TABLE person_plans   AUTO_INCREMENT = 1;');
+        $conn->executeUpdate('ALTER TABLE persons        AUTO_INCREMENT = 1;');        
     }
 }
 ?>
