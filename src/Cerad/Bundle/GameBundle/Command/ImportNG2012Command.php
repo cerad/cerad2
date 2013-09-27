@@ -93,20 +93,22 @@ EOT;
             $gameField = $gameFieldRepo->findOneByProjectName($projectId,$row['field_name']);
             $game->setField($gameField);
                 
-                $datex = $row['datex'];
-                $timex = $row['timex'];
-                $dt = sprintf('%s-%s-%s %s:%s:00',
-                    substr($datex,0,4),substr($datex,4,2),substr($datex,6,2),
-                    substr($timex,0,2),substr($timex,2,2));
+            $datex = $row['datex'];
+            $timex = $row['timex'];
+            $dt = sprintf('%s-%s-%s %s:%s:00',
+                substr($datex,0,4),substr($datex,4,2),substr($datex,6,2),
+                substr($timex,0,2),substr($timex,2,2));
                 
-                $dtBeg = \DateTime::createFromFormat('Y-m-d H:i:s',$dt);
-                $dtEnd = clone($dtBeg);
-                $dtEnd->add(new \DateInterval('PT55M'));
+            $dtBeg = \DateTime::createFromFormat('Y-m-d H:i:s',$dt);
+            $dtEnd = clone($dtBeg);
+            $dtEnd->add(new \DateInterval('PT55M'));
                 
-                $game->setDtBeg($dtBeg);
-                $game->setDtEnd($dtEnd);
-                
-                $gameRepo->save($game);
+            $game->setDtBeg($dtBeg);
+            $game->setDtEnd($dtEnd);
+            
+            $this->processGameReport($game,$row['datax']);
+            
+            $gameRepo->save($game);
         }
         $gameRepo->commit();
         echo sprintf("Commited Games : %4d\n",count($gameRows));
@@ -139,14 +141,14 @@ EOT;
                 default: die('bad gameTeam role ' . $role);
             }
             $gameTeam->setLevelId($game->getLevelId());
-            $gameTeam->setReport($row['gameTeamReport']);
             $gameTeam->setOrgId ($row['org_id']);
             
             $name  = $row['desc1'];
             $gameTeam->setName (substr($name,3));
             $gameTeam->setGroup(substr($name,0,2));
             
-            //print_r($row); die();
+            // Process the report
+            $this->processGameTeamReport($gameTeam,$row['gameTeamReport']);            
         }
         $gameRepo->commit();
         echo sprintf("Commited Teams : %4d\n",count($gameTeamRows));
@@ -214,6 +216,92 @@ EOT;
         
         return;
         
+    }
+    /* ===================================================
+     * Break out the game team report processing
+     */
+    protected function processGameReport($game,$report)
+    {
+        // Dink around with unserializing
+        $report = unserialize($report);
+        
+        if (!is_array($report)) return;
+        
+        if (!isset($report['report']))
+        {
+            // numx => 10GA04 - Think it has to do with printing?
+            if (isset($report['numx'])) return;
+            
+            print_r($report); die();
+        }
+        $reportText   = $report['report'];
+        $reportStatus = $report['reportStatus'];
+        
+        $gameReport = $game->createGameReport();
+        $gameReport->setText  ($reportText);
+        $gameReport->setStatus($reportStatus);
+        
+        $game->setReport($gameReport);
+        
+        return;
+        print_r($report); die();
+    }
+    /* ===================================================
+     * Break out the game team report processing
+     */
+    protected function processGameTeamReport($gameTeam,$report)
+    {
+        // Dink around with unserializing
+        $report = unserialize($report);
+        
+        if (!is_array($report)) return;
+        
+        foreach($report as $key => $value)
+        {
+            switch($key)
+            {
+                case 'report': break;
+                default:
+                    echo sprintf("*** Unkown report key %s\n",$key);
+                    die();
+            }
+        }
+        // Triggers error if no report
+        $reportData = $report['report'];
+        
+        $transform = array(
+            'cautions'    => 'playerWarnings',
+            'sendoffs'    => 'playerEjections',
+            'coachTossed' => 'coachEjections',
+            'specTossed'  => 'specEjections',
+        );
+        foreach($transform as $key => $value)
+        {
+            if (array_key_exists($key,$reportData))
+            {
+                $reportData[$value] = $reportData[$key];
+                unset($reportData[$key]);
+            }
+        }
+        // Transfer data
+        $gameTeamReport = $gameTeam->createGameTeamReport($reportData);
+        $gameTeam->setReport($gameTeamReport);
+        
+        // Want to check for unknown prop names
+        $propNames = $gameTeamReport->getPropNames();
+        $extra = array();    
+        foreach($reportData as $propName => $value)
+        {
+            if (!in_array($propName,$propNames))
+            {
+                $extra[$propName] = $value;
+            }
+        }
+        if (count($extra))
+        {
+            print_r($extra);
+            die('Extra Report Data');
+        }        
     }
 }
 ?>
