@@ -137,11 +137,11 @@ class PersonFed extends BaseModel
     }
     public function getOrgState($autoCreate = true)
     {
-        return $this->findOrg(PersonFedOrg::RoleState,$autoCreate);
+        return $this->getOrg(PersonFedOrg::RoleState,$autoCreate);
     }
     public function getOrgRegion($autoCreate = true)
     {
-        return $this->findOrg(PersonFedOrg::RoleRegion,$autoCreate);
+        return $this->getOrg(PersonFedOrg::RoleRegion,$autoCreate);
     }
 }
 ?>

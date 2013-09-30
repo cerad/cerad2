@@ -33,14 +33,13 @@ class ImportNG2012Command extends ContainerAwareCommand
     {
         $this->processPersons();
         
-        return;
-        
         $projectId  = self::PROJECT_ID;
         $projectIdx = self::PROJECT_IDX;
         
         $conn = $this->getService('doctrine.dbal.ng2012_connection');
         
         $gameRepo      = $this->getService('cerad_game.game_repository');
+        $personRepo    = $this->getService('cerad_person.person_repository');
         $gameFieldRepo = $this->getService('cerad_game.game_field_repository');
         
         /* =======================================================================
@@ -182,6 +181,26 @@ EOT;
         
         foreach($gameOfficialRows as $row)
         {
+            // Should have person for everyone
+            $personId = $row['id'];
+            if ($personId)
+            {
+                $personGuid = $this->persons[$personId];
+                $person = $personRepo->findOneByGuid($personGuid);
+                $personFed = $person->getFed('AYSOV');
+                
+                /* =================================================
+                 * Originally, personFed was not being loaded
+                 * Clearing the cache fixed it
+                 */
+                if ($personFed->getId() != $row['fedId'])
+                {
+                    echo sprintf("*** Person id: %d, guid: %s\n",$person->getId(),$personGuid);
+                    echo sprintf("*** AYSOV Mismatch PF: %s, GO: %s\n",$personFed->getId(),$row['fedId']);
+                    die();
+                }
+            }
+            // Back to the game
             $num = $row['gameNum'];
             $game = $gameRepo->findOneByProjectNum($projectId,$num);
             
@@ -212,6 +231,10 @@ EOT;
             $gameOfficial->setPersonFedId($row['fedId']);
             $gameOfficial->setPersonOrgId($row['orgId']);
             
+            if ($personId)
+            {
+                $gameOfficial->setPersonGuid($this->persons[$personId]);
+            }
             $data= unserialize($row['regData']);
             $gameOfficial->setPersonBadge($data['ref_badge']);
             
@@ -326,19 +349,34 @@ EOT;
         $personRepo->truncate();
         
         $personSql = <<<EOT
-SELECT person.*
-FROM   person;
+SELECT 
+    person.*, 
+    personFed.reg_key AS fedId,
+    personFed.org_id  AS orgId,
+    personFed.datax   AS fedData
+FROM person
+LEFT JOIN person_reg AS personFed ON personFed.person_id = person.id
+;
 EOT;
         $personRows = $conn->fetchAll($personSql);
 
         foreach($personRows as $row)
         {
+            // This does nothing but verify that there is nothing to do
             $this->processPersonDatax($row,$row['datax']);
             
-            $personId = $row['id'];
-            
-            $person = $personRepo->createPerson();
+            // The fed is the immmutable aysoid
+            $personFed = $personRepo->findFed($row['fedId']);
+            if ($personFed) $person = $personFed->getPerson();
+            else
+            {
+                $person = $personRepo->createPerson();
+                $personFed = $person->getFed('AYSOV');
+                $personFed->setId($row['fedId']);
+            }
 
+            $this->processPersonFedDatax($personFed,$row['orgId'],$row['fedData']);
+            
             /* ======================================================
              * The name stuff using wonderful value object
              */
@@ -377,12 +415,69 @@ EOT;
             $personRepo->save($person);
             
             // Stash
+            $personId = $row['id'];
             $this->persons[$personId] = $person->getGuid();
         }
         $personRepo->commit();
         
         echo sprintf("Commited Pers  : %4d\n",count($personRows));
    }
+    /* ====================================================================
+     * All have an array datax
+     * ref_badge - All have, many with a value of none
+     * ref_date
+     * safe_haven
+     * mem_year  - Missing if never looked up
+     */
+    protected function processPersonFedDatax($personFed,$orgId,$datax)
+    {
+        if (!$datax) return;
+        $data = unserialize($datax);
+        if (!is_array($data))
+        {
+            echo sprintf("personFed.datax is not array: %s\n",$datax);
+            die();
+        }
+        // Unpack
+        $refBadge  = isset($data['ref_badge'])  ? $data['ref_badge']  : null;
+        $refDate   = isset($data['ref_date' ])  ? $data['ref_date' ]  : null;
+        $safeHaven = isset($data['safe_haven']) ? $data['safe_haven'] : null;
+        $memYear   = isset($data['mem_year'])   ? $data['mem_year']   : null;
+        
+        // All seem to have an org_id
+        if ($orgId)
+        {
+            $personFedOrg = $personFed->getOrgRegion();
+            $personFedOrg->setOrgId($orgId);
+            
+            if ($memYear == 'None') $memYear = null;
+            
+            $personFedOrg->setMemYear($memYear);
+        }
+        // Process safe haven is have one
+        if ($safeHaven)
+        {
+            $certSafeHaven = $personFed->getCertSafeHaven();
+            $certSafeHaven->setBadge($safeHaven);
+        }
+        if ($refBadge == 'None') $refBadge = null;
+        if ($refBadge)
+        {
+            $certReferee = $personFed->getCertReferee();
+            $certReferee->setBadge ($refBadge);
+          //$certReferee->setBadgex($refBadge);
+            
+            if ($refDate)
+            {
+                $refDate2 = sprintf('%s-%s-%s',
+                    substr($refDate,0,4),substr($refDate,4,2),substr($refDate,6,2));
+                
+                $refDate3 = \DateTime::createFromFormat('Y-m-d',$refDate2);
+                
+                $certReferee->setDateFirstCertified($refDate3);
+            }
+        }
+    }
     /* ====================================================================
      * There is a datax but looks to be empty
      */

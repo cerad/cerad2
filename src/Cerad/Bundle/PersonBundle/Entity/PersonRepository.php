@@ -89,6 +89,13 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
     public function truncate()
     {
         $conn = $this->_em->getConnection();
+        $conn->executeUpdate('DELETE FROM person_fed_certs;' );
+        $conn->executeUpdate('DELETE FROM person_fed_orgs;'  );
+        $conn->executeUpdate('DELETE FROM person_feds;'      );
+        
+        $conn->executeUpdate('ALTER TABLE person_fed_certs AUTO_INCREMENT = 1;');
+        $conn->executeUpdate('ALTER TABLE person_fed_orgs  AUTO_INCREMENT = 1;');
+        
         $conn->executeUpdate('DELETE FROM person_persons;');
         $conn->executeUpdate('DELETE FROM person_plans;'  );
         $conn->executeUpdate('DELETE FROM persons;'       );
