@@ -19,6 +19,12 @@ Cerad\Bundle\UserBundle\Entity\User:
            
     fields:
               
+        personGuid:
+            column:   person_guid
+            type:     string
+            length:   40
+            nullable: true
+            
         personFedId:
             column:   person_fed_id
             type:     string

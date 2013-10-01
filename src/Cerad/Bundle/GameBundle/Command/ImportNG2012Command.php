@@ -30,12 +30,16 @@ class ImportNG2012Command extends ContainerAwareCommand
     const PROJECT_IDX = 52;
     
     protected $persons;
+    protected $accounts;
+    protected $accountPersons; // Only one account per person
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->processPersons();
         $this->processPersonPlans();
         $this->processPersonPersons();
+        
+        $this->processAccounts();
         return;
         
         $projectId  = self::PROJECT_ID;
@@ -651,6 +655,77 @@ EOT;
             $person1->addPersonPerson($personPerson);
         }
         $personRepo->commit();
+    }
+    /* =====================================================================
+     * Called after the persons have been processed
+     * Add in all the person person relations
+     * 
+     * Remember to clear the user table for a full reset
+     */
+    protected function processAccounts()
+    {
+        $conn = $this->getService('doctrine.dbal.ng2012_connection');
+        
+        $userManager = $this->getService('cerad_user.user_manager');
+        $personRepo  = $this->getService('cerad_person.person_repository');
+        
+        $accountSql = <<<EOT
+SELECT account.*
+FROM   account
+;
+EOT;
+        $accountRows = $conn->fetchAll($accountSql);
+        foreach($accountRows as $row)
+        {
+            $this->processAccount($userManager,$personRepo,$row);    
+        }
+    }
+    protected function processAccount($userManager,$personRepo,$row)
+    {
+        // Only allow one account per person mostly because emails need to be unique
+        $personId  = $row['person_id'];
+        $accountId = $row['id'];
+        if (isset($this->accountPersons[$personId])) return;
+        
+        // Grab the person stuff
+        $personGuid = $this->persons[$personId];
+        $person = $personRepo->findOneByGuid($personGuid);
+        $personName = $person->getName();
+            
+        $username = $row['user_name'];
+        $userpass = $row['user_pass'];
+            
+        if (strlen($userpass) != 32)
+        {
+            // Some have blank for password
+            $userpass = md5('zaysox');
+        }
+        // For now, no need to update
+        $userExisting = $userManager->findUserByUsername($username);
+        if ($userExisting) return;
+        
+        // See if email was already used
+        $email = $person->getEmail();
+        $userEmail = $userManager->findUserByEmail($email);
+        if ($userEmail)
+        {
+            // Just a few
+          //echo sprintf("Dup email: %d %d %s\n",$accountId,$personId,$email);
+            return;
+        }
+        // Shoud be good to go
+        $user = $userManager->createUser();
+        $user->setUsername   ($username);
+        $user->setPassword   ($userpass);
+        $user->setEmail      ($email);
+        $user->setAccountName($personName->full);
+        $user->setPersonGuid ($person->getGuid());
+            
+        // Persist
+        $userManager->updateUser($user);
+        $this->accounts     [$accountId] = $username;
+        $this->accountPersons[$personId] = $username;
+        
     }
 }
 ?>
