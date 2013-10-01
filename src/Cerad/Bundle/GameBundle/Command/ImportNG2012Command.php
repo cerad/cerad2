@@ -24,6 +24,8 @@ class ImportNG2012Command extends ContainerAwareCommand
     protected function getService  ($id)   { return $this->getContainer()->get($id); }
     protected function getParameter($name) { return $this->getContainer()->getParameter($name); }
     
+    const PROJECT_S5Games_2012  = 'AYSOS5Games2012';
+    
     const PROJECT_ID  = 'AYSONationalGames2012';
     const PROJECT_IDX = 52;
     
@@ -32,6 +34,9 @@ class ImportNG2012Command extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->processPersons();
+        $this->processPersonPlans();
+        $this->processPersonPersons();
+        return;
         
         $projectId  = self::PROJECT_ID;
         $projectIdx = self::PROJECT_IDX;
@@ -340,13 +345,10 @@ EOT;
         // Map of personId to person/personGuid
         $this->persons = array();
         
-        $projectId  = self::PROJECT_ID;
-        $projectIdx = self::PROJECT_IDX;
-        
         $conn = $this->getService('doctrine.dbal.ng2012_connection');
         
         $personRepo = $this->getService('cerad_person.person_repository');
-        $personRepo->truncate();
+      //$personRepo->truncate();
         
         $personSql = <<<EOT
 SELECT 
@@ -500,6 +502,155 @@ EOT;
         if (is_bool($data)) return;
         
         echo sprintf("datax: %s\n",$datax);
-    }        
+    }
+    /* =====================================================================
+     * Called after the persons have been processed
+     * Add in all the project plans
+     */
+    protected function processPersonPlans()
+    {
+        $conn = $this->getService('doctrine.dbal.ng2012_connection');
+        
+        $personRepo = $this->getService('cerad_person.person_repository');
+        
+        $personPlanSql = <<<EOT
+SELECT plan.*
+FROM   project_person AS plan
+WHERE  plan.project_id IN (52,62)
+;
+EOT;
+        $personPlanRows = $conn->fetchAll($personPlanSql);
+        foreach($personPlanRows as $row)
+        {
+            $personGuid = $this->persons[$row['person_id']];
+            $person = $personRepo->findOneByGuid($personGuid);
+            
+            switch($row['project_id'])
+            {
+                case 52: 
+                    $projectId = 'AYSONationalGames2012'; 
+                    $plan = $person->getPlan($projectId);
+                    $plan->setBasic($this->getBasicPlanInfo());
+                    $this->processNatGamesPlan($plan,unserialize($row['datax']));
+                    break;
+                
+                case 62: 
+                    $projectId = 'AYSOS5Games2012';       
+                    $plan = $person->getPlan($projectId);
+                    $plan->setBasic($this->getBasicPlanInfo());
+                    $this->processS5GamesPlan($plan,unserialize($row['datax']));
+                    break;
+            }
+        }
+        $personRepo->commit();
+    }
+    protected function processNatGamesPlan($plan,$data)
+    {
+        if (!is_array($data)) return;
+        if (!isset($data['plans'])) return;
+        
+        $info = $data['plans'];
+                
+        $basic = $this->getBasicPlanInfo();
+        
+        $map = array(
+            'attending'    => 'attend',
+            'refereeing'   => 'will_referee',
+            'willAssess'   => 'do_assessments',
+            'wantAssess'   => 'want_assessment',
+            'coaching'     => 'coaching',
+            'playing'      => 'have_player',
+            'volunteering' => 'other_jobs',
+            'tshirt'       => 't_shirt_size',
+            'opening'      => 'attend_open',
+            'shuttle'      => 'ground_transport',
+            'housing'      => 'hotel',
+
+        );
+        foreach($map as $key1 => $key2)
+        {
+            if (isset($info[$key2])) $basic[$key1] = $info[$key2];
+        }
+        $plan->setBasic($basic);
+    }
+    protected function processS5GamesPlan($plan,$data)
+    {
+        if (!is_array($data)) return;
+        if (!isset($data['plans'])) return;
+        
+        $info = $data['plans'];
+        
+        $basic = $plan->getBasic();
+        $map = array(
+            'attending'    => 'willAttend',
+            'refereeing'   => 'willReferee',
+            'willAssess'   => 'willAssess',
+            'wantAssess'   => 'requestAssess',
+            'coaching'     => 'willCoach',
+            'playing'      => 'havePlayer',
+            'volunteering' => 'willVolunteer',
+            'tshirt'       => 'tshirtSize',
+            'notes'        => 'notes',
+        );
+        foreach($map as $key1 => $key2)
+        {
+            $basic[$key1] = $info[$key2];
+        }
+        $plan->setBasic($basic);
+    }
+    protected function getBasicPlanInfo()
+    {
+        return array
+        (
+                'attending'    => null,
+                'refereeing'   => null,
+                'willInstruct' => null,
+                'willAssess'   => null,
+                'wantAssess'   => null,
+                'coaching'     => null,
+                'volunteering' => null,
+                'playing'      => null,
+                'opening'      => null,
+                'tshirt'       => null,
+                'shuttle'      => null,
+                'housing'      => null,
+                'notes'        => null,
+        );
+    }
+    /* =====================================================================
+     * Called after the persons have been processed
+     * Add in all the person person relations
+     */
+    protected function processPersonPersons()
+    {
+        $conn = $this->getService('doctrine.dbal.ng2012_connection');
+        
+        $personRepo = $this->getService('cerad_person.person_repository');
+        
+        $personPersonSql = <<<EOT
+SELECT person_person.*
+FROM   person_person
+;
+EOT;
+        $personPersonRows = $conn->fetchAll($personPersonSql);
+        foreach($personPersonRows as $row)
+        {
+            $personGuid1 = $this->persons[$row['person_id1']];
+            $person1 = $personRepo->findOneByGuid($personGuid1);
+            
+            $personGuid2 = $this->persons[$row['person_id2']];
+            $person2 = $personRepo->findOneByGuid($personGuid2);
+            
+            $role = $row['relation'];
+            
+            $personPerson = $person1->createPersonPerson();
+            $personPerson->setRole($role);
+            $personPerson->setParent($person1);
+            $personPerson->setChild ($person2);
+            
+            $person1->addPersonPerson($personPerson);
+        }
+        $personRepo->commit();
+    }
 }
 ?>
