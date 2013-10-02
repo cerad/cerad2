@@ -17,7 +17,7 @@ class ImportS1GamesCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName       ('cerad:import:s1games')
+            ->setName       ('cerad:import:s1gamesx')
             ->setDescription('Schedule Import');
           //->addArgument   ('importFile', InputArgument::REQUIRED, 'Import File')
           //->addArgument   ('truncate',   InputArgument::OPTIONAL, 'Truncate')
