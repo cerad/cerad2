@@ -9,3 +9,16 @@ services:
             - '%cerad_tourn_show_configs%'
         tags:
             - { name: twig.extension }
+
+    cerad_tourn.schedule_official_search.form_type:
+        class: Cerad\Bundle\TournBundle\FormType\Schedule\Official\SearchFormType
+        tags:
+            - { name: form.type, alias: cerad_schedule_official_search }
+            
+    cerad_tourn.s1games_results:
+        class: Cerad\Bundle\TournBundle\Results\S1GamesResults
+
+    cerad_tourn.s5games_results:
+        class: Cerad\Bundle\TournBundle\Results\S5GamesResults
+
+

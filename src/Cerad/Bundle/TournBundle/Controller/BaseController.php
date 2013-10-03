@@ -44,6 +44,8 @@ class BaseController extends Controller
     /* ===================================================
      * This is similiar to what the authentication listener does on success
      * This should me moved to some sort of user service
+     * 
+     * TODO: Needs more work, user seems to get signed out
      */
     public function loginUser(Request $request, UserInterface $user)
     {
@@ -121,11 +123,11 @@ class BaseController extends Controller
         $personRepo = $this->get('cerad_person.person_repository');
         
         $user  = $this->getUser();
-        $fedId = $user->getPersonFedId();
+        $personGuid = $user->getPersonGuid();
         
-        if ($fedId)
+        if ($personGuid)
         {
-            $person = $personRepo->findByFed($fedId);
+            $person = $personRepo->findOneByGuid($personGuid);
             if ($person) return $person;
         }
         if (!$autoCreate) return null;

@@ -145,7 +145,32 @@ cerad_tourn_person_plan_update:
 #                           @CeradTourn/PersonPlan/Update/PersonPlanUpdateIndex.html.twig
 #                                                        /PersonPlanUpdateForm.html.twig
 #                                                        /PersonPlanUpdateHelp.html.twig
+# ===============================================
+# Schedule and results
+cerad_tourn_schedule_official_list:
+    pattern:  /schedule/official
+    defaults: { _controller: CeradTournBundle:Schedule/ScheduleOfficialList:list }
+    
+cerad_tourn_schedule_team_list:
+    pattern:  /schedule/team
+    defaults: { _controller: CeradTournBundle:Schedule/ScheduleTeamList:list }
+    
+cerad_tourn_schedule_my_list:
+    pattern:  /schedule/my
+    defaults: { _controller: CeradTournBundle:Schedule/ScheduleMyList:list }
+    
+cerad_tourn_game_update:
+    pattern:  /game/update
+    defaults: { _controller: CeradTournBundle:Game/GameUpdate:update }
+  
+cerad_tourn_game_report_update:
+    pattern:  /game-report/update/{num}
+    defaults: { _controller: CeradTournBundle:GameReport/GameReportUpdate:update }
 
+cerad_tourn_results_poolplay:
+    pattern:  /results/poolplay
+    defaults: { _controller: CeradTournBundle:Results/PoolPlayResults:results }
+  
 # ===============================================
 # Internal controllers
 # header:

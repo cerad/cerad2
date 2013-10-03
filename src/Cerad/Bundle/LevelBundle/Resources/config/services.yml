@@ -1,0 +1,9 @@
+
+services:
+    cerad_level.repository.in_memory:
+        class:  Cerad\Bundle\LevelBundle\InMemory\LevelRepository
+        arguments:  
+            - '%cerad_level_level_files%'
+
+    cerad_level.level_repository:
+        alias: cerad_level.repository.in_memory

@@ -1,0 +1,112 @@
+Cerad\Bundle\GameBundle\Entity\GameOfficial:
+    type:  entity
+    table: game_officials
+    changeTrackingPolicy: NOTIFY
+
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+            
+    manyToOne:
+          
+        game:
+            targetEntity: Game
+            inversedBy:   officials
+            nullable:     false
+      
+    fields:
+            
+        slot:
+            column:   slot
+            type:     integer
+            nullable: false
+            
+        role:
+            column:   role
+            type:     string
+            length:   20
+            nullable: false
+            
+        personNameFull:
+            column:   person_name_full
+            type:     string
+            length:   80
+            nullable: true
+            
+        personNameLast:
+            column:   person_name_last
+            type:     string
+            length:   40
+            nullable: true
+            
+        personNameFirst:
+            column:   person_name_first
+            type:     string
+            length:   40
+            nullable: true
+            
+        personEmail:
+            column:   person_email
+            type:     string
+            length:   80
+            nullable: true
+            
+        personPhone:
+            column:   person_phone
+            type:     string
+            length:   20
+            nullable: true
+            
+        personBadge:
+            column:   person_badge
+            type:     string
+            length:   20
+            nullable: true
+        
+        personGuid:
+            column:   person_guid
+            type:     string
+            length:   40
+            nullable: true
+            
+        personFedId:
+            column:   person_fed_id
+            type:     string
+            length:   40
+            nullable: true
+            
+        personOrgId:
+            column:   person_org_id
+            type:     string
+            length:   40
+            nullable: true
+                        
+        status:
+            column:   status
+            type:     string
+            length:   20
+            nullable: true
+            
+        state:
+            column:   state
+            type:     string
+            length:   20
+            nullable: true
+            
+        stateUpdatedOn:
+            column:   state_updated_on
+            type:     datetime
+            nullable: true
+            
+        stateUpdatedBy:
+            column:   state_updated_by
+            type:     string
+            length:   40
+            nullable: true
+                         
+        report:
+            column:   report
+            type:     array
+            nullable: true
+

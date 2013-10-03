@@ -26,7 +26,8 @@ class VolunteerIdTransformer implements DataTransformerInterface
         
         if (strlen($id) != 8 && $this->fake)
         {
-            $id = '99' . rand(100000,999999);
+            // Was 99 but those are valid
+            $id = '66' . rand(100000,999999);
         }
         return 'AYSOV' . $id;
     }

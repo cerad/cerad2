@@ -21,6 +21,8 @@ class AppKernel extends Kernel
             new Cerad\Bundle\ProjectBundle\CeradProjectBundle(),
             new Cerad\Bundle\PersonBundle \CeradPersonBundle(),
             new Cerad\Bundle\UserBundle   \CeradUserBundle(),
+            new Cerad\Bundle\GameBundle\CeradGameBundle(),
+            new Cerad\Bundle\LevelBundle\CeradLevelBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

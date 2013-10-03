@@ -16,6 +16,8 @@ class Person extends BaseModel implements PersonInterface
     const GenderUnknown = 'U';
 
   //protected $id;
+    protected $guid;   // For linking across contexts
+    
     protected $name;   // VO PersonName
     protected $icon;
     
@@ -40,7 +42,7 @@ class Person extends BaseModel implements PersonInterface
     
     public function __construct()
     {
-      //$this->id = $this->genId(); // Does the model really need these?
+        $this->guid = $this->genGuid();
         
         $this->setName   ($this->createName());
         $this->setAddress($this->createAddress());
@@ -50,6 +52,7 @@ class Person extends BaseModel implements PersonInterface
      */
   //public function getId       () { return $this->id;     }
     public function getDob      () { return $this->dob;    }
+    public function getGuid     () { return $this->guid;   }
     public function getIcon     () { return $this->icon;   }
     public function getNotes    () { return $this->notes;  }
     public function getEmail    () { return $this->email;  }
@@ -74,6 +77,7 @@ class Person extends BaseModel implements PersonInterface
     // Setters
   //public function setId       ($value) { $this->onPropertySet('id',       $value); }
     public function setDob      ($value) { $this->onPropertySet('dob',      $value); }
+    public function setGuid     ($value) { $this->onPropertySet('guid',     $value); }
     public function setIcon     ($value) { $this->onPropertySet('icon',     $value); }
     public function setNotes    ($value) { $this->onPropertySet('notes',    $value); }
     public function setEmail    ($value) { $this->onPropertySet('email',    $value); }

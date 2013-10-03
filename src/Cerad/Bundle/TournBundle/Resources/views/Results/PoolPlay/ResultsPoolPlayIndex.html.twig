@@ -1,0 +1,15 @@
+{# @CeradTourn/ResultsPoolPlay/ResultsPoolPlayIndex.html.twig #}
+{% extends '@CeradTourn/Layout.html.twig' %}
+  
+{% block content %}
+<h3>Pool Play Games and Results</h3>
+{{ include('@CeradTourn/Results/PoolPlay/ResultsPoolPlaySelect.html.twig') }}
+<br />
+
+{% for poolKey, pool in pools %}
+  {% include('@CeradTourn/Results/PoolPlay/ResultsPoolPlayGames.html.twig') %}
+  <br />
+  {% include('@CeradTourn/Results/PoolPlay/ResultsPoolPlayTeams.html.twig') %}
+  <br />
+{% endfor %}
+{% endblock %}

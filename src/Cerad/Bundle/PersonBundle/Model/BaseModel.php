@@ -55,7 +55,7 @@ class BaseModel implements NotifyPropertyChanged
     /* ========================================================
      * Simple guid format
      */
-    protected function genId() 
+    protected function genGuid() 
     { 
         return sprintf('%04X%04X-%04X-%04X-%04X-%04X%04X%04X', 
             mt_rand(0,     65535), mt_rand(0,     65535), mt_rand(0, 65535), 

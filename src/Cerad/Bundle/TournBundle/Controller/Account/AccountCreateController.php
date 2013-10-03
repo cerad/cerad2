@@ -147,7 +147,8 @@ class AccountCreateController extends MyBaseController
         $user->setAccountName   ($name);
         $user->setAccountEnabled(true);
         $user->setPasswordPlain($password);
-        $user->setPersonFedId  ($fedId);
+        $user->setPersonGuid   ($person->getGuid());
+      //$user->setPersonFedId  ($fedId); // TODO: Remove
         
         $model['user'] = $user;
         
