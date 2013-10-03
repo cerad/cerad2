@@ -60,7 +60,8 @@ class PoolPlayResultsController extends MyBaseController
         
         $games = $gameRepo->queryGameSchedule($criteria);
         
-        $results = $this->get('cerad_tourn.s5games_results');
+        $resultsServiceId = sprintf('cerad_tourn.%s_results',$project->getResults());
+        $results = $this->get($resultsServiceId);
         
         $pools = $results->getPools($games);
         

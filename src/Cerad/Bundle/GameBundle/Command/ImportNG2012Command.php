@@ -23,153 +23,45 @@ class ImportNG2012Command extends ContainerAwareCommand
     }
     protected function getService  ($id)   { return $this->getContainer()->get($id); }
     protected function getParameter($name) { return $this->getContainer()->getParameter($name); }
-    
-    const PROJECT_S5Games_2012  = 'AYSOS5Games2012';
-    
-    const PROJECT_ID  = 'AYSONationalGames2012';
-    const PROJECT_IDX = 52;
-    
+        
     protected $persons;
     protected $accounts;
     protected $accountPersons; // Only one account per person
     
+    protected function getProjectId($id)
+    {
+        switch($id)
+        {
+            case 52: return 'AYSONationalGames2012'; 
+            case 62: return 'AYSOS5Games2012';
+        }
+        echo sprintf("*** Invalid project id: %d\n",$id);
+    }
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->processPersons();
-        $this->processPersonPlans();
-        $this->processPersonPersons();
+      //$this->processPersonPlans();
+      //$this->processPersonPersons();
         
-        $this->processAccounts();
+      //$this->processAccounts();
+      //
+        $this->processGameFields();
+        $this->processGames();
+        $this->processGameTeams();
+        $this->processGameOfficials();
+        
         return;
-        
-        $projectId  = self::PROJECT_ID;
-        $projectIdx = self::PROJECT_IDX;
-        
+    }
+    /* =====================================================================
+     * Game Officials
+     */
+    protected function processGameOfficials()
+    {
         $conn = $this->getService('doctrine.dbal.ng2012_connection');
         
-        $gameRepo      = $this->getService('cerad_game.game_repository');
-        $personRepo    = $this->getService('cerad_person.person_repository');
-        $gameFieldRepo = $this->getService('cerad_game.game_field_repository');
+        $gameRepo   = $this->getService('cerad_game.game_repository');
+        $personRepo = $this->getService('cerad_person.person_repository');
         
-        /* =======================================================================
-         * Fields
-         */
-        $gameFieldSql = <<<EOT
-SELECT gameField.key1 AS name, gameField.venue AS venue
-FROM   project_field AS gameField
-WHERE  gameField.project_id = $projectIdx;
-EOT;
-        $gameFieldRows = $conn->fetchAll($gameFieldSql);
-
-        foreach($gameFieldRows as $row)
-        {
-            $name  = $row['name'];
-            $venue = $row['venue'];
-            
-            $gameField = $gameFieldRepo->findOneByProjectName($projectId,$name);
-            if (!$gameField)
-            {
-                $gameField = $gameFieldRepo->createGameField();
-                $gameField->setName     ($name);
-                $gameField->setVenue    ($venue);
-                $gameField->setProjectId($projectId);
-                $gameFieldRepo->save($gameField);
-            }
-        }
-        $gameFieldRepo->commit();
-        echo sprintf("Commited Fields: %4d\n",count($gameFieldRows));
-        
-        /* =====================================================================
-         * Games
-         */
-        $gameSql = <<<EOT
-SELECT event.* ,field.key1 AS field_name FROM event 
-LEFT JOIN project_field AS field ON event.field_id = field.id 
-WHERE event.project_id = $projectIdx;
-EOT;
-        $gameRows = $conn->fetchAll($gameSql);
-
-        foreach($gameRows as $row)
-        {
-            $num = $row['num'];
-            $game = $gameRepo->findOneByProjectNum($projectId,$num);
-            if (!$game)
-            {
-                $game = $gameRepo->createGame();
-                $game->setNum($num);
-                $game->setProjectId($projectId);
-            }
-            $pool = $row['pool'];
-            $levelId = 'AYSO_' . substr($pool,0,4) . '_Core';
-            $game->setLevelId($levelId);
-            $game->setGroup(substr($pool,5));
-                
-            $gameField = $gameFieldRepo->findOneByProjectName($projectId,$row['field_name']);
-            $game->setField($gameField);
-                
-            $datex = $row['datex'];
-            $timex = $row['timex'];
-            $dt = sprintf('%s-%s-%s %s:%s:00',
-                substr($datex,0,4),substr($datex,4,2),substr($datex,6,2),
-                substr($timex,0,2),substr($timex,2,2));
-                
-            $dtBeg = \DateTime::createFromFormat('Y-m-d H:i:s',$dt);
-            $dtEnd = clone($dtBeg);
-            $dtEnd->add(new \DateInterval('PT55M'));
-                
-            $game->setDtBeg($dtBeg);
-            $game->setDtEnd($dtEnd);
-            
-            $this->processGameReport($game,$row['datax']);
-            
-            $gameRepo->save($game);
-        }
-        $gameRepo->commit();
-        echo sprintf("Commited Games : %4d\n",count($gameRows));
-        
-        /* =====================================================================
-         * Game Teams
-         */
-        $gameTeamSql = <<<EOT
-SELECT 
-    team.*,
-    gameTeam.type  AS gameTeamRole, 
-    gameTeam.datax AS gameTeamReport,
-    game.num       AS gameNum
-FROM event_team AS gameTeam 
-LEFT JOIN event AS game ON game.id = gameTeam.event_id 
-LEFT JOIN team  AS team ON team.id = gameTeam.team_id
-WHERE game.project_id = $projectIdx;
-EOT;
-        $gameTeamRows = $conn->fetchAll($gameTeamSql);
-        
-        foreach($gameTeamRows as $row)
-        {
-            $num = $row['gameNum'];
-            $game = $gameRepo->findOneByProjectNum($projectId,$num);
- 
-            switch($row['gameTeamRole'])
-            {
-                case 'Home': $gameTeam = $game->getHomeTeam(); break;
-                case 'Away': $gameTeam = $game->getAwayTeam(); break;
-                default: die('bad gameTeam role ' . $role);
-            }
-            $gameTeam->setLevelId($game->getLevelId());
-            $gameTeam->setOrgId ($row['org_id']);
-            
-            $name  = $row['desc1'];
-            $gameTeam->setName (substr($name,3));
-            $gameTeam->setGroup(substr($name,0,2));
-            
-            // Process the report
-            $this->processGameTeamReport($gameTeam,$row['gameTeamReport']);            
-        }
-        $gameRepo->commit();
-        echo sprintf("Commited Teams : %4d\n",count($gameTeamRows));
-        
-        /* =====================================================================
-         * Game Officials
-         */
         $gameOfficialSql = <<<EOT
 SELECT 
     person.*,
@@ -178,13 +70,15 @@ SELECT
     personReg.datax    AS regData,
     gameOfficial.type  AS gameOfficialRole, 
     gameOfficial.state AS gameOfficialState, 
-    game.num           AS gameNum
+    game.num           AS gameNum,
+    game.project_id    AS projectId
+                
 FROM event_person      AS gameOfficial 
 LEFT JOIN event        AS game      ON game.id   = gameOfficial.event_id 
 LEFT JOIN person       AS person    ON person.id = gameOfficial.person_id
 LEFT JOIN person_reg   AS personReg ON personReg.person_id = person.id
                 
-WHERE game.project_id = $projectIdx;
+WHERE game.project_id IN (52,62);
 EOT;
         $gameOfficialRows = $conn->fetchAll($gameOfficialSql);
         
@@ -211,6 +105,7 @@ EOT;
             }
             // Back to the game
             $num = $row['gameNum'];
+            $projectId = $this->getProjectId($row['projectId']);
             $game = $gameRepo->findOneByProjectNum($projectId,$num);
             
             $slot = null;
@@ -250,10 +145,71 @@ EOT;
           //print_r($data); die();
         }
         $gameRepo->commit();
+        $gameRepo->clear();
         echo sprintf("Commited Offs  : %4d\n",count($gameOfficialRows));
         
         return;
         
+    }
+    /* =====================================================================
+     * Games
+     */
+    protected function processGames()
+    {
+      $conn = $this->getService('doctrine.dbal.ng2012_connection');
+        
+        $gameRepo      = $this->getService('cerad_game.game_repository');
+        $gameFieldRepo = $this->getService('cerad_game.game_field_repository');
+
+        $gameSql = <<<EOT
+SELECT event.* ,field.key1 AS field_name FROM event 
+LEFT JOIN project_field AS field ON event.field_id = field.id 
+WHERE event.project_id IN (52,62);
+EOT;
+        $gameRows = $conn->fetchAll($gameSql);
+
+        foreach($gameRows as $row)
+        {
+            $num = $row['num'];
+            
+            $projectId = $this->getProjectId($row['project_id']);
+            
+            $game = $gameRepo->findOneByProjectNum($projectId,$num);
+            if (!$game)
+            {
+                $game = $gameRepo->createGame();
+                $game->setNum($num);
+                $game->setProjectId($projectId);
+            }
+            $pool = $row['pool'];
+            $levelId = 'AYSO_' . substr($pool,0,4) . '_Core';
+            $game->setLevelId($levelId);
+            $game->setGroup(substr($pool,5));
+                
+            $gameField = $gameFieldRepo->findOneByProjectName($projectId,$row['field_name']);
+            $game->setField($gameField);
+                
+            $datex = $row['datex'];
+            $timex = $row['timex'];
+            $dt = sprintf('%s-%s-%s %s:%s:00',
+                substr($datex,0,4),substr($datex,4,2),substr($datex,6,2),
+                substr($timex,0,2),substr($timex,2,2));
+                
+            $dtBeg = \DateTime::createFromFormat('Y-m-d H:i:s',$dt);
+            $dtEnd = clone($dtBeg);
+            $dtEnd->add(new \DateInterval('PT55M'));
+                
+            $game->setDtBeg($dtBeg);
+            $game->setDtEnd($dtEnd);
+            
+            $this->processGameReport($game,$row['datax']);
+            
+            $gameRepo->save($game);
+        }
+        $gameRepo->commit();
+        $gameRepo->clear();
+        $gameFieldRepo->clear();
+        echo sprintf("Commited Games : %4d\n",count($gameRows));
     }
     /* ===================================================
      * Break out the game team report processing
@@ -283,6 +239,59 @@ EOT;
         
         return;
         print_r($report); die();
+    }
+    /* =====================================================================
+     * Game Teams
+     */
+    protected function processGameTeams()
+    {
+        $conn = $this->getService('doctrine.dbal.ng2012_connection');
+        
+        $gameRepo = $this->getService('cerad_game.game_repository');
+               
+        
+        /* =====================================================================
+         * Game Teams
+         */
+        $gameTeamSql = <<<EOT
+SELECT 
+    team.*,
+    gameTeam.type   AS gameTeamRole, 
+    gameTeam.datax  AS gameTeamReport,
+    game.num        AS gameNum,
+    game.project_id AS projectId
+FROM event_team AS gameTeam 
+LEFT JOIN event AS game ON game.id = gameTeam.event_id 
+LEFT JOIN team  AS team ON team.id = gameTeam.team_id
+WHERE game.project_id IN (52,62);
+EOT;
+        $gameTeamRows = $conn->fetchAll($gameTeamSql);
+        
+        foreach($gameTeamRows as $row)
+        {
+            $num = $row['gameNum'];
+            $projectId = $this->getProjectId($row['projectId']);
+            $game = $gameRepo->findOneByProjectNum($projectId,$num);
+ 
+            switch($row['gameTeamRole'])
+            {
+                case 'Home': $gameTeam = $game->getHomeTeam(); break;
+                case 'Away': $gameTeam = $game->getAwayTeam(); break;
+                default: die('bad gameTeam role ' . $row['gameTeamRole']);
+            }
+            $gameTeam->setLevelId($game->getLevelId());
+            $gameTeam->setOrgId ($row['org_id']);
+            
+            $name  = $row['desc1'];
+            $gameTeam->setName (substr($name,3));
+            $gameTeam->setGroup(substr($name,0,2));
+            
+            // Process the report
+            $this->processGameTeamReport($gameTeam,$row['gameTeamReport']);            
+        }
+        $gameRepo->commit();
+        $gameRepo->clear();
+        echo sprintf("Commited Teams : %4d\n",count($gameTeamRows));
     }
     /* ===================================================
      * Break out the game team report processing
@@ -340,6 +349,46 @@ EOT;
             print_r($extra);
             die('Extra Report Data');
         }        
+    }
+    /* =======================================================================
+     * Fields
+     */
+    protected function processGameFields()
+    {
+        $conn = $this->getService('doctrine.dbal.ng2012_connection');
+        
+        $gameFieldRepo = $this->getService('cerad_game.game_field_repository');
+ 
+        $gameFieldSql = <<<EOT
+SELECT 
+    gameField.project_id AS projectId, 
+    gameField.key1       AS name, 
+    gameField.venue      AS venue
+FROM   project_field AS gameField
+WHERE  gameField.project_id IN (52,62);
+EOT;
+        $gameFieldRows = $conn->fetchAll($gameFieldSql);
+
+        foreach($gameFieldRows as $row)
+        {
+            $name  = $row['name'];
+            $venue = $row['venue'];
+            
+            $projectId = $this->getProjectId($row['projectId']);
+            
+            $gameField = $gameFieldRepo->findOneByProjectName($projectId,$name);
+            if (!$gameField)
+            {
+                $gameField = $gameFieldRepo->createGameField();
+                $gameField->setName     ($name);
+                $gameField->setVenue    ($venue);
+                $gameField->setProjectId($projectId);
+                $gameFieldRepo->save($gameField);
+            }
+        }
+        $gameFieldRepo->commit();
+        $gameFieldRepo->clear();
+        echo sprintf("Commited Fields: %4d\n",count($gameFieldRows));
     }
     /* ===============================================================
      * Build up an array of people
