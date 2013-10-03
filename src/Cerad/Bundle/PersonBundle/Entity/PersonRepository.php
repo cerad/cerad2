@@ -30,7 +30,7 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         
         return $this->findOneBy(array('guid' => $id));
     }
-    public function findByFed($id)
+    public function findOneByFedId($id)
     {
         if (!$id) return null;
         
@@ -42,6 +42,9 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         
         return null;
     }
+    // TODO: Make this one go away
+    public function findByFed($id) { return $this->findOneByFedId($id); }
+    
     public function findFed($id)
     {
         if (!$id) return null;
