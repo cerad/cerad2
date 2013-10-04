@@ -137,6 +137,10 @@ EOT;
             
             if ($personId)
             {
+                $name = $person->getName();
+                
+                $gameOfficial->setPersonNameFull($name->full);
+                
                 $gameOfficial->setPersonGuid($this->persons[$personId]);
             }
             $data= unserialize($row['regData']);

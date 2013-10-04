@@ -50,20 +50,3 @@
     </tbody>
     </table>
 </div>
-{% block javascripts %}
-<script type="text/javascript">
-    $(document).ready(function() 
-    {
-        $('#schedule').dataTable(
-        {
-            "bPaginate": false,
-            "bLengthChange": false,
-            "bFilter": false,
-            "bSort": true,
-            "bInfo": false,
-            "bAutoWidth": false,
-            "aaSorting": [[ 2, "asc" ],[ 5, "asc" ],[ 4, "asc" ]]
-        });
-    });
-</script>
-{% endblock %}

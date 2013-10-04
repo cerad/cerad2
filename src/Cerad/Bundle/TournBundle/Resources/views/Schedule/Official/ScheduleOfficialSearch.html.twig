@@ -11,11 +11,18 @@
     novalidate
 >
     <fieldset>
-        {{ form_row(form.dates)          }}
-        {{ form_row(form.levels)         }}
+    <table><tr>
+        {% set items = form.dates %}
+      <td>{% include '@CeradTourn/Schedule/Search/ScheduleSearchCheckboxes.html.twig' %}</td>
+            
+        {% set items = form.levels %}
+      <td>{% include '@CeradTourn/Schedule/Search/ScheduleSearchCheckboxes.html.twig' %}</td>
+      <td>
         {{ form_row(form.numFilter)      }}
         {{ form_row(form.teamFilter)     }}
         {{ form_row(form.officialFilter) }}
+      </td>
+    </tr></table>
     </fieldset>
     <fieldset>
         <div class="controls">

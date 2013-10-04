@@ -55,13 +55,13 @@ class ScheduleOfficialListController extends MyBaseController
         $model['teams' ]  = array();
         $model['fields']  = array();
         
-        $model['searches'] = $searches = $project->getSearches();
+        $searches = $project->getSearches();
         
         foreach($searches as $name => $search)
         {
             $model[$name] = $search['default']; // Array of defaults
         }
-      //print_r($model['levelIds']); die();
+        //print_r($model['searches']); die();
         
         // Merge form session
         $session = $request->getSession();
@@ -70,6 +70,8 @@ class ScheduleOfficialListController extends MyBaseController
             $modelSession = $session->get(self::SESSION_SCHEDULE_OFFICIAL_SEARCH);
             $model = array_merge($model,$modelSession);
         }
+        // Do this after merge, otherwise changes get overwritten
+        $model['searches'] = $searches;
     
         // Done
         return $model;
