@@ -14,7 +14,7 @@ class ScheduleOfficialListController extends MyBaseController
      * Wanted to just use GET but the dates mess up
      * Use the session trick for now
      */
-    public function listAction(Request $request, $_format)
+    public function listAction(Request $request, $_format = 'html')
     {
         // The search model
         $model = $this->getModel($request);
