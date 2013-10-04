@@ -3,7 +3,12 @@
 
 {% block content %}
 {% include '@CeradTourn/Schedule/Official/ScheduleOfficialSearch.html.twig' %}
+
+<a href="{{ path('cerad_tourn_schedule_official_list', { '_format': 'xls'}) }}">Generate Spreadsheet</a>
+<a href="{{ path('cerad_tourn_schedule_official_list', { '_format': 'csv'}) }}">Generate Text File</a>
+
 {% include '@CeradTourn/Schedule/Official/ScheduleOfficialList.html.twig'   %}
+
 {% endblock %} {# content #}
 
 {% block javascripts %} 

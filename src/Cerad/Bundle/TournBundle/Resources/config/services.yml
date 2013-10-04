@@ -20,5 +20,15 @@ services:
 
     cerad_tourn.s5games_results:
         class: Cerad\Bundle\TournBundle\Results\S5GamesResults
+        
+    cerad_tourn.excel:
+        class:  Cerad\Component\Excel\Excel
 
+    cerad_tourn.schedule_official.export_csv:
+        class:  Cerad\Bundle\TournBundle\Schedule\Official\ScheduleOfficialExportCSV
+
+    cerad_tourn.schedule_official.export_xls:
+        class:  Cerad\Bundle\TournBundle\Schedule\Official\ScheduleOfficialExportXLS
+        arguments:  
+            - '@cerad_tourn.excel'
 

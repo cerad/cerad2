@@ -2,6 +2,7 @@
 namespace Cerad\Bundle\TournBundle\Controller\Schedule;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
 
@@ -13,7 +14,7 @@ class ScheduleOfficialListController extends MyBaseController
      * Wanted to just use GET but the dates mess up
      * Use the session trick for now
      */
-    public function listAction(Request $request)
+    public function listAction(Request $request, $_format)
     {
         // The search model
         $model = $this->getModel($request);
@@ -37,6 +38,31 @@ class ScheduleOfficialListController extends MyBaseController
         $gameRepo = $this->get('cerad_game.game_repository');
         $games = $gameRepo->queryGameSchedule($model);
         
+        // Spreadsheet
+        if ($_format == 'xls')
+        {
+            $export = $this->get('cerad_tourn.schedule_official.export_xls');
+            $response = new Response($export->generate($games));
+        
+            $outFileName = 'RefSched' . date('YmdHi') . '.xls';
+        
+            $response->headers->set('Content-Type',       'application/vnd.ms-excel');
+            $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"',$outFileName));
+            return $response;
+        }
+        // csv processing
+        if ($_format == 'csv')
+        {
+            $export = $this->get('cerad_tourn.schedule_official.export_csv');
+            $response = new Response($export->generate($games));
+        
+            $outFileName = 'RefSched' . date('YmdHi') . '.csv';
+        
+            $response->headers->set('Content-Type',       'text/csv;');
+            $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"',$outFileName));
+            return $response;
+        }
+       
         // And render
         $tplData = array();
         $tplData['searchForm'] = $searchForm->createView();

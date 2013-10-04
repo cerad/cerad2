@@ -148,9 +148,13 @@ cerad_tourn_person_plan_update:
 # ===============================================
 # Schedule and results
 cerad_tourn_schedule_official_list:
-    pattern:  /schedule/official
-    defaults: { _controller: CeradTournBundle:Schedule/ScheduleOfficialList:list }
-    
+    pattern:  /schedule/official.{_format}
+    defaults: 
+        _controller: CeradTournBundle:Schedule/ScheduleOfficialList:list
+        _format: html
+    requirements:
+        _format:  html|csv|xls|pdf
+     
 cerad_tourn_schedule_team_list:
     pattern:  /schedule/team
     defaults: { _controller: CeradTournBundle:Schedule/ScheduleTeamList:list }
