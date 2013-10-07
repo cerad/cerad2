@@ -3,7 +3,7 @@
     "type":        "symfony-bundles",
     "description": "Cerad Libraries",
     "keywords":    ["security"],
-    "homepage":    "https://github.com/cerad/ceradc.git",
+    "homepage":    "https://github.com/cerad/cerad2.git",
     "license":     "MIT",
 
     "authors": [
