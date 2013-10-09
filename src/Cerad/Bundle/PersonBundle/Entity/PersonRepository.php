@@ -30,6 +30,22 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         
         return $this->findOneBy(array('guid' => $id));
     }
+    public function query($projects = null)
+    {
+        $qb = $this->createQueryBuilder('person');
+        
+        $qb->addSelect('personPlan');
+        $qb->leftJoin ('person.plans','personPlan');
+        
+        if ($projects)
+        {
+            $qb->andWhere('personPlan.projectId IN (:projectIds)');
+            $qb->setParameter('projectIds',$projects);
+        }
+        $qb->orderBy('person.nameLast,person.nameFirst');
+        
+        return $qb->getQuery()->getResult();
+    }
     public function findOneByFedId($id)
     {
         if (!$id) return null;

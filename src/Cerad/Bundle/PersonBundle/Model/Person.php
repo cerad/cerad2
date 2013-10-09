@@ -36,9 +36,10 @@ class Person extends BaseModel implements PersonInterface
     protected $verified  = 'No';
     protected $status    = 'Active';
     
-    protected $feds    = array();
-    protected $plans   = array();
-    protected $persons = array();
+    // Setting to array messes up qp left join
+    protected $feds;    // = array();
+    protected $plans;   // = array();
+    protected $persons; // = array();
     
     public function __construct()
     {
@@ -46,6 +47,11 @@ class Person extends BaseModel implements PersonInterface
         
         $this->setName   ($this->createName());
         $this->setAddress($this->createAddress());
+        
+        $this->feds    = array();
+        $this->plans   = array();
+        $this->persons = array();
+        
     }
     /* ======================================================================
      * Standard getters/setters/creators

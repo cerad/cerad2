@@ -111,14 +111,36 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     {
         $this->passwordPlain = null;
     }
+    /* ====================================================
+     * Roles stuff
+     * String only for now
+     */
     public function getRoles()
     {
         if (in_array(self::ROLE_DEFAULT,$this->roles,true)) return $this->roles;
         
         return array_merge(array(self::ROLE_DEFAULT),$this->roles);
     }
-    public function hasRole($role) { }
-    
+    public function hasRole($role) 
+    { 
+        $roles = $this->getRoles();
+        return in_array($role,$roles);
+    }
+    public function addRole($role)
+    {
+        $roles = $this->getRoles();
+        if (in_array($role,$roles)) return;
+        
+        $roles[] = $role;
+        
+        $this->onPropertySet('roles',$roles);
+    }
+    public function removeRole($role)
+    {
+        $roles = $this->getRoles();
+        $roles = array_diff($roles, array($role));
+        $this->onPropertySet('roles',$roles);
+    }
     // Account - AdvancedUserInterface
     public function getAccountName()          { return $this->accountName;     }
    
