@@ -1,3 +1,7 @@
+cerad_tourn_admin:
+    resource: "@CeradTournAdminBundle/Resources/config/routing.yml"
+    prefix:   /
+
 cerad_game:
     resource: "@CeradGameBundle/Resources/config/routing.yml"
     prefix:   /
