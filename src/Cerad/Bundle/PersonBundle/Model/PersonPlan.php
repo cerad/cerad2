@@ -57,5 +57,8 @@ class PersonPlan extends BaseModel
         $this->basic = array_merge($propx,$this->basic);
         
     }
+    /* ============================================================
+     * Make things a bit easier for reading common information
+     */
 }
 ?>

@@ -224,5 +224,20 @@ class Person extends BaseModel implements PersonInterface
             
         return $personPerson;
     }
+    /* ===========================================
+     * Age with optional asOf date
+     */
+    public function getAge($asOf = null)
+    {
+        if (!$this->dob) return null;
+        
+        if (!$asOf) $asOf = new \DateTime();
+            
+        $interval = $asOf->diff($this->dob);
+        
+        $years = $interval->format('%y');
+        
+        return $years;
+    }
 }
 ?>
