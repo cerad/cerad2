@@ -16,7 +16,7 @@ interface UserRepositoryInterface
     public function save(UserModelInterface $item);
     public function commit();
     
-    static function createUser($params = null);
+    public function createUser($params = null);
     
 }
 

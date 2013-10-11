@@ -2,11 +2,21 @@ parameters:
 #    cerad_tourn.example.class: Cerad\Bundle\TournBundle\Example
 
 services:
+# =====================================================
+# Twig extensions
     cerad_tourn.twig_extension:
         class:  Cerad\Bundle\TournBundle\TwigExtension\TournExtension
         arguments:  
             - '@cerad_project.find_default.in_memory'
             - '%cerad_tourn_show_configs%'
+        tags:
+            - { name: twig.extension }
+            
+    cerad_tourn.twig_admin_extension:
+        class:  Cerad\Bundle\TournBundle\TwigExtension\TournAdminExtension
+        arguments:  
+            - '@cerad_user.user_repository'
+            - '@cerad_person.person_repository'
         tags:
             - { name: twig.extension }
 

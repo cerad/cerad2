@@ -28,7 +28,7 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
     /* ==========================================================
      * Allow creating objects via static methods
      */
-    static function createUser($params = null) { return new UserEntity($params); }
+    function createUser($params = null) { return new UserEntity($params); }
     
     /* ==========================================================
      * Persistence
@@ -47,6 +47,15 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
     {
        $em = $this->getEntityManager();
        return $em->flush();
+    }
+    /* =========================================================================
+     * Still a bit uneasy about user repo vs user manager
+     */
+    public function findOneByPersonGuid($guid)
+    {
+        if (!$guid) return null;
+        
+        return $this->findOneBy(array('personGuid' => $guid));
     }
 }
 ?>
