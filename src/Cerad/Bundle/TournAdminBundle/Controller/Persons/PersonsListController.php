@@ -25,7 +25,7 @@ class PersonsListController extends MyBaseController
 
             $export->generate($project,$persons);
             
-            $outFileName = ucfirst($model['slug']) . 'Officials' . date('Ymd-Hi') . '.xls';
+            $outFileName = 'Persons' . date('Ymd-Hi') . '.xls';
         
             $response = new Response();
             $response->setContent($export->getBuffer());
