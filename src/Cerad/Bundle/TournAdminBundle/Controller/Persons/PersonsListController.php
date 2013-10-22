@@ -15,15 +15,17 @@ class PersonsListController extends MyBaseController
         
         $model = $this->createModel($request);
         if (isset($model['repsonse'])) return $model['response'];
-                
+        
+        $project = $model['project'];
+        $persons = $model['persons'];
+        
         if ($_format == 'xls') 
         {
-            $export = $this->get('cerad_tourn.officials.export.excel');
-            $export->setTournMeta($tourn);
+            $export = $this->get('cerad_tourn.officials.export_xls');
 
-            $export->generate($officials);
+            $export->generate($project,$persons);
             
-            $outFileName = ucfirst($project) . date('Ymd-Hi') . '.xls';
+            $outFileName = ucfirst($model['slug']) . 'Officials' . date('Ymd-Hi') . '.xls';
         
             $response = new Response();
             $response->setContent($export->getBuffer());
@@ -33,11 +35,9 @@ class PersonsListController extends MyBaseController
             return $response;
            
         }
-        $project = $model['project'];
-        
         $tplData = array();
         $tplData['project']   = $project;
-        $tplData['persons']   = $model['persons'];
+        $tplData['persons']   = $persons;
         $tplData['fedRoleId'] = $project->getFedRoleId();
         
         $tplName = $request->get('_template');
@@ -51,6 +51,7 @@ class PersonsListController extends MyBaseController
         $persons = $personRepo->query(array($project->getId()));
         
         $model = array();
+        $model['slug']    = $project->getSlug();
         $model['project'] = $project;
         $model['persons'] = $persons;
         return $model;
