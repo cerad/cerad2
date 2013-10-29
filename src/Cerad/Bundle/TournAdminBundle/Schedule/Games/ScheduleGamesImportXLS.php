@@ -1,5 +1,5 @@
 <?php
-namespace Cerad\Bundle\TournAdminBundle\Schedule\Officials;
+namespace Cerad\Bundle\TournAdminBundle\Schedule\Games;
 
 use Cerad\Component\Excel\Loader as BaseLoader;
 
@@ -7,21 +7,21 @@ class ImportResults
 {
     
 }
-class ScheduleOfficialsImportXLS extends BaseLoader
+class ScheduleGamesImportXLS extends BaseLoader
 {
     protected $record = array
     (
-        'num'     => array('cols' => 'Game',    'req' => true),
-        'referee' => array('cols' => 'Referee', 'req' => true),
-        'ar1'     => array('cols' => 'Referee', 'req' => true, 'plus' => 1),
-        'ar2'     => array('cols' => 'Referee', 'req' => true, 'plus' => 2),
+        'num'   => array('cols' => 'Game',    'req' => true),
+        'date'  => array('cols' => 'Referee', 'req' => true),
+        'time'  => array('cols' => 'Referee', 'req' => true, 'plus' => 1),
+        'venue' => array('cols' => 'Referee', 'req' => true, 'plus' => 2),
+        'field' => array('cols' => 'Referee', 'req' => true, 'plus' => 2),
     );
-    public function __construct($gameRepo,$personRepo)
+    public function __construct($gameRepo)
     {
         parent::__construct();
         
         $this->gameRepo   = $gameRepo;
-        $this->personRepo = $personRepo;
     }
     protected function processItem($item)
     {
@@ -32,6 +32,8 @@ class ScheduleOfficialsImportXLS extends BaseLoader
         if (!$game) return;
         
         $this->results->totalGameCount++;
+        
+        return;
         
         $names = array(
             1 => $item['referee'],
@@ -72,7 +74,7 @@ class ScheduleOfficialsImportXLS extends BaseLoader
         $this->results = new ImportResults();
         $this->results->basename = $params['basename'];
         $this->results->totalGameCount    = 0;
-        $this->results->modifiedSlotCount = 0;
+        $this->results->modifiedGameCount = 0;
         
         // Insert each record
         foreach($rows as $row)
