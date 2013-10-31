@@ -24,12 +24,11 @@ class GameReportUpdateController extends MyBaseController
             
             return $this->redirect('cerad_tourn_game_report_update',array('num' => $model['game']->getNum()));
         }
-        
         $tplData = array();
-        $tplData['form']    = $form->createView();
-        
-        $tplData['game']    = $model['game'];
-        $tplData['project'] = $model['project'];
+        $tplData['form']       = $form->createView();
+        $tplData['formErrors'] = $form->getErrors();
+        $tplData['game']       = $model['game'];
+        $tplData['project']    = $model['project'];
         
         return $this->render('@CeradTourn/GameReport/Update/GameReportUpdateIndex.html.twig', $tplData);
     }
