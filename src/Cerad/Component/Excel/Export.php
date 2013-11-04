@@ -19,6 +19,9 @@ class Export
     {
         return \PHPExcel_IOFactory::createWriter($ss, 'Excel2007');
     }
+    /* ======================================================================
+     * Set a cell value with an optional format
+     */
     protected function setCellValueByColumnAndRow($ws,$col,$row,$value,$format = null)
     {
         $ws->setCellValueByColumnAndRow($col,$row,$value);
@@ -53,10 +56,10 @@ class Export
     protected $columnCenters = array();
     protected $columnFormats = array();  // Maybe for dates and times?
     
-    protected function setHeaders($ws,$map,$row = 1)
+    protected function setHeaders($ws,$headers,$row = 1)
     {
-        $col = 1;
-        foreach(array_keys($map) as $header)
+        $col = 0;
+        foreach($headers as $header)
         {
             if (isset($this->columnWidths[$header]))
             {
@@ -68,7 +71,8 @@ class Export
             {
                 $coord = \PHPExcel_Cell::stringFromColumnIndex($col) . $row;
                 
-                $ws->getStyle($coord)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+              //$ws->getStyle($coord)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
+              $ws->getStyle($col)->getAlignment()->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER);
             }
             $col++;
         }

@@ -3,3 +3,10 @@ parameters:
 services:
     cerad_tourn_admin.schedule_games.export_xls:
         class: Cerad\Bundle\TournAdminBundle\Schedule\Games\ScheduleGamesExportXLS
+        
+    cerad_tourn_admin.schedule_games.import_xls:
+        class: Cerad\Bundle\TournAdminBundle\Schedule\Games\ScheduleGamesImportXLS
+        arguments:  
+            - '@cerad_game.game_repository'
+            - '@cerad_game.game_field_repository'
+            

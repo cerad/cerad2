@@ -53,7 +53,7 @@ class ScheduleGamesImportController extends MyBaseController
         $params['filepath'] = $importFilePath;
         $params['basename'] = $clientFileName;
         
-        $importService = $this->get('cerad_tourn.schedule_games.import_xls');
+        $importService = $this->get('cerad_tourn_admin.schedule_games.import_xls');
         
         $results = $importService->import($params);
 

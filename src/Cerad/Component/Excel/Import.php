@@ -8,6 +8,7 @@ namespace Cerad\Component\Excel;
 class Import
 {
     protected $excel;
+    protected $reader; // Use reader instead of excel
     protected $items  = array();
     protected $errors = array();
     
@@ -18,7 +19,7 @@ class Import
     
     public function __construct()
     {
-        $this->excel = new Reader();
+        $this->reader = $this->excel = new Reader();
     }
     protected function processDataRow($row)
     {
@@ -79,12 +80,16 @@ class Import
             }
         }
     }
+    /* ======================================================
+     * This should probably go away and become abstract
+     * Or at least process parameters
+     */
     public function load($inputFileName, $worksheetName = null)
     {
-        $reader = $this->excel->load($inputFileName);
+        $ss = $this->reader->load($inputFileName);
 
-        if ($worksheetName) $ws = $reader->getSheetByName($worksheetName);
-        else                $ws = $reader->getSheet(0);
+        if ($worksheetName) $ws = $ss->getSheetByName($worksheetName);
+        else                $ws = $ss->getSheet(0);
         
         $rows = $ws->toArray();
         
@@ -101,17 +106,25 @@ class Import
         }
         return $this->items;
     }
+    /* ====================================================
+     * Abstract
+     */
     protected function processItem($item)
     {
         print_r($item); die("\n");
     }
-    protected function processTime($time)
+    /* ====================================================
+     * Still kind of messy
+     * Currently handles numeric excel values
+     * Might want to handle csv string values?
+     */
+    public function processTime($time,$format = 'hh:mm:ss')
     {
-        return $this->excel->processTime($time);
+        return \PHPExcel_Style_NumberFormat::toFormattedString($time,$format);
     }
-    protected function processDate($date)
+    public function processDate($date, $format = 'yyyy-MM-dd')
     {
-        return $this->excel->processDate($date);
+        return \PHPExcel_Style_NumberFormat::toFormattedString($date,$format);
     }
 }
 ?>
