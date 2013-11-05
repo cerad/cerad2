@@ -1,0 +1,23 @@
+{# @CeradTournAdmin/PersonPlan/Update/PersonPlanUpdateIndex.html.twig #}
+{% extends '@CeradTourn/Layout.html.twig' %}
+
+{% block content %}
+
+{{ form_start(form) }}
+
+{{ form_row(form.person.name.full)  }}
+{{ form_row(form.person.name.first) }}
+{{ form_row(form.person.name.last)  }}
+
+{{ form_row(form.person.email) }}
+{{ form_row(form.person.phone) }}
+{{ form_row(form.person.gender)}}
+{{ form_row(form.person.dob)   }}
+{{ form_row(form.person.notes) }}
+
+<a href="{{ path('cerad_tourn_admin_persons_list') }}">Back to Persons</a>
+{{ form_widget(form.update) }}
+{{ form_rest(form) }}
+{{ form_end(form)  }}
+
+{% endblock %}

@@ -69,6 +69,16 @@ services:
         class: Cerad\Bundle\PersonBundle\FormType\UpgradingFormType
         tags:
             - { name: form.type, alias: cerad_person_upgrading }
+            
+    cerad_person.gender.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\GenderFormType
+        tags:
+            - { name: form.type, alias: cerad_person_gender }
+            
+    cerad_person.dob.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\DobFormType
+        tags:
+            - { name: form.type, alias: cerad_person_dob }
        
 # ==========================================================
 # AYSO Form Types

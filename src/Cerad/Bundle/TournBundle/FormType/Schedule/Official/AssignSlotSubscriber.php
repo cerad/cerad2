@@ -52,13 +52,19 @@ class AssignSlotSubscriber implements EventSubscriberInterface
         
         $states = array
         (
-            'Pending'   => 'Pending',
-            'Published' => 'Published',
-            'Notified'  => 'Notified',
-            'Accepted'  => 'Accepted',
-            'Declined'  => 'Declined',
-            'Requested' => 'Requested',
-            'Turnback'  => 'Turnback',
+            'Pending'   => 'Pending',   // Assignor assigned
+            'Published' => 'Published', // Assignor published
+            
+            'Notified'  => 'Notified',  // Official has been notified
+            'Accepted'  => 'Accepted',  // Official has accepted
+            'Declined'  => 'Declined',  // Official declined
+            'Turnback'  => 'Turnback',  // Official accepted but then bailed
+            
+            'Requested' => 'Requested', // Official has requested assignment
+            'Approved'  => 'Approved',  // Assignor has approved request
+            'Reviewing' => 'Reviewing', // Assignor is reviewing request
+            'Rejected'  => 'Rejected',  // Assignor has rejected request
+            
         );
         $form->add($this->factory->createNamed('state','choice', null, array(
             'required'        => false,
