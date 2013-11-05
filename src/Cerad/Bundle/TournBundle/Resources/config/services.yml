@@ -42,3 +42,9 @@ services:
         arguments:  
             - '@cerad_tourn.excel'
 
+# Used for generating list of available officials for assigning
+# Might need a different select for each type of tournament unless we clean up person-project-plan
+    cerad_tourn.schedule_officials.select_s1games:
+        class:  Cerad\Bundle\TournBundle\Schedule\Officials\Select\ScheduleOfficialsSelectS1Games
+        arguments:  
+            - '@cerad_person.person_repository'

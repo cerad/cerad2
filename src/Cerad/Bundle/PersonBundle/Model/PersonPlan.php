@@ -58,7 +58,7 @@ class PersonPlan extends BaseModel
         
     }
     /* ============================================================
-     * Make things a bit easier for reading common information
+     * Need some commanility and consistency
      */
 }
 ?>
