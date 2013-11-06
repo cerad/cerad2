@@ -6,6 +6,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
 
 use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\PersonFormType;
+use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\PersonPlanFormType;
+
+use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\AYSO\RefereeCertFormType;
+use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\AYSO\SafeHavenCertFormType;
 
 /* =================================================================
  * Currently only the pool play games are exported
@@ -86,7 +90,15 @@ class PersonPlanUpdateController extends MyBaseController
         $model['plan'] = $plan;
         
         // The fed
-        $personFed = $person->getFed($project->getFedRoleId());
+        $fed = $person->getFed($project->getFedRoleId());
+        $org = $fed->getOrgRegion();
+        $certReferee   = $fed->getCertReferee();
+        $certSafeHaven = $fed->getCertSafeHaven();
+        
+        $model['fed'] = $fed;
+        $model['org'] = $fed;
+        $model['certReferee']   = $certReferee;
+        $model['certSafeHaven'] = $certSafeHaven;
         
         /* ======================================================
          * Now start to get little ayso specific
@@ -105,7 +117,10 @@ class PersonPlanUpdateController extends MyBaseController
         $builder->setAction($this->generateUrl($route,array('person' => $person->getId())));
         $builder->setMethod('POST');
         
-        $builder->add('person', new PersonFormType());
+        $builder->add('person',        new PersonFormType());
+        $builder->add('plan',          new PersonPlanFormType());
+        $builder->add('certReferee',   new RefereeCertFormType());
+        $builder->add('certSafeHaven', new SafeHavenCertFormType());
         
         $builder->add('update', 'submit', array(
             'label' => 'Update Person',

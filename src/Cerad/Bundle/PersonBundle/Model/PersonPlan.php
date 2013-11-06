@@ -60,5 +60,42 @@ class PersonPlan extends BaseModel
     /* ============================================================
      * Need some commanility and consistency
      */
+    const WILL_ATTEND  = 'attending';
+    const WILL_REFEREE = 'refereeing';
+    
+    public function getWillAttend () { return $this->basic[self::WILL_ATTEND];  }
+    public function getWillReferee() { return $this->basic[self::WILL_REFEREE]; }
+    
+    public function setWillAttend($value)
+    {
+        if ($value == $this->basic[self::WILL_ATTEND]) return;
+        
+        $basic = $this->getBasic();
+        
+        $basic[self::WILL_ATTEND] = $value;
+       
+        $this->setBasic($basic);
+    }
+    public function setWillReferee($value)
+    {
+        if ($value == $this->basic[self::WILL_REFEREE]) return;
+        
+        $basic = $this->getBasic();
+        
+        $basic[self::WILL_REFEREE] = $value;
+        
+        $this->setBasic($basic);
+        
+        return;
+        
+        /* ======================================================
+         * For some reason, this ends up clearing the basic array
+         */
+        if ($value == $this->basic[self::WILL_REFEREE]) return;
+        
+        $this->basic[self::WILL_REFEREE] = $value;
+           
+        $this->onPropertyChanged('basic');     
+    }
 }
 ?>

@@ -8,12 +8,24 @@
 {{ form_row(form.person.name.full)  }}
 {{ form_row(form.person.name.first) }}
 {{ form_row(form.person.name.last)  }}
-
+<br />
 {{ form_row(form.person.email) }}
 {{ form_row(form.person.phone) }}
 {{ form_row(form.person.gender)}}
 {{ form_row(form.person.dob)   }}
 {{ form_row(form.person.notes) }}
+<br />
+{{ form_row(form.plan.willAttend ) }}
+{{ form_row(form.plan.willReferee) }}
+<br />
+{{ form_row(form.certSafeHaven.badge,   { 'label': 'Safe Haven' } ) }}
+<br />
+{{ form_row(form.certReferee.badge,     { 'label': 'Confirmed Badge' } ) }}
+{{ form_row(form.certReferee.badgex,    { 'label': 'User Badge' } ) }}
+{{ form_row(form.certReferee.upgrading, { 'label': 'Upgrading' } ) }}
+
+{{ form_row(form.certReferee.dateFirstCertified, { 'label': 'Date first certified' } ) }}
+{{ form_row(form.certReferee.dateLastUpgraded,   { 'label': 'Date last upgraded' } ) }}
 
 <a href="{{ path('cerad_tourn_admin_persons_list') }}">Back to Persons</a>
 {{ form_widget(form.update) }}

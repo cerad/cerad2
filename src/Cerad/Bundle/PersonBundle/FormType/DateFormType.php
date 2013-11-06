@@ -7,13 +7,12 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /* ==================================================================
- * Use this to collect and partially validate a region number
- * The transformer will yield AYSORxxxx
+ * For inputting a date, assuming copy/paste
  */
-class DobFormType extends AbstractType
+class DateFormType extends AbstractType
 {   
     public function getParent() { return 'birthday'; }
-    public function getName()   { return 'cerad_person_dob'; }
+    public function getName()   { return 'cerad_person_date'; }
 
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {

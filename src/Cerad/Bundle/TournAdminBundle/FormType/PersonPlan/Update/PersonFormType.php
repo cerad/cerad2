@@ -47,7 +47,7 @@ class PersonFormType extends AbstractType
         $builder->add('gender','cerad_person_gender', array(
             'required' => false,
         ));
-        $builder->add('dob','cerad_person_dob', array(
+        $builder->add('dob','cerad_person_date', array(
             'required' => false,
         ));
         $builder->add('notes','text', array(
