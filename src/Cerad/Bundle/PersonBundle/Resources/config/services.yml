@@ -79,6 +79,11 @@ services:
         class: Cerad\Bundle\PersonBundle\FormType\DateFormType
         tags:
             - { name: form.type, alias: cerad_person_date }
+            
+    cerad_person.shirt_size.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\ShirtSizeFormType
+        tags:
+            - { name: form.type, alias: cerad_person_shirt_size }
 
 # =======================================================
 # Person Plans
@@ -91,6 +96,16 @@ services:
         class: Cerad\Bundle\PersonBundle\FormType\Plan\WillRefereeFormType
         tags:
             - { name: form.type, alias: cerad_person_plan_will_referee }
+            
+    cerad_person.plan_want_mentor.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\Plan\WantMentorFormType
+        tags:
+            - { name: form.type, alias: cerad_person_plan_want_mentor }
+            
+    cerad_person.plan_will_mentor.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\Plan\WillMentorFormType
+        tags:
+            - { name: form.type, alias: cerad_person_plan_will_mentor }
        
 # ==========================================================
 # AYSO Form Types
@@ -120,6 +135,11 @@ services:
         class: Cerad\Bundle\PersonBundle\FormType\AYSO\RegionIdFormType
         tags:
             - { name: form.type, alias: cerad_person_ayso_region_id } 
+            
+    cerad_person.ayso_mem_year.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\AYSO\MemYearFormType
+        tags:
+            - { name: form.type, alias: cerad_person_ayso_mem_year } 
             
     cerad_person.aysov_org_id.form_type:
         alias: cerad_person.aysov_org_region_id.form_type

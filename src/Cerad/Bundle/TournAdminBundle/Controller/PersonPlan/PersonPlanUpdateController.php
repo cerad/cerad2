@@ -5,9 +5,12 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\TournBundle\Controller\BaseController as MyBaseController;
 
+use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\UserFormType;
 use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\PersonFormType;
 use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\PersonPlanFormType;
 
+use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\AYSO\VolFormType;
+use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\AYSO\RegionFormType;
 use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\AYSO\RefereeCertFormType;
 use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\AYSO\SafeHavenCertFormType;
 
@@ -38,12 +41,20 @@ class PersonPlanUpdateController extends MyBaseController
         }
         // And render
         $tplData = array();
-        $tplData['form'] = $form->createView();
+        $tplData['form']   = $form->createView();
+        $tplData['person'] = $model['person'];
         return $this->render($request->get('_template'),$tplData);                
     }
     protected function processModel($model)
     {
         $personRepo = $this->get('cerad_person.person_repository');
+        
+        // See if the aysoid has changed
+        if ($model['aysoid'] != $model['fed']->getId())
+        {
+            die('changed id');
+        }
+        // Commit
         $personRepo->commit();
         
         // Do some stuff for the user as well
@@ -51,6 +62,8 @@ class PersonPlanUpdateController extends MyBaseController
         if ($user->getId())
         {
             // Commit it
+            $userRepo = $this->get('cerad_user.user_repository');
+            $userRepo->commit();
         }
         return;
     }
@@ -96,17 +109,21 @@ class PersonPlanUpdateController extends MyBaseController
         $certSafeHaven = $fed->getCertSafeHaven();
         
         $model['fed'] = $fed;
-        $model['org'] = $fed;
+        $model['org'] = $org;
         $model['certReferee']   = $certReferee;
         $model['certSafeHaven'] = $certSafeHaven;
         
-        /* ======================================================
-         * Now start to get little ayso specific
-         */
+        // Because changing this requires extra effort
+        $model['aysoid'] = $fed->getId();
         
         // Done
         return $model;
     }
+    /* =============================================================
+     * For now we break things up into individual components
+     * Makes it easier to customize for a given tournamnt
+     * Might merge some of it later
+     */
     protected function createModelForm($request, $model)
     {
         $person = $model['person'];
@@ -117,7 +134,10 @@ class PersonPlanUpdateController extends MyBaseController
         $builder->setAction($this->generateUrl($route,array('person' => $person->getId())));
         $builder->setMethod('POST');
         
+        $builder->add('user',          new UserFormType());
         $builder->add('person',        new PersonFormType());
+        $builder->add('fed',           new VolFormType());
+        $builder->add('org',           new RegionFormType());
         $builder->add('plan',          new PersonPlanFormType());
         $builder->add('certReferee',   new RefereeCertFormType());
         $builder->add('certSafeHaven', new SafeHavenCertFormType());

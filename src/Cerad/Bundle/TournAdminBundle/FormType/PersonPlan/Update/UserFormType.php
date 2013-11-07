@@ -12,31 +12,28 @@ use Symfony\Component\Validator\Constraints\NotBlank  as NotBlankConstraint;
  * Try having some standard admin forms
  * Might end up flattening everything and just moving to controller
  */
-class PersonPlanFormType extends AbstractType
+class UserFormType extends AbstractType
 {
-    public function getName() { return 'cerad_tourn_admin_person_plan_person_plan'; }
+    public function getName() { return 'cerad_tourn_admin_person_plan_user'; }
     
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Cerad\Bundle\PersonBundle\Model\PersonPlan',
+            'data_class' => 'Cerad\Bundle\UserBundle\Model\User',
         ));
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        $builder->add('willAttend', 'cerad_person_plan_will_attend');
-        $builder->add('willReferee','cerad_person_plan_will_referee');
-        
-        $builder->add('wantMentor', 'cerad_person_plan_want_mentor');
-        $builder->add('willMentor', 'cerad_person_plan_will_mentor');
-        
-        $builder->add('shirtSize',  'cerad_person_shirt_size');
-        
-        $builder->add('notes', 'textarea' ,array(
+    {    
+        // Need to deal with people with no user accounts
+        $builder->add('accountName','text', array(
             'required' => false,
-            'attr' => array('rows' => 3, 'cols' => 40)
-        ));
-        
+            'label'    => 'Account Name',
+            'trim'     => true,
+            'constraints' => array(
+              //new NotBlankConstraint(),
+            ),
+            'attr' => array('size' => 30),
+        )); 
     }
 }
 ?>

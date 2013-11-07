@@ -63,39 +63,34 @@ class PersonPlan extends BaseModel
     const WILL_ATTEND  = 'attending';
     const WILL_REFEREE = 'refereeing';
     
+    const WILL_MENTOR  = 'willMentor';
+    const WANT_MENTOR  = 'wantMentor';
+    
+    const SHIRT_SIZE  = 'tshirt';
+    
     public function getWillAttend () { return $this->basic[self::WILL_ATTEND];  }
     public function getWillReferee() { return $this->basic[self::WILL_REFEREE]; }
+    public function getWillMentor () { return $this->basic[self::WILL_MENTOR];  }
+    public function getWantMentor () { return $this->basic[self::WANT_MENTOR];  }
+    public function getShirtSize  () { return $this->basic[self::SHIRT_SIZE ];  }
     
-    public function setWillAttend($value)
+    public function setWillAttend ($value) { return $this->setBasicParam(self::WILL_ATTEND, $value); }
+    public function setWillReferee($value) { return $this->setBasicParam(self::WILL_REFEREE,$value); }
+    public function setWillMentor ($value) { return $this->setBasicParam(self::WILL_MENTOR, $value); }
+    public function setWantMentor ($value) { return $this->setBasicParam(self::WANT_MENTOR, $value); }
+    public function setShirtSize  ($value) { return $this->setBasicParam(self::SHIRT_SIZE,  $value); }
+    
+    protected function setBasicParam($name,$value)
     {
-        if ($value == $this->basic[self::WILL_ATTEND]) return;
+        if ($value == $this->basic[$name]) return;
         
+        // Had problems making this cleaner
         $basic = $this->getBasic();
         
-        $basic[self::WILL_ATTEND] = $value;
+        $basic[$name] = $value;
        
         $this->setBasic($basic);
     }
-    public function setWillReferee($value)
-    {
-        if ($value == $this->basic[self::WILL_REFEREE]) return;
         
-        $basic = $this->getBasic();
-        
-        $basic[self::WILL_REFEREE] = $value;
-        
-        $this->setBasic($basic);
-        
-        return;
-        
-        /* ======================================================
-         * For some reason, this ends up clearing the basic array
-         */
-        if ($value == $this->basic[self::WILL_REFEREE]) return;
-        
-        $this->basic[self::WILL_REFEREE] = $value;
-           
-        $this->onPropertyChanged('basic');     
-    }
 }
 ?>
