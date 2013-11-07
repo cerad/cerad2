@@ -63,6 +63,17 @@ class PersonFed extends BaseModel
     
     public function getCerts() { return $this->certs; }
     
+    public function removeCert(PersonFedCert $cert)
+    {
+        $role = $cert->getRole();
+         
+        if (!isset($this->certs[$role])) return;
+        
+        unset($this->certs[$role]);
+        
+        $this->onPropertyChanged('certs');
+    }
+    
     public function addCert(PersonFedCert $cert)
     {
         $role = $cert->getRole();
@@ -102,6 +113,16 @@ class PersonFed extends BaseModel
     
     public function getOrgs() { return $this->orgs; }
  
+    public function removeOrg(PersonFedOrg $org)
+    {
+        $role = $org->getRole();
+         
+        if (!isset($this->orgs[$role])) return;
+        
+        unset($this->orgs[$role]);
+        
+        $this->onPropertyChanged('orgs');
+    }
     public function addOrg(PersonFedOrg $org)
     {
         $role = $org->getRole();

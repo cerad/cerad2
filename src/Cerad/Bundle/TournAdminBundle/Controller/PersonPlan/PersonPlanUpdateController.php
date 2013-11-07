@@ -52,7 +52,10 @@ class PersonPlanUpdateController extends MyBaseController
         // See if the aysoid has changed
         if ($model['aysoid'] != $model['fed']->getId())
         {
-            die('changed id');
+            die('AYSOID change is not yet implemented');
+            
+            // Works from a script
+            $personRepo->changeFedId($model['fed'],$model['aysoid'],true);
         }
         // Commit
         $personRepo->commit();

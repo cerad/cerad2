@@ -107,6 +107,16 @@ class Person extends BaseModel implements PersonInterface
     
     public function getFeds() { return $this->feds; }
     
+    public function removeFed(PersonFed $fed)
+    {
+        $fedRoleId = $fed->getFedRoleId();
+        
+        if (!isset($this->feds[$fedRoleId])) return;
+        
+        unset($this->feds[$fedRoleId]);
+        
+        $this->onPropertyChanged('feds');
+    }
     public function addFed(PersonFed $fed)
     {
         $fedRoleId = $fed->getFedRoleId();

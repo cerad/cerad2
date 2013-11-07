@@ -123,5 +123,50 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         $conn->executeUpdate('ALTER TABLE person_plans   AUTO_INCREMENT = 1;');
         $conn->executeUpdate('ALTER TABLE persons        AUTO_INCREMENT = 1;');        
     }
+    /* ===============================================================
+     * This should probably go in a manager or some place
+     * Changing the fed id can be complicated at best
+     * 
+     * Some of this can go away once the database is refactored and 
+     * no longer need to cascade id updates
+     */
+    public function changeFedId($oldFed,$newId,$commit = true)
+    {
+        // Make sure it realy needs changing
+        if ($oldFed->getId() == $newId) return;
+        
+        // For now, newId cannot exist
+        $fedx = $this->findFed($newId);
+        if ($fedx) return;
+        
+        // Need a new fed and then transfer
+        $newFed = new PersonFed();
+        $newFed->setId($newId);
+        $newFed->setFedRoleId($oldFed->getFedRoleId());
+        
+        // Connect person to new fed
+        $person = $oldFed->getPerson();
+        $person->removeFed($oldFed);
+        $person->addFed   ($newFed);
+      //$newFed->setPerson($person);
+        
+        // Connect certs and orgs to new fed
+        foreach($oldFed->getCerts() as $cert)
+        {
+            $oldFed->removeCert($cert);
+            $cert->setFed($newFed);
+        }
+        foreach($oldFed->getOrgs() as $org)
+        {
+            $oldFed->removeOrg($org);
+            $org->setFed($newFed);
+         }
+        
+        // Remove old fed
+        $em = $this->getEntityManager();
+        $em->remove ($oldFed);
+      //$em->persist($newFed);
+        if ($commit) $em->flush();
+    }
 }
 ?>
