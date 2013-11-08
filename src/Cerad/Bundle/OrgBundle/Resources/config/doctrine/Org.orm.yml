@@ -1,0 +1,38 @@
+Cerad\Bundle\OrgBundle\Entity\Org:
+    type:  entity
+    table: orgs
+    repositoryClass: Cerad\Bundle\OrgBundle\Entity\OrgRepository
+    changeTrackingPolicy: NOTIFY
+
+    id:
+        id:
+            type:   string
+            length: 40
+            generator: { strategy: NONE }
+    
+    fields:
+                        
+        parent:
+            column:   parent
+            type:     string
+            length:   40
+            nullable: false
+            
+        city:
+            column:   city
+            type:     string
+            length:   120
+            nullable: true
+            
+        state:
+            column:   state
+            type:     string
+            length:   40
+            nullable: true
+                        
+        status:
+            column:   status
+            type:     string
+            length:   20
+            nullable: false
+            

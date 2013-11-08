@@ -1,7 +1,31 @@
 parameters:
-#    cerad_org.example.class: Cerad\Bundle\OrgBundle\Example
 
 services:
-#    cerad_org.example:
-#        class: %cerad_org.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+
+    cerad_org.entity_manager.doctrine:
+        alias: doctrine.orm.default_entity_manager
+        
+    cerad_org.org_repository.doctrine:
+        class:  Cerad\Bundle\OrgBundle\Entity\OrgRepository
+        factory_service: 'cerad_org.entity_manager.doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\OrgBundle\Entity\Org'
+            
+    cerad_org.org_repository:
+        alias: cerad_org.org_repository.doctrine
+        
+    cerad_org.orgs.export_xls:
+        class: Cerad\Bundle\OrgBundle\Services\Orgs\OrgsExportXLS
+        
+    cerad_org.orgs.import_xls:
+        class: Cerad\Bundle\OrgBundle\Services\Orgs\OrgsImportXLS
+        arguments:  
+            - '@cerad_org.org_repository'
+            
+    cerad_org.twig_extension:
+        class:  Cerad\Bundle\OrgBundle\TwigExtension\OrgExtension
+        arguments:  
+            - '@cerad_org.org_repository'
+        tags:
+            - { name: twig.extension }
