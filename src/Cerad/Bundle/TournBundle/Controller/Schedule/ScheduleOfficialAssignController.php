@@ -46,6 +46,9 @@ class ScheduleOfficialAssignController extends MyBaseController
     }
     public function processModel($model)
     {   
+        $project = $model['project'];
+        $projectId = $project->getId();
+        
         $personRepo = $this->get('cerad_person.person_repository');
          
         // Should point to original slots
@@ -64,7 +67,9 @@ class ScheduleOfficialAssignController extends MyBaseController
             }
             else
             {
-                // TODO: Lookup person by full name
+                $person = $personRepo->findOneByProjectName($projectId,$slot->getPersonNameFull());
+                $personGuid = $person ? $person->getGuid() : null;
+                $slot->setPersonGuid($personGuid);
             }
         }
         // Lots to add

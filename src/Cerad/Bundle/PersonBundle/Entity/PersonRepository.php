@@ -46,6 +46,30 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         
         return $qb->getQuery()->getResult();
     }
+    /* ===========================================================
+     * Looking up person for a project by their full name
+     * Take into account the possibility that there might be two people with the same name
+     */
+    public function findOneByProjectName($projectId,$personName)
+    {
+        if (!$personName) return null;
+        
+        $qb = $this->createQueryBuilder('person');
+        
+        $qb->addSelect('personPlan');
+        $qb->leftJoin ('person.plans','personPlan');
+        
+        $qb->andWhere('person.nameFull = :personName');
+        $qb->andWhere('personPlan.projectId  = :projectId' );
+        
+        $qb->setParameter('personName',$personName);
+        $qb->setParameter('projectId', $projectId);
+        
+        $items = $qb->getQuery()->getResult();
+        if (count($items) == 1) return $items[0];
+        
+        return null;
+    }
     public function findOneByFedId($id)
     {
         if (!$id) return null;

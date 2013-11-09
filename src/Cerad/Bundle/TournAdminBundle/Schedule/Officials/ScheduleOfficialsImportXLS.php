@@ -32,6 +32,7 @@ class ScheduleOfficialsImportXLS extends BaseLoader
         if (!$game) return;
         
         $this->results->totalGameCount++;
+        $isModified = false;
         
         $names = array(
             1 => $item['referee'],
@@ -42,12 +43,32 @@ class ScheduleOfficialsImportXLS extends BaseLoader
         for($slot = 1; $slot < 4; $slot++)
         {
             $official = $game->getOfficialForSlot($slot);
+            
+            // Always do name
             $officialName = $official->getPersonNameFull();
             if ($officialName != $names[$slot])
             {
                 $official->setPersonNameFull($names[$slot]);
-                $this->results->modifiedSlotCount++;
+                if (!$isModified)
+                {
+                    $this->results->modifiedSlotCount++;
+                    $isModified = true;
+                }
             }
+            // Link to person
+            $person = $this->personRepo->findOneByProjectName($this->projectId,$officialName);
+            $personGuid = $person ? $person->getGuid() : null;
+
+            if ($personGuid != $official->getPersonGuid())
+            {
+                $official->setPersonGuid($personGuid);
+                if (!$isModified)
+                {
+                    $this->results->modifiedSlotCount++;
+                    $isModified = true;
+                }
+            }
+            // Adjust slot status
         }
     }
     /* ==============================================================
