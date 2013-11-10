@@ -69,6 +69,7 @@ class AccountUserLoginController extends MyBaseController
         $formOptions = array(
             'cascade_validation' => true,
             'intention' => 'authenticate',
+            'csrf_protection' => false,
         );
         $constraintOptions = array(); // array('groups' => 'basic');
         
