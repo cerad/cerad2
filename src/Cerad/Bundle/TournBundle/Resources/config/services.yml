@@ -19,6 +19,11 @@ services:
             - '@cerad_person.person_repository'
         tags:
             - { name: twig.extension }
+            
+    cerad_tourn.response.listener:
+        class:  Cerad\Bundle\TournBundle\Listeners\ResponseListener
+        tags:
+            - { name: kernel.event_subscriber }
 
     cerad_tourn.schedule_official_search.form_type:
         class: Cerad\Bundle\TournBundle\FormType\Schedule\Official\SearchFormType
