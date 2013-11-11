@@ -54,7 +54,7 @@ class AssignSlotSubscriber implements EventSubscriberInterface
         (
             'Pending'   => 'Pending',   // Assignor assigned
             'Published' => 'Published', // Assignor published
-            
+            /*
             'Notified'  => 'Notified',  // Official has been notified
             'Accepted'  => 'Accepted',  // Official has accepted
             'Declined'  => 'Declined',  // Official declined
@@ -64,7 +64,7 @@ class AssignSlotSubscriber implements EventSubscriberInterface
             'Approved'  => 'Approved',  // Assignor has approved request
             'Reviewing' => 'Reviewing', // Assignor is reviewing request
             'Rejected'  => 'Rejected',  // Assignor has rejected request
-            
+            */
         );
         $form->add($this->factory->createNamed('state','choice', null, array(
             'required'        => false,
