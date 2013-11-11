@@ -1,11 +1,29 @@
 <?php
 namespace Cerad\Bundle\TournAdminBundle\Schedule\Officials;
 
+use Doctrine\Common\PropertyChangedListener;
+
 use Cerad\Component\Excel\Loader as BaseLoader;
 
-class ImportResults
+class ImportResults implements PropertyChangedListener
 {
+    public $basename;
     
+    public $totalGameCount    = 0;
+    public $modifiedSlotCount = 0;
+    
+    protected $slots = array();
+    
+    public function propertyChanged($slot, $propName, $oldValue, $newValue)
+    {
+        $slotId = $slot->getId();
+        if (isset($this->slots[$slotId])) return;
+        
+        $this->modifiedSlotCount++;
+        $this->slots[$slotId] = true;
+        
+        return;
+    }
 }
 class ScheduleOfficialsImportXLS extends BaseLoader
 {
@@ -22,6 +40,49 @@ class ScheduleOfficialsImportXLS extends BaseLoader
         
         $this->gameRepo   = $gameRepo;
         $this->personRepo = $personRepo;
+    }
+    /* ========================================================
+     * Really need to hook a listener for changes
+     */
+    protected function processSlot($slot,$slotName)
+    {
+        $slot->addPropertyChangedListener($this->results);
+        
+        // No name, clear slot
+        if (!$slotName)
+        {
+            // Probable need a rest method
+            $slot->setState(null);
+            $slot->setPersonGuid(null);
+            $slot->setPersonNameFull(null);
+            return;
+        }
+        // Link to person
+        $person = $this->personRepo->findOneByProjectName($this->projectId,$slotName);
+        $personGuid = $person ? $person->getGuid() : null;
+        
+        if ($personGuid)
+        {
+            // Always sync name
+            $slot->setPersonNameFull($slotName);
+             
+            // See if an update
+            if ($personGuid == $slot->getPersonGuid()) return;
+            
+            // Set default state
+            $slot->setPersonGuid($personGuid);
+            $slot->setState('Pending');
+            return;
+        }
+        
+        // No link
+        $slot->setPersonGuid(null);
+        
+        if ($slotName == $slot->getPersonNameFull()) return;
+        
+        $slot->setPersonNameFull($slotName);
+        $slot->setState('Pending');
+        
     }
     protected function processItem($item)
     {
@@ -40,35 +101,10 @@ class ScheduleOfficialsImportXLS extends BaseLoader
             3 => $item['ar2'],
         );
         
-        for($slot = 1; $slot < 4; $slot++)
+        for($slotNum = 1; $slotNum < 4; $slotNum++)
         {
-            $official = $game->getOfficialForSlot($slot);
-            
-            // Always do name
-            $officialName = $official->getPersonNameFull();
-            if ($officialName != $names[$slot])
-            {
-                $official->setPersonNameFull($names[$slot]);
-                if (!$isModified)
-                {
-                    $this->results->modifiedSlotCount++;
-                    $isModified = true;
-                }
-            }
-            // Link to person
-            $person = $this->personRepo->findOneByProjectName($this->projectId,$officialName);
-            $personGuid = $person ? $person->getGuid() : null;
-
-            if ($personGuid != $official->getPersonGuid())
-            {
-                $official->setPersonGuid($personGuid);
-                if (!$isModified)
-                {
-                    $this->results->modifiedSlotCount++;
-                    $isModified = true;
-                }
-            }
-            // Adjust slot status
+            $slot = $game->getOfficialForSlot($slotNum);
+            $this->processSlot($slot,  $names[$slotNum]);          
         }
     }
     /* ==============================================================
@@ -92,9 +128,7 @@ class ScheduleOfficialsImportXLS extends BaseLoader
         
         $this->results = new ImportResults();
         $this->results->basename = $params['basename'];
-        $this->results->totalGameCount    = 0;
-        $this->results->modifiedSlotCount = 0;
-        
+         
         // Insert each record
         foreach($rows as $row)
         {
