@@ -54,12 +54,12 @@ class AssignSlotSubscriber implements EventSubscriberInterface
         (
             'Pending'   => 'Pending',   // Assignor assigned
             'Published' => 'Published', // Assignor published
-            /*
+            
             'Notified'  => 'Notified',  // Official has been notified
             'Accepted'  => 'Accepted',  // Official has accepted
             'Declined'  => 'Declined',  // Official declined
             'Turnback'  => 'Turnback',  // Official accepted but then bailed
-            
+            /*
             'Requested' => 'Requested', // Official has requested assignment
             'Approved'  => 'Approved',  // Assignor has approved request
             'Reviewing' => 'Reviewing', // Assignor is reviewing request

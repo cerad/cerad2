@@ -52,8 +52,9 @@ class GameRepository extends EntityRepository
         
         $groupTypes = $this->getArrayValue($criteria,'groupTypes');
         
-        $teamNames  = $this->getArrayValue($criteria,'teams');
-        $fieldNames = $this->getArrayValue($criteria,'fields');
+        $teamNames     = $this->getArrayValue($criteria,'teams');
+        $fieldNames    = $this->getArrayValue($criteria,'fields');
+        $officialNames = $this->getArrayValue($criteria,'officialNames');
         
         /* =================================================
          * Dates are always so much fun
@@ -88,8 +89,9 @@ class GameRepository extends EntityRepository
         $qb = $this->createQueryBuilder('game');
      
         $qb->select('distinct game.id');
-        $qb->leftJoin ('game.field','gameField');
-        $qb->leftJoin ('game.teams','gameTeam');
+        $qb->leftJoin ('game.field',    'gameField');
+        $qb->leftJoin ('game.teams',    'gameTeam');
+        $qb->leftJoin ('game.officials','gameOfficial');
         
         if ($projects)
         {
@@ -124,6 +126,11 @@ class GameRepository extends EntityRepository
         {
             $qb->andWhere('gameTeam.name IN (:teamNames)');
             $qb->setParameter('teamNames',$teamNames);
+        }
+        if ($officialNames)
+        {
+            $qb->andWhere('gameOfficial.personNameFull IN (:officialNames)');
+            $qb->setParameter('officialNames',$officialNames);
         }
         
         if ($date1On and $date2On)

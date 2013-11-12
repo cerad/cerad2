@@ -1,0 +1,38 @@
+{# @CeradTourn/Schedule/My/ScheduleMyList.html.twig #}
+{#
+    Example of a tabular form
+#}
+<table>
+{{ form_start(form, { 'attr' : { 'class' : 'app_form' }}) }}
+
+{% for formGame in form.games %}
+{% set game = formGame.vars.data %}
+<tr>
+    <td>{{ game.num }}</td>
+    <td>{{ game.dtBeg.format('D H:i A') }}
+    <td>{{ game.field.name }}</td>
+    <td>{{ game.group      }}</td>
+    <td><table>
+        {% for gameTeam in game.teams %}
+            <tr>
+                <td>{{ gameTeam.name }}</td>
+            </tr>
+        {% endfor %} {# gameTeam #}
+    </table></td>
+    <td>
+        <table>
+        {% for formGameOfficial in formGame.officials %}
+        {% set gameOfficial = formGameOfficial.vars.data %}
+        <tr>
+            <td>{{ gameOfficial.role }}</td>
+            <td>{{ gameOfficial.personNameFull }}</td>
+            <td>{{ form_widget(formGameOfficial.state) }}</td>
+        </tr>
+        {% endfor %} {# formGameOfficial #}
+        </table>
+    </td>
+{% endfor %} {# formGame #}
+<tr><td>{{ form_widget(form.update) }}</td><tr>
+{{ form_rest(form) }}
+{{ form_end(form)  }}
+</table>
