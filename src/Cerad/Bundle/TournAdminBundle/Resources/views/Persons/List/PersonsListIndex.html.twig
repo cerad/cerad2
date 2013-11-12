@@ -1,0 +1,64 @@
+{# @CeradTournAdmin/Persons/List/PersonsListIndex.html.twig   #}
+{% extends '@CeradTournAdmin/Layout.html.twig' %}
+
+{% block content %}
+<style>
+.aysov_mem_year-FS2013 { background-color: lightgreen; }
+</style>
+<div style="padding:0 2em 1em 2em; float: left;"><a href="{{ path('cerad_tourn_admin_persons_list', { '_format': 'xls'}) }}">Export to Excel</a></div>
+<!--<div style="padding: 0 2em 1em 0; float: left;"><a href="{{ path('cerad_tourn_admin_persons_list', { '_format': 'csv'}) }}"> Export to Text</a></div>
+-->
+<table id="person-list" class="app_table">
+<thead>
+<tr><th colspan="20">Registered Persons List - Count: {{ persons | length }}</th></tr>
+<tr>
+    <!--<th>Update</th>-->
+    <th>Account</th>
+    <th>Person</th>
+    <th>AYSO Information</th>
+    <th>Plans</th>
+</tr>
+</thead>
+<tbody>
+{% for person in persons  %}
+{% set name = person.name %}
+{% set user = cerad_tourn_get_user_for_person(person) %}
+{% set personFed     = person.fed(fedRoleId) %}
+{% set personOrg     = personFed.orgRegion %}
+{% set certReferee   = personFed.certReferee %}
+{% set certSafeHaven = personFed.certSafeHaven %}
+{% set plan      = person.plan(project.id) %}
+<tr id="person-{{person.id}}">
+    <td>
+        <p>Username: {{ user.username }}</p>
+        <p>Email: {{ user.email       }}</p>
+        <p>Account Name:{{ user.accountName }}</p>
+    </td>
+    <td><table class="person-info">
+        <tr><td>Name </td><td><a href="{{ path('cerad_tourn_admin_person_plan_update',{ 'person' : person.id }) }}">{{ name.full }}</a></td></tr>
+        <tr><td>First</td><td>{{ name.first   }}</td></tr>
+        <tr><td>Last </td><td>{{ name.last    }}</td></tr>
+        <tr><td>Email</td><td>{{ person.email }}</td></tr>
+        <tr><td>Phone</td><td>{{ person.phone | cerad_phone }}</td></tr>
+        <tr><td>Gender Age</td><td>{{ person.gender }} {{ person.age }}</td></tr>
+    </table></td>
+    <td>
+        <p>Vol: {{ personFed.id | slice(5)    }}</p>
+        <p>S/A/R: {{ personOrg.orgId | cerad_org_sar }}</p>
+        <p>MY:  <span class="aysov_mem_year-{{ personOrg.memYear }}">{{ personOrg.memYear }}</span></p>
+        <p>SH:  {{ certSafeHaven.badge }}</p>
+        <p>REF: {{ certReferee.badge   }}</p>
+    </td>
+    <td>
+        <p>Will Attend:  {{ plan.willAttend  }}</p>
+        <p>Will Referee: {{ plan.willReferee }}</p>
+        <p>Will Mentor:  {{ plan.willMentor  }}</p>
+        <p>Want Mentor:  {{ plan.wantMentor  }}</p>
+        <p>Shirt Size:   {{ plan.shirtSize   }}</p>
+    </td>
+</tr>
+{% endfor %} {# persons #}
+</tbody>
+</table>
+
+{% endblock %}{# end content block #}

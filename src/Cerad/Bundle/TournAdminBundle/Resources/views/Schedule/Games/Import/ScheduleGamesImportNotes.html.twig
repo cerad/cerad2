@@ -1,0 +1,21 @@
+{# @CeradTournAdmin/Schedule/Games/Import/ScheduleGamesImportNotes.html.twig   #}
+
+<h2>Managing Game Schedule</h2>
+<div id="notes">
+    <strong>Notes on Modifying Game Schedule</strong>:
+    <ul>
+    <li>Games are modified using this page.</li>
+    <li><strong>Important: </strong>You must use the same format worksheet as is exported. <strong>NO added columns or rows</strong>.</li>
+    <li>The <strong><em>only</em></strong> proper way to do this is to:</li>
+    <ol>
+      <li><a href="{{ path('cerad_tourn_admin_schedule_games_export') }} target="_blank">Export Game Schedule</a></li>
+      <li>Update Date/Start/Stop/Field/Team Names</li>
+      <li>Save the modified game schedule.</li>
+
+      <li>Using the controls below, select the modified worksheet by clicking the "Choose File" button.</li>
+      <li>Complete the import by clicking the "Import Game Schedule" button.</li>
+      <li><a href="{{ path('cerad_tourn_schedule_official_list') }}">View Referee Schedule</a> to confirm the changes.</li>
+    </ol>
+    </ul>
+</div>
+<br>

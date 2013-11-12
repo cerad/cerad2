@@ -1,3 +1,77 @@
-cerad_tourn_admin_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: CeradTournAdminBundle:Default:index }
+# Put all the admin routes here
+---
+cerad_tourn_admin:
+    pattern:  /admin
+    defaults: 
+        _controller: CeradTournAdminBundle:Admin/AdminMenu:show
+        _template: '@CeradTournAdmin/Admin/AdminShowIndex.html.twig'
+            
+cerad_tourn_admin_persons_list:
+    pattern:  /admin/persons/list.{_format}
+    defaults:
+        _controller: CeradTournAdminBundle:Persons/PersonsList:list
+        _template: '@CeradTournAdmin/Persons/List/PersonsListIndex.html.twig'
+        _format: html
+    requirements:
+        _format:  html|csv|xls|pdf
+        
+cerad_tourn_admin_person_plan_update:
+    pattern:  /admin/person-plan/update/{person}
+    defaults: 
+        _controller: CeradTournAdminBundle:PersonPlan/PersonPlanUpdate:update
+        _template: '@CeradTournAdmin/PersonPlan/Update/PersonPlanUpdateIndex.html.twig'
+
+cerad_tourn_admin_schedule_officials_import:
+    pattern:  /admin/schedule-officials/import
+    defaults: 
+        _controller: CeradTournAdminBundle:Schedule/Officials/ScheduleOfficialsImport:import
+        _template: '@CeradTournAdmin/Schedule/Officials/Import/ScheduleOfficialsImportIndex.html.twig'
+
+cerad_tourn_admin_officials_list:
+    pattern:  /admin/officials/list.{_format}
+    defaults: 
+        _controller: CeradTournAdminBundle:Schedule/Officials/OfficialsList:list
+        _template: '@CeradTournAdmin/Schedule/Officials/List/OfficialsListIndex.html.twig'
+        _format: html
+    requirements:
+        _format:  html|csv|xls|pdf
+        
+# ==============================================================
+# Listing, Importing and exporting the game schedule
+cerad_tourn_admin_schedule_games_list:
+    pattern:  /admin/schedule-games/list
+    defaults: 
+        _controller: CeradTournAdminBundle:Schedule/Games/ScheduleGamesList:list
+        _template: '@CeradTournAdmin/Schedule/Games/List/ScheduleGamesListIndex.html.twig'
+        
+cerad_tourn_admin_schedule_games_import:
+    pattern:  /admin/schedule-games/import
+    defaults: 
+        _controller: CeradTournAdminBundle:Schedule/Games/ScheduleGamesImport:import
+        _template: '@CeradTournAdmin/Schedule/Games/Import/ScheduleGamesImportIndex.html.twig'
+        
+cerad_tourn_admin_schedule_games_export:
+    pattern:  /admin/schedule-games/export.{_format}
+    defaults: 
+        _controller: CeradTournAdminBundle:Schedule/Games/ScheduleGamesExport:export
+        _template: '@CeradTournAdmin/Schedule/Games/Export/ScheduleGamesExportIndex.html.twig'
+        _format: xls
+    requirements:
+        _format:  html|csv|xls|pdf
+
+# ==============================================================
+# Exporting and printing the results stuff
+#
+# This if for all the results including pool play, playoffs and the champions
+#
+# Only excel is currently supported
+
+# pdf would be good as well for mailing
+#
+cerad_tourn_admin_results_export:
+    pattern:  /admin/results/export.{_format}
+    defaults:
+        _controller: CeradTournAdminBundle:Results/ResultsExport:export
+        _format: xls
+    requirements:
+        _format:  html|csv|xls|pdf

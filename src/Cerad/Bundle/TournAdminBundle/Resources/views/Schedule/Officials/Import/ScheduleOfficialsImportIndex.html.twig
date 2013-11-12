@@ -1,0 +1,27 @@
+{# @CeradTournAdmin/Schedule/Officials/Import/ScheduleOfficialsImportIndex.html.twig #}
+{% extends '@CeradTournAdmin/Layout.html.twig' %}
+
+{% block content %}
+
+{% include '@CeradTournAdmin/Schedule/Officials/Import/ScheduleOfficialsImportNotes.html.twig' %}
+
+<hr>
+<div class="import_controls">
+{{ form_start(form) }}
+{{ form_row(form.attachment, {'label': ' '}) }}
+{{ form_row(form.import, {'label': ' Import Referee Assignments '}) }}
+{{ form_rest(form) }}
+{{ form_end(form)  }}
+</div>
+{% if results %}
+<hr>
+<div class="import_controls">
+<h4>Results:</h4>
+<table class="import_results" border="1">
+<tr><td>Import File:         </td><td>{{ results.basename }}</td></tr>
+<tr><td>Total Game Count:    </td><td>{{ results.totalGameCount }}</td></tr>
+<tr><td>Modified Slot Count: </td><td>{{ results.modifiedSlotCount }}</td></tr>
+</table>
+</div>
+{% endif %}
+{% endblock %}

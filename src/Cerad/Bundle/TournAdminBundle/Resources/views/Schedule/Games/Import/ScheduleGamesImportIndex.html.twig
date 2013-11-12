@@ -1,0 +1,31 @@
+{# @CeradTournAdmin/Schedule/Games/Import/ScheduleGamesImportIndex.html.twig #}
+{% extends '@CeradTournAdmin/Layout.html.twig' %}
+
+{% block content %}
+
+{% include '@CeradTournAdmin/Schedule/Games/Import/ScheduleGamesImportNotes.html.twig' %}
+
+<hr>
+<div class="import_controls">
+{{ form_start(form) }}
+{{ form_row(form.attachment, {'label': ' '}) }}
+{{ form_row(form.import, {'label': ' Import Game Schedule '}) }}
+{{ form_rest(form) }}
+{{ form_end(form)  }}
+</div>
+{% if results %}
+<hr>
+<div class="import_controls">
+<h4>Results:</h4>
+<table class="import_results" border="1">
+<tr><td>Import File:              </td><td>{{ results.basename              }}</td></tr>
+<tr><td>Total    Game Count:      </td><td>{{ results.totalGameCount        }}</td></tr>
+<tr><td>Modified Game Count:      </td><td>{{ results.modifiedGameCount     }}</td></tr>
+<tr><td>Modified Date/Time Count: </td><td>{{ results.modifiedDateTimeCount }}</td></tr>
+<tr><td>Modified Field Count:     </td><td>{{ results.modifiedFieldCount    }}</td></tr>
+<tr><td>Modified Home Team Count: </td><td>{{ results.modifiedHomeTeamCount }}</td></tr>
+<tr><td>Modified Away Team Count: </td><td>{{ results.modifiedAwayTeamCount }}</td></tr>
+</table>
+</div>
+{% endif %}
+{% endblock %}

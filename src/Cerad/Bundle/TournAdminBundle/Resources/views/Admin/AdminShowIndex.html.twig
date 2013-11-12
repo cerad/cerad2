@@ -1,0 +1,46 @@
+{# @CeradTournAdmin/Admin/AdminShowIndex.html.twig   #}
+{% extends '@CeradTournAdmin/Layout.html.twig' %}
+
+{% block content %}
+
+<div class="admin">
+{% if is_granted('ROLE_ADMIN')  %}
+  <ul><h2>Account Management</h2>
+<!--
+    <li><a href="">List of Accounts and Referees (empty)</a></li>
+-->
+    <li><a href="{{ path('cerad_tourn_admin_persons_list') }}">View Registered People</a></li>
+    <li><a href="{{ path('cerad_tourn_admin_persons_list', { '_format' : 'xls' }) }}">Export Registered People (Excel)</a></li>
+    <!--<li><a href="{{ path('cerad_tourn_admin_officials_list', { '_format' : 'xls' }) }}">Export Tournament Officials (Excel)</a></li>-->
+
+<!--
+    <li><a href="">Search People (empty)</a></li>
+    <li><a href="">List of Teams (empty)</a></li>
+    <li><a href="">Import AYSO Information (empty)</a></li>
+-->
+  </ul>
+{% endif %}
+{#
+  <ul><h2>Schedule Management</h2>
+    <li><a href="{{ path('cerad_tourn_schedule_list') }}">View Game Schedule</a></li>
+{% if is_granted('ROLE_SCORE_ADMIN')  %}
+    <li><a href="{{ path('cerad_tourn_admin_schedule_games_export') }}">Export Game Schedule (Excel)</a></li>
+    <li><a href="{{ path('cerad_tourn_admin_schedule_games_import') }}">Import Game Schedule (Excel)</a></li>
+    <!--<li><a href="">Update Individual Game Schedule</a></li>-->
+{% endif %}
+{% if is_granted('ROLE_ASSIGNOR') %}
+    <li><a href="{{ path('cerad_tourn_schedule_official_list') }}">View Referee Schedule</a></li>
+    <li><a href="{{ path('cerad_tourn_schedule_official_list', { '_format': 'xls'}) }}">Export Referee Schedule (Excel)</a></li>
+    <li><a href="{{ path('cerad_tourn_admin_schedule_officials_import') }}">Import Referee Schedule (Excel)</a></li>
+  </ul>
+{% endif %}
+{% if is_granted('ROLE_SCORE_ADMIN') %}
+  <ul><h2>Game Management</h2>
+    <li><a href="{{ path('cerad_tourn_schedule_list') }}">Enter Match Results</a></li>
+    <li><a href="{{ path('cerad_tourn_admin_results_export',{ '_format': 'xls' }) }}">Export Pool Score Board (Excel)</a></li>
+  </ul>
+{% endif %}
+#}
+</div>
+
+{% endblock %}{# end content block #}
