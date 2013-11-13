@@ -10,6 +10,8 @@ class TournIFrameController extends MyBaseController
 {
     public function iframeAction(Request $request)
     {
+        $session = $request->getSession();
+        $session->set('iframe','called');
         return new RedirectResponse('http://ayso1ref.com/s1_13/zayso', 302);
     }
 }
