@@ -26,6 +26,8 @@ class ExportS1GamesCommand extends ContainerAwareCommand
         $export = $this->getService('cerad_app_cerad.persons_s1games.export_xml');
         $writer = $export->process();
         
+        echo $writer->outputMemory(true);
+        
         return;
     }
     /* =====================================================================

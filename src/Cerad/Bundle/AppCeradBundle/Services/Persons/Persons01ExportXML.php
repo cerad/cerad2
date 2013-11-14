@@ -298,7 +298,9 @@ EOT;
         $writer->endElement(); // Export
 
         $writer->endDocument();
-        echo $writer->outputMemory(true);        
+      //echo $writer->outputMemory(true); 
+        
+        return $writer;
     }
 }
 ?>
