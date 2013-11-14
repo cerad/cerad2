@@ -1,0 +1,7 @@
+parameters:
+#    cerad_app_cerad.example.class: Cerad\Bundle\AppCeradBundle\Example
+
+services:
+#    cerad_app_cerad.example:
+#        class: %cerad_app_cerad.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

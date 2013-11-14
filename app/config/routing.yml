@@ -1,3 +1,7 @@
+cerad_app_cerad:
+    resource: "@CeradAppCeradBundle/Resources/config/routing.yml"
+    prefix:   /
+
 cerad_tourn_admin:
     resource: "@CeradTournAdminBundle/Resources/config/routing.yml"
     prefix:   /
