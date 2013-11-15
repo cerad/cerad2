@@ -41,6 +41,10 @@ class BaseController extends Controller
     {
         return $this->get('security.context')->isGranted('ROLE_ASSIGNOR');
     }
+    protected function hasRoleScoreAdmin($projectId = null)
+    {
+        return $this->get('security.context')->isGranted('ROLE_SCORE_ADMIN');
+    }    
     /* ===================================================
      * This is similiar to what the authentication listener does on success
      * This should me moved to some sort of user service
