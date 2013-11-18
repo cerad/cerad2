@@ -12,3 +12,8 @@ services:
         class: Cerad\Bundle\AppCeradBundle\Services\Persons\PersonsImportXML
         arguments:
             - '@doctrine.dbal.default_connection'
+            
+    cerad_app_cerad.persons.import_xml02:
+        class: Cerad\Bundle\AppCeradBundle\Services\Persons\PersonsImportXML02
+        arguments:
+            - '@doctrine.dbal.default_connection'
