@@ -7,13 +7,13 @@ use Symfony\Component\Console\Input\InputInterface;
 //  Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ExportS1GamesCommand extends ContainerAwareCommand
+class ImportPersonsCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
         $this
-            ->setName       ('cerad_app:export:s1games')
-            ->setDescription('Export S1Games');
+            ->setName       ('cerad_app:import:persons')
+            ->setDescription('Import Persons');
           //->addArgument   ('importFile', InputArgument::REQUIRED, 'Import File')
           //->addArgument   ('truncate',   InputArgument::OPTIONAL, 'Truncate')
         ;
@@ -23,16 +23,14 @@ class ExportS1GamesCommand extends ContainerAwareCommand
         
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $export = $this->getService('cerad_app_cerad.persons_s1games.export_xml');
-        $writer = $export->process();
+        $import = $this->getService('cerad_app_cerad.persons.import_xml');
+        $params = array('filepath' => 'Persons.xml', 'basename' => 'Persons.xml');
         
-        echo $writer->flush(false);
+        $results = $import->process($params);
         
-        file_put_contents('Persons.xml',$writer->flush());
-        
-
+        print_r($results);
         
         return;
-   }
+    }
 }
 ?>

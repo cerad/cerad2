@@ -229,6 +229,9 @@ EOT;
      */
     protected function processPerson($conn,$writer,$person)
     {
+        $personId = $person['id'];
+        if ($personId > 5) return;
+        
         $writer->startElement('person');
             
       //$writer->writeAttribute('id',  $person['id']);
