@@ -128,7 +128,16 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
        $em = $this->getEntityManager();
        return $em->flush();
     }
-    
+    public function delete(PersonModel $entity)
+    {
+        if (!($entity instanceof PersonEntity)) 
+        {
+            throw new \Exception('Wrong type of entity for remove');
+        }
+        $em = $this->getEntityManager();
+
+        return $em->remove($entity);
+    }
     public function truncate()
     {
         $conn = $this->_em->getConnection();

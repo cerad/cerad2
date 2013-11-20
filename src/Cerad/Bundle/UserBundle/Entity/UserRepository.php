@@ -48,6 +48,16 @@ class UserRepository extends EntityRepository implements UserRepositoryInterface
        $em = $this->getEntityManager();
        return $em->flush();
     }
+    public function delete(UserInterface $entity)
+    {
+        if (!($entity instanceof UserEntity)) 
+        {
+            throw new \Exception('Wrong type of entity for remove');
+        }
+        $em = $this->getEntityManager();
+
+        return $em->remove($entity);
+    }
     /* =========================================================================
      * Still a bit uneasy about user repo vs user manager
      */
