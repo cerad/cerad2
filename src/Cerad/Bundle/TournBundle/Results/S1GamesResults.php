@@ -25,9 +25,8 @@ class S1GamesResults extends AbstractResults
     protected $pointsMinusForBenchEjection  = 1;
     protected $pointsMinusForSpecEjection   = 1;
     
-    // This is for the pool play results
-    protected $maxGoalsScoredPerGame  =  3;
-    protected $maxGoalsAllowedPerGame = 99; // Used for goal differential
+    // This if for total goal differential
+    protected $maxGoalDifferentialPerGame = 3;
     
     /* =====================================================
      * Standings sort based on PoolTeamReports
@@ -53,17 +52,19 @@ class S1GamesResults extends AbstractResults
         if ($te1 < $te2) return $w1;
         if ($te1 > $te2) return $w2;
         
-        // Fewest Goals Allowed
-        $ga1 = $team1->getGoalsAllowedMax();
-        $ga2 = $team2->getGoalsAllowedMax();
+        // Fewest Goals Allowed 
+        // NO LIMIT ON GOALS ALLOWED IN THE RULES
+        $ga1 = $team1->getGoalsAllowed();
+        $ga2 = $team2->getGoalsAllowed();
         if ($ga1 < $ga2) return $w1;
         if ($ga1 > $ga2) return $w2;
         
-        // Goal differential
-        $gd1 = $team1->getGoalsScoredMax() - $team1->getGoalsAllowed();
-        $gd2 = $team2->getGoalsScoredMax() - $team2->getGoalsAllowed();
-        if ($gd1 < $gd2) return $w1;
-        if ($gd1 > $gd2) return $w2;
+        // Highest Goal Differential
+        // MAX 3 per game
+        $gd1 = $team1->getGoalDifferential();
+        $gd2 = $team2->getGoalDifferential();
+        if ($gd1 > $gd2) return $w1;
+        if ($gd1 < $gd2) return $w2;
         
         // Best sportsmanship
         $sp1 = $team1->getSportsmanship();
@@ -84,6 +85,64 @@ class S1GamesResults extends AbstractResults
         // Should not happen
         return 0;
     }
+    /* =============================================================
+     * Transfers data from game team to pool team
+     * Summarizing the results
+     */
+    protected function calcPoolTeamPoints($poolTeamReport,$gameTeamReport)
+    {   
+        $poolTeamReport->addPointsEarned($gameTeamReport->getPointsEarned());   
+        $poolTeamReport->addPointsMinus ($gameTeamReport->getPointsMinus());
+        
+        $goalsScored  = $gameTeamReport->getGoalsScored();
+        $goalsAllowed = $gameTeamReport->getGoalsAllowed();
+       
+        $poolTeamReport->addGoalsScored ($goalsScored );
+        $poolTeamReport->addGoalsAllowed($goalsAllowed);
+        
+        /* ================================================
+         * Differential
+         */
+        $goalDifferential = $goalsScored - $goalsAllowed;
 
+        // Max 3 per game
+        if ($goalDifferential > $this->maxGoalDifferentialPerGame) 
+        {
+            $goalDifferential = $this->maxGoalDifferentialPerGame;
+        }
+        // Min -3 per game?
+        if ($goalDifferential < ($this->maxGoalDifferentialPerGame * -1))
+        {
+            $goalDifferential = $this->maxGoalDifferentialPerGame * -1;
+        }
+        $poolTeamReport->addGoalDifferential($goalDifferential);
+        
+        // Conduct
+        $poolTeamReport->addPlayerWarnings ($gameTeamReport->getPlayerWarnings ());
+        $poolTeamReport->addPlayerEjections($gameTeamReport->getPlayerEjections());
+        
+        $poolTeamReport->addCoachWarnings ($gameTeamReport->getCoachWarnings ());
+        $poolTeamReport->addCoachEjections($gameTeamReport->getCoachEjections());
+        
+        $poolTeamReport->addBenchWarnings ($gameTeamReport->getBenchWarnings ());
+        $poolTeamReport->addBenchEjections($gameTeamReport->getBenchEjections());
+        
+        $poolTeamReport->addSpecWarnings ($gameTeamReport->getSpecWarnings ());
+        $poolTeamReport->addSpecEjections($gameTeamReport->getSpecEjections());
+        
+        $poolTeamReport->addSportsmanship($gameTeamReport->getSportsmanship());
+        
+        // Missing from national?
+        $poolTeamReport->addGamesTotal(1);
+        
+        if ($gameTeamReport->getGoalsScored() !== null)
+        {
+            // Track games played
+            $poolTeamReport->addGamesPlayed(1);
+            
+            // Track games won
+            if ($gameTeamReport->getGoalsScored() > $gameTeamReport->getGoalsAllowed()) $poolTeamReport->addGamesWon(1);
+        }        
+    }
 }
 ?>

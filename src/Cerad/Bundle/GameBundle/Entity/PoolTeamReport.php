@@ -9,6 +9,8 @@ namespace Cerad\Bundle\GameBundle\Entity;
  */
 class PoolTeamReport extends GameTeamReport
 {
+    protected $goalDifferential;
+    
     protected $goalsScoredMax;
     protected $goalsAllowedMax;
     
@@ -24,8 +26,9 @@ class PoolTeamReport extends GameTeamReport
     public function addGoalsScored ($value) { $this->goalsScored  += $value; }
     public function addGoalsAllowed($value) { $this->goalsAllowed += $value; }
     
-    public function addGoalsScoredMax ($value) { $this->goalsScoredMax  += $value; }
-    public function addGoalsAllowedMax($value) { $this->goalsAllowedMax += $value; }
+    public function addGoalsScoredMax  ($value) { $this->goalsScoredMax   += $value; }
+    public function addGoalsAllowedMax ($value) { $this->goalsAllowedMax  += $value; }
+    public function addGoalDifferential($value) { $this->goalDifferential += $value; }
     
     public function addPlayerWarnings ($value) { $this->playerWarnings  += $value; }
     public function addCoachWarnings  ($value) { $this->coachWarnings   += $value; }
@@ -47,8 +50,9 @@ class PoolTeamReport extends GameTeamReport
     public function getGamesPlayed() { return $this->gamesPlayed; }
     public function getGamesWon   () { return $this->gamesWon;    }
     
-    public function getGoalsScoredMax () { return $this->goalsScoredMax ; }
-    public function getGoalsAllowedMax() { return $this->goalsAllowedMax; }
+    public function getGoalsScoredMax  () { return $this->goalsScoredMax ;  }
+    public function getGoalsAllowedMax () { return $this->goalsAllowedMax;  }
+    public function getGoalDifferential() { return $this->goalDifferential; }
     
     public function setWinPercent($value) { $this->winPercent = $value; }
     public function getWinPercent()       { return $this->winPercent; }

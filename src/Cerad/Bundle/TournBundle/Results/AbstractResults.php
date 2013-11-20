@@ -31,8 +31,12 @@ class AbstractResults
     protected $pointsMinusForSpecEjection   = 0;
     
     // This is for the pool play results
+    // Don't think this is applicable to s1games
     protected $maxGoalsScoredPerGame  = 3;
     protected $maxGoalsAllowedPerGame = 5;
+    
+    // This if for total goal differential
+    protected $maxGoalDifferentialPerGame = 3;
     
     /* =========================================================
      * Called by game report controller
@@ -114,6 +118,7 @@ class AbstractResults
         
         /* =======================================================
          * Tie breaking rule for goals allowed
+         * These are not applicable to the s1games
          */
         $goalsScored = $gameTeamReport->getGoalsScored();
         if ($goalsScored > $this->maxGoalsScoredPerGame) $goalsScored = $this->maxGoalsScoredPerGame;
@@ -122,6 +127,23 @@ class AbstractResults
         $goalsAllowed = $gameTeamReport->getGoalsAllowed();
         if ($goalsAllowed > $this->maxGoalsAllowedPerGame) $goalsAllowed = $this->maxGoalsAllowedPerGame;
         $poolTeamReport->addGoalsAllowedMax($goalsAllowed);
+        
+        /* ================================================
+         * Differential
+         */
+        $goalDifferential = $goalsScored - $goalsAllowed;
+
+        // Max 3 per game
+        if ($goalDifferential > $this->maxGoalDifferentialPerGame) 
+        {
+            $goalDifferential = $this->maxGoalDifferentialPerGame;
+        }
+        // Min -3 per game?
+        if ($goalDifferential < ($this->maxGoalDifferentialPerGame * -1))
+        {
+            $goalDifferential = $this->maxGoalDifferentialPerGame * -1;
+        }
+        $poolTeamReport->addGoalDifferential($goalDifferential);
         
         // Conduct
         $poolTeamReport->addPlayerWarnings ($gameTeamReport->getPlayerWarnings ());
