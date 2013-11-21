@@ -14,6 +14,18 @@ class MyXMLReader extends \XMLReader
         
         return $value;
     }
+    // Try return all attributes as an array
+    public function getAttributes()
+    {
+        $attrs = array();
+        while($this->moveToNextAttribute())
+        {
+            $value = $this->value;
+            if (!strlen($value)) $value = null;
+            $attrs[$this->name] = $value;
+        }
+        return $attrs;
+    }
 }
 class PersonsImportXML02Results
 {
@@ -84,57 +96,36 @@ class PersonsImportXML02
         return $this->tableInsertStatements[$tableName] = $this->conn->prepare($sql);
     }
     /* =========================================================================
-     * Process PersonFedOrg elements
+     * Process PersonFed elements
      */
-    protected function processPersonFedOrg($reader,$personFed)
+    protected function extractPersonPlan($reader)
     {
-        $personFedOrg = array();
-        foreach($this->getTableColumnNames('person_fed_orgs') as $key)
+        $plan = $reader->getAttributes();
+        $plan['basic'] = array();
+        
+        while($reader->read() && $reader->name != 'person_plan')
         {
-            $personFedOrg[$key] = $reader->getAttribute($key);;
+            if ($reader->nodeType == \XMLReader::ELEMENT)
+            {    
+                switch($reader->name)
+                {
+                    case 'person_plan_basic':
+                        $plan['basic'] = $reader->getAttributes();
+                        break;
+                 }
+            }
         }
-        $personFedOrg['fed_id'] = $personFed['id'];
-        
-        $personFedOrgInsertStatement = $this->getTableInsertStatement('person_fed_orgs');
-        $personFedOrgInsertStatement->execute($personFedOrg);
-    }
-    /* =========================================================================
-     * Process PersonFedCert elements
-     */
-    protected function processPersonFedCert($reader,$personFed)
-    {
-        $personFedCert = array();
-        foreach($this->getTableColumnNames('person_fed_certs') as $key)
-        {
-            $personFedCert[$key] = $reader->getAttribute($key);;
-        }
-        $personFedCert['fed_id'] = $personFed['id'];
-        
-        $personFedCertInsertStatement = $this->getTableInsertStatement('person_fed_certs');
-        $personFedCertInsertStatement->execute($personFedCert);
-        
-        // Not sure if really need this but guess it doesn't hurt
-        // It does hurt, the second cert is consumed
-        // Possible because person_fed_cert has only attributes?
-        //while($reader->read() && $reader->name !== 'person_fed_cert') {}
+        return $plan;
     }
     /* =========================================================================
      * Process PersonFed elements
      */
-    protected function processPersonFed($reader,$person)
+    protected function extractPersonFed($reader)
     {
-        $personFed = array(
-            'id'          => $reader->getAttribute('fed_id'),
-            'person_id'   => $person['id'],
-            'fed_role_id' => $reader->getAttribute('fed_role_id'),
-            'status'      => $reader->getAttribute('status'),
-            'verified'    => $reader->getAttribute('verified'),
-        );
-        $personFedInsertStatement = $this->getTableInsertStatement('person_feds');
-        $personFedInsertStatement->execute($personFed);
-        
-        // This only works for autoinc/sequences
-      //$personFed['id'] = $this->conn->lastInsertId();
+        $fed = $reader->getAttributes();
+
+        $fed['certs']  = array();
+        $fed['orgs']   = array();
         
         // Might be fooling myself here, could be consuming subsequent person_feds
         while($reader->read() && $reader->name != 'person_fed')
@@ -145,56 +136,32 @@ class PersonsImportXML02
                 switch($reader->name)
                 {
                     case 'person_fed_cert':
-                      //echo sprintf("%s person_fed_cert\n",$personFed['id']);
-                        $this->processPersonFedCert($reader,$personFed);
+                        $cert = $reader->getAttributes();
+                        $fed['certs'][] = $cert;
                         break;
                     
                     case 'person_fed_org':
-                        $this->processPersonFedOrg($reader,$personFed);
+                        $org = $reader->getAttributes();
+                        $fed['orgs'][] = $org;
                         break;
                 }
             }
-        }    
+        }
+        return $fed;
     }
     /* ==========================================================================
      * Process a person and all nested records
-     * Use simpleXml to get complete record
+     * Use simpleXml to get complete record - Nope 
      */
-    protected function processPerson($reader)
+    protected function extractPerson($reader)
     {
         $this->results->totalPersonCount++;
         
-        $personNode = new \SimpleXMLElement($reader->readOuterXML());
-        echo $personNode['name_full'] . "\n";
+        $person = $reader->getAttributes();
+        $person['feds']  = array();
+        $person['plans'] = array();
+        $person['users'] = array();
         
-        foreach($personNode->person_feds as $personFedNode)
-        {
-            var_dump($personFedNode);
-            print_r($personFedNode->attributes());
-            echo sprintf("Fed %s\n",$personFedNode['fed_id']);
-          //print_r($personFedNode);
-        }
-        die();
-        return;
-        $personFedNodes = $personNode->person_feds;
-        print_r($personFedNodes);
-        die();
-        return;
-        
-        echo $reader->readOuterXML();
-        die('outer');
-        $node = $reader->expand();
-        echo $node->textContent;
-        die(get_class($node));
-        $person = array();
-        foreach($this->getTableColumnNames('persons') as $key)
-        {
-            $person[$key] = $reader->getAttribute($key);;
-        }
-        $personInsertStatement = $this->getTableInsertStatement('persons');
-        $personInsertStatement->execute($person);
-        $person['id'] = $this->conn->lastInsertId();
-                
         // Read through all the sub nodes until hit person END_ELEMENT
         while($reader->read() && $reader->name !== 'person')
         {
@@ -204,19 +171,21 @@ class PersonsImportXML02
                 switch($reader->name)
                 {
                     case 'person_fed':
-                        $this->processPersonFed($reader,$person);
+                        $person['feds'][] = $this->extractPersonFed($reader);
+                        break;
+                        
+                    case 'person_plan':
+                        $person['plans'][] = $this->extractPersonPlan($reader);
                         break;
                     
-                    case 'person_fed_cert':
-                    case 'person_fed_certs':
-                    case 'person_plan':
                     case 'person_user':
-                      //echo sprintf("%s\n",$reader->name);
+                        $user = $reader->getAttributes();
+                        $person['users'][] = $user;
+                        break;                    
                 }
             }
         }
-        // \XMLReader::END_ELEMENT = 15
-        // echo sprintf("Person type %d\n",$reader->nodeType);
+        return $person;
     }
     /* ==========================================================================
      * Main entry point
@@ -257,8 +226,10 @@ class PersonsImportXML02
         //$reader->read();
         while($reader->name == 'person')
         {
-            $this->processPerson($reader);
+            $person = $this->extractPerson($reader);
             
+          //$this->processPerson($person);
+            print_r($person); die();
             // On to the next one
             // Done by processPerson
             $reader->next('person');
