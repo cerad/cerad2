@@ -33,7 +33,8 @@ class PersonsImportXML02Results
     public $filepath;
     public $basename;
     
-    public $totalPersonCount = 0;
+    public $totalPersonCount  = 0;
+    public $insertPersonCount = 0;
 }
 class PersonsImportXML02
 {
@@ -51,15 +52,15 @@ class PersonsImportXML02
     {
         $conn = $this->conn;
         
-        $conn->executeUpdate('DELETE FROM person_fed_certs;' );
-        $conn->executeUpdate('DELETE FROM person_fed_orgs;' );
-        $conn->executeUpdate('DELETE FROM person_feds;' );
-        $conn->executeUpdate('DELETE FROM persons;' );
-       
-        $conn->executeUpdate('ALTER TABLE person_fed_certs AUTO_INCREMENT = 1;');        
-        $conn->executeUpdate('ALTER TABLE person_fed_orgs  AUTO_INCREMENT = 1;');        
-        $conn->executeUpdate('ALTER TABLE person_feds      AUTO_INCREMENT = 1;');        
-        $conn->executeUpdate('ALTER TABLE persons          AUTO_INCREMENT = 1;');        
+        $tables = array(
+            'person_fed_certs','person_fed_orgs','person_feds',
+            'person_plans','person_persons','persons',
+        );
+        foreach($tables as $table)
+        {
+            $conn->executeUpdate("DELETE FROM $table;" );
+            $conn->executeUpdate("ALTER TABLE $table AUTO_INCREMENT = 1;");        
+        }  
     }
     /* ======================================================
      * Statement functions
@@ -96,12 +97,86 @@ class PersonsImportXML02
         return $this->tableInsertStatements[$tableName] = $this->conn->prepare($sql);
     }
     /* =========================================================================
-     * Process PersonFed elements
+     * Inserting a brand new person.  Nothing existing
+     */
+    protected function insertPerson($person)
+    {
+        $this->results->insertPersonCount++;
+        
+        // Insert the person
+        $person['id'] = null;
+        $personData = array();
+        foreach($this->getTableColumnNames('persons') as $key) $personData[$key] = $person[$key];
+
+        $personInsertStatement = $this->getTableInsertStatement('persons');
+        $personInsertStatement->execute($personData);
+        $person['id'] = $this->conn->lastInsertId();
+        
+        echo sprintf("%d %s\n",$person['id'],$person['name_full']);
+        
+        // Now the feds
+        foreach($person['feds'] as $fed)
+        {
+            $fed['id'] = $fed['fed_id'];
+            $fed['person_id'] = $person['id'];
+            $fedData = array();
+            foreach($this->getTableColumnNames('person_feds') as $key) $fedData[$key] = $fed[$key];
+            
+            $fedInsertStatement = $this->getTableInsertStatement('person_feds');
+            $fedInsertStatement->execute($fedData);
+          //$fed['id'] = $this->conn->lastInsertId();
+
+            // Certs
+            foreach($fed['certs'] as $cert)
+            {
+                $cert['id'] = null;
+                $cert['fed_id'] = $fed['fed_id'];
+                
+                $certData = array();
+                foreach($this->getTableColumnNames('person_fed_certs') as $key) $certData[$key] = $cert[$key];
+            
+                $certInsertStatement = $this->getTableInsertStatement('person_fed_certs');
+                $certInsertStatement->execute($certData);
+            }
+            // Orgs
+            foreach($fed['orgs'] as $org)
+            {
+                $org['id'] = null;
+                $org['fed_id'] = $fed['fed_id'];
+                
+                $orgData = array();
+                foreach($this->getTableColumnNames('person_fed_orgs') as $key) $orgData[$key] = $org[$key];
+            
+                $orgInsertStatement = $this->getTableInsertStatement('person_fed_orgs');
+                $orgInsertStatement->execute($orgData);
+            }
+        }
+        // Plans
+        foreach($person['plans'] as $plan)
+        {
+            $plan['id'] = null;
+            $plan['person_id'] = $person['id'];
+            $planData = array();
+            foreach($this->getTableColumnNames('person_plans') as $key) $planData[$key] = $plan[$key];
+            
+            $planData['basic'] = serialize($planData['basic']);
+            $planData['level'] = serialize($planData['level']);
+            $planData['avail'] = serialize($planData['avail']);
+            
+            $planInsertStatement = $this->getTableInsertStatement('person_plans');
+            $planInsertStatement->execute($planData);
+        }
+    }
+    /* =========================================================================
+     * Extract PersonPlan
      */
     protected function extractPersonPlan($reader)
     {
         $plan = $reader->getAttributes();
         $plan['basic'] = array();
+        $plan['level'] = null;
+        $plan['avail'] = null;
+        $plan['notes'] = null;
         
         while($reader->read() && $reader->name != 'person_plan')
         {
@@ -118,7 +193,7 @@ class PersonsImportXML02
         return $plan;
     }
     /* =========================================================================
-     * Process PersonFed elements
+     * Extract PersonFed
      */
     protected function extractPersonFed($reader)
     {
@@ -150,17 +225,17 @@ class PersonsImportXML02
         return $fed;
     }
     /* ==========================================================================
-     * Process a person and all nested records
-     * Use simpleXml to get complete record - Nope 
+     * Extract Person
      */
     protected function extractPerson($reader)
     {
         $this->results->totalPersonCount++;
         
         $person = $reader->getAttributes();
-        $person['feds']  = array();
-        $person['plans'] = array();
-        $person['users'] = array();
+        $person['feds']    = array();
+        $person['plans']   = array();
+        $person['users']   = array();
+        $person['persons'] = array();
         
         // Read through all the sub nodes until hit person END_ELEMENT
         while($reader->read() && $reader->name !== 'person')
@@ -181,6 +256,11 @@ class PersonsImportXML02
                     case 'person_user':
                         $user = $reader->getAttributes();
                         $person['users'][] = $user;
+                        break;    
+                    
+                    case 'person_person':
+                        $child = $reader->getAttributes();
+                        $person['persons'][] = $child;
                         break;                    
                 }
             }
@@ -228,8 +308,10 @@ class PersonsImportXML02
         {
             $person = $this->extractPerson($reader);
             
+            $this->insertPerson($person);
+            
           //$this->processPerson($person);
-            print_r($person); die();
+          //print_r($person); die();
             // On to the next one
             // Done by processPerson
             $reader->next('person');
