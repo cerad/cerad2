@@ -24,7 +24,7 @@ class ImportPersonsCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $import = $this->getService('cerad_app_cerad.persons.import_xml02');
-        $params = array('filepath' => 'Persons.xml', 'basename' => 'Persons.xml');
+        $params = array('filepath' => 'data/Persons5.xml', 'basename' => 'Persons5.xml');
         
         $results = $import->process($params);
         

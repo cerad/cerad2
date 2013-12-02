@@ -34,6 +34,7 @@ class PersonsImportXML02Results
     public $basename;
     
     public $totalPersonCount  = 0;
+    public $mergePersonCount  = 0;
     public $insertPersonCount = 0;
 }
 class PersonsImportXML02
@@ -274,7 +275,7 @@ class PersonsImportXML02
      */
     public function process($params)
     {   
-        $this->resetDatabase();
+      //$this->resetDatabase();
         
         $this->results = $results = new PersonsImportXML02Results();
         $results->filepath = $params['filepath'];
@@ -308,7 +309,7 @@ class PersonsImportXML02
         {
             $person = $this->extractPerson($reader);
             
-            $this->insertPerson($person);
+            $this->processPerson($person);
             
           //$this->processPerson($person);
           //print_r($person); die();
@@ -322,6 +323,63 @@ class PersonsImportXML02
         $results->message = "Import completed";
         return $results;
         
+    }
+    /* =========================================================================
+     * Got the person all broken out
+     * Need to see if existing or new
+     */
+    public function processPerson($person)
+    {
+        // For now, require one and only one fed
+        if (count($person['feds']) != 1)
+        {
+            die('Invalid fed count');
+        }
+        $fed = $person['feds'][0];
+        $fedId = $fed['fed_id'];
+        
+        // Make this a prepared statement
+        $sql = "SELECT person_feds.* FROM person_feds WHERE id = :fedId;";
+        
+        $rows = $this->conn->fetchAll($sql,array('fedId' => $fedId));
+       
+        if (count($rows) == 0)
+        {
+            $this->results->insertPersonCount++;
+            return;
+          //return $this->insertPerson($person);
+        }
+        
+        $this->results->mergePersonCount++;
+        
+        // Need to update fed? (check status and verified
+        
+        // Check each cert
+        foreach($fed['certs'] as $cert)
+        {
+            // Pull out the certData
+            $cert['id'] = null;
+            $cert['fed_id'] = $fedId;
+                
+            $certData = array();
+            foreach($this->getTableColumnNames('person_fed_certs') as $key) $certData[$key] = $cert[$key];
+            
+            // See if have one already
+            $sql = "SELECT person_fed_certs.* FROM person_fed_certs WHERE fed_id = :fedId AND role = :role;";
+            $rows = $this->conn->fetchAll($sql,array('fedId' => $fedId, 'role' => $cert['role']));
+            if (count($rows) == 0)
+            {
+                // Insert new one
+                $certInsertStatement = $this->getTableInsertStatement('person_fed_certs');
+                $certInsertStatement->execute($certData);
+            }
+            else
+            {
+                // Merge in any changes
+                
+                // Update existing cert
+            }
+        }
     }
 }
 ?>

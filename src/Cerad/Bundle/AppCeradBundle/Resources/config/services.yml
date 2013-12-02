@@ -8,6 +8,11 @@ services:
         arguments:
             - '@doctrine.dbal.s1games_connection'
             
+    cerad_app_cerad.persons.export_xml:
+        class: Cerad\Bundle\AppCeradBundle\Services\Persons\Persons01ExportXML
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            
     cerad_app_cerad.persons.import_xml:
         class: Cerad\Bundle\AppCeradBundle\Services\Persons\PersonsImportXML
         arguments:
