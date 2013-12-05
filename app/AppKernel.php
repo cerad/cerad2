@@ -28,6 +28,8 @@ class AppKernel extends Kernel
             new Cerad\Bundle\TournAdminBundle\CeradTournAdminBundle(),
 
             new Cerad\Bundle\AppCeradBundle\CeradAppCeradBundle(),
+            
+            new Cerad\Bundle\ApiV1Bundle\CeradApiV1Bundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

@@ -1,3 +1,7 @@
+cerad_api_v1:
+    resource: "@CeradApiV1Bundle/Resources/config/routing.yml"
+    prefix:   /
+
 cerad_app_cerad:
     resource: "@CeradAppCeradBundle/Resources/config/routing.yml"
     prefix:   /
