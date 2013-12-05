@@ -45,6 +45,7 @@ doctrine:
                   CeradUserBundle: ~
                   CeradPersonBundle: ~
                   CeradGameBundle: ~
+                  CeradOrgBundle: ~
                 dql:
                     datetime_functions:
                         date:  Cerad\Bundle\GameBundle\Doctrine\DQL\Date

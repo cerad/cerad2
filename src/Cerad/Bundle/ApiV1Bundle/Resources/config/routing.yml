@@ -1,3 +1,15 @@
-cerad_api_v1_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: CeradApiV1Bundle:Default:index }
+
+cerad_api_v1_person:
+    path:  /api/v1/persons/{personId}
+    methods:  [GET]
+    defaults: 
+        _controller: cerad_api_v1.person.controller:getAction
+    requirements:
+        personId:  \d+      
+
+cerad_api_v1_persons:
+    path:  /api/v1/persons
+    methods:  [GET]
+    defaults: 
+        _controller: cerad_api_v1.persons.controller:getAction
+    

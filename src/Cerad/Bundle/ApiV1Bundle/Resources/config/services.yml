@@ -1,7 +1,11 @@
-parameters:
-#    cerad_api_v1.example.class: Cerad\Bundle\ApiV1Bundle\Example
 
 services:
-#    cerad_api_v1.example:
-#        class: %cerad_api_v1.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    cerad_api_v1.person.controller:
+        class: Cerad\Bundle\ApiV1Bundle\Controller\PersonController
+        arguments: 
+            - '@cerad_person.person_repository'
+            
+    cerad_api_v1.persons.controller:
+        class: Cerad\Bundle\ApiV1Bundle\Controller\PersonsController
+        arguments: 
+            - '@cerad_person.person_repository'
