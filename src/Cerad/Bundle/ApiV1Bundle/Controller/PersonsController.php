@@ -29,6 +29,8 @@ class PersonsController extends Controller
         $qb->leftJoin ('fed.certs',  'cert');
         $qb->leftJoin ('fed.orgs',   'org');
         
+        $qb->orderBy('person.nameFull');
+        
         return $qb->getQuery()->getResult(Query::HYDRATE_ARRAY);
         
     }

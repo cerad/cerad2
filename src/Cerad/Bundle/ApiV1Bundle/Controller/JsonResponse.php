@@ -16,7 +16,8 @@ class JsonResponse extends BaseResponse
         
         if (defined('JSON_PRETTY_PRINT')) $options |= JSON_PRETTY_PRINT;
         
-        $this->data = json_encode($data, $options);
+        // Angular security prefix
+        $this->data = ")]}',\n" . json_encode($data, $options);
 
         return $this->update();
     }
