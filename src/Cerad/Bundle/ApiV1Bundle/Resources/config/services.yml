@@ -8,4 +8,5 @@ services:
     cerad_api_v1.persons.controller:
         class: Cerad\Bundle\ApiV1Bundle\Controller\PersonsController
         arguments: 
+            - '@router'
             - '@cerad_person.person_repository'

@@ -1,15 +1,24 @@
 
 cerad_api_v1_person:
-    path:  /api/v1/persons/{personId}
+    path:  /api/v1/person/{personId}
     methods:  [GET]
     defaults: 
         _controller: cerad_api_v1.person.controller:getAction
     requirements:
         personId:  \d+      
 
-cerad_api_v1_persons:
-    path:  /api/v1/persons
+cerad_api_v1_persons_get:
+    path:  /api/v1/persons/{personId}
     methods:  [GET]
     defaults: 
         _controller: cerad_api_v1.persons.controller:getAction
+        personId: null
+    requirements:
+        personId:  \d+      
+    
+cerad_api_v1_persons_post:
+    path:  /api/v1/persons
+    methods:  [POST]
+    defaults: 
+        _controller: cerad_api_v1.persons.controller:postAction
     

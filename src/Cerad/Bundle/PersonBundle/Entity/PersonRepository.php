@@ -106,7 +106,7 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
     /* ==========================================================
      * Allow creating objects via static methods
      */
-    static function createPerson($params = null) { return new PersonEntity($params); }
+    function createPerson($params = null) { return new PersonEntity($params); }
     
     /* ==========================================================
      * Persistence
