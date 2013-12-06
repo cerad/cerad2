@@ -43,6 +43,7 @@ class PersonsController extends Controller
             'name_first' => $person['nameFirst'],
             'name_last'  => $person['nameLast'],
             'dob'        => $person['dob'] ? $person['dob']->format('Y-m-d') : null,
+            'feds'       => $person['feds'],
         );
         
         return $personData;

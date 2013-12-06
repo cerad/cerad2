@@ -23,8 +23,20 @@ class UpdatePersonsCommand extends ContainerAwareCommand
     }
     protected function getService  ($id)   { return $this->getContainer()->get($id); }
     protected function getParameter($name) { return $this->getContainer()->getParameter($name); }
-        
     protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $em = $this->getService('doctrine.orm.entity_manager');
+        $qb = $em->createQueryBuilder();
+        $qb->update('Cerad\Bundle\PersonBundle\Entity\Person','person');
+        $qb->set('person.verified',':verified');
+        $qb->setParameter('verified',null);
+        $qb->where('person.id IN (:ids)');
+        $qb->setParameter('ids','1,2,3');
+      //$qb->setParameter('ids',array(1,2,3));
+        echo $qb->getQuery()->getSql();
+        $qb->getQuery()->execute();
+    }        
+    protected function execute2(InputInterface $input, OutputInterface $output)
     {
         $conn = $this->getService('doctrine.dbal.default_connection');
         
