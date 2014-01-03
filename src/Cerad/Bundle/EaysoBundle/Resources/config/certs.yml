@@ -1,0 +1,93 @@
+certs:
+  
+    Referee:
+        U08:
+            - 'U-8 Official'
+            - 'U-8 Official & Safe Haven Referee'  
+        Assistant:
+            - 'Assistant Referee'
+            - 'Assistant Referee & Safe Haven Referee'
+        Regional:
+            - 'Regional Referee'
+            - 'Regional Referee & Safe Haven Referee'
+        Intermediate:
+            - 'Intermediate Referee'
+        Advanced:
+            - 'Advanced Referee'
+        National_1:
+            - 'National 1 Referee'
+        National_2:
+            - 'National 2 Referee'
+        National:
+            - 'National Referee'
+          
+    SafeHaven:
+        AYSO:
+            - 'Safe Haven AYSOs' 
+        Coach:
+            - 'Safe Haven Coach'
+            - 'Z-Online Safe Haven Coach'
+        Referee:
+            - 'Safe Haven Referee'
+            - 'Z-Online Safe Haven Referee'
+            - 'U-8 Official & Safe Haven Referee'              
+            - 'Assistant Referee & Safe Haven Referee'
+            - 'Regional Referee & Safe Haven Referee'
+    Coach:
+        U06:
+            - 'U-6 Coach'
+            - 'Z-Online U-6 Coach'
+        U08:
+            - 'U-8 Coach'
+            - 'Z-Online U-8 Coach'
+        U10:
+            - 'U-10 Coach'
+            - 'Z-Online U-10 Coach'
+        U12:
+            - 'U-12 Coach'
+        Intermediate:
+            - 'Intermediate Coach'
+            - 'Intermediate Coach - Cross Certification'
+        Advanced:
+            - 'Advanced Coach'
+            - 'Advanced Coach - Cross Certification'
+        National:
+            - 'National Coach'
+            
+    Assessor:
+        Mentor:
+            - 'Referee Mentor'
+        Assessor:
+            - 'Referee Assessor'
+        National:
+            - 'National Referee Assessor'
+
+# Might be nice to know of they have taken the class even if they are not yet certified
+    RefereeCourse:
+        Regional:
+            - 'Z-Online Regional Referee without Safe Haven' # Took the class but no clinic or paperwork
+        Intermediate:
+            - 'Intermediate Referee Course'
+        Advanced:
+            - 'Advanced Referee Course'
+        National:
+            - 'National Referee Course'
+            
+    AssessorCourse:
+        Assessor:
+            - 'Referee Assessor Course'
+        National:
+            - 'National Referee Assessor Course'
+
+# Ignore these for now
+# The VIP certs might be useful for the national games
+    Other:
+        Other:
+            - 'Coach Administrator Training'
+            - 'VIP Buddy Training and Certification'
+            - 'VIP Volunteer Training'
+            - 'Referee Administrator Training'
+            - 'B Coach'
+            - 'National Coaching Course'
+            - 'VIP Coach/Referee'
+
