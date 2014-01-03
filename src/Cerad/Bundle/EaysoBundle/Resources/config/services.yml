@@ -1,0 +1,7 @@
+parameters:
+#    cerad_eayso.example.class: Cerad\Bundle\EaysoBundle\Example
+
+services:
+#    cerad_eayso.example:
+#        class: %cerad_eayso.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]
