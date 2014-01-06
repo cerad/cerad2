@@ -105,7 +105,7 @@ class AccountCreateController extends MyBaseController
          */
         $personRepo = $this->get('cerad_person.person_repository');
         
-        $personFed = $personRepo->findFed($fedId);
+        $personFed = $personRepo->findFedByFedId($fedId);
         
         if (!$personFed)
         {
@@ -121,7 +121,7 @@ class AccountCreateController extends MyBaseController
             $person->setEmail($email);
            
             $personFed = $person->getFed($project->getFedRoleId());
-            $personFed->setId($fedId);
+            $personFed->setFedId($fedId);
         }
         else
         {
@@ -148,7 +148,6 @@ class AccountCreateController extends MyBaseController
         $user->setAccountEnabled(true);
         $user->setPasswordPlain($password);
         $user->setPersonGuid   ($person->getGuid());
-      //$user->setPersonFedId  ($fedId); // TODO: Remove
         
         $model['user'] = $user;
         

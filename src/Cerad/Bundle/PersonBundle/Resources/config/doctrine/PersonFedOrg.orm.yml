@@ -2,10 +2,9 @@ Cerad\Bundle\PersonBundle\Entity\PersonFedOrg:
     type:  entity
     table: person_fed_orgs
     changeTrackingPolicy: NOTIFY
-   
-   #uniqueConstraints:
-   #   person_league_identifier_index:
-   #       columns: identifier
+    uniqueConstraints:
+        person_fed_org_role_index:
+            columns: fed_id, role
     
     id:
         id:

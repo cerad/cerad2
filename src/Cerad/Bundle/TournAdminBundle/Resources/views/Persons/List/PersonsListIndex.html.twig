@@ -44,7 +44,7 @@
         <tr><td>Gender Age</td><td>{{ person.gender }} {{ person.age }}</td></tr>
     </table></td>
     <td>
-        <p>Vol: {{ personFed.id | slice(5)    }}</p>
+        <p>Vol: {{ personFed.fedId | slice(5)    }}</p>
         <p>S/A/R: {{ personOrg.orgId | cerad_org_sar }}</p>
         <p>MY:  <span class="aysov_mem_year-{{ personOrg.memYear }}">{{ personOrg.memYear }}</span></p>
         <p>SH:  {{ certSafeHaven.badge }}</p>

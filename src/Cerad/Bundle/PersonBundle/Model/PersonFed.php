@@ -30,6 +30,7 @@ class PersonFed extends BaseModel
     const RoleOfficial   = 'Official';
     
     protected $id;
+    protected $fedId;  // AYSOV12341234 Unique
     protected $fedRoleId;
     protected $person;
     protected $status   = 'Active';
@@ -44,12 +45,14 @@ class PersonFed extends BaseModel
         $this->certs = array();
     }
     public function getId       () { return $this->id;        }
+    public function getFedId    () { return $this->fedId;     }
     public function getFedRoleId() { return $this->fedRoleId; }
     public function getPerson   () { return $this->person;    }
     public function getStatus   () { return $this->status;    }
     public function getVerified () { return $this->verified;  }
     
     public function setId       ($value) { $this->onPropertySet('id',       $value); }
+    public function setFedId    ($value) { $this->onPropertySet('fedId',    $value); }
     public function setFedRoleId($value) { $this->onPropertySet('fedRoleId',$value); }
     public function setStatus   ($value) { $this->onPropertySet('status',   $value); }
     public function setVerified ($value) { $this->onPropertySet('verified', $value); }

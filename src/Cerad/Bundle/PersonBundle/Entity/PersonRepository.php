@@ -70,26 +70,36 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         
         return null;
     }
-    public function findOneByFedId($id)
-    {
-        if (!$id) return null;
-        
-        $repo = $this->_em->getRepository('CeradPersonBundle:PersonFed');
-        
-        $fed = $repo->find($id); 
+    /* ==========================================================
+     * Returns the person doe the fedId
+     */
+    public function findOneByFedId($fedId)
+    {   
+        $fed = $this->findFedByFedId($fedId);
         
         if ($fed) return $fed->getPerson();
         
         return null;
     }
-    // TODO: Make this one go away
-    public function findByFed($id) { return $this->findOneByFedId($id); }
-    
+    /* ================================================
+     * Load record based on fedId AYSOV12341234
+     */
+    public function findFedByFedId($fedId)
+    {
+        if (!$fedId) return null;
+        $repo = $this->_em->getRepository('CeradPersonBundle:PersonFed');
+        return $repo->findOneBy(array('fedId' => $fedId));
+    }
+    /* =================================================================
+     * The next three load a record by id
+     */
     public function findFed($id)
     {
         if (!$id) return null;
         $repo = $this->_em->getRepository('CeradPersonBundle:PersonFed');
         return $repo->find($id);        
+
+        return $this->findOneBy(array('fedId' => $id));      
     }
     public function findPlan($id)
     {

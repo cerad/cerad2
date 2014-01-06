@@ -106,7 +106,7 @@ class PersonUpdateController extends MyBaseController
         
         // Simple model
         $model['person']    = $person;
-        $model['fedId']     = $personFed->getId();
+        $model['fedId']     = $personFed->getFedId();
         $model['orgId']     = $personOrg->getOrgId();
         $model['badge']     = $personCertRef->getBadgex();
         $model['upgrading'] = $personCertRef->getUpgrading();

@@ -1,5 +1,5 @@
 <?php
-namespace Cerad\Bundle\GameBundle\Command;
+namespace Cerad\Bundle\EaysoBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
@@ -7,7 +7,7 @@ use Symfony\Component\Console\Input\InputInterface;
 //  Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
-class ImportNG2012Command extends ContainerAwareCommand
+class ImportCommand extends ContainerAwareCommand
 {
     protected $commandName = 'command';
     protected $commandDesc = 'Command Description';

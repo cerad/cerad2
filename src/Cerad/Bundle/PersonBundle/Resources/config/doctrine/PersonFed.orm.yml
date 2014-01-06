@@ -2,12 +2,14 @@ Cerad\Bundle\PersonBundle\Entity\PersonFed:
     type:  entity
     table: person_feds
     changeTrackingPolicy: NOTIFY
+    uniqueConstraints:
+        person_fed_role_index:
+            columns: fed_role_id, person_id
     
     id:
        id:
-           type:   string
-           length: 40
-           generator: { strategy: NONE }
+           type: integer
+           generator: { strategy: AUTO }
                 
     manyToOne:
         person:
@@ -30,6 +32,13 @@ Cerad\Bundle\PersonBundle\Entity\PersonFed:
                         
     fields:
       
+        fedId:
+            column:   fed_id
+            type:     string
+            length:   40
+            nullable: false
+            unique:   true
+            
         fedRoleId:
             column:   fed_role_id
             type:     string

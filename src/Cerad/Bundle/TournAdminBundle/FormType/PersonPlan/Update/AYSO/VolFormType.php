@@ -22,7 +22,7 @@ class VolFormType extends AbstractType
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('id','cerad_person_aysov_id');
+        $builder->add('fedId','cerad_person_aysov_id');
     }
 }
 ?>

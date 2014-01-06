@@ -22,3 +22,15 @@ services:
         class: Cerad\Bundle\AppCeradBundle\Services\Persons\PersonsImportXML02
         arguments:
             - '@doctrine.dbal.default_connection'
+            
+    # ======================================================
+    # Feds
+    cerad_app_cerad.feds.export01_yaml:
+        class: Cerad\Bundle\AppCeradBundle\Services\Feds\FedsExport01YAML
+        arguments:
+            - '@doctrine.dbal.s1games_connection'
+            
+    cerad_app_cerad.feds.import01_yaml:
+        class: Cerad\Bundle\AppCeradBundle\Services\Feds\FedsImport01YAML
+        arguments:
+            - '@doctrine.dbal.default_connection'

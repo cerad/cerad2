@@ -2,6 +2,9 @@ Cerad\Bundle\PersonBundle\Entity\PersonFedCert:
     type:  entity
     table: person_fed_certs
     changeTrackingPolicy: NOTIFY
+    uniqueConstraints:
+        person_fed_cert_role_index:
+            columns: fed_id, role
     
     id:
         id:
@@ -13,7 +16,7 @@ Cerad\Bundle\PersonBundle\Entity\PersonFedCert:
         fed:
             targetEntity: PersonFed
             inversedBy:   certs
-             
+            
     fields:
             
         role:
