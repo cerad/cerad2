@@ -2,6 +2,16 @@ parameters:
 #    cerad_eayso.example.class: Cerad\Bundle\EaysoBundle\Example
 
 services:
-#    cerad_eayso.example:
-#        class: %cerad_eayso.example.class%
-#        arguments: [@service_id, "plain_value", %parameter%]
+    cerad_eayso.cert_repository.in_memory:
+        class:  Cerad\Bundle\EaysoBundle\InMemory\CertRepository
+        arguments:  
+            - '%cerad_eayso_resources_dir%/config/certs.yml'
+
+    cerad_eayso.cert_repository:
+        alias: cerad_eayso.cert_repository.in_memory
+        
+    cerad_eayso.certs.sync:
+        class: Cerad\Bundle\EaysoBundle\Services\Feds\FedsSync
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '@cerad_eayso.cert_repository'
