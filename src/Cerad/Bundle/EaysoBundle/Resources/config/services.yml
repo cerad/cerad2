@@ -15,3 +15,8 @@ services:
         arguments:
             - '@doctrine.dbal.default_connection'
             - '@cerad_eayso.cert_repository'
+            
+    cerad_eayso.vols.sync:
+        class: Cerad\Bundle\EaysoBundle\Services\Feds\VolsSync
+        arguments:
+            - '@doctrine.dbal.default_connection'

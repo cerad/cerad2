@@ -125,3 +125,49 @@ FedBundle
     Should only know about the FedStuff.
     But allow overriding for PersonBundle ?
 
+======================================================================
+# Only have PersonFed record
+# Simple and fast, works AYSOV,USSFC,NFHSC(Single state)
+
+idx
+person_idx
+person_fed_verified
+
+fed_role
+fed_key
+fed_key_verified
+
+org_key
+org_key_verified
+
+mem_year
+
+referee_badge
+referee_badge_user
+referee_badge_verified
+referee_experience
+referee_upgrading
+
+assessor_badge
+safehaven_badge
+
+name_full
+email
+phone
+dob
+gender
+address_city
+address_state
+
+status
+
+================================
+person_fed
+    idx
+    person_idx
+    fed_role
+    fed_key
+    org_key
+    mem_year
+    referee_badge
+    status

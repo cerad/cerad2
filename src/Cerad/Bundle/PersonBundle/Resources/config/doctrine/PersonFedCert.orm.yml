@@ -4,7 +4,7 @@ Cerad\Bundle\PersonBundle\Entity\PersonFedCert:
     changeTrackingPolicy: NOTIFY
     uniqueConstraints:
         person_fed_cert_role_index:
-            columns: fed_id, role
+            columns: fed_id, role, org_key
     
     id:
         id:
@@ -24,43 +24,55 @@ Cerad\Bundle\PersonBundle\Entity\PersonFedCert:
             type:     string
             length:   20
             nullable: false
+            
+        roleDate:
+            column:   role_date
+            type:     date
+            nullable: true
              
         badge:
+            column:   badge
             type:     string
             length:   20
             nullable: true
             
-        badgex:
+        badgeDate:
+            column:   badge_date
+            type:     date
+            nullable: true
+            
+        badgeVerified:
+            column:   badge_verified
             type:     string
             length:   20
             nullable: true
             
-        dateFirstCertified:
-            column:   date_cert
-            type:     date
+        badgeUser:
+            column:   badge_user
+            type:     string
+            length:   20
             nullable: true
             
-        dateLastUpgraded:
-            column:   date_upgraded
-            type:     date
-            nullable: true
-            
-        dateExpires:
-            column:   date_expires
-            type:     date
-            nullable: true
-           
         upgrading:
+            column:   upgrading
             type:     string
             length:   20
             nullable: true
-                      
+                
+        memYear:
+            column:   mem_year
+            type:     string
+            length:   20
+            nullable: true
+        
+        orgKey:
+            column:   org_key
+            type:     string
+            length:   40
+            nullable: false
+            
         status:
             type:     string
             length:   20
             nullable: false
             
-        verified:
-            type:     string
-            length:   20
-            nullable: true

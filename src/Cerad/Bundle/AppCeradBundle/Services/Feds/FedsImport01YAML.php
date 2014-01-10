@@ -2,23 +2,97 @@
 namespace Cerad\Bundle\AppCeradBundle\Services\Feds;
 
 use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Stopwatch\Stopwatch;
 
+/* =========================================================
+ * On laptop
+ * Fed Only  139 0.50
+ * Fed Certs 258 1.00  Quite an increase (because of indexes?)
+ * Fed Orgs  138 1.10  Very little increase
+ */
 class FedsImport01YAMLResults
 {
     public $message;
     public $filepath;
     public $basename;
     
-    public $totalFedCount = 0;
+    public $stopwatch;
+    public $duration;
+    
+    public $totalFedCount  = 0;
+    public $totalOrgCount  = 0;
+    public $totalCertCount = 0;
+    
+    public function __construct()
+    {
+        $this->stopwatch = new Stopwatch();
+        $this->stopwatch->start('import');
+    }
+    public function __toString()
+    {
+        return sprintf(
+            "%s %s\n" . 
+            "Total Feds  %d\n" .
+            "Total Orgs  %d\n" .
+            "Total Certs %d\n" .
+            "Duration %.2f\n",
+            $this->message,
+            $this->basename,
+            $this->totalFedCount,
+            $this->totalOrgCount,
+            $this->totalCertCount,
+            $this->duration / 1000.
+        );
+    }
 }
 class FedsImport01YAML
 {
     protected $conn;
     protected $results;
     
+    protected $fedImportStatement;
+    protected $fedCertImportStatement;
+    
     public function __construct($conn)
     {
         $this->conn = $conn;
+        
+        /* ===========================================================
+         * person_feds
+         */
+        $insertFedSql = <<<EOT
+INSERT INTO person_feds 
+    (person_id,fed,fed_role,fed_key,status)
+VALUES
+    (:personId,'AYSO','AYSOV',:fedKey,'Active')             
+;
+EOT;
+        $this->insertFedStatement = $conn->prepare($insertFedSql);
+        
+        /* ===========================================================
+         * person_fed_certs
+         */
+        $insertCertSql = <<<EOT
+INSERT INTO person_fed_certs 
+    (fed_id,role,badge,badge_user,upgrading,status)
+VALUES
+    (:fedId,:role,:badge,:badgeUser,:upgrading,'Active')             
+;
+EOT;
+        $this->insertCertStatement = $conn->prepare($insertCertSql);
+        
+        /* ===========================================================
+         * person_fed_orgs
+         */
+        $insertOrgSql = <<<EOT
+INSERT INTO person_fed_orgs 
+    (fed_id,role,org_key,status)
+VALUES
+    (:fedId,:role,:orgKey,'Active')             
+;
+EOT;
+        $this->insertOrgStatement = $conn->prepare($insertOrgSql);
+        
     }
     /* ======================================================
      * Reset the database
@@ -35,90 +109,59 @@ class FedsImport01YAML
         $conn->executeUpdate('ALTER TABLE person_fed_orgs  AUTO_INCREMENT = 1;');        
         $conn->executeUpdate('ALTER TABLE person_feds      AUTO_INCREMENT = 1;');     
     }
-    /* ======================================================
-     * Statement functions
-     * Load column names from the database
-     */    
-    protected $tableColumnNames = array();
-    protected $tableInsertStatements = array();
-    protected $tableUpdateStatements = array();
-    
-    protected function getTableColumnNames($tableName)
-    {
-        if (isset($this->tableColumnNames[$tableName])) return $this->tableColumnNames[$tableName];
-        
-        $columns = $this->conn->getSchemaManager()->listTableColumns($tableName);
-        
-        $colNames = array();
-        foreach($columns as $column)
-        {
-            $colNames[] = $column->getName();  // getType
-        }
-        return $this->tableColumnNames[$tableName] = $colNames;
-    }
-    protected function getTableInsertStatement($tableName)
-    {
-        if (isset($this->tableInsertStatements[$tableName])) return $this->tableInsertStatements[$tableName];
-        
-        $colNames = $this->getTableColumnNames($tableName);
-        
-        $sql = sprintf("INSERT INTO %s \n(%s)\nVALUES(:%s);",
-            $tableName,
-            implode(',', $colNames),
-            implode(',:',$colNames)
-        );
-        return $this->tableInsertStatements[$tableName] = $this->conn->prepare($sql);
-    }
     /* =========================================================================
      * Process PersonFedOrg
+     * (:fedId,:role,:orgKey,'Active')   
      */
-    protected function processFedOrg($id,$org)
+    protected function processFedOrg($fedId,$org)
     {
-        $org['id'] = null;
-        $org['fed_id'] = $id;
-        
-        if (substr($org['mem_year'],0,2) == 'FS')
-        {
-            $org['mem_year'] = 'MY' . substr($org['mem_year'],2);
-        }
-        $orgInsertStatement = $this->getTableInsertStatement('person_fed_orgs');
-        $orgInsertStatement->execute($org);    
+        $orgx = array(
+            'fedId'  => $fedId,
+            'role'   => $org['role'],
+            'orgKey' => $org['org_id'],
+        );
+        $this->insertOrgStatement->execute($orgx);
+        $this->results->totalOrgCount++;
     }
     /* =========================================================================
      * Process PersonFedCert
+     *    (:fedId,:role,:badge.:badgeUser,:upgrading,'Active')      
      */
-    protected function processFedCert($id,$cert)
+    protected function processFedCert($fedId,$cert)
     {
-        $cert['id'] = null;
-        $cert['fed_id'] = $id;
-        
-        $certInsertStatement = $this->getTableInsertStatement('person_fed_certs');
-        $certInsertStatement->execute($cert);    
+        $certx = array(
+            'fedId'     => $fedId,
+            'role'      => $cert['role'],
+            'badge'     => $cert['badge'],
+            'badgeUser' => $cert['badgex'],
+            'upgrading' => $cert['upgrading'],
+            
+        );
+        $this->insertCertStatement->execute($certx);
+        $this->results->totalCertCount++;
     }
     /* =========================================================================
      * Process PersonFed
      */
     protected function processFed($fed)
     {
-        $fedx = $fed;
-        $fedx['id'] = null;
-        unset($fedx['certs']);
-        unset($fedx['orgs' ]);
-      
-        $fedInsertStatement = $this->getTableInsertStatement('person_feds');
-        $fedInsertStatement->execute($fedx);
+        $fedx = array(
+            'personId' => $fed['person_id'],
+            'fedKey'   => $fed['fed_id']
+        );
+        $this->insertFedStatement->execute($fedx);
         
-        $id = $this->conn->lastInsertId();
+        $fedId = $this->conn->lastInsertId();
         
         $this->results->totalFedCount++;
         
         foreach($fed['certs'] as $cert)
         {
-            $this->processFedCert($id,$cert);
+            $this->processFedCert($fedId,$cert);
         }
         foreach($fed['orgs'] as $org)
         {
-            $this->processFedOrg($id,$org);
+            $this->processFedOrg($fedId,$org);
         }
         return;
         
@@ -146,6 +189,10 @@ class FedsImport01YAML
         
         // Done
         $results->message = "Import completed";
+        
+        $event = $results->stopwatch->stop('import');
+        $results->duration = $event->getDuration();
+
         return $results;
         
     }

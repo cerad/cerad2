@@ -23,13 +23,15 @@ class ImportFedsCommand extends ContainerAwareCommand
         
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+      //echo sprintf("kernel.root_dir: %s\n", $this->getParameter('kernel.root_dir'));
+        
         $import = $this->getService('cerad_app_cerad.feds.import01_yaml');
         
         $params = array('filepath' => 'data/Feds.yml', 'basename' => 'Feds.yml');
         
         $results = $import->process($params);
         
-        print_r($results);
+        echo $results;
         
         return;
     }

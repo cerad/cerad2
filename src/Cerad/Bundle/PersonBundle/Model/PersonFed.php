@@ -23,18 +23,19 @@ class PersonFed extends BaseModel
     const FedRoleUSSFC = 'USSFC'; // Contractor
     const FedRoleNFHSC = 'NFHSC'; // Contractor
     
-    // Roles are not redundant
-    const RoleVolunteer  = 'Volunteer';
-    const RolePlayer     = 'Player';
-    const RoleContractor = 'Contractor';
-    const RoleOfficial   = 'Official';
-    
     protected $id;
-    protected $fedId;  // AYSOV12341234 Unique
-    protected $fedRoleId;
-    protected $person;
-    protected $status   = 'Active';
-    protected $verified = 'No';
+    
+    protected $fed;         // Not currently used
+    protected $fedRole;
+    protected $fedRoleDate; // First joined the federation
+    
+    protected $fedKey;          // AYSOV12341234 Globally Unique
+    protected $fedKeyVerified;  // personFedKey or fedPersonKey
+    
+    protected $person;          // personModelId
+    protected $personVerified;
+    
+    protected $status = 'Active';
     
     protected $orgs;
     protected $certs;
@@ -44,20 +45,31 @@ class PersonFed extends BaseModel
         $this->orgs  = array();
         $this->certs = array();
     }
-    public function getId       () { return $this->id;        }
-    public function getFedId    () { return $this->fedId;     }
-    public function getFedRoleId() { return $this->fedRoleId; }
-    public function getPerson   () { return $this->person;    }
+    public function getId         () { return $this->id;          }
+    public function getFed        () { return $this->fed;         }
+    public function getFedRole    () { return $this->fedRole;     }
+    public function getFedRoleDate() { return $this->fedRoleDate; }
+    
+    public function getFedKey         () { return $this->fedKey;    }
+    public function getFedKeyVerified () { return $this->fedKeyVerified; }
+    
+    public function getPerson         () { return $this->person;    }
+    public function getPersonVerified () { return $this->personVerified; }
+    
     public function getStatus   () { return $this->status;    }
-    public function getVerified () { return $this->verified;  }
     
-    public function setId       ($value) { $this->onPropertySet('id',       $value); }
-    public function setFedId    ($value) { $this->onPropertySet('fedId',    $value); }
-    public function setFedRoleId($value) { $this->onPropertySet('fedRoleId',$value); }
-    public function setStatus   ($value) { $this->onPropertySet('status',   $value); }
-    public function setVerified ($value) { $this->onPropertySet('verified', $value); }
+    public function setId         ($value) { $this->onPropertySet('id',         $value); }
+    public function setFed        ($value) { $this->onPropertySet('fed',        $value); }
+    public function setFedRole    ($value) { $this->onPropertySet('fedRole',    $value); }
+    public function setFedRoleDate($value) { $this->onPropertySet('fedRoleDate',$value); }
     
-    public function setPerson(Person $person) { $this->onPropertySet('person',$person); }
+    public function setFedKey        ($value) { $this->onPropertySet('fedKey',        $value); }
+    public function setFedKeyVerified($value) { $this->onPropertySet('fedKeyVerified',$value); }
+    
+    public function setPerson(Person $person) { $this->onPropertySet('person',        $person); }
+    public function setPersonVerified($value) { $this->onPropertySet('personVerified',$value);  }
+    
+    public function setStatus($value) { $this->onPropertySet('status',$value); }
     
     /* ====================================================
      * Certification

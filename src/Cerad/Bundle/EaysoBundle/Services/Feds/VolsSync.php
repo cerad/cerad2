@@ -1,55 +1,16 @@
 <?php
 namespace Cerad\Bundle\EaysoBundle\Services\Feds;
 
-use Symfony\Component\Stopwatch\Stopwatch;
-
 /* ==============================================================
- * Basic design question is: 
- * Do we pull as much as possible (gender, region etc) from the cert record
- * Or do we pretty much require importing the vol record?
- * 
- * Cert Import Total 38330, MY 19899, Fed 127 Badge 169
- * No joins     7742
- * Join person: 8400
- * Join org:    9000
- * 
- * Adding in person,cert,region updates/inserts 9400
+ * Lines 25968    659 Scan csv file
+ * Lookup  131  11328 Lookup person - vol - org
+ * Person  125  12083 Update person dob,gender
+ * Fed     131  11000 Update fed
  */
-/* ==============================================================
- * For lack of a better word, use sync to describe the process of
- * loading eayso information from eayso reports
- */
-class FedsSyncResults
-{
-    public $message;
-    public $filepath;
-    public $basename;
-    
-    public $totalCertCount       = 0;
-    public $totalCertMYCount     = 0;
-    public $totalCertFedCount    = 0;
-    public $totalCertBadgeCount  = 0;
-    public $totalCertUpdateCount = 0;
-    public $totalCertInsertCount = 0;
-    
-    public $totalRegionInsertCount = 0;
-    public $totalRegionUpdateCount = 0;
-    
-    public $totalPersonUpdateCount = 0;
-    
-    public $duration;
-    
-    public function __construct()
-    {
-        $this->stopwatch = new Stopwatch();
-        $this->stopwatch->start('sync');
-    }
-}
-class FedsSync
+class VolsSync
 {
     protected $conn;
     protected $results;
-    protected $certRepo;
     
     // TODO: Bench mark prepared statements
     protected $selectFedStatement     = null;
@@ -64,39 +25,56 @@ class FedsSync
     
     protected $updatePersonStatement = null;
     
-    public function __construct($conn,$certRepo)
+    /* ====================================================
+     * TODO: Benchmark using pdo object
+     */
+    public function __construct($conn)
     {
         $this->conn = $conn;
-        $this->certRepo = $certRepo;
+        $this->results = new VolsSyncResults();
         
         /* ========================================================
          * PersonFed - The select statement joins person and the region
          */
         $selectFedSql = <<<EOT
 SELECT 
-    fed.id        AS fed_idx,
-    fed.verified  AS fed_verified,
-                
-    person.id     AS person_idx,
+    fed.id                AS fed_id,
+    fed.fed_role_date     AS fed_role_date,
+    fed.fed_key           AS fed_key,
+    fed.fed_key_verified  AS fed_key_verified,
+          
+    person.id     AS person_id,
     person.dob    AS person_dob,
+    person.email  AS person_email,
     person.gender AS person_gender,
+    
+    fed.person_verified  AS person_verified,
                 
-    org.id        AS org_idx,
-    org.org_id    AS org_region,
-    org.mem_year  AS org_mem_year,
-    org.verified  AS org_verified
+    org.id               AS org_id,
+    org.mem_year         AS org_mem_year,
+    org.org_key          AS org_key,
+    org.org_key_verified AS org_key_verified
                 
 FROM      person_feds     AS fed
 LEFT JOIN persons         AS person ON person.id  = fed.person_id
 LEFT JOIN person_fed_orgs AS org    ON org.fed_id = fed.id AND org.role = 'Region'
-WHERE fed.fed_id = :fedId
+WHERE fed.fed_key = :fedKey
 ;
 EOT;
 
         $this->selectFedStatement = $conn->prepare($selectFedSql);
         
-        $this->updateFedStatement = 
-            $conn->prepare("UPDATE id person_feds SET verified = 'Yes' WHERE id = :id;\n");
+        $updateFedSql = <<<EOT
+UPDATE person_feds
+SET 
+    person_verified  = :personVerified,
+    fed_key_verified = :fedKeyVerified,
+    fed_role_date    = :fedRoleDate
+
+WHERE id = :id;
+EOT;
+        
+        $this->updateFedStatement = $conn->prepare($updateFedSql);
         
         /* ===============================================================
          * PersonFedCert
@@ -147,7 +125,7 @@ EOT;
         $this->insertRegionStatement = $conn->prepare($insertRegionSql);
         
         /* =================================================================
-         * Person
+         * Person - Actually retrieved with join so select is not used
          */
         $selectPersonSql = <<<EOT
 SELECT
@@ -162,14 +140,13 @@ EOT;
         
         $updatePersonSql = <<<EOT
 UPDATE persons 
-SET gender = :gender
+SET dob = :dob, gender = :gender
 WHERE id = :id
 ;
 EOT;
         $this->updatePersonStatement = $conn->prepare($updatePersonSql);
         
     }
-    
     /* ===============================================================
      * TODO: Benchmark datetime conversion
      */
@@ -180,28 +157,108 @@ EOT;
         return sprintf('%04u-%02u-%02u',$parts[2],$parts[0],$parts[1]);
     }
     /* ==========================================================================
-     * Update existing person gender
+     * Update existing person gender and dob
      */
-    protected function updateCeradPerson($eaysoCert,$ceradFed)
+    protected function updatePerson($eaysoVol,$ceradVol)
     {
         // Needs to be linked
-        $ceradPersonIdx = $ceradFed['person_idx'];
-        if (!$ceradPersonId) die('missing person id');
+        $ceradPersonId = $ceradVol['person_id'];
+        if (!$ceradPersonId) die('*** missing person id');
+        
+        // Two fields for update
+        $ceradDOB    = $ceradVol['person_dob'];
+        $ceradGender = $ceradVol['person_gender'];
+        
+        $eaysoDOB    = $this->processDate($eaysoVol['dob']);
+        $eaysoGender = $eaysoVol['gender'];
+        
+        $params = array(
+            'id'     => $ceradPersonId,
+            'dob'    => $ceradDOB,
+            'gender' => $ceradGender,
+        );
                 
         $needUpdate = false;
         
-        // If the cerad person gender has a value then leave it alone
-        $ceradGender = $ceradFed['person_gender'];
-        if ((!$ceradGender) && ($ceradGender != $eaysoCert['gender'])) $needUpdate = true; 
-        
+        if ((!$ceradDOB) && ($ceradDOB != $eaysoDOB)) 
+        {
+            $params['dob'] = $eaysoDOB;
+            $needUpdate = true; 
+        }
+        if ((!$ceradGender) && ($ceradGender != $eaysoGender)) 
+        {
+            $params['gender'] = $eaysoGender;
+            $needUpdate = true; 
+        }
         if (!$needUpdate) return;
         
-        $params = array(
-            'id'     => $ceradPersonIdx,
-            'gender' => $eaysoCert['gender'],
-        );
         $this->updatePersonStatement->execute($params);
-        $this->results->totalPersonUpdateCount++;
+        $this->results->countPersonUpdate++;
+        
+    }
+    /* ==========================================================================
+     * Mostly verification stuff
+     */
+    protected function updateFed($eaysoVol,$ceradVol)
+    {
+        // Needs to be linked
+        $ceradFedId = $ceradVol['fed_id'];
+        if (!$ceradFedId) die('*** missing vol id');
+        
+        // Two fields for update
+        $ceradPersonVerified = $ceradVol['person_verified'];
+        $ceradFedKeyVerified = $ceradVol['fed_key_verified'];
+        $ceradFedRoleDate    = $ceradVol['fed_role_date'];
+        
+        $eaysoFedRoleDate = $this->processDate($eaysoVol['date_registered']);
+        
+        $params = array(
+            'id'             => $ceradFedId,
+            'personVerified' => $ceradPersonVerified,
+            'fedKeyVerified' => $ceradFedKeyVerified,
+            'fedRoleDate'    => $ceradFedRoleDate,
+        );
+                
+        $needUpdate = false;
+        
+        /* =====================================================================
+         * Trying to travk the earliest date that the person registered to volunteer in eayso
+         */
+        if ($eaysoFedRoleDate)
+        {
+            if ((!$ceradFedRoleDate) || ($ceradFedRoleDate > $eaysoFedRoleDate))
+            {
+                $params['fedRoleDate'] = $eaysoFedRoleDate;
+                $needUpdate = true; 
+            }
+        }
+        /* =====================================================================
+         * If the person has not been verified then match fed emails with person email
+         * To automatically verify
+         */
+        if ($ceradPersonVerified != 'Yes')
+        {
+            if ($ceradVol['person_email'] == $eaysoVol['email'])
+            {
+                $params['personVerified'] = 'Yes';
+                $needUpdate = true;
+            }
+        }
+        /* ===========================================================
+         * Since we have a match, the fed_key itself if considered verified
+         */
+        if ($ceradFedKeyVerified != 'Yes')
+        {
+            $params['fedKeyVerified'] = 'Yes';
+            $needUpdate = true; 
+        }
+        /* ===========================================================
+         * Since we have a match, the fed_key itself if considered verified
+         */
+        if (!$needUpdate) return;
+        
+        $this->updateFedStatement->execute($params);
+        $this->results->countFedUpdate++;
         
     }
     /* ==========================================================================
@@ -376,6 +433,25 @@ EOT;
         $this->updateCeradPerson($eaysoCert,$ceradFed);
         $this->updateCeradRegion($eaysoCert,$ceradFed);
     }
+    /* ======================================================
+     * Process line item
+     */
+    public function processItem($eaysoVol)
+    {
+        // Look up fed
+        $eaysoFedKey = 'AYSOV' . $eaysoVol['fed_key'];
+        $this->selectFedStatement->execute(array('fedKey' => $eaysoFedKey));   
+        $rows = $this->selectFedStatement->fetchAll();
+        if (count($rows) != 1) return;
+        
+        // Got it
+        $ceradVol = $rows[0];
+        
+        $this->results->countFedMatch++;
+        
+        $this->updatePerson($eaysoVol,$ceradVol);
+        $this->updateFed   ($eaysoVol,$ceradVol);
+    }
     /* ==========================================================================
      * Main entry point
      * $params['filepath']
@@ -384,63 +460,95 @@ EOT;
     public function process($params)
     {   
         // Param stuff
-        $this->results = $results = new FedsSyncResults();
-        $results->filepath = $params['filepath'];
-        $results->basename = $params['basename'];
+        $this->results->filepath = $params['filepath'];
+        $this->results->basename = $params['basename'];
                 
         // Open
+        if (!is_readable($params['filepath']))
+        {
+            $this->results->message = '*** Could not open CSV file.';
+            return $this->results;
+        }
         $fp = fopen($params['filepath'],'rt');
-        if (!$fp) return $results;
         
         $headers = fgetcsv($fp);
         $indexes = $this->processHeaders($headers);
         
-        while($row = fgetcsv($fp))
+        if (!$indexes)
         {
-            $eaysoCert = array();
+            fclose($fp);
+            $this->results->message = '*** Incorrect file headers.';
+            return $this->results;
+        }
+        $this->processLines($fp,$indexes);
+        
+        fclose($fp);
+        
+        return $this->results;        
+    }
+    public function processLines($fp,$indexes)
+    {
+        while($line = fgetcsv($fp))
+        {
+            $this->results->countLines++;
+            
+            // Hack to get all the fields
+            $item = $indexes;
+            
             foreach($indexes as $key => $index)
             {
-                $eaysoCert[$key] = $row[$index];
+                if ($index !== null) $item[$key] = $line[$index];
             }
-            $this->processEaysoCert($eaysoCert);
-          //print_r($eaysoCert); die();
+            $this->processItem($item);
         }
-        
-        // Done
-        fclose($fp);
-        $results->message = "Sync completed";
-        
-        $event = $results->stopwatch->stop('sync');
-        $results->duration = $event->getDuration();
-        
-        return $results;
-        
+        return;
     }
+    /* ========================================================
+     * Returns an array of fields mapped to offset
+     * If required fields are not found then return null
+     */
     protected function processHeaders($headers)
     {
         $map = array(    
-            'AYSOID'            => 'fed_id',
-            'Name'              => 'name_full',
+            'Membershipyear'    => 'mem_year',
+            'Region'            => 'region',
+            'AYSOID'            => 'fed_key',
+            'FirstName'         => 'name_first',
+            'LastName'          => 'name_last',
+            'City'              => 'address_city',
             'State'             => 'address_state',
             'HomePhone'         => 'phone_home',
-            'BusinessPhone'     => 'phone_work',
+            'WorkPhone'         => 'phone_work',
+            'CellPhone'         => 'phone_cell',
             'Email'             => 'email',
-            'CertificationDesc' => 'cert_desc',
             'Gender'            => 'gender',
-            'SectionAreaRegion' => 'sar',
-            'CertDate'          => 'date_cert',
-            'RegionNumber'      => 'region',
-            'Membership Year'   => 'mem_year',
+            'DOB'               => 'dob',
+            'Changed Date'      => 'date_changed',
+            'Registered Date'   => 'date_registered',
         );
-        $indexes = array();
-        $index = 0;
-        foreach($headers as $header)
+        $index = array();
+        foreach($map as $key)
+        {
+            $indexes[$key] = null;
+        }
+        foreach($headers as $index => $header)
         {
             if (isset($map[$header])) $indexes[$map[$header]] = $index;
-            $index++;
         }
-        // Should probably verify have all the expected columns
-        
+      //print_r($headers);
+      //print_r($indexes);die();
+
+        $missing = array();
+        foreach(array('fed_key','mem_year','region') as $key)
+        {
+            if ($indexes[$key] === null) $missing = $key;
+        }
+        if (count($missing))
+        {
+            print_r($missing);
+            die("*** MISSING\n");
+            return null;
+        }
         return $indexes;
     }
 }

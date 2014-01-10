@@ -15,25 +15,25 @@ class PersonFedCert extends BaseModel
     const RoleRefereeInstructor = 'RefereeInstructor';
     
     protected $id;
-    protected $fed;     // PersonFed
-    protected $role;    // Referee, Assessor etc
+    protected $fed;      // PersonFed
     
-    protected $sort;    // Maybe
+    protected $role;     // Referee, Assessor etc
+    protected $roleDate; // First certified as Referee
     
-    protected $badge;   // As set by administrator
-    protected $badgex;  // As set by user
-    
-    protected $dateFirstCertified;
-    protected $dateLastUpgraded;
-    protected $dateExpires;
+    protected $badge;      // As set by administrator or import
+    protected $badgeUser;  // As set by user
+    protected $badgeDate;
+    protected $badgeVerified;
     
     protected $upgrading;
- 
+    protected $memYear;
+    protected $orgKey;
+    
     protected $status   = 'Active';
-    protected $verified = 'No';
+    protected $sort;     // Maybe later
     
     /* =================================================================
-     * Accessors
+     * TODO: Accessors
      */
     public function getId     () { return $this->id;      }
     public function getFed    () { return $this->fed;     }

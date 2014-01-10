@@ -4,7 +4,7 @@ Cerad\Bundle\PersonBundle\Entity\PersonFed:
     changeTrackingPolicy: NOTIFY
     uniqueConstraints:
         person_fed_role_index:
-            columns: fed_role_id, person_id
+            columns: fed_role, person_id
     
     id:
        id:
@@ -32,26 +32,43 @@ Cerad\Bundle\PersonBundle\Entity\PersonFed:
                         
     fields:
       
-        fedId:
-            column:   fed_id
+        personVerified:
+            column:   person_verified
+            type:     string
+            length:   20
+            nullable: true
+          
+        fed:
+            column:   fed     # AYSO,USSF,NFHS
+            type:     string
+            length:   20
+            nullable: false
+            
+        fedRole:
+            column:   fed_role # AYSOV, AYSOP, USSFC, NFHSC
+            type:     string
+            length:   20
+            nullable: false
+            
+        fedRoleDate:
+            column:   fed_role_date
+            type:     date
+            nullable: true
+            
+        fedKey:
+            column:   fed_key
             type:     string
             length:   40
-            nullable: false
+            nullable: true  # Fill in later?, Otherwise globally unique
             unique:   true
             
-        fedRoleId:
-            column:   fed_role_id
+        fedKeyVerified:
+            column:   fed_key_verified
             type:     string
-            length:   40
-            nullable: false
-                                    
+            length:   20
+            nullable: true
+                                   
         status:
             type:     string
             length:   20
             nullable: false
-            
-        verified:
-            type:     string
-            length:   20
-            nullable: true
-    

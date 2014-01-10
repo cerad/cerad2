@@ -12,24 +12,17 @@ class PersonFedOrg extends BaseModel
     protected $id;
     protected $fed;        // PersonFed
     protected $role;       // Primary, Region, State
-    protected $orgId;      // AYSOR0894, id only no relation
+    protected $roleDate;
     
-    protected $memYear;    // FS2012 etc
-    protected $memLast;
-    protected $memFirst;   // Registered or whatever
-    protected $memExpires;
+    protected $orgKey;         // AYSOR0894, id only no relation
+    protected $orgKeyVerified;
     
-    // Probably want two objects
-    protected $bcYear;
-    protected $bcLast;
-    protected $bcFirst;
-    protected $bcExpires;
+    protected $memYear;    // MY2012 etc
     
-    protected $status   = 'Active'; // Active means all is well, Checking for needs to be checked
-    protected $verified = 'No';     // Active means all is well, Checking for needs to be checked
+    protected $status   = 'Active';
     
     /* =================================================================
-     * Accessors
+     * TODO: Accessors
      */
     public function getId        () { return $this->id;         }
     public function getFed       () { return $this->fed;        }
