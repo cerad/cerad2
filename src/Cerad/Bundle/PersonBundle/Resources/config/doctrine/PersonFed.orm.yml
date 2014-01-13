@@ -18,11 +18,11 @@ Cerad\Bundle\PersonBundle\Entity\PersonFed:
             
     oneToMany:
                   
-       orgs:
-           targetEntity: PersonFedOrg
-           mappedBy:     fed
-           indexBy:      role
-           cascade:      ['all']
+      #orgs:
+      #    targetEntity: PersonFedOrg
+      #    mappedBy:     fed
+      #    indexBy:      role
+      #    cascade:      ['all']
             
        certs:
            targetEntity: PersonFedCert
@@ -64,6 +64,24 @@ Cerad\Bundle\PersonBundle\Entity\PersonFed:
             
         fedKeyVerified:
             column:   fed_key_verified
+            type:     string
+            length:   20
+            nullable: true
+            
+        orgKey:
+            column:   org_key
+            type:     string
+            length:   40
+            nullable: true
+            
+        orgKeyVerified:
+            column:   org_key_verified
+            type:     string
+            length:   20
+            nullable: true
+            
+        memYear:
+            column:   mem_year
             type:     string
             length:   20
             nullable: true

@@ -59,17 +59,17 @@ Cerad\Bundle\PersonBundle\Entity\PersonFedCert:
             length:   20
             nullable: true
                 
+        orgKey:
+            column:   org_key
+            type:     string
+            length:   40
+            nullable: true
+            
         memYear:
             column:   mem_year
             type:     string
             length:   20
             nullable: true
-        
-        orgKey:
-            column:   org_key
-            type:     string
-            length:   40
-            nullable: false
             
         status:
             type:     string

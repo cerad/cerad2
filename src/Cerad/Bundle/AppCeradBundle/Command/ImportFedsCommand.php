@@ -27,7 +27,7 @@ class ImportFedsCommand extends ContainerAwareCommand
         
         $import = $this->getService('cerad_app_cerad.feds.import01_yaml');
         
-        $params = array('filepath' => 'data/Feds.yml', 'basename' => 'Feds.yml');
+        $params = array('filepath' => 'data/feds.yml', 'basename' => 'Feds.yml');
         
         $results = $import->process($params);
         

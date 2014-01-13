@@ -35,6 +35,11 @@ class PersonFed extends BaseModel
     protected $person;          // personModelId
     protected $personVerified;
     
+    protected $orgKey;          // AYSOR0894, "primary" organization
+    protected $orgKeyVerified;
+    
+    protected $memYear;         // MY2013
+    
     protected $status = 'Active';
     
     protected $orgs;

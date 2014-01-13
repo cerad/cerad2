@@ -28,7 +28,7 @@ class ExportFedsCommand extends ContainerAwareCommand
         
       //echo $writer->flush(false);
         
-        file_put_contents('data/Feds.yml',$writer->flush());
+        file_put_contents('data/feds.yml',$writer->flush());
         
         echo sprintf("Exported Feds: %d\n",$export->getFedCount());
         return;

@@ -17,70 +17,54 @@ class FedsExport01YAML
         $this->conn = $conn;
     }
     /* =================================================================
-     * Orgs
-     */
-    protected function processFedOrgs($fedId)
-    {
-        $sql = "SELECT person_fed_orgs.* FROM person_fed_orgs WHERE fed_id = :fedId ORDER BY ROLE;";
-        
-        $rows = $this->conn->fetchAll($sql,array('fedId' => $fedId));
-        
-        $items = array();
-        
-        foreach($rows as $row)
-        {
-            unset($row['id']);
-            unset($row['fed_id']);
-            
-            $items[] = $row;
-        }
-        return $items;
-    }
-    /* =================================================================
      * Certs
      */
-    protected function processFedCerts($fedId)
+    protected function processFedCerts($fedKey)
     {
-        $sql = "SELECT person_fed_certs.* FROM person_fed_certs WHERE fed_id = :fedId ORDER BY role;";
+        $sql = <<<EOT
+SELECT
+    cert.role      AS role,
+    cert.badge     AS badge,
+    cert.badgex    AS badge_user,
+    cert.upgrading AS upgrading
+                
+FROM  person_fed_certs AS cert
+WHERE fed_id = :fedKey 
+ORDER BY role
+EOT;
+        $rows = $this->conn->fetchAll($sql,array('fedKey' => $fedKey));
         
-        $rows = $this->conn->fetchAll($sql,array('fedId' => $fedId));
-        
-        $items = array();
-        
-        foreach($rows as $row)
-        {
-            unset($row['id']);
-            unset($row['fed_id']);
-            
-            $items[] = $row;
-        }
-        return $items;
+        return $rows;
     }
     /* =======================================================
      * Feds collection
      */
     protected function processFeds()
     {
-      //$sql = "SELECT person_feds.* FROM person_feds ORDER BY id LIMIT 0,5;";
-        $sql = "SELECT person_feds.* FROM person_feds ORDER BY person_id;";
+        $sql = <<<EOT
+SELECT 
+    fed.person_id   AS person_id,
+    fed.id          AS fed_key,
+    fed.fed_role_id AS fed_role,
+    org.org_id      AS org_key,
+    org.mem_year    AS mem_year
+                
+FROM      person_feds AS fed
+LEFT JOIN person_fed_orgs AS org ON org.fed_id = fed.id
+ORDER BY  person_id
+EOT;
+      //$sql .= "\nLIMIT 0,3";
+        $sql .= ";\n";
         
         $rows = $this->conn->fetchAll($sql);
         
         $items = array();
         
-        foreach($rows as $row)
+        foreach($rows as $item)
         {
-            $id = $row['id']; // AYSOV12341234
+            $id = $item['fed_key']; // AYSOV12341234
             
-            $item = array();
-            $item['fed_id']      = $id;
-            $item['fed_role_id'] = $row['fed_role_id'];
-            $item['person_id']   = (int)$row['person_id'];
-            $item['status']      = $row['status'];
-            $item['verified']    = $row['verified'];
-            
-            $item['certs'] = $this->processFedCerts($id);
-            $item['orgs']  = $this->processFedOrgs ($id);
+            $item['certs']  = $this->processFedCerts($id);
             
             $items[] = $item;
         }

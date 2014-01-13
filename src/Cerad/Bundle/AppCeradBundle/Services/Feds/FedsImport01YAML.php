@@ -9,6 +9,11 @@ use Symfony\Component\Stopwatch\Stopwatch;
  * Fed Only  139 0.50
  * Fed Certs 258 1.00  Quite an increase (because of indexes?)
  * Fed Orgs  138 1.10  Very little increase
+ * 
+ * At Home
+ * Feds  139 3.5
+ * Certs 258 9.48 Increase still seems bizare
+ * 
  */
 class FedsImport01YAMLResults
 {
@@ -18,6 +23,7 @@ class FedsImport01YAMLResults
     
     public $stopwatch;
     public $duration;
+    public $memory;
     
     public $totalFedCount  = 0;
     public $totalOrgCount  = 0;
@@ -30,18 +36,21 @@ class FedsImport01YAMLResults
     }
     public function __toString()
     {
+        $event = $this->stopwatch->stop('import');
+        $this->duration = $event->getDuration();
+        $this->memory   = $event->getMemory();
+        
         return sprintf(
             "%s %s\n" . 
-            "Total Feds  %d\n" .
-            "Total Orgs  %d\n" .
-            "Total Certs %d\n" .
-            "Duration %.2f\n",
+            "Feds  Insert %d\n" .
+            "Certs Insert %d\n" .
+            "Duration %.2f %.2fM\n",
             $this->message,
             $this->basename,
             $this->totalFedCount,
-            $this->totalOrgCount,
             $this->totalCertCount,
-            $this->duration / 1000.
+            $this->duration / 1000.,
+            $this->memory   / 1000000.
         );
     }
 }
@@ -50,49 +59,12 @@ class FedsImport01YAML
     protected $conn;
     protected $results;
     
-    protected $fedImportStatement;
-    protected $fedCertImportStatement;
-    
     public function __construct($conn)
     {
         $this->conn = $conn;
         
-        /* ===========================================================
-         * person_feds
-         */
-        $insertFedSql = <<<EOT
-INSERT INTO person_feds 
-    (person_id,fed,fed_role,fed_key,status)
-VALUES
-    (:personId,'AYSO','AYSOV',:fedKey,'Active')             
-;
-EOT;
-        $this->insertFedStatement = $conn->prepare($insertFedSql);
-        
-        /* ===========================================================
-         * person_fed_certs
-         */
-        $insertCertSql = <<<EOT
-INSERT INTO person_fed_certs 
-    (fed_id,role,badge,badge_user,upgrading,status)
-VALUES
-    (:fedId,:role,:badge,:badgeUser,:upgrading,'Active')             
-;
-EOT;
-        $this->insertCertStatement = $conn->prepare($insertCertSql);
-        
-        /* ===========================================================
-         * person_fed_orgs
-         */
-        $insertOrgSql = <<<EOT
-INSERT INTO person_fed_orgs 
-    (fed_id,role,org_key,status)
-VALUES
-    (:fedId,:role,:orgKey,'Active')             
-;
-EOT;
-        $this->insertOrgStatement = $conn->prepare($insertOrgSql);
-        
+        $this->prepareFedInsert    ($conn);
+        $this->prepareFedCertInsert($conn);                
     }
     /* ======================================================
      * Reset the database
@@ -102,66 +74,74 @@ EOT;
         $conn = $this->conn;
         
         $conn->executeUpdate('DELETE FROM person_fed_certs;' );
-        $conn->executeUpdate('DELETE FROM person_fed_orgs;' );
+      //$conn->executeUpdate('DELETE FROM person_fed_orgs;' );
         $conn->executeUpdate('DELETE FROM person_feds;' );
        
         $conn->executeUpdate('ALTER TABLE person_fed_certs AUTO_INCREMENT = 1;');        
-        $conn->executeUpdate('ALTER TABLE person_fed_orgs  AUTO_INCREMENT = 1;');        
+      //$conn->executeUpdate('ALTER TABLE person_fed_orgs  AUTO_INCREMENT = 1;');        
         $conn->executeUpdate('ALTER TABLE person_feds      AUTO_INCREMENT = 1;');     
-    }
-    /* =========================================================================
-     * Process PersonFedOrg
-     * (:fedId,:role,:orgKey,'Active')   
-     */
-    protected function processFedOrg($fedId,$org)
-    {
-        $orgx = array(
-            'fedId'  => $fedId,
-            'role'   => $org['role'],
-            'orgKey' => $org['org_id'],
-        );
-        $this->insertOrgStatement->execute($orgx);
-        $this->results->totalOrgCount++;
     }
     /* =========================================================================
      * Process PersonFedCert
      *    (:fedId,:role,:badge.:badgeUser,:upgrading,'Active')      
      */
-    protected function processFedCert($fedId,$cert)
+    protected $statementFedCertInsert;
+    
+    protected function prepareFedCertInsert($conn)
     {
-        $certx = array(
-            'fedId'     => $fedId,
-            'role'      => $cert['role'],
-            'badge'     => $cert['badge'],
-            'badgeUser' => $cert['badgex'],
-            'upgrading' => $cert['upgrading'],
-            
-        );
-        $this->insertCertStatement->execute($certx);
+        $sql = <<<EOT
+INSERT INTO person_fed_certs 
+    ( fed_id, role, badge, badge_user, upgrading, mem_year, status)
+VALUES
+    (:fed_id,:role,:badge,:badge_user,:upgrading,:mem_year, 'Active')
+;
+EOT;
+        $this->statementFedCertInsert = $conn->prepare($sql);
+    }
+    protected function processFedCert($fed,$cert)
+    {
+        $cert['fed_id']   = $fed['id'];
+        $cert['mem_year'] = $fed['mem_year'];
+        
+      //print_r($cert); die();
+        
+        $this->statementFedCertInsert->execute($cert);
         $this->results->totalCertCount++;
     }
     /* =========================================================================
      * Process PersonFed
      */
+    protected $statementFedInsert;
+    
+    protected function prepareFedInsert($conn)
+    {
+        $sql = <<<EOT
+INSERT INTO person_feds 
+    ( person_id, fed, fed_role, fed_key, org_key, mem_year,status)
+VALUES
+    (:person_id,:fed,:fed_role,:fed_key,:org_key,:mem_year,'Active')       
+;
+EOT;
+        $this->statementFedInsert = $conn->prepare($sql);
+    }
     protected function processFed($fed)
     {
-        $fedx = array(
-            'personId' => $fed['person_id'],
-            'fedKey'   => $fed['fed_id']
-        );
-        $this->insertFedStatement->execute($fedx);
+        $fedx = $fed;
         
-        $fedId = $this->conn->lastInsertId();
+        // AYSOV to AYSO
+        $fedx['fed'] = substr($fedx['fed_role'],0,4);
+        
+        unset($fedx['certs']);
+        
+        $this->statementFedInsert->execute($fedx);
+        
+        $fedx['id'] = $this->conn->lastInsertId();
         
         $this->results->totalFedCount++;
         
         foreach($fed['certs'] as $cert)
         {
-            $this->processFedCert($fedId,$cert);
-        }
-        foreach($fed['orgs'] as $org)
-        {
-            $this->processFedOrg($fedId,$org);
+            $this->processFedCert($fedx,$cert);
         }
         return;
         
@@ -189,12 +169,23 @@ EOT;
         
         // Done
         $results->message = "Import completed";
-        
-        $event = $results->stopwatch->stop('import');
-        $results->duration = $event->getDuration();
-
         return $results;
         
+    }
+    /* =========================================================================
+     * Process PersonFedOrg
+     * (:fedId,:role,:orgKey,'Active')   
+     * *** Not longer used
+     */
+    protected function processFedOrg($fedId,$org)
+    {
+        $orgx = array(
+            'fedId'  => $fedId,
+            'role'   => $org['role'],
+            'orgKey' => $org['org_id'],
+        );
+        $this->insertOrgStatement->execute($orgx);
+        $this->results->totalOrgCount++;
     }
 }
 ?>
