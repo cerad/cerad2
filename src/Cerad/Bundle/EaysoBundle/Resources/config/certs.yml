@@ -24,6 +24,9 @@ certs:
     SafeHaven:
         AYSO:
             - 'Safe Haven AYSOs' 
+            - 'AYSOs Safe Haven'
+            - 'Z-Online AYSOs Safe Haven'
+            - 'Webinar-AYSOs Safe Haven'
         Coach:
             - 'Safe Haven Coach'
             - 'Z-Online Safe Haven Coach'

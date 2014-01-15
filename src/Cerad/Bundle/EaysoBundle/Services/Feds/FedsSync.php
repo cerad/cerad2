@@ -489,6 +489,7 @@ EOT;
     }
     public function processRows($fp,$indexes)
     {
+        $count = 0;
         while($row = fgetcsv($fp))
         {
             $this->results->countRows++;
@@ -501,6 +502,8 @@ EOT;
                 if ($index !== null) $fed[$key] = trim($row[$index]);
             }
             $this->processFed($fed);
+            
+          //if ($count++ > 30000) return;
         }
         return;
     }

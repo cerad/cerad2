@@ -31,10 +31,19 @@ class CertRepository
             }
             $this->certDescs = $certDescs;
         }
-        if (isset($this->certDescs[$certDesc])) return $this->certDescs[$certDesc];
-        
-        echo sprintf("*** No cert record for '%s'\n",$certDesc);
-        return array();
+        // Need to handle comma delimited nonsense
+        $parts = explode(',',$certDesc);
+        $certs = array();
+        foreach($parts as $part)
+        {
+            $part = trim($part);
+            if (isset($this->certDescs[$part])) $certs = array_merge($certs,$this->certDescs[$part]);
+            else
+            {
+                echo sprintf("*** No cert record for '%s'\n",$certDesc);die();
+            }
+        }
+        return $certs;
     }
     // Referee Intermediate National
     public function compareBadges($role,$badge1,$badge2)

@@ -36,6 +36,12 @@ cerad_tourn_admin_officials_list:
     requirements:
         _format:  html|csv|xls|pdf
         
+cerad_tourn_admin_person_feds_sync:
+    pattern:  /admin/person_feds/sync
+    defaults: 
+        _controller: CeradTournAdminBundle:PersonFeds/PersonFedsSync:sync
+        _template: '@CeradTournAdmin/PersonFeds/PersonFedsSyncIndex.html.twig'
+        
 # ==============================================================
 # Listing, Importing and exporting the game schedule
 cerad_tourn_admin_schedule_games_list:
