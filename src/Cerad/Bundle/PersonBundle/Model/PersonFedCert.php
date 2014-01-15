@@ -5,7 +5,7 @@ use Cerad\Bundle\PersonBundle\Model\PersonFed;
 
 class PersonFedCert extends BaseModel
 {       
-    const RoleReferee    = 'Referee';
+    const RoleReferee    = 'Referee';  // SoccerReferee? or add Sport?
     const RoleSafeHaven  = 'SafeHaven';
     
     const RoleAssignor   = 'Assignor';
@@ -15,7 +15,7 @@ class PersonFedCert extends BaseModel
     const RoleRefereeInstructor = 'RefereeInstructor';
     
     protected $id;
-    protected $fed;      // PersonFed
+    protected $personFed;
     
     protected $role;     // Referee, Assessor etc
     protected $roleDate; // First certified as Referee
@@ -35,49 +35,51 @@ class PersonFedCert extends BaseModel
     /* =================================================================
      * TODO: Accessors
      */
-    public function getId     () { return $this->id;      }
-    public function getFed    () { return $this->fed;     }
-    public function getRole   () { return $this->role;    }
+    public function getId       () { return $this->id;       }
+    public function getPersonFed() { return $this->personFed;}
+    public function getRole     () { return $this->role;     }
+    public function getRoleDate () { return $this->roleDate; }
     
-    public function getBadgex () { return $this->badgex;  }
-    public function getBadge  () { return $this->badge;   }
+    public function getBadge        () { return $this->badge;         }
+    public function getBadgeUser    () { return $this->badgeUser;     }
+    public function getBadgeDate    () { return $this->badgeDate;     }
+    public function getBadgeVerified() { return $this->badgeVerified; }
 
-    public function getStatus  () { return $this->status;  }
-    public function getVerified() { return $this->verified;}
+    public function getUpgrading() { return $this->upgrading; }
+    public function getOrgKey   () { return $this->orgKey;    }
+    public function getMemYear  () { return $this->memYear;   }
+    public function getStatus   () { return $this->status;    }
     
-    public function getDateFirstCertified () { return $this->dateFirstCertified;  }
-    public function getDateLastUpgraded()    { return $this->dateLastUpgraded;    }
-    public function getDateExpires()         { return $this->dateExpires;         }
-    public function getUpgrading()           { return $this->upgrading;           }
+    public function setRole    ($value) { $this->onPropertySet('role',    $value); }
+    public function setRoleDate($value) { $this->onPropertySet('roleDate',$value); }
     
-    public function setRole    ($value) { $this->onPropertySet('role',      $value); }
-    public function setBadge   ($value) { $this->onPropertySet('badge',     $value); }
-    public function setStatus  ($value) { $this->onPropertySet('status',    $value); }
-    public function setVerified($value) { $this->onPropertySet('verified',  $value); }
+    public function setBadge        ($value) { $this->onPropertySet('badge',        $value); }
+    public function setBadgeDate    ($value) { $this->onPropertySet('badgeDate',    $value); }
+    public function setBadgeVerified($value) { $this->onPropertySet('badgeVerified',$value); }
     
-    public function setFed(PersonFed $fed) { $this->onPropertySet('fed',    $fed);   }
-    
-    public function setDateFirstCertified($value) { $this->onPropertySet('dateFirstCertified',$value); }
-    public function setDateLastUpgraded  ($value) { $this->onPropertySet('dateLastUpgraded',  $value); }
-    public function setDateExpires       ($value) { $this->onPropertySet('dateExpires',       $value); }
-    public function setUpgrading         ($value) { $this->onPropertySet('upgrading',         $value); }
+    public function setStatus   ($value) { $this->onPropertySet('status',   $value); }
+    public function setOrgKey   ($value) { $this->onPropertySet('orgKey',   $value); }
+    public function setMemYear  ($value) { $this->onPropertySet('memYear',  $value); }
+    public function setUpgrading($value) { $this->onPropertySet('upgrading',$value); }
+   
+    public function setPersonFed(PersonFed $personFed) { $this->onPropertySet('personFed',$personFed);   }
     
     public function __construct() {}
 
-    public function setBadgex($badge) 
+    public function setBadgeUser($badge) 
     { 
-        $this->onPropertySet('badgex',$badge); 
+        $this->onPropertySet('badgeUser',$badge); 
     
         if (!$this->badge) $this->onPropertySet('badge',$badge); 
     }
     // Calc based on cert date
     public function getExperience($asOf = null)
     {
-        if (!$this->dateFirstCertified) return null;
+        if (!$this->roleDate) return null;
         
         if (!$asOf) $asOf = new \DateTime();
             
-        $interval = $asOf->diff($this->dateFirstCertified);
+        $interval = $asOf->diff($this->roleDate);
         
         $years = $interval->format('%y');
         

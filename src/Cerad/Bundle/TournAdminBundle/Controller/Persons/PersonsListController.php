@@ -14,7 +14,7 @@ class PersonsListController extends MyBaseController
         if (!$this->hasRoleAdmin()) { return $this->redirect('cerad_tourn_welcome'); }
         
         $model = $this->createModel($request);
-        if (isset($model['repsonse'])) return $model['response'];
+        if (isset($model['response'])) return $model['response'];
         
         $project = $model['project'];
         $persons = $model['persons'];
@@ -36,9 +36,9 @@ class PersonsListController extends MyBaseController
            
         }
         $tplData = array();
-        $tplData['project']   = $project;
-        $tplData['persons']   = $persons;
-        $tplData['fedRoleId'] = $project->getFedRoleId();
+        $tplData['project'] = $project;
+        $tplData['persons'] = $persons;
+        $tplData['fedRole'] = $project->getFedRole();
         
         $tplName = $request->get('_template');
         return $this->render($tplName,$tplData);   

@@ -91,17 +91,17 @@ class FedsImport01YAML
     {
         $sql = <<<EOT
 INSERT INTO person_fed_certs 
-    ( fed_id, role, badge, badge_user, upgrading, mem_year, status)
+    ( person_fed_id, role, badge, badge_user, upgrading, mem_year, status)
 VALUES
-    (:fed_id,:role,:badge,:badge_user,:upgrading,:mem_year, 'Active')
+    (:person_fed_id,:role,:badge,:badge_user,:upgrading,:mem_year, 'Active')
 ;
 EOT;
         $this->statementFedCertInsert = $conn->prepare($sql);
     }
     protected function processFedCert($fed,$cert)
     {
-        $cert['fed_id']   = $fed['id'];
-        $cert['mem_year'] = $fed['mem_year'];
+        $cert['person_fed_id'] = $fed['id'];
+        $cert['mem_year']      = $fed['mem_year'];
         
       //print_r($cert); die();
         

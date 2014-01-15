@@ -3,6 +3,9 @@ namespace Cerad\Bundle\PersonBundle\Model;
 
 use Cerad\Bundle\PersonBundle\Model\PersonFed;
 
+/* ==============================================
+ * 14 Jan 2014 - No longer used by ayso/ussf apps
+ */
 class PersonFedOrg extends BaseModel
 {
     const RoleState   = 'State';

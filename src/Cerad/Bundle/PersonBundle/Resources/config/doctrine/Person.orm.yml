@@ -18,7 +18,7 @@ Cerad\Bundle\PersonBundle\Entity\Person:
         feds:
             targetEntity: PersonFed
             mappedBy:     person
-            indexBy:      fedRoleId
+            indexBy:      fedRole
             cascade:      ['all']
             
         plans:

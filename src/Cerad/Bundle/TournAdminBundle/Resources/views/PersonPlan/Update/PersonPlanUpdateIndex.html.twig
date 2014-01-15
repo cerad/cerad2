@@ -25,17 +25,17 @@
 {{ form_row(form.plan.notes)       }}
 </fieldset>
 <fieldset><legend><span>AYSO Info</span></legend>
-{{ form_row(form.fed.fedId,             { 'label': 'AYSOV ID' } )        }}
-{{ form_row(form.org.orgId,             { 'label': 'Region Number' } )   }}
-{{ form_row(form.org.memYear,           { 'label': 'Mem Year  ' } )      }}
+{{ form_row(form.personFed.fedKey,      { 'label': 'AYSOV ID' } )        }}
+{{ form_row(form.personFed.orgKey,      { 'label': 'Region Number' } )   }}
+{{ form_row(form.personFed.memYear,     { 'label': 'Mem Year  ' } )      }}
 {{ form_row(form.certSafeHaven.badge,   { 'label': 'Safe Haven' } )      }}
 </fieldset>
 <fieldset><legend><span>AYSO Referee Cert</span></legend>
 {{ form_row(form.certReferee.badge,     { 'label': 'Confirmed Badge' } ) }}
-{{ form_row(form.certReferee.badgex,    { 'label': 'User Badge' } )      }}
+{{ form_row(form.certReferee.badgeUser, { 'label': 'User Badge' } )      }}
 
-{{ form_row(form.certReferee.dateFirstCertified, { 'label': 'Date first certified' } ) }}
-{{ form_row(form.certReferee.dateLastUpgraded,   { 'label': 'Date last upgraded' } )   }}
+{{ form_row(form.certReferee.badgeDate,{ 'label': 'Badge   Date' } ) }}
+{{ form_row(form.certReferee.roleDate, { 'label': 'Referee Started Date' } ) }}
         
 {{ form_row(form.certReferee.upgrading, { 'label': 'Upgrading' } ) }}
 </fieldset>

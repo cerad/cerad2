@@ -1,6 +1,9 @@
 <?php
 namespace Cerad\Bundle\ProjectBundle\Model;
 
+/* =====================================================
+ * TODO: Change fedId and fedRoleId to fed and fedRole
+ */
 class Project
 {
     protected $id;
@@ -9,7 +12,7 @@ class Project
     protected $verified;
                 
     protected $fedId;     // AYSO
-    protected $fedRoleId;  // AYSOV
+    protected $fedRoleId; // AYSOV
     
     protected $results;  // s1games, s5games, natgames etc
     
@@ -27,6 +30,9 @@ class Project
     public function getSlugs   () { return $this->slugs;    }
     public function getStatus  () { return $this->status;   }
     public function getVerified() { return $this->verified; }
+    
+    public function getFed     () { return $this->fedId;     }
+    public function getFedRole () { return $this->fedRoleId; }
     
     public function getFedId     () { return $this->fedId;     }
     public function getFedRoleId () { return $this->fedRoleId; }

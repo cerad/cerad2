@@ -26,10 +26,16 @@ class TournHomeController extends MyBaseController
         $user   = $this->getUser();
         $person = $this->getUserPerson(true);
         
-        // Check that the plan was setup
+        /* ======================================================
+         * This was an attempt to more or less force users to fill out their plans
+         * The test for attending fails under the s1games lower tournament
+         * Hack this for now
+         * 
+         * Need to add a havePlansBeenSet method to PersonPlan
+         */
         $personPlan = $person->getPlan($project->getId());
         $basic = $personPlan->getBasic();
-        if (!isset($basic['attending'])) 
+        if (!isset($basic['attending'])  && !isset($basic['attendingLeague']))
         {
             return $this->redirect('cerad_tourn_person_plan_update');
         }

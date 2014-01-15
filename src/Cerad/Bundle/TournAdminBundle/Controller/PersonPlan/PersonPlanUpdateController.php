@@ -50,12 +50,16 @@ class PersonPlanUpdateController extends MyBaseController
         $personRepo = $this->get('cerad_person.person_repository');
         
         // See if the aysoid has changed
-        if ($model['aysoid'] != $model['fed']->getId())
+        if ($model['fedKey'] != $model['personFed']->getFedKey())
         {
-            die('AYSOID change is not yet implemented');
-            
-            // Works from a script
-            $personRepo->changeFedId($model['fed'],$model['aysoid'],true);
+            // TODO: Need to see if changes fedKey already exists
+            // If so then assorted logic
+            $newFedKey = $model['personFed']->getFedKey();
+            $existingPersonFed = $personRepo->findFedByFedKey($newFedKey);
+            if ($existingPersonFed)
+            {
+                die('AYSOID already exists');
+            }
         }
         // Commit
         $personRepo->commit();
@@ -106,18 +110,16 @@ class PersonPlanUpdateController extends MyBaseController
         $model['plan'] = $plan;
         
         // The fed
-        $fed = $person->getFed($project->getFedRoleId());
-        $org = $fed->getOrgRegion();
-        $certReferee   = $fed->getCertReferee();
-        $certSafeHaven = $fed->getCertSafeHaven();
+        $personFed     = $person->getFed($project->getFedRole());
+        $certReferee   = $personFed->getCertReferee();
+        $certSafeHaven = $personFed->getCertSafeHaven();
         
-        $model['fed'] = $fed;
-        $model['org'] = $org;
+        $model['personFed']     = $personFed;
         $model['certReferee']   = $certReferee;
         $model['certSafeHaven'] = $certSafeHaven;
         
         // Because changing this requires extra effort
-        $model['aysoid'] = $fed->getId();
+        $model['fedKey'] = $personFed->getFedKey();
         
         // Done
         return $model;
@@ -139,8 +141,7 @@ class PersonPlanUpdateController extends MyBaseController
         
         $builder->add('user',          new UserFormType());
         $builder->add('person',        new PersonFormType());
-        $builder->add('fed',           new VolFormType());
-        $builder->add('org',           new RegionFormType());
+        $builder->add('personFed',     new VolFormType());
         $builder->add('plan',          new PersonPlanFormType());
         $builder->add('certReferee',   new RefereeCertFormType());
         $builder->add('certSafeHaven', new SafeHavenCertFormType());

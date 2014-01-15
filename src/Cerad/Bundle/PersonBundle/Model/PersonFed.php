@@ -9,8 +9,7 @@ use Cerad\Bundle\PersonBundle\Model\PersonFedOrg;
 use Cerad\Bundle\PersonBundle\Model\PersonFedCert;
 
 /* ================================================
- * This is really a link to a FedPersonType but
- * works fine in the person context
+ * Local copy of federation data
  */
 class PersonFed extends BaseModel
 {   
@@ -58,23 +57,41 @@ class PersonFed extends BaseModel
     public function getFedKey         () { return $this->fedKey;    }
     public function getFedKeyVerified () { return $this->fedKeyVerified; }
     
+    public function getOrgKey         () { return $this->orgKey;    }
+    public function getOrgKeyVerified () { return $this->orgKeyVerified; }
+    
     public function getPerson         () { return $this->person;    }
     public function getPersonVerified () { return $this->personVerified; }
+    
+    public function getMemYear  () { return $this->memYear;   }
     
     public function getStatus   () { return $this->status;    }
     
     public function setId         ($value) { $this->onPropertySet('id',         $value); }
     public function setFed        ($value) { $this->onPropertySet('fed',        $value); }
-    public function setFedRole    ($value) { $this->onPropertySet('fedRole',    $value); }
     public function setFedRoleDate($value) { $this->onPropertySet('fedRoleDate',$value); }
     
     public function setFedKey        ($value) { $this->onPropertySet('fedKey',        $value); }
     public function setFedKeyVerified($value) { $this->onPropertySet('fedKeyVerified',$value); }
     
+    public function setOrgKey        ($value) { $this->onPropertySet('orgKey',        $value); }
+    public function setOrgKeyVerified($value) { $this->onPropertySet('orgKeyVerified',$value); }
+    
     public function setPerson(Person $person) { $this->onPropertySet('person',        $person); }
     public function setPersonVerified($value) { $this->onPropertySet('personVerified',$value);  }
     
+    public function setMemYear($value) { $this->onPropertySet('memYear',$value); }
+    
     public function setStatus($value) { $this->onPropertySet('status',$value); }
+    
+    /* =============================================================
+     * Derive Fed from Fed role just to be consistent
+     */
+    public function setFedRole($fedRole) 
+    { 
+        $this->onPropertySet('fed',    substr($fedRole,0,4)); 
+        $this->onPropertySet('fedRole',$fedRole); 
+    }
     
     /* ====================================================
      * Certification
@@ -102,7 +119,7 @@ class PersonFed extends BaseModel
         
         $this->certs[$role] = $cert;
          
-        $cert->setFed($this);
+        $cert->setPersonFed($this);
         
         $this->onPropertyChanged('certs');
     }
@@ -128,6 +145,7 @@ class PersonFed extends BaseModel
     
     /* ====================================================
      * Organizations
+     * 14 Jan 2014 - No longer used by ayso/ussf apps
      */
     public function createOrg($params) { return new PersonFedOrg($params); }
     
@@ -160,7 +178,7 @@ class PersonFed extends BaseModel
         // Default role based on Fed Role
         if ($role == null)
         {
-            switch($this->fedRoleId)
+            switch($this->fedRole)
             {
                 case self::FedRoleAYSOV: $role = PersonFedOrg::RoleRegion; break;
                 case self::FedRoleUSSFC: $role = PersonFedOrg::RoleState;  break;

@@ -4,7 +4,7 @@ Cerad\Bundle\PersonBundle\Entity\PersonFedCert:
     changeTrackingPolicy: NOTIFY
     uniqueConstraints:
         person_fed_cert_role_index:
-            columns: fed_id, role, org_key
+            columns: person_fed_id, role, org_key
     
     id:
         id:
@@ -13,8 +13,11 @@ Cerad\Bundle\PersonBundle\Entity\PersonFedCert:
             
     manyToOne:
                   
-        fed:
+        personFed:
             targetEntity: PersonFed
+            joinColumn:
+                name:                 person_fed_id
+                referencedColumnName: id
             inversedBy:   certs
             
     fields:

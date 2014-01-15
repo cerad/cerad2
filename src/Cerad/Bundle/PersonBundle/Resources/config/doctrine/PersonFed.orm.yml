@@ -26,7 +26,7 @@ Cerad\Bundle\PersonBundle\Entity\PersonFed:
             
        certs:
            targetEntity: PersonFedCert
-           mappedBy:     fed
+           mappedBy:     personFed
            indexBy:      role
            cascade:      ['all']
                         

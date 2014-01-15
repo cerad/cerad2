@@ -67,12 +67,26 @@ class PersonPlan extends BaseModel
     const WANT_MENTOR  = 'wantMentor';
     
     const SHIRT_SIZE  = 'tshirt';
+
+    // Hack this in for now
+    const WILL_ATTEND_LEAGUE  = 'attendingLeague';
+    const WILL_ATTEND_ASExtra = 'attendingASExtra';
     
-    public function getWillAttend () { return $this->basic[self::WILL_ATTEND];  }
-    public function getWillReferee() { return $this->basic[self::WILL_REFEREE]; }
-    public function getWillMentor () { return $this->basic[self::WILL_MENTOR];  }
-    public function getWantMentor () { return $this->basic[self::WANT_MENTOR];  }
-    public function getShirtSize  () { return $this->basic[self::SHIRT_SIZE ];  }
+    protected function getBasicValue($key)
+    {
+        return isset($this->basic[$key]) ? $this->basic[$key] : null;
+    }
+    public function getWillAttendLeague()  { return $this->getBasicValue(self::WILL_ATTEND_LEAGUE);  }
+    public function getWillAttendASExtra() { return $this->getBasicValue(self::WILL_ATTEND_ASExtra); }
+    
+    public function getWillAttend () { return $this->getBasicValue(self::WILL_ATTEND);  }
+    public function getWillReferee() { return $this->getBasicValue(self::WILL_REFEREE); }
+    public function getWillMentor () { return $this->getBasicValue(self::WILL_MENTOR);  }
+    public function getWantMentor () { return $this->getBasicValue(self::WANT_MENTOR);  }
+    public function getShirtSize  () { return $this->getBasicValue(self::SHIRT_SIZE);   }
+    
+    public function setWillAttendLeague ($value) { return $this->setBasicParam(self::WILL_ATTEND_LEAGUE, $value); }
+    public function setWillAttendASExtra($value) { return $this->setBasicParam(self::WILL_ATTEND_ASExtra,$value); }
     
     public function setWillAttend ($value) { return $this->setBasicParam(self::WILL_ATTEND, $value); }
     public function setWillReferee($value) { return $this->setBasicParam(self::WILL_REFEREE,$value); }
@@ -82,6 +96,8 @@ class PersonPlan extends BaseModel
     
     protected function setBasicParam($name,$value)
     {
+        if (!isset($this->basic[$name])) return;
+        
         if ($value == $this->basic[$name]) return;
         
         // Had problems making this cleaner

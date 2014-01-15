@@ -83,21 +83,21 @@ class AccountCreateController extends MyBaseController
         // Unpack
         $user      = $model['user'     ];
         $name      = $model['name'     ];
-        $fedId     = $model['fedId'    ];
-        $fedRoleId = $model['fedRoleId'];
+        $fedKey    = $model['fedKey'   ];
+        $fedRole   = $model['fedRole'  ];
         $email     = $model['email'    ];
         $password  = $model['password' ];
 
         // If they left it blank
-        if (!$fedId)
+        if (!$fedKey)
         {
-            $fedIdTransformerServiceId = sprintf('cerad_person.%s_id_fake.data_transformer',$fedRoleId);
+            $fedKeyTransformerServiceId = sprintf('cerad_person.%s_id_fake.data_transformer',$fedRole);
 
-            $fedIdTransformer = $this->get($fedIdTransformerServiceId);
+            $fedKeyTransformer = $this->get($fedKeyTransformerServiceId);
             
-            $fedId = $fedIdTransformer->reverseTransform('99');
+            $fedKey = $fedKeyTransformer->reverseTransform('11');
             
-            $model['fedId'] = $fedId;
+            $model['fedKey'] = $fedKey;
         }
 
         /* =================================================
@@ -105,7 +105,7 @@ class AccountCreateController extends MyBaseController
          */
         $personRepo = $this->get('cerad_person.person_repository');
         
-        $personFed = $personRepo->findFedByFedId($fedId);
+        $personFed = $personRepo->findFedByFedKey($fedKey);
         
         if (!$personFed)
         {
@@ -120,8 +120,8 @@ class AccountCreateController extends MyBaseController
             
             $person->setEmail($email);
            
-            $personFed = $person->getFed($project->getFedRoleId());
-            $personFed->setFedId($fedId);
+            $personFed = $person->getFed($project->getFedRole());
+            $personFed->setFedKey($fedKey);
         }
         else
         {
@@ -172,8 +172,8 @@ class AccountCreateController extends MyBaseController
         $user = $userManager->createUser();
 
         $model = array(
-            'fedId'     => null,
-            'fedRoleId' => $project->getFedRoleId(),
+            'fedKey'    => null,
+            'fedRole'   => $project->getFedRole(),
             'user'      => $user,
             'name'      => null,
             'email'     => null,
@@ -193,11 +193,11 @@ class AccountCreateController extends MyBaseController
          * Be nice if the constraibnt type could come along with the form
          * Need to see how to inject the constraint options
          */
-        $fedRoleId = $model['fedRoleId'];
+        $fedRole = $model['fedRole'];
         
-        $fedIdTypeServiceId = sprintf('cerad_person.%s_id_Fake.form_type',$fedRoleId);
+        $fedKeyTypeServiceId = sprintf('cerad_person.%s_id_Fake.form_type',$fedRole);
 
-        $fedIdTypeService = $this->get($fedIdTypeServiceId);
+        $fedKeyTypeService = $this->get($fedKeyTypeServiceId);
         
         /* ======================================================
          * Start building
@@ -211,7 +211,7 @@ class AccountCreateController extends MyBaseController
         
         $builder = $this->createFormBuilder($model,$formOptions);
         
-        $builder->add('fedId',$fedIdTypeService, array(
+        $builder->add('fedKey',$fedKeyTypeService, array(
             'required' => false,
         ));
         $builder->add('email','email', array(

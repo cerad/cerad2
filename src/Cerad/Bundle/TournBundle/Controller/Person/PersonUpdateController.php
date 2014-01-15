@@ -57,17 +57,16 @@ class PersonUpdateController extends MyBaseController
         $person->setPhone($model['personPhone']);
         
         // Certs
-      //$fedId     = $model['fedId'    ];
-        $orgId     = $model['orgId'    ];
+        $orgKey    = $model['orgKey'   ];
         $badge     = $model['badge'    ];
         $upgrading = $model['upgrading'];
         
-        $personFed     = $person->getFed($project->getFedRoleId());
-        $personOrg     = $personFed->getOrg();
+        $personFed     = $person->getFed($project->getFedRole());
         $personCertRef = $personFed->getCertReferee();
         
-        $personOrg->setOrgId($orgId);
-        $personCertRef->setBadgex($badge);
+        $personFed->setOrgKey($orgKey);  // Do we really want them to be able to change this?
+        
+        $personCertRef->setBadgeUser($badge);
         $personCertRef->setUpgrading($upgrading);
         
         // And persist
@@ -99,16 +98,16 @@ class PersonUpdateController extends MyBaseController
         {
             throw new \Exception('No person in cerad_tourn_person_edit');
         }
-        $personFed = $person->getFed($project->getFedRoleId());
+        $personFed = $person->getFed($project->getFedRole());
  
-        $personOrg     = $personFed->getOrg();
+      //$personOrg     = $personFed->getOrg();
         $personCertRef = $personFed->getCertReferee();
         
         // Simple model
         $model['person']    = $person;
-        $model['fedId']     = $personFed->getFedId();
-        $model['orgId']     = $personOrg->getOrgId();
-        $model['badge']     = $personCertRef->getBadgex();
+        $model['fedKey']    = $personFed->getFedKey();
+        $model['orgKey']    = $personFed->getOrgKey();
+        $model['badge']     = $personCertRef->getBadgeUser();
         $model['upgrading'] = $personCertRef->getUpgrading();
         
         // Value object, just flatten for now
@@ -130,15 +129,16 @@ class PersonUpdateController extends MyBaseController
 
     public function createModelForm($project,$model = null)
     {
-        $fedRoleId = $project->getFedRoleId();
+        $fedRole = $project->getFedRole();
+        $orgKey = $model['orgKey'];
         
         // Service id's are not case sensitive
-        $fedIdTypeServiceId = sprintf('cerad_person.%s_id_Fake.form_type',      $fedRoleId);
-        $orgIdTypeServiceId = sprintf('cerad_person.%s_org_id.form_type',       $fedRoleId);
-        $badgeTypeServiceId = sprintf('cerad_person.%s_referee_badge.form_type',$fedRoleId);
+        $fedKeyTypeServiceId = sprintf('cerad_person.%s_id_Fake.form_type',      $fedRole);
+        $orgKeyTypeServiceId = sprintf('cerad_person.%s_org_id.form_type',       $fedRole);
+        $badgeTypeServiceId = sprintf('cerad_person.%s_referee_badge.form_type',$fedRole);
         
-        $fedIdTypeService   = $this->get($fedIdTypeServiceId);
-        $orgIdTypeService   = $this->get($orgIdTypeServiceId);
+        $fedKeyTypeService  = $this->get($fedKeyTypeServiceId);
+        $orgKeyTypeService  = $this->get($orgKeyTypeServiceId);
         $badgeTypeService   = $this->get($badgeTypeServiceId);
         
         $formOptions = array(
@@ -149,21 +149,28 @@ class PersonUpdateController extends MyBaseController
         
         $builder = $this->createFormBuilder($model,$formOptions);
         
-        $builder->add('fedId',$fedIdTypeService, array(
+        $builder->add('fedKey',$fedKeyTypeService, array(
             'required' => false,
             'disabled' => true,
         ));
-        $builder->add('orgId',$orgIdTypeService, array(
-            'required' => true,
-            'constraints' => array(
-                new NotBlankConstraint($constraintOptions),
-        )));
+        if ($orgKey)
+        {
+            // Don't allow chnging region once it has been put in
+            $builder->add('orgKey',$orgKeyTypeService, array(
+                'disabled' => true,
+            ));
+        }
+        else
+        {
+            $builder->add('orgKey',$orgKeyTypeService, array(
+                'required' => true,
+                'constraints' => array(
+                    new NotBlankConstraint($constraintOptions),
+                )
+            ));
+        }
         $builder->add('badge',$badgeTypeService, array(
             'required' => true,
-        ));
-        $builder->add('fedId',$fedIdTypeService, array(
-            'required' => false,
-            'disabled' => true,
         ));
         $builder->add('upgrading','cerad_person_upgrading', array(
             'required' => false,
@@ -213,7 +220,7 @@ class PersonUpdateController extends MyBaseController
                 new EmailConstraint   ($constraintOptions),
             ),
             'attr' => array('size' => 30),
-         ));
+        ));
         $builder->add('personPhone','cerad_person_phone', array(
             'required' => false,
             'label'    => 'Cell Phone',
@@ -222,12 +229,6 @@ class PersonUpdateController extends MyBaseController
             ),
             'attr' => array('size' => 20),
         ));
-          
-/*
-            ->add('badge',    $badgeType)
-            ->add('orgId',    $orgIdType)
-            ->add('upgrading',$upgradingType)
-        ;*/
         return $builder->getForm();
     }
 }

@@ -30,13 +30,15 @@ class MemYearFormType extends AbstractType
     protected $choices = array
     (
         'None'   => 'None',
-        'FS2013' => 'FS2013',
-        'FS2014' => 'FS2014',
-        'FS2015' => 'FS2015',
+        'MY2013' => 'MY2013',
+        'MY2014' => 'MY2014',
+        'MY2015' => 'MY2015',
         
-        'FS2012' => 'FS2012',
-        'FS2011' => 'FS2011',
-        'FS2010' => 'FS2010',
+        'MY2012' => 'MY2012',
+        'MY2011' => 'MY2011',
+        'MY2010' => 'MY2010',
+        
+        // Leave for now
         'FS2009' => 'FS2009',
         'FS2008' => 'FS2008',
 

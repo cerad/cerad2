@@ -18,30 +18,18 @@ class FedsSync
      */
     public function __construct($conn,$certRepo)
     {
-        $this->conn = $conn;
+        $this->conn     = $conn;
         $this->certRepo = $certRepo;
-        $this->results = new FedsSyncResults();
+        $this->results  = new FedsSyncResults();
         
         $this->prepareFedSelect($conn);
         $this->prepareFedUpdate($conn);
         
         $this->prepareCertSelect($conn);
         $this->prepareCertInsert($conn);
+        $this->prepareCertUpdate($conn);
         
         $this->preparePersonUpdate($conn);
-        
-        /* ===============================================================
-         * PersonFedCert
-         */
-        
-        $insertFedCertSql = <<<EOT
-INSERT INTO person_fed_certs 
-    (fed_id,role,badge,badgex,date_cert,status,verified)
-VALUES
-    (:fedId,:role,:badge,:badgex,:dateCert,'Active','Yes')             
-;
-EOT;
-        $this->insertFedCertStatement = $conn->prepare($insertFedCertSql);
         
     }
     /* ===============================================================
@@ -130,8 +118,8 @@ EOT;
     protected function updateFed($eaysoFed,$ceradFed)
     {
         // Needs to be linked, should never fail
-        $ceradFedId = $ceradFed['fed_id'];
-        if (!$ceradFedId) die('*** missing fed id');
+        $ceradPersonFedId = $ceradFed['id'];
+        if (!$ceradPersonFedId) die('*** missing fed id');
         
         // Two fields for update
         $ceradPersonEmail    = $ceradFed['person_email'];
@@ -152,7 +140,7 @@ EOT;
         $eaysoMemYear = $eaysoFed['mem_year'];
         
         $params = array(
-            'id'               => $ceradFedId,
+            'id'               => $ceradPersonFedId,
             'person_verified'  => $ceradPersonVerified,
             'fed_key_verified' => $ceradFedKeyVerified,
             'fed_role_date'    => $ceradFedRoleDate,
@@ -231,76 +219,6 @@ EOT;
         $this->results->countFedUpdate++;
     }
     /* ==========================================================================
-     * Update existing cert record
-     * 
-     * TODO: Try storing date first certified for role
-     */
-    protected function updateCeradCert($eaysoCert,$eaysoRole,$eaysoBadge,$ceradCert)
-    {
-        // Start by checking badges
-        $ceradBadge = $ceradCert['badge'];
-        if ($this->certRepo->compareBadges($eaysoRole,$eaysoBadge,$ceradBadge) < 0) return;
-        
-        // Track changes to avoid unnecessary updates
-        $needUpdate = false;
-        
-        // New badge
-        if ($ceradBadge != $eaysoBadge) $needUpdate = true;
-        
-        // Adjust the verified
-        if ($ceradCert['verified'] == 'No') $needUpdate = true;
-        
-        // Adjust the date
-        $eaysoDateCert = $this->processDate($eaysoCert['date_cert']);
-        $ceradDateCert = $ceradCert['date_cert'];
-        if ($ceradDateCert != $eaysoDateCert)  $needUpdate = true;
-        
-        // Any changes?
-        if (!$needUpdate) return;
-        
-        // Need update, just make suree all three updateable values are set
-        $params = array(
-            'id'       => $ceradCert['id'],
-            'badge'    => $eaysoBadge,
-            'verified' => 'Yes',
-            'dateCert' => $eaysoDateCert,
-        );
-        $this->updateFedCertStatement->execute($params);
-        $this->results->totalCertUpdateCount++;
-    }
-    /* ==========================================================================
-     * process individual person_fed_cert record
-     */
-    protected function processEaysoCertBadge($eaysoCert,$eaysoRole,$eaysoBadge,$ceradFed)
-    {
-        // Skip the others
-        if ($eaysoRole == 'Other') return;
-        $this->results->totalCertBadgeCount++;
-        
-        // Update or insert?
-        $fedIdx = $ceradFed['fed_idx'];
-        $this->selectFedCertStatement->execute(array('fedIdx' => $fedIdx, 'role' => $eaysoRole));   
-        $rows = $this->selectFedCertStatement->fetchAll();
-        if (count($rows))
-        {
-            return $this->updateCeradCert($eaysoCert,$eaysoRole,$eaysoBadge,$rows[0]);
-        }
-        
-        // Setup for insert
-        $params = array
-        (
-            'fedId'    => $fedIdx,
-            'role'     => $eaysoRole,
-            'badge'    => $eaysoBadge,
-            'badgex'   => $eaysoBadge,
-            'dateCert' => $this->processDate($eaysoCert['date_cert']),
-        );
-        $this->insertFedCertStatement->execute($params);
-        $this->results->totalCertInsertCount++;
-        return;
-    }
-    
-    /* ==========================================================================
      * Process cert information
      */
     protected $statementCertSelect;
@@ -312,68 +230,155 @@ EOT;
         $sql = <<<EOT
 SELECT 
     cert.id              AS id,
-    cert.role            AS role,
     cert.role_date       AS role_date,
     cert.badge           AS badge,
     cert.badge_date      AS badge_date,
     cert.badge_verified  AS badge_verified,
-    cert.upgrading       AS upgrading,
     cert.mem_year        AS mem_year
                 
 FROM person_fed_certs AS cert
-WHERE cert.fed_id = :fed_id AND cert.role = :role
+WHERE cert.person_fed_id = :person_fed_id AND cert.role = :role
 ;
 EOT;
-
         $this->statementCertSelect = $conn->prepare($sql);
     }
     protected function prepareCertInsert($conn)
     {
         $sql = <<<EOT
 INSERT INTO person_fed_certs 
-    ( fed_id, role, role_date, badge, badge_date, badge_verified, mem_year, status)
+    ( person_fed_id, role, role_date, badge, badge_date, badge_verified, mem_year, status)
 VALUES
-    (:fed_id,:role,:role_date,:badge,:badge_date,'Yes',          :mem_year,'Active')             
+    (:person_fed_id,:role,:role_date,:badge,:badge_date,'Yes',          :mem_year,'Active')             
 ;
 EOT;
         $this->statementCertInsert = $conn->prepare($sql);
     }
+    protected function prepareCertUpdate($conn)
+    {
+        $sql = <<<EOT
+UPDATE person_fed_certs
+SET 
+    role_date      = :role_date,          
+    badge          = :badge,
+    badge_date     = :badge_date,
+    badge_verified = :badge_verified,
+    mem_year       = :mem_year
+
+WHERE id = :id;    
+;
+EOT;
+        $this->statementCertUpdate = $conn->prepare($sql);
+    }
     protected function processCert($eaysoFed,$ceradFed)
     {
-        // Copule of things
+        // Couple of things
         $eaysoCertRole  = $eaysoFed['cert_role'];
-        $eaysoCertDate  = $this->processDate($eaysoFed['cert_date']);
-        $eaysoCertBadge = $eaysoFed['cert_badge'];
-        $eaysoMemYear   = $eaysoFed['mem_year'];
+        if ($eaysoCertRole == 'Other') return;
+
+        $eaysoCertBadge   = $eaysoFed['cert_badge'];
+        $eaysoCertDate    = $this->processDate($eaysoFed['cert_date']);
+        $eaysoCertMemYear = $eaysoFed['mem_year'];
         
-        $ceradFedId = $ceradFed['fed_id'];
+        $ceradPersonFedId = $ceradFed['id'];
         
         // Do we have a cert record?
-        $params = array(
-            'fed_id' => $ceradFedId,
-            'role'   => $eaysoCertRole,
+        $paramsSelect = array(
+            'person_fed_id' => $ceradPersonFedId,
+            'role'          => $eaysoCertRole,
         );
-        $this->statementCertSelect->execute($params);   
+        $this->statementCertSelect->execute($paramsSelect);   
         $rows = $this->statementCertSelect->fetchAll();
         
         if (count($rows) == 0)
         {
             // Insert new record
-            $params = array
+            $paramsInsert = array
             (
-                'fed_id'     => $ceradFedId, 
-                'role'       => $eaysoCertRole, 
-                'role_date'  => $eaysoCertDate, 
-                'badge'      => $eaysoCertBadge, 
-                'badge_date' => $eaysoCertDate,
-                'mem_year'   => $eaysoMemYear,   
+                'person_fed_id' => $ceradPersonFedId, 
+                'role'          => $eaysoCertRole, 
+                'role_date'     => $eaysoCertDate, 
+                'badge'         => $eaysoCertBadge, 
+                'badge_date'    => $eaysoCertDate,
+                'mem_year'      => $eaysoCertMemYear,   
             );
-            $this->statementCertInsert->execute($params);
+            $this->statementCertInsert->execute($paramsInsert);
             $this->results->countCertInsert++;
             return;
         }
-        return;
+        // Should never happen
+        if (count($rows) > 1)
+        {
+            die("*** multiple cert records for role ***");
+        }
+        // Update existing record
+        $ceradCert = $rows[0];
         
+        $ceradCertRoleDate      = $ceradCert['role_date'];
+        $ceradCertBadge         = $ceradCert['badge'];
+        $ceradCertBadgeDate     = $ceradCert['badge_date'];
+        $ceradCertBadgeVerified = $ceradCert['badge_verified'];
+        $ceradCertMemYear       = $ceradCert['mem_year'];
+        
+        $params = array
+        (
+            'id'             => $ceradCert['id'],
+            'role_date'      => $ceradCertRoleDate,
+            'badge'          => $ceradCertBadge,
+            'badge_date'     => $ceradCertBadgeDate,
+            'badge_verified' => $ceradCertBadgeVerified,
+            'mem_year'       => $ceradCertMemYear,
+        );
+        $needUpdate = false;
+        
+        // Use cert date for two possible updates
+        if ($eaysoCertDate)
+        {
+            // Set if currently empty
+            if (!$ceradCertBadgeDate)
+            {
+                $params['badge_date'] = $eaysoCertDate;
+                $needUpdate = true;
+            }
+            // Store earliest role date
+            if ((!$ceradCertRoleDate) || ($eaysoCertDate < $ceradCertRoleDate))
+            {
+                $params['role_date'] = $eaysoCertDate;
+                $needUpdate = true;
+            }
+        }
+        // Update mem year if later
+        if ($eaysoCertMemYear)
+        {
+            if ((!$ceradCertMemYear) || ($eaysoCertMemYear > $ceradCertMemYear))
+            {
+                $params['mem_year'] = $eaysoCertMemYear;
+                $needUpdate = true;
+            }
+        }
+        // Process badge, should always have eayso and cerad
+        if ($ceradCertBadge == $eaysoCertBadge)
+        {
+            if ($ceradCertBadgeVerified != 'Yes')
+            {
+                $params['badge_verified'] = 'Yes';
+                $needUpdate = true;
+            }
+        }
+        else
+        {
+            // Compare badges
+            if ($this->certRepo->compareBadges($eaysoCertRole,$eaysoCertBadge,$ceradCertBadge) > 0)
+            {
+                $params['badge']          = $eaysoCertBadge;
+                $params['badge_verified'] = 'Yes';
+                $needUpdate = true;
+            }
+        }
+        // Update if needed
+        if (!$needUpdate) return;
+        
+        $this->statementCertUpdate->execute($params);
+        $this->results->countCertUpdate++;
     }
     /* ======================================================
      * Process Fed
@@ -384,7 +389,7 @@ EOT;
     {
         $sql = <<<EOT
 SELECT 
-    fed.id                AS fed_id,
+    fed.id                AS id,
     fed.fed_role          AS fed_role,
     fed.fed_role_date     AS fed_role_date,
     fed.fed_key           AS fed_key,
@@ -413,19 +418,22 @@ EOT;
     {
         // Ignore old records completely
         if (substr($eaysoFed['mem_year'],0,2) != 'MY') return;
-        
+ 
         // Look up fed
         $eaysoFedKey = 'AYSOV' . $eaysoFed['fed_key'];
         
-        // TODO: Should be avle to execute and fetch in one statement
+        /* =============================================================
+         * Merely exicuting this staements causes memory usage to jimp from 7 to 77MB
+         * Why?  Research later, maybe try pdo?
+         */
         $this->statementFedSelect->execute(array('fed_key' => $eaysoFedKey)); 
         $rows = $this->statementFedSelect->fetchAll(); 
-        
+
         if (count($rows) != 1) return;
         
         // Got it
         $ceradFed = $rows[0];
-        
+       
         $this->results->countFedMatch++;
         
         $this->updateFed   ($eaysoFed,$ceradFed);
@@ -520,7 +528,7 @@ EOT;
             'Email'             => 'email',
             'Gender'            => 'gender',
             'DOB'               => 'dob',
-            'Changed Date'      => 'date_changed',
+          //'Changed Date'      => 'date_changed',
             'Registered Date'   => 'date_registered',
             'CertificationDesc' => 'cert_desc',
             'CertDate'          => 'cert_date',

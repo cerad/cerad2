@@ -161,7 +161,7 @@ class PersonPlanUpdateController extends MyBaseController
         $tplData['person']      = $person;
         
         $tplData['fed']         = $personFed;
-        $tplData['org']         = $personFed->getOrg();
+      //$tplData['org']         = $personFed->getOrgKey();
         $tplData['certReferee'] = $personFed->getCertReferee();
         
         $tplData['project']  = $project;

@@ -109,34 +109,34 @@ class Person extends BaseModel implements PersonInterface
     
     public function removeFed(PersonFed $fed)
     {
-        $fedRoleId = $fed->getFedRoleId();
+        $fedRole = $fed->getFedRole();
         
-        if (!isset($this->feds[$fedRoleId])) return;
+        if (!isset($this->feds[$fedRole])) return;
         
-        unset($this->feds[$fedRoleId]);
+        unset($this->feds[$fedRole]);
         
         $this->onPropertyChanged('feds');
     }
     public function addFed(PersonFed $fed)
     {
-        $fedRoleId = $fed->getFedRoleId();
+        $fedRole = $fed->getFedRole();
         
-        if (isset($this->feds[$fedRoleId])) return;
+        if (isset($this->feds[$fedRole])) return;
         
-        $this->feds[$fedRoleId] = $fed;
+        $this->feds[$fedRole] = $fed;
         
         $fed->setPerson($this);
         
         $this->onPropertyChanged('feds');
     }
-    public function getFed($fedRoleId, $autoCreate = true, $autoAdd = true)
+    public function getFed($fedRole, $autoCreate = true, $autoAdd = true)
     {
-        if (isset($this->feds[$fedRoleId])) return $this->feds[$fedRoleId];
-        
+        if (isset($this->feds[$fedRole])) return $this->feds[$fedRole];
+ 
         if (!$autoCreate) return null;
         
         $fed = $this->createFed();
-        $fed->setFedRoleId($fedRoleId);
+        $fed->setFedRole($fedRole);
         
         if (!$autoAdd) return $fed;
         
