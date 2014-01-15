@@ -25,13 +25,30 @@
 {{ form_row(form.plan.notes)       }}
 </fieldset>
 <fieldset><legend><span>AYSO Info</span></legend>
-{{ form_row(form.personFed.fedKey,      { 'label': 'AYSOV ID' } )        }}
-{{ form_row(form.personFed.orgKey,      { 'label': 'Region Number' } )   }}
+<div>
+    <label for="form_personFed_fedKey" class="required">AYSOID</label>
+    {{ form_widget(form.personFed.fedKey)         }}
+    {{ form_widget(form.personFed.fedKeyVerified) }}
+</div>
+<div>
+    <label for="form_personFed_orgKey" class="required">Region#</label>
+    {{ form_widget(form.personFed.orgKey)         }}
+    {{ form_widget(form.personFed.orgKeyVerified) }}
+</div>
+<div>
+    <label for="form_personFed_person" class="required">Person Verified</label>
+    {{ form.person.name.full.vars.value }}
+    {{ form_widget(form.personFed.personVerified) }}
+</div>        
 {{ form_row(form.personFed.memYear,     { 'label': 'Mem Year  ' } )      }}
 {{ form_row(form.certSafeHaven.badge,   { 'label': 'Safe Haven' } )      }}
 </fieldset>
 <fieldset><legend><span>AYSO Referee Cert</span></legend>
-{{ form_row(form.certReferee.badge,     { 'label': 'Confirmed Badge' } ) }}
+<div>
+    <label for="form_certReferee_badge" class="required">Badge</label>
+    {{ form_widget(form.certReferee.badge)         }}
+    {{ form_widget(form.certReferee.badgeVerified) }}
+</div>
 {{ form_row(form.certReferee.badgeUser, { 'label': 'User Badge' } )      }}
 
 {{ form_row(form.certReferee.badgeDate,{ 'label': 'Badge   Date' } ) }}

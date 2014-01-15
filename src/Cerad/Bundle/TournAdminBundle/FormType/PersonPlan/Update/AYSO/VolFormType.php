@@ -22,9 +22,12 @@ class VolFormType extends AbstractType
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('fedKey', 'cerad_person_aysov_id');
-        $builder->add('orgKey', 'cerad_person_ayso_region_id');
-        $builder->add('memYear','cerad_person_ayso_mem_year');
+        $builder->add('fedKey',         'cerad_person_aysov_id');
+        $builder->add('fedKeyVerified', 'cerad_person_verified');
+        $builder->add('orgKey',         'cerad_person_ayso_region_id');
+        $builder->add('orgKeyVerified', 'cerad_person_verified');
+        $builder->add('memYear',        'cerad_person_ayso_mem_year');
+        $builder->add('personVerified', 'cerad_person_verified');
     }
 }
 ?>

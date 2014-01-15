@@ -65,6 +65,11 @@ services:
         tags:
             - { name: form.type, alias: cerad_person_state }
             
+    cerad_person.verified.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\VerifiedFormType
+        tags:
+            - { name: form.type, alias: cerad_person_verified }
+            
     cerad_person.upgrading.form_type:
         class: Cerad\Bundle\PersonBundle\FormType\UpgradingFormType
         tags:

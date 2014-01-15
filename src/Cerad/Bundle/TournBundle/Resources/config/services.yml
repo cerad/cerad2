@@ -9,6 +9,7 @@ services:
         arguments:  
             - '@cerad_project.find_default.in_memory'
             - '%cerad_tourn_show_configs%'
+            - '@cerad_org.org_repository'
         tags:
             - { name: twig.extension }
             

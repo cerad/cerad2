@@ -22,8 +22,10 @@ class RefereeCertFormType extends AbstractType
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('badge',    'cerad_person_aysov_referee_badge');
-        $builder->add('badgeUser','cerad_person_aysov_referee_badge');
+        $builder->add('badge',        'cerad_person_aysov_referee_badge');
+        $builder->add('badgeUser',    'cerad_person_aysov_referee_badge');
+        $builder->add('badgeVerified','cerad_person_verified');
+        
         $builder->add('upgrading','cerad_person_upgrading');
         
         $builder->add('roleDate', 'cerad_person_date');

@@ -28,7 +28,7 @@ services:
     cerad_app_cerad.feds.export01_yaml:
         class: Cerad\Bundle\AppCeradBundle\Services\Feds\FedsExport01YAML
         arguments:
-            - '@doctrine.dbal.s1games_connection'
+            - '@doctrine.dbal.default_connection'
             
     cerad_app_cerad.feds.import01_yaml:
         class: Cerad\Bundle\AppCeradBundle\Services\Feds\FedsImport01YAML
