@@ -22,7 +22,7 @@ class PersonPlan extends BaseModel
     protected $basic = array();
     protected $avail;
     protected $level;
-    protected $notes;
+    protected $notes; // For now, notes are being stored under the basic array
    
     public function __construct($id = null, $planProps = array())
     {
@@ -31,14 +31,14 @@ class PersonPlan extends BaseModel
     }
     public function getId()        { return $this->id;        }
     public function getBasic()     { return $this->basic;     }
-    public function getNotes()     { return $this->notes;     }
+    public function getNotesx()    { return $this->notes;     }
     public function getPerson()    { return $this->person;    }
     public function getStatus()    { return $this->status;    }
     public function getVerified()  { return $this->verified;  }
     public function getProjectId() { return $this->projectId; }
     
     public function setBasic    ($value) { $this->onPropertySet('basic',     $value); }
-    public function setNotes    ($value) { $this->onPropertySet('notes',     $value); }
+    public function setNotesx   ($value) { $this->onPropertySet('notes',     $value); }
     public function setStatus   ($value) { $this->onPropertySet('status',    $value); }
     public function setVerified ($value) { $this->onPropertySet('verified',  $value); }
     public function setProjectId($value) { $this->onPropertySet('projectId', $value); }
@@ -60,6 +60,8 @@ class PersonPlan extends BaseModel
     /* ============================================================
      * Need some commanility and consistency
      */
+    const NOTES = 'notes';
+    
     const WILL_ATTEND  = 'attending';
     const WILL_REFEREE = 'refereeing';
     
@@ -79,6 +81,8 @@ class PersonPlan extends BaseModel
     public function getWillAttendLeague()  { return $this->getBasicValue(self::WILL_ATTEND_LEAGUE);  }
     public function getWillAttendASExtra() { return $this->getBasicValue(self::WILL_ATTEND_ASExtra); }
     
+    public function getNotes () { return $this->getBasicValue(self::NOTES);  }
+    
     public function getWillAttend () { return $this->getBasicValue(self::WILL_ATTEND);  }
     public function getWillReferee() { return $this->getBasicValue(self::WILL_REFEREE); }
     public function getWillMentor () { return $this->getBasicValue(self::WILL_MENTOR);  }
@@ -87,6 +91,8 @@ class PersonPlan extends BaseModel
     
     public function setWillAttendLeague ($value) { return $this->setBasicParam(self::WILL_ATTEND_LEAGUE, $value); }
     public function setWillAttendASExtra($value) { return $this->setBasicParam(self::WILL_ATTEND_ASExtra,$value); }
+    
+    public function setNotes($value) { return $this->setBasicParam(self::NOTES, $value); }
     
     public function setWillAttend ($value) { return $this->setBasicParam(self::WILL_ATTEND, $value); }
     public function setWillReferee($value) { return $this->setBasicParam(self::WILL_REFEREE,$value); }

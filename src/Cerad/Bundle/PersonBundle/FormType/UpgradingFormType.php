@@ -23,6 +23,7 @@ class UpgradingFormType extends AbstractType
             'choices'  => $this->choices,
             'multiple' => false,
             'expanded' => false,
+            'required' => false,
             
             'empty_value' => 'Working on Upgrade',
             'empty_data'  => null
