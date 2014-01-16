@@ -19,12 +19,12 @@ class VerifiedFormType extends AbstractType
     {
         $resolver->setDefaults(array(
           
-            'label'    => 'Verify',
+            'label'    => 'Verified',
             'choices'  => $this->choices,
             'multiple' => false,
             'expanded' => false,
             
-            'empty_value' => 'Verify',
+            'empty_value' => 'Verified',
             'empty_data'  => null
             
         ));

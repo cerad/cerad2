@@ -29,11 +29,18 @@ class WillAttendFormType extends AbstractType
             
         ));
     }    
+    // Should inject project and pull from it
     protected $choices = array
     (
         'no'    => 'No',
         'yes'   => 'Yes',
+        'yesx'  => 'Yesx',
         'maybe' => 'Maybe',
+        
+        'we12' => 'Both weekends',
+        'we1'  => 'First Weekend',
+        'we2'  => 'Second Weekend',
+                
       //'SeeNotes' => 'See Notes',
    );    
 }

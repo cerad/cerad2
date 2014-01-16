@@ -14,13 +14,13 @@ certs:
             - 'Intermediate Referee'
         Advanced:
             - 'Advanced Referee'
-        National_1:
-            - 'National 1 Referee'
         National_2:
             - 'National 2 Referee'
         National:
             - 'National Referee'
-          
+        National_1:
+            - 'National 1 Referee'
+           
     SafeHaven:
         AYSO:
             - 'Safe Haven AYSOs' 
