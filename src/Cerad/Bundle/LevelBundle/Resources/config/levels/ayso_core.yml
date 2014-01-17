@@ -85,9 +85,8 @@ AYSO_U19B_Core:
 AYSO_U19G_Core:
     name:      U19G_Core
     div:       Core
-    age:       U14
+    age:       U19
     gender:    G
     sport:     Soccer
     domain:    AYSO
     domainSub: AYSO
-        

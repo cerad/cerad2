@@ -1,0 +1,92 @@
+# ====================================
+# Bunch of levels
+
+AYSO_U11B_Extra:
+    name:      U11B_Extra
+    div:       Extra
+    age:       U11
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U11G_Extra:
+    name:      U11G_Extra
+    div:       Extra
+    age:       U11
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+    
+AYSO_U13B_Extra:
+    name:      U13B_Extra
+    div:       Extra
+    age:       U13
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U13G_Extra:
+    name:      U13G_Extra
+    div:       Extra
+    age:       U13
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+    
+AYSO_U15B_Extra:
+    name:      U15B_Extra
+    div:       Extra
+    age:       U15
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U15G_Extra:
+    name:      U15G_Extra
+    div:       Extra
+    age:       U15
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U17B_Extra:
+    name:      U17B_Extra
+    div:       Extra
+    age:       U17
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U17G_Extra:
+    name:      U17G_Extra
+    div:       Extra
+    age:       U17
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U18B_Extra:
+    name:      U18B_Extra
+    div:       Extra
+    age:       U18
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U18G_Extra:
+    name:      U18G_Extra
+    div:       Extra
+    age:       U18
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO

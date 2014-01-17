@@ -1,0 +1,93 @@
+# ====================================
+# Bunch of levels
+
+AYSO_U10B_League:
+    name:      U10B_League
+    div:       League
+    age:       U10
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U10G_League:
+    name:      U10G_League
+    div:       League
+    age:       U10
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+    
+AYSO_U12B_League:
+    name:      U12B_League
+    div:       League
+    age:       U12
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U12G_League:
+    name:      U12G_League
+    div:       League
+    age:       U12
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+    
+AYSO_U14B_League:
+    name:      U14B_League
+    div:       League
+    age:       U14
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U14G_League:
+    name:      U14G_League
+    div:       League
+    age:       U14
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U16B_League:
+    name:      U16B_League
+    div:       League
+    age:       U16
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U16G_League:
+    name:      U16G_League
+    div:       League
+    age:       U16
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U19B_League:
+    name:      U19B_League
+    div:       League
+    age:       U19
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U19G_League:
+    name:      U19G_League
+    div:       League
+    age:       U19
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        

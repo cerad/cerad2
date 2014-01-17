@@ -8,6 +8,21 @@ use Cerad\Bundle\LevelBundle\InMemory\LevelRepository;
 
 class LevelRepositoryTest extends \PHPUnit_Framework_TestCase
 {
+    protected $repo;
+    
+    public function setUp()
+    {
+        $dir = __DIR__ . '/../../Resources/config/levels/';
+        
+        $files = array(
+            $dir . 'ayso_core.yml',
+            $dir . 'ayso_extra.yml',
+            $dir . 'ayso_league.yml',
+            $dir . 'ayso_allstars.yml',
+        );
+        
+        $this->repo = new LevelRepository($files);
+    }
     public function testExistence()
     {   
         $repo = new LevelRepository(array());
@@ -15,27 +30,41 @@ class LevelRepositoryTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($repo instanceOf LevelRepositoryInterface);     
     }
     public function testFind()
-    {
-        $files = array(__DIR__ . '/../../Resources/config/levels/ayso_core.yml');
-        
-        $repo = new LevelRepository($files);
+    {        
+        $repo = $this->repo;
         
         $level = $repo->find('AYSO_U14G_Core');
         
         $this->assertTrue($level instanceOf Level);
         
-        return;
+        $this->assertEquals('U14', $level->getAge());
+        $this->assertEquals('G',   $level->getGender());
+        $this->assertEquals('Core',$level->getProgram());
         
-        $this->assertEquals($this->projectId,$project->getId());
+    }
+    public function testQuery()
+    {   
+        $repo = $this->repo;
         
-      //$this->assertEquals('ceradtest',          $project->getSlug());
-      //$this->assertEquals('ceradtest2013',      $project->getSlugx());
-        $this->assertEquals('Active',             $project->getStatus());
-        $this->assertEquals('Yes',                $project->getVerified());
-        $this->assertEquals('AYSO',               $project->getFedId());
-        $this->assertEquals('AYSOV',              $project->getFedRoleId());
-        $this->assertEquals('Cerad Test 13 2013', $project->getTitle());
-        $this->assertEquals('USSF Cerad Test 2013 - Huntsville, Alabama - October 18, 19, 20', $project->getDesc());   
+        $params1 = array();
+        $params1['programs'] = 'League';
+        $keys1 = $repo->queryKeys($params1);
+        $this->assertEquals(10, count($keys1));
+        $this->assertEquals('AYSO_U12G_League', $keys1[3]);
+        
+        $params2 = array();
+        $params2['programs'] = array('League','Core');
+        
+        $keys2 = $repo->queryKeys($params2);
+        $this->assertEquals(20, count($keys2));
+        
+        $params3 = array();
+        $params3['programs'] = 'Core';
+        $params3['genders'] = array('G');
+        $keys3 = $repo->queryKeys($params3);
+        $this->assertEquals(5, count($keys3));
+        $this->assertEquals('AYSO_U16G_Core', $keys3[3]);
+        
     }
 }
 

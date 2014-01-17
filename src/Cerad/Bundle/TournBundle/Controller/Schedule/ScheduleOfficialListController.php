@@ -34,6 +34,13 @@ class ScheduleOfficialListController extends MyBaseController
             return $this->redirect('cerad_tourn_schedule_official_list');
         }
 
+        // Hack in levels for now
+        $levelRepo = $this->get('cerad_level.level_repository');
+        $levelKeys = $levelRepo->queryKeys($model);
+        if (count($levelKeys))
+        {
+            $model['levels'] = $levelKeys;
+        }
         // Query for the games
         $gameRepo = $this->get('cerad_game.game_repository');
         $games = $gameRepo->queryGameSchedule($model);
@@ -67,9 +74,9 @@ class ScheduleOfficialListController extends MyBaseController
         $tplData = array();
         $tplData['searchForm'] = $searchForm->createView();
         $tplData['games']   = $games;
-        $tplData['isAdmin'] = false;
+        $tplData['isAdmin'] = $this->hasRoleAdmin();
         $tplData['project'] = $this->getProject();
-        return $this->render('@CeradTourn/Schedule/Official/ScheduleOfficialIndex.html.twig',$tplData);
+        return $this->render($request->get('_template'),$tplData);
     }
     public function getModel(Request $request)
     {   
@@ -77,11 +84,16 @@ class ScheduleOfficialListController extends MyBaseController
 
         $project = $this->getProject();
         $model['projects'] = array($project->getId());
+     
         
         $model['teams' ]  = array();
         $model['fields']  = array();
         
         $searches = $project->getSearches();
+      //unset($searches['levels']);
+      //unset($searches['fields']);
+        
+      //echo implode(',',array_keys($searches)); die();
         
         foreach($searches as $name => $search)
         {

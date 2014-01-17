@@ -17,8 +17,13 @@ class Level
     protected $status = 'Active';
     
     public function getId()        { return $this->id;     }
+    public function getKey()       { return $this->id;     }
     public function getName()      { return $this->name;   }
     public function getStatus()    { return $this->status; }
+    
+    public function getAge()       { return $this->age;     }
+    public function getGender()    { return $this->gender;  }
+    public function getProgram()   { return $this->div; }
     
     public function getSport()     { return $this->sport;  }
     public function getDomain()    { return $this->domain; }

@@ -1,0 +1,93 @@
+# ====================================
+# Bunch of levels
+
+AYSO_U10B_AllStars:
+    name:      U10B_AllStars
+    div:       AllStars
+    age:       U10
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U10G_AllStars:
+    name:      U10G_AllStars
+    div:       AllStars
+    age:       U10
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+    
+AYSO_U12B_AllStars:
+    name:      U12B_AllStars
+    div:       AllStars
+    age:       U12
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U12G_AllStars:
+    name:      U12G_AllStars
+    div:       AllStars
+    age:       U12
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+    
+AYSO_U14B_AllStars:
+    name:      U14B_AllStars
+    div:       AllStars
+    age:       U14
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U14G_AllStars:
+    name:      U14G_AllStars
+    div:       AllStars
+    age:       U14
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U16B_AllStars:
+    name:      U16B_AllStars
+    div:       AllStars
+    age:       U16
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U16G_AllStars:
+    name:      U16G_AllStars
+    div:       AllStars
+    age:       U16
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U19B_AllStars:
+    name:      U19B_AllStars
+    div:       AllStars
+    age:       U19
+    gender:    B
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        
+AYSO_U19G_AllStars:
+    name:      U19G_AllStars
+    div:       AllStars
+    age:       U19
+    gender:    G
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+        

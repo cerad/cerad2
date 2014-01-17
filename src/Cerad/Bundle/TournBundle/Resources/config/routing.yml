@@ -151,6 +151,7 @@ cerad_tourn_schedule_official_list:
     pattern:  /schedule/official.{_format}
     defaults: 
         _controller: CeradTournBundle:Schedule/ScheduleOfficialList:list
+        _template: '@CeradTourn/Schedule/Official/ScheduleOfficialIndex.html.twig'
         _format: html
     requirements:
         _format:  html|csv|xls|pdf

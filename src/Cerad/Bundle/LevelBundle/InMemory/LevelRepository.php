@@ -8,7 +8,7 @@ use Cerad\Bundle\LevelBundle\Model\LevelRepositoryInterface;
 
 class LevelRepository implements LevelRepositoryInterface
 {
-    protected $items = array();
+    protected $levels = array();
     
     public function __construct($files)
     {
@@ -19,18 +19,80 @@ class LevelRepository implements LevelRepositoryInterface
             foreach($configs as $id => $config)
             {
                 $config['id'] = $id;
-                $item = new Level($config);
-                $this->items[$item->getId()] = $item;
+                $level = new Level($config);
+                $this->levels[$id] = $level;
             }
         }
     }
     public function find($id)
     {
-        return isset($this->items[$id]) ? $this->items[$id] : null;
+        return isset($this->levels[$id]) ? $this->levels[$id] : null;
     }
     public function findAll()
     {
-        return $this->items;        
+        return $this->levels;        
+    }
+    /* ==========================================================
+     * Simulating a query
+     */
+    public function queryKeys($params)
+    {
+        $keys = array();
+        foreach($this->levels AS $level)
+        {
+            if ($this->filter($params,$level)) $keys[] = $level->getKey();
+        }
+        // If everything was picked
+        if (count($keys) == count($this->levels)) return array();
+        
+        return $keys;
+    }
+    protected function filter($params,$level)
+    {
+        if (!$this->filterProperty($params,'programs',$level->getProgram())) return false;
+        if (!$this->filterProperty($params,'genders' ,$level->getGender ())) return false;
+        if (!$this->filterProperty($params,'ages',    $level->getAge    ())) return false;
+        
+        // Might want to handle divs as well U10G
+        
+        return true;
+        
+    }
+    protected function filterProperty($params,$name,$value)
+    {
+        if (!isset($params[$name])) return true;
+        
+        $props = $params[$name];
+        if (!is_array($props)) $props = array($props);
+
+        if (count($props) < 1) return true;
+        
+        foreach($props as $prop)
+        {
+            $parts = explode(',',$prop);
+            foreach($parts as $part)
+            {
+                if (trim($part) == $value) return true;
+            }
+        }
+        return false;
+    }
+    protected function filterPropertyx($params,$name,$value)
+    {
+        if (!isset($params[$name])) return true;
+        
+        $props = $params[$name];
+        if (!is_array($props))
+        {
+            return ($props == $value);
+        }
+        if (count($props) < 1) return true;
+        
+        foreach($props as $prop)
+        {
+            if ($prop == $value) return true;
+        }
+        return false;
     }
 }
 
