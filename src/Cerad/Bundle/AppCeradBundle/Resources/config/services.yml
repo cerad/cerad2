@@ -2,11 +2,6 @@ parameters:
 #    cerad_app_cerad.example.class: Cerad\Bundle\AppCeradBundle\Example
 
 services:
-
-    cerad_app_cerad.persons_s1games.export_xml:
-        class: Cerad\Bundle\AppCeradBundle\Services\Persons\Persons01ExportXML
-        arguments:
-            - '@doctrine.dbal.s1games_connection'
             
     cerad_app_cerad.persons.export_xml:
         class: Cerad\Bundle\AppCeradBundle\Services\Persons\Persons01ExportXML

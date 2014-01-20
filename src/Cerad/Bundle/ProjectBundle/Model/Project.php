@@ -27,6 +27,7 @@ class Project
     protected $searches;
     
     public function getId      () { return $this->id;       }
+    public function getKey     () { return $this->id;       }
     public function getSlugs   () { return $this->slugs;    }
     public function getStatus  () { return $this->status;   }
     public function getVerified() { return $this->verified; }
