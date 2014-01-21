@@ -146,10 +146,17 @@ class AccountCreateController extends MyBaseController
         $user->setUsername      ($email);
         $user->setAccountName   ($name);
         $user->setAccountEnabled(true);
-        $user->setPasswordPlain($password);
-        $user->setPersonGuid   ($person->getGuid());
+        $user->setPasswordPlain ($password);
+        $user->setPersonGuid    ($person->getGuid());
         
         $model['user'] = $user;
+        
+        /* =================================================
+         * Always create a plan so we don't have orphan person records
+         */
+        $plan = $person->getPlan($project->getKey());
+        $plan->mergeBasicProps($project->getBasic());
+        $plan->setPersonName($name);
         
         /* ===============================
          * And persist

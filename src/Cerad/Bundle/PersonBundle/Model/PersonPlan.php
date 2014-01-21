@@ -14,9 +14,14 @@ class PersonPlan extends BaseModel
 {
     protected $id;
     protected $person;
+    protected $personName;
+    
     protected $projectId;
     protected $status   = 'Active';
     protected $verified = 'No';
+    
+    protected $createdOn;
+    protected $updatedOn;
     
     // These are basically value objects
     protected $basic = array();
@@ -28,14 +33,22 @@ class PersonPlan extends BaseModel
     {
     //    $this->id = $id;
     //    $this->setPlanProperties($planProps);
+        $this->createdOn = new \DateTime();
     }
-    public function getId()        { return $this->id;        }
-    public function getBasic()     { return $this->basic;     }
-    public function getNotesx()    { return $this->notes;     }
-    public function getPerson()    { return $this->person;    }
-    public function getStatus()    { return $this->status;    }
-    public function getVerified()  { return $this->verified;  }
-    public function getProjectId() { return $this->projectId; }
+    public function getId()         { return $this->id;        }
+    public function getBasic()      { return $this->basic;     }
+    public function getNotesx()     { return $this->notes;     }
+
+    public function getStatus()     { return $this->status;    }
+    public function getVerified()   { return $this->verified;  }
+    public function getProjectId()  { return $this->projectId; }
+    public function getProjectKey() { return $this->projectId; }
+    
+    public function getPerson()     { return $this->person;    }
+    public function getPersonName() { return $this->personName;}
+   
+    public function getCreatedOn () { return $this->createdOn; }
+    public function getUpdatedOn()  { return $this->updatedOn; }
     
     public function setBasic    ($value) { $this->onPropertySet('basic',     $value); }
     public function setNotesx   ($value) { $this->onPropertySet('notes',     $value); }
@@ -43,7 +56,16 @@ class PersonPlan extends BaseModel
     public function setVerified ($value) { $this->onPropertySet('verified',  $value); }
     public function setProjectId($value) { $this->onPropertySet('projectId', $value); }
     
-    public function setPerson(Person $person) { $this->onPropertySet('person',$person); }
+    public function setPerson(Person $person)  { $this->onPropertySet('person',    $person); }
+    public function setPersonName($personName) { $this->onPropertySet('personName',$personName); }
+    
+    public function setCreatedOn(\DateTime $dt) { $this->onPropertySet('createdOn',$dt);  }
+    
+    public function setUpdatedOn($dt = null) 
+    { 
+        if (!$dt) $dt = new \DateTime();
+        $this->onPropertySet('updatedOn',$dt);  
+    }
     
     // Initializ from project->basic
     public function mergeBasicProps($props)

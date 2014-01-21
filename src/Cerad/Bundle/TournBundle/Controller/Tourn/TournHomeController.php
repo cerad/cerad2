@@ -33,9 +33,10 @@ class TournHomeController extends MyBaseController
          * 
          * Need to add a havePlansBeenSet method to PersonPlan
          */
-        $personPlan = $person->getPlan($project->getId());
-        $basic = $personPlan->getBasic();
-        if (!isset($basic['attending'])  && !isset($basic['attendingLeague']))
+        $personPlan = $person->getPlan($project->getKey());
+        if ($personPlan->getUpdatedOn() == null)
+      //$basic = $personPlan->getBasic();
+      //if (!isset($basic['attending'])  && !isset($basic['attendingLeague']))
         {
             return $this->redirect('cerad_tourn_person_plan_update');
         }
