@@ -28,6 +28,12 @@ Cerad\Bundle\GameBundle\Entity\GameOfficial:
             length:   20
             nullable: false
             
+        assignRole:
+            column:   assign_role
+            type:     string
+            length:   20
+            nullable: true
+            
         personNameFull:
             column:   person_name_full
             type:     string

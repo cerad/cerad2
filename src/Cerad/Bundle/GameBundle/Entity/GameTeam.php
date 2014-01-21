@@ -26,12 +26,8 @@ class GameTeam extends AbstractEntity
     protected $name;
     protected $group;
     
-    protected $orgId;
+    protected $orgId;   // AKA orgKey
     protected $levelId; // Could be different than the game
-    
-    protected $div;
-    protected $age;
-    protected $gender;
     
     protected $score;
     protected $report;  // Misconduct etc, sendoff caution sportsmanship
@@ -46,7 +42,9 @@ class GameTeam extends AbstractEntity
     public function getName()    { return $this->name;    }
     public function getGroup()   { return $this->group;   }
     public function getOrgId()   { return $this->orgId;   }
+    public function getOrgKey()  { return $this->orgId;   }
     public function getLevelId() { return $this->levelId; }
+    public function getLevelKey(){ return $this->levelId; }
     public function getScore()   { return $this->score;   }
     public function getStatus()  { return $this->status;  }
     
@@ -57,7 +55,9 @@ class GameTeam extends AbstractEntity
     public function setName    ($value) { $this->onPropertySet('name',    $value); }
     public function setGroup   ($value) { $this->onPropertySet('group',   $value); }
     public function setOrgId   ($value) { $this->onPropertySet('orgId',   $value); }
+    public function setOrgKey  ($value) { $this->onPropertySet('orgId',   $value); }
     public function setLevelId ($value) { $this->onPropertySet('levelId', $value); }
+    public function setLevelKey($value) { $this->onPropertySet('levelId', $value); }
     public function setScore   ($value) { $this->onPropertySet('score',   $value); }
     public function setStatus  ($value) { $this->onPropertySet('status',  $value); }
     
@@ -86,6 +86,13 @@ class GameTeam extends AbstractEntity
     public function setReport(GameTeamReport $report) 
     { 
         $this->onPropertySet('report',$report->getData()); 
+    }
+    /* ===================================================
+     * Are users allowed to self assign?
+     */
+    public function isUserAssignable()
+    {
+        return $this->assignRole == 'ROLE_USER' ? true : false;
     }
 }
 ?>

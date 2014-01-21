@@ -22,10 +22,10 @@ class Game extends AbstractEntity
     protected $dtBeg; // DateTime begin
     protected $dtEnd; // DateTime end
     
-    protected $orgId;
+    protected $orgId;     // AKA orgKey
     protected $field;
-    protected $levelId;
-    protected $projectId;
+    protected $levelId;   // AKA levelKey
+    protected $projectId; // AKA projectKey
     
     protected $status = 'Active';
     
@@ -44,10 +44,13 @@ class Game extends AbstractEntity
     public function getDtEnd()     { return $this->dtEnd;     }
     public function getStatus()    { return $this->status;    }
     
-    public function getOrgId()     { return $this->orgId;     }
-    public function getField()     { return $this->field;     }
-    public function getLevelId()   { return $this->levelId;   }
-    public function getProjectId() { return $this->projectId; }
+    public function getOrgId()      { return $this->orgId;     }
+    public function getOrgKey()     { return $this->orgId;     }
+    public function getField()      { return $this->field;     }
+    public function getLevelId()    { return $this->levelId;   }
+    public function getLevelKey()   { return $this->levelId;   }
+    public function getProjectId()  { return $this->projectId; }
+    public function getProjectKey() { return $this->projectId; }
     
     public function setNum      ($value) { $this->onPropertySet('num',      $value); }
     public function setLink     ($value) { $this->onPropertySet('link',     $value); }
@@ -59,9 +62,12 @@ class Game extends AbstractEntity
     public function setDtEnd    ($value) { $this->onPropertySet('dtEnd',    $value); }
     public function setStatus   ($value) { $this->onPropertySet('status',   $value); }
     
-    public function setOrgId    ($value) { $this->onPropertySet('orgId',    $value); }
-    public function setLevelId  ($value) { $this->onPropertySet('levelId',  $value); }
-    public function setProjectId($value) { $this->onPropertySet('projectId',$value); }
+    public function setOrgId     ($value) { $this->onPropertySet('orgId',    $value); }
+    public function setOrgKey    ($value) { $this->onPropertySet('orgId',    $value); }
+    public function setLevelId   ($value) { $this->onPropertySet('levelId',  $value); }
+    public function setLevelKey  ($value) { $this->onPropertySet('levelId',  $value); }
+    public function setProjectId ($value) { $this->onPropertySet('projectId',$value); }
+    public function setProjectKey($value) { $this->onPropertySet('projectId',$value); }
     
     /* =======================================
      * Create factory
