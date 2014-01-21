@@ -1,7 +1,7 @@
 Cerad\Bundle\PersonBundle\Entity\Person:
     type:  entity
     table: persons
-    repositoryClass: Cerad\Bundle\PersonBundle\Entity\PersonRepository
+    repositoryClass: Cerad\Bundle\PersonBundle\EntityRepository\PersonRepository
     changeTrackingPolicy: NOTIFY
     
     lifecycleCallbacks:

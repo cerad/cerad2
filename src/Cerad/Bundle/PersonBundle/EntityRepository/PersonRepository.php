@@ -1,6 +1,6 @@
 <?php
 
-namespace Cerad\Bundle\PersonBundle\Entity;
+namespace Cerad\Bundle\PersonBundle\EntityRepository;
 
 use Doctrine\ORM\EntityRepository;
 

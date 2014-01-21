@@ -1,6 +1,10 @@
 <?php
 namespace Cerad\Bundle\PersonBundle\Command;
 
+/* =========================================
+ * 21 Jan 2014
+ * No longer needed after person_fed schema changes
+ */
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -23,6 +27,8 @@ class ChangeVolunteerIdCommand extends ContainerAwareCommand
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        return;
+        
         $personRepo = $this->getService('cerad_person.person_repository');
         
         $oldFedId = $input->getArgument('oldFedId'); // 'AYSOV66723556';
