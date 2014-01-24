@@ -87,12 +87,5 @@ class GameTeam extends AbstractEntity
     { 
         $this->onPropertySet('report',$report->getData()); 
     }
-    /* ===================================================
-     * Are users allowed to self assign?
-     */
-    public function isUserAssignable()
-    {
-        return $this->assignRole == 'ROLE_USER' ? true : false;
-    }
 }
 ?>

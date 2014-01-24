@@ -54,3 +54,50 @@ services:
         class:  Cerad\Bundle\TournBundle\Schedule\Officials\Select\ScheduleOfficialsSelectS1Games
         arguments:  
             - '@cerad_person.person_repository'
+
+# ==========================================================
+# 23 Jan 2014
+# Experiment with defining action models as services
+
+    cerad_tourn.action_helper:
+        class: Cerad\Bundle\TournBundle\Controller\ActionHelper
+        arguments:
+            - '@logger'
+            - '@kernel'
+            - '@router'
+            - '@security.context'
+            - '@form.factory'
+            - '@templating'
+            
+    cerad_tourn.action_helper2:
+        class: Cerad\Bundle\TournBundle\Controller\ActionHelper2
+        calls:
+             - [setContainer, ['@service_container']]
+                                      
+    cerad_tourn.schedule_official_selfassign.model:
+        class: Cerad\Bundle\TournBundle\Controller\Schedule\ScheduleOfficialSelfAssignModel
+        scope: request
+        arguments:
+            - '@request'
+            - '@cerad_project.project_current'
+            - '@cerad_user.user_current'
+            - '@cerad_person.person_repository'
+            - '@cerad_game.game_repository'
+            
+    cerad_tourn.schedule_official_selfassign.modelx:
+        class: Cerad\Bundle\TournBundle\Controller\Schedule\ScheduleOfficialSelfAssignModel
+        arguments:
+            - '@cerad_tourn.action_helper'
+            - '@cerad_project.find_default.in_memory'
+            - '@cerad_person.person_repository'
+            - '@cerad_game.game_repository'
+            
+    cerad_tourn.schedule_official_selfassign.controller:
+        class: Cerad\Bundle\TournBundle\Controller\Schedule\ScheduleOfficialSelfAssignController
+        scope: request
+        arguments:
+            - '@cerad_tourn.action_helper2'
+            - '@cerad_tourn.schedule_official_selfassign.model'
+
+
+            

@@ -87,6 +87,14 @@ class GameOfficial extends AbstractEntity
     public function setStateUpdatedOn ($value) { $this->onPropertySet('stateUpdatedOn', $value); }
     public function setStateUpdatedBy ($value) { $this->onPropertySet('stateUpdatedBy', $value); }
     
+    /* ===================================================
+     * Are users allowed to self assign?
+     */
+    public function isUserAssignable()
+    {
+        return $this->assignRole == 'ROLE_USER' ? true : false;
+    }
+    
     /* =========================================
      * Used to highlite objects
      */

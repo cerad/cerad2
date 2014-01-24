@@ -41,6 +41,14 @@ services:
         class:  Cerad\Bundle\UserBundle\Security\UserEncoder
         arguments:
             - '%cerad_user_master_password%'
+            
+    cerad_user.user_current:
+        class: Symfony\Component\Security\Core\User\UserInterface
+       #factory_service: cerad_user.current_user_factory
+        factory_class:   Cerad\Bundle\UserBundle\Security\UserCurrent
+        factory_method:  get
+        arguments:
+            - '@security.context'
       
     # ======================================================
     # Validators

@@ -16,3 +16,11 @@ services:
             
     cerad_project.project_repository:
         alias: cerad_project.repository.in_memory
+        
+    cerad_project.project_current:
+        class:  Cerad\Bundle\ProjectBundle\Model\Project
+        factory_class: Cerad\Bundle\ProjectBundle\InMemory\ProjectCurrent
+        factory_method: get
+        arguments:  
+            - '@cerad_project.repository.in_memory'
+            - '%cerad_project_project_default%'

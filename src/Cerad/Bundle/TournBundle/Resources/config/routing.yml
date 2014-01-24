@@ -155,6 +155,20 @@ cerad_tourn_schedule_official_list:
         _format: html
     requirements:
         _format:  html|csv|xls|pdf
+        
+# ==========================================
+# _controller is a service
+# DI is used to inject model into the controller's constructor
+# TODO: Have a listener create the model and pass via the action
+cerad_tourn_schedule_official_selfassign:
+    pattern:  /schedule/official/selfassign/{game}/{slot}
+    defaults:
+       #_controllex: CeradTournBundle:Schedule/ScheduleOfficialSelfAssign:assign
+        _controller: cerad_tourn.schedule_official_selfassign.controller:assignAction
+       #_model:      cerad_tourn.schedule_official_selfassign.model
+        _template: '@CeradTourn/Schedule/Official/SelfAssign/ScheduleOfficialSelfAssignIndex.html.twig'
+        _redirect:   cerad_tourn_schedule_official_list
+        slot: 0
      
 cerad_tourn_schedule_team_list:
     pattern:  /schedule/team

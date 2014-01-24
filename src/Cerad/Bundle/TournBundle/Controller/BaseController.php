@@ -14,6 +14,24 @@ class BaseController extends Controller
     const FLASHBAG_TYPE             = 'cerad_tourn';
     const FLASHBAG_ACCOUNT_CREATED  = 'cerad_tourn_account_created';
     
+    /* ================================================================
+     * 23 Jan 2014
+     * Added this however some controllers have a createModel with a different signature
+     * This seems to generate a FlattenException when the S2 cache is rebuilt.
+     * Research later, don't really want to adjust controllers for this.
+     */
+    /*
+    protected function createModel(Request $request)
+    {
+        // Init model
+        $model = array();
+        $model['_route']    = $request->get('_route');
+        $model['_redirect'] = $request->get('_redirect');
+        $model['_template'] = $request->get('_template');
+        $model['_response'] = null;
+        return $model;
+    }*/
+   
     protected function punt($request,$reason = null)
     {
         $flashBag = $request->getSession()->getFlashBag();
