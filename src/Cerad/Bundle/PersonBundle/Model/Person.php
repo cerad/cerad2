@@ -172,7 +172,7 @@ class Person extends BaseModel implements PersonInterface
         
         $plan = $this->createPlan();
         $plan->setProjectId($projectId);
-        
+        $plan->setPersonName($this->getName()->full);
         if (!$autoAdd) return $plan;
         
         $this->addPlan($plan);
