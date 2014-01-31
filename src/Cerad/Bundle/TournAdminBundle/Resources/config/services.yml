@@ -1,5 +1,6 @@
 parameters:
-
+    cerad_tourn.officials.export_xls.class: Cerad\Bundle\TournAdminBundle\Services\Persons\PersonsExportXLS
+    
 services:
     cerad_tourn_admin.schedule_games.export_xls:
         class: Cerad\Bundle\TournAdminBundle\Schedule\Games\ScheduleGamesExportXLS
@@ -15,7 +16,7 @@ services:
         
     # s1games compatibility
     cerad_tourn.officials.export_xls:
-        class: Cerad\Bundle\TournAdminBundle\Services\Persons\PersonsExportXLS
+        class: '%cerad_tourn.officials.export_xls.class%'
         arguments:  
             - '@cerad_tourn.excel'
             - '@cerad_org.org_repository'

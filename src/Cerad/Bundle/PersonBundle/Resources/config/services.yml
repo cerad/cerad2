@@ -3,6 +3,8 @@ parameters:
 
     # Did not work for alias
     cerad_person.entity_manager.doctrine.service: doctrine.orm.default_entity_manager
+    
+    cerad_person.aysov_referee_badge.form_type.class: Cerad\Bundle\PersonBundle\FormType\AYSO\RefereeBadgeFormType
 
 services:
 
@@ -127,7 +129,7 @@ services:
             - { name: form.type, alias: cerad_person_aysov_id_fake } 
             
     cerad_person.aysov_referee_badge.form_type:
-        class: Cerad\Bundle\PersonBundle\FormType\AYSO\RefereeBadgeFormType
+        class: %cerad_person.aysov_referee_badge.form_type.class%
         tags:
             - { name: form.type, alias: cerad_person_aysov_referee_badge } 
             

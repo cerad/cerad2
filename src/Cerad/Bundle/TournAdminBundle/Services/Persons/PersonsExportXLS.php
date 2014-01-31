@@ -31,67 +31,135 @@ class PersonsExportXLS
             $ws->setCellValueByColumnAndRow($col++,$row,$value);
         }
     }
+    protected function writeHeaders($ws,$row,$map,$keys)
+    {
+        $col = 0;
+        foreach($keys as $key)
+        {
+            $info = isset($map[$key]) ? $map[$key] : array('value' => $key, 'width' => 8);
+
+            $ws->getColumnDimensionByColumn($col)->setWidth($info['width']);
+            $ws->setCellValueByColumnAndRow($col,$row,      $info['value']);
+            
+            $col++;
+        }
+    }
+    /* ===================================================================
+     * Map data items to column headers
+     */
+    protected $headerMap = array
+    (
+        'planId'          => array('width' =>  6, 'value' => 'ID'),
+        'planStatus'      => array('width' =>  8, 'value' => 'Status'),
+        'planCreatedOn'   => array('width' => 16, 'value' => 'Applied On'),
+        'planWillAttend'  => array('width' =>  8, 'value' => 'Attend'),
+        'planWillReferee' => array('width' =>  8, 'value' => 'Referee'),
+        'planWillMentor'  => array('width' =>  8, 'value' => 'Will Mentor'),
+        'planWantMentor'  => array('width' =>  8, 'value' => 'Want Mentor'),
+        'planWillAssess'  => array('width' =>  8, 'value' => 'Will Assess'),
+        'planWantAssess'  => array('width' =>  8, 'value' => 'Want Assess'),
+        'planNotes'       => array('width' => 72, 'value' => 'Person Plan Notes'),
+        
+        'personNameFull'  => array('width' => 24, 'value' => 'Name'), 
+        'personEmail'     => array('width' => 24, 'value' => 'Email'), 
+        'personPhone'     => array('width' => 14, 'value' => 'Cell Phone'),
+        'personGage'      => array('width' =>  4, 'value' => 'Gage'),
+            
+        'fedKey'          => array('width' => 12, 'value' => 'AYSO ID'), 
+        'fedArea'         => array('width' =>  8, 'value' => 'Area'), 
+        'fedRegion'       => array('width' =>  8, 'value' => 'Region'),
+            
+        'certSafeHavenBadge'       => array('width' =>  8, 'value' => 'Safe Haven'),
+        'certRefereeBadge'         => array('width' => 12, 'value' => 'Badge'),
+        'certRefereeBadgeVerified' => array('width' =>  4, 'value' => 'Verified'),
+        'certRefereeUpgrading'     => array('width' =>  4, 'value' => 'Upgrading'),
+    );
+    /* ================================================================
+     * Process an official but transfering the relevant information to a flat array
+     * This should probably go into it's own object for reuse
+     * 
+     * The keys here match the header map keys
+     */
+    protected function processPerson($project,$person)
+    {
+        $item = array();
+        
+        // Person Information
+        $personName = $person->getName();
+        $item['personName']     = $personName;
+        $item['personNameFull'] = $personName->full;
+        
+        $item['personEmail'] = $person->getEmail();
+        $item['personPhone'] = $this->phoneTransformer->transform($person->getPhone());
+
+        // Fed information
+        $personFed   = $person->getFed($project->getFedRole());
+        
+        $item['fedKey'] = substr($personFed->getFedKey(),4);
+
+        $orgKey = $personFed->getOrgKey();
+        $org    = $this->orgRepo->find($orgKey);
+        
+        $item['fedArea']   = $org ? substr($org->getParent(),4) : null;
+        $item['fedRegion'] = substr($orgKey,4);
+        
+        // Certs
+        $certReferee = $personFed->getCertReferee();
+        $item['certRefereeBadge']         = $certReferee->getBadge();
+        $item['certRefereeBadgeVerified'] = $certReferee->getBadgeVerified();
+        $item['certRefereeUpgrading']     = $certReferee->getUpgrading();
+        
+        $item['certSafeHavenBadge'] = $personFed->getCertSafeHaven()->getBadge();
+        
+        // Plan Information
+        $plan = $person->getPlan($project->getKey());
+        $item['planId']      = $plan->getId();
+        $item['planStatus']  = $plan->getStatus();
+        
+        $planCreatedOn = $plan->getCreatedOn();
+        $item['planCreatedOn'] = $planCreatedOn ? $planCreatedOn->format('Y-m-d H:i') : null;
+        
+        $basic = $plan->getBasic();
+        $item['planNotes']       = $basic['notes'];
+        $item['planWillAttend']  = $basic['attending'];
+        $item['planWillReferee'] = $basic['refereeing'];
+        $item['planWantMentor']  = $basic['wantMentor'];
+        $item['planWillMentor']  = $basic['willMentor'];
+        
+        return $item;
+    }
     /* ================================================================
      * Master sheet of everyone
      */
-    protected function generateAllSheet($ws,$project,$officials)
+    protected function generateAllSheet($ws,$items)
     {
         $ws->setTitle('All');
 
-        $headers = array_merge(
-            array(
-                'ID','Status','Name','Email','Cell Phone',
-                'AYSO ID','Area','Region','Badge','Verified','Want Mentor','Upgrading',
-                'Attend','Referee',
-            )
+        $keys = array
+        (
+            'planId', 'planStatus', 'planCreatedOn',
+            
+            'personNameFull', 'personEmail', 'personPhone',
+            
+            'fedKey', 'fedArea', 'fedRegion',
+            
+            'certSafeHavenBadge', 
+            'certRefereeBadge', 
+            'certRefereeBadgeVerified',
+            'certRefereeUpgrading',
+            
+            'planWantMentor', 'planWillAttend', 'planWillReferee',
         );
-        $this->writeHeaders($ws,1,$headers);
+        $this->writeHeaders($ws,1,$this->headerMap,$keys);
         $row = 2;
 
-        foreach($officials as $person)
+        foreach($items as $item)
         {
-            $name        = $person->getName();
-          //$address     = $person->getAddress();
-            $personFed   = $person->getFed($project->getFedRoleId());
-            $personOrg   = $personFed->getOrgRegion();
-            $cert        = $personFed->getCertReferee();
-            $plan        = $person->getPlan($project->getId());
-            $basic       = $plan->getBasic();
-
-          //if ($basic['refereeing'] == 'no') continue;
-
             $values = array();
-            $values[] = $plan->getId();
-            $values[] = $plan->getStatus();
-          //$values[] = null; // $plans->getDateTimeCreated()->format('Y-m-d H:i');
-            $values[] = $name->full;
-            $values[] = $person->getEmail();
-            $values[] = $this->phoneTransformer->transform($person->getPhone());
-
-          //$gender = $person->getGender();
-          //$age    = $person->getAge();
-          //$gage   = $gender . $age;
-          //$values[] = $gage;
-
-          //$city = $address->city . ', ' . $address->state;
-          //$values[] = $city;
-
-            $orgId = $personOrg->getOrgId();
-            $org = $this->orgRepo->find($orgId);
-            $area = $org ? substr($org->getParent(),4) : null;
-            
-            $values[] = substr($personFed->getId(),4);
-            $values[] = $area;
-            $values[] = substr($personOrg->getOrgId(),4);
-            $values[] = $cert->getBadge();
-            $values[] = $cert->getVerified();
-
-            $values[] = $basic['wantMentor'];
-            $values[] = $cert->getUpgrading();
-
-            $values[] = $basic['attending'];
-            $values[] = $basic['refereeing'];
-
+            foreach($keys as $key)
+            {
+                $values[] = $item[$key];
+            }
             $this->setRowValues($ws,$row++,$values);
         }
         // Done
@@ -100,120 +168,43 @@ class PersonsExportXLS
     /* ================================================================
      * Master sheet of referees
      */
-    protected function generateOfficialsSheet($ws,$project,$officials)
+    protected function generateOfficialsSheet($ws,$items)
     {
         $ws->setTitle('Officials');
 
-        $headers = array_merge(
-            array(
-                'ID','Status','Official','Email','Cell Phone',
-                'AYSO ID','Area','Region','Badge','Verified','Want Mentor','Upgrading',
-                'Attend','Referee',
-            )
-        );
-        $this->writeHeaders($ws,1,$headers);
-        $row = 2;
-
-        foreach($officials as $person)
-        {
-            $name        = $person->getName();
-          //$address     = $person->getAddress();
-            $personFed   = $person->getFed($project->getFedRoleId());
-            $personOrg   = $personFed->getOrgRegion();
-            $cert        = $personFed->getCertReferee();
-            $plan        = $person->getPlan($project->getId());
-            $basic       = $plan->getBasic();
-
-            if ($basic['refereeing'] == 'no') continue;
-
-            $values = array();
-            $values[] = $plan->getId();
-            $values[] = $plan->getStatus();
-          //$values[] = null; // $plans->getDateTimeCreated()->format('Y-m-d H:i');
-            $values[] = $name->full;
-            $values[] = $person->getEmail();
-            $values[] = $this->phoneTransformer->transform($person->getPhone());
-
-          //$gender = $person->getGender();
-          //$age    = $person->getAge();
-          //$gage   = $gender . $age;
-          //$values[] = $gage;
-
-          //$city = $address->city . ', ' . $address->state;
-          //$values[] = $city;
+        $keys = array
+        (
+            'planId', 'planStatus', 'planCreatedOn',
             
-            $orgId = $personOrg->getOrgId();
-            $org  = $this->orgRepo->find($orgId);
-            $area = $org ? substr($org->getParent(),4) : null;
- 
-            $values[] = substr($personFed->getId(),4);
-            $values[] = $area;
-            $values[] = substr($personOrg->getOrgId(),4);
-            $values[] = $cert->getBadge();
-            $values[] = $cert->getVerified();
-
-            $values[] = $basic['wantMentor'];
-            $values[] = $cert->getUpgrading();
-
-            $values[] = $basic['attending'];
-            $values[] = $basic['refereeing'];
-
-            $this->setRowValues($ws,$row++,$values);
-        }
-        // Done
-        return;
-    }
-    /* =============================================================
-     * The availability
-     */
-    protected function generateAvailSheet($ws,$project,$officials)
-    {
-        $ws->setTitle('Availability');
-
-        $headers = array_merge(
-            array(
-                'Official','Email','Cell Phone','Age',
-                'Badge','Level','LE CR','LE AR','Assess','Upgrading',
-                'Team Aff','Team Desc',
-            ),
-            $this->availabilityDaysHeaders
+            'personNameFull', 'personEmail', 'personPhone',
+            
+            'fedKey', 'fedArea', 'fedRegion',
+            
+            'certSafeHavenBadge', 
+            'certRefereeBadge', 
+            'certRefereeBadgeVerified',
+            'certRefereeUpgrading',
+            
+            'planWantMentor', 'planWillAttend', 'planWillReferee',
         );
-
-        $this->writeHeaders($ws,1,$headers);
+        $this->writeHeaders($ws,1,$this->headerMap,$keys);
+        
         $row = 2;
-
-        foreach($officials as $person)
+        
+        foreach($items as $item)
         {
-            $personFed   = $person->getFed($project->getFedRoleId());
-            $cert        = $personFed->getCertReferee();
-            $plan        = $person->getPlan($project->getId());
-            $basic       = $plan->getBasic();
-
+            // Filter
+            if ($item['planWillAttend' ] == 'no') continue;
+            if ($item['planWillReferee'] == 'no') continue;
+             
             $values = array();
-            $values[] = $person->getName()->full;
-            $values[] = $person->getEmail();
-            $values[] = $this->phoneTransformer->transform($person->getPhone());
-
-            $gender = $person->getGender();
-            $age    = $person->getAge();
-            $gage   = $gender . $age;
-            $values[] = $gage;
-
-            $values[] = $basic['refereeLevel'];
-            $values[] = $basic['comfortLevelCenter'];
-            $values[] = $basic['comfortLevelAssist'];
-
-            $values[] = $basic['requestAssessment'];
-            $values[] = $cert->getUpgrading();
-            $values[] = $basic['teamClubAffilation'];
-            $values[] = $basic['teamClubName'];
-
-            foreach($basic['availabilityDays'] as $value)
+            foreach($keys as $key)
             {
-                $values[] = $value;
+                $values[] = $item[$key];
             }
             $this->setRowValues($ws,$row++,$values);
         }
+
         // Done
         return;
     }
@@ -221,109 +212,66 @@ class PersonsExportXLS
      * Put the notes on their own sheer
      * Formatting tends to be ugly
      */
-    protected function generateNotesSheet($ws,$project,$officials)
+    protected function generateNotesSheet($ws,$items)
     {
         $ws->setTitle('Notes');
-
-        $headers = array(
-            'Status','Official','Email','Cell Phone','Badge','Verified','Notes');
-
-        $this->writeHeaders($ws,1,$headers);
+        
+        $keys = array
+        (
+            'planId',
+            
+            'personNameFull', 'personEmail', 'personPhone',
+            
+            'fedKey', 'certRefereeBadge', 
+            
+            'planNotes',
+        );
+        $this->writeHeaders($ws,1,$this->headerMap,$keys);
+        
         $row = 2;
-
-        foreach($officials as $person)
+        
+        foreach($items as $item)
         {
-            $personFed   = $person->getFed($project->getFedRoleId());
-            $cert        = $personFed->getCertReferee();
-            $plan        = $person->getPlan($project->getId());
-            $basic       = $plan->getBasic();
-
-            if ($basic['refereeing'] == 'no') continue;
-
+            // Filter
+            if ($item['planWillAttend' ] == 'no') continue;
+            if ($item['planWillReferee'] == 'no') continue;
+            
+            if (!$item['planNotes']) continue;
+             
             $values = array();
-            $values[] = $plan->getStatus();
-            $values[] = $person->getName()->full;
-            $values[] = $person->getEmail();
-            $values[] = $this->phoneTransformer->transform($person->getPhone());
-            $values[] = $cert->getBadge();
-            $values[] = $cert->getVerified();
-            $values[] = $basic['notes'];
-
+            foreach($keys as $key)
+            {
+                $values[] = $item[$key];
+            }
             $this->setRowValues($ws,$row++,$values);
         }
+
         // Done
         return;
-    }
-    /* ===================================================================
-     * Deal with widths and such
-     */
-    protected $widths = array
-    (
-        'ID' => 6,
-        'Status'       => 8,
-        'Applied Date' => 16,
-        'AYSO ID'    => 12,
-        'Official'   => 24,
-        'Email'      => 24,
-        'Cell Phone' => 14,
-        'Age'        =>  4,
-        'Badge'      => 12,
-        'Verified'   =>  4,
-        'Notes'      => 72,
-        'Home City'  => 16,
-        'USSF State' =>  4,
-        'Region'     =>  8,
-        'Area'       =>  8,
-      //'AV Fri'     =>  8,
-      //'AV Sat'     =>  8,
-      //'AV Sun'     =>  8,
-      //'LO Fri'     =>  6,
-      //'LO Sat'     =>  6,
-        'LO With'    =>  8,
-        'TR From'    =>  8,
-        'TR With'    =>  8,
-        'Assess'     =>  8,
-        'Want Mentor'  =>  8,
-        'Upgrading'  =>  8,
-        'Team Aff'   => 10,
-        'Team Desc'  => 10,
-        'Level'      => 14,
-        'LE CR'      =>  6,
-        'LE AR'      =>  6,
-
-        'Attend'  => 8,
-        'Referee' => 8,
-    );
-    protected function writeHeaders($ws,$row,$headers)
-    {
-        $col = 0;
-        foreach($headers as $header)
-        {
-            if (isset($this->widths[$header])) $width = $this->widths[$header];
-            else                               $width = 16;
-
-            $ws->getColumnDimensionByColumn($col)->setWidth($width);
-            $ws->setCellValueByColumnAndRow($col,$row,$header);
-            $col++;
-        }
     }
     /* ==========================================================
      * Main entry point
      */
     public function generate($project,$officials)
     {
+        // Flatten the object tree
+        $items = array();
+        foreach($officials as $official)
+        {
+            $items[] = $this->processPerson($project,$official);
+        }
+        
+        // Build the spreadsheet, no need to inject excel
         $this->ss = $ss = $this->excel->newSpreadSheet();
 
         $si = 0;
 
-        $this->generateAllSheet      ($ss->createSheet($si++),$project,$officials);
-        $this->generateOfficialsSheet($ss->createSheet($si++),$project,$officials);
-        $this->generateNotesSheet    ($ss->createSheet($si++),$project,$officials);
-      //$this->generateLodgingSheet  ($ss->createSheet($si++),$project,$officials);
-      //$this->generateAvailSheet    ($ss->createSheet($si++),$project,$officials);
+        $this->generateAllSheet      ($ss->createSheet($si++),$items);
+        $this->generateOfficialsSheet($ss->createSheet($si++),$items);
+        $this->generateNotesSheet    ($ss->createSheet($si++),$items);
 
         // Finish up
-        $ss->setActiveSheetIndex(1);
+        $ss->setActiveSheetIndex(2);
         return $ss;
     }
     /* =======================================================
