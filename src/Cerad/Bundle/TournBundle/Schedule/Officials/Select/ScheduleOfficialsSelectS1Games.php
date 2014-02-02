@@ -23,8 +23,16 @@ class ScheduleOfficialsSelectS1Games
         $basic = $plan->getBasic();
         
         $willAttend  = isset($basic['attending' ]) ? $basic['attending']  : null;
-        if ($willAttend != 'yes') return false;
-        
+        switch($willAttend)
+        {
+            case 'yes':
+            case 'we1';
+            case 'we2';
+            case 'we12':
+                break;
+            default:
+                return false;
+        }
         $willReferee = isset($basic['refereeing']) ? $basic['refereeing'] : null;
         if ($willReferee != 'yes') return false;
         
