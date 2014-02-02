@@ -5,7 +5,26 @@ use Cerad\Component\Excel\Import as BaseImport;
 
 class ScheduleGamesImportResults
 {
+    public $basename;
+    public $filepath;
     
+    public $totalGameCount        = 0;
+    public $modifiedGameCount     = 0;
+    public $modifiedFieldCount    = 0;
+    public $modifiedVenueCount    = 0;
+    public $modifiedDateTimeCount = 0;
+    public $modifiedHomeTeamCount = 0;
+    public $modifiedAwayTeamCount = 0;
+    
+    protected $gameId = null;
+    public function modifiedGameCountInc($game)
+    {
+        if ($game->getId() != $this->gameId)
+        {
+            $this->gameId = $game->getId();
+            $this->modifiedGameCount++;
+        }
+    }
 }
 class ScheduleGamesImportXLS extends BaseImport
 {
@@ -42,20 +61,24 @@ class ScheduleGamesImportXLS extends BaseImport
         $this->gameRepo      = $gameRepo;
         $this->gameFieldRepo = $gameFieldRepo;
         
+        $this->results = new ScheduleGamesImportResults();
     }
     /* ===============================================
      * Processes each item
      */
     protected function processItem($item)
     {
+        $results       = $this->results;
+        $gameRepo      = $this->gameRepo;
+        $gameFieldRepo = $this->gameFieldRepo;
+        
         $num = (int)$item['num'];
         
-        $game = $this->gameRepo->findOneByProjectNum($this->projectId,$num);
+        $game = $gameRepo->findOneByProjectNum($this->projectId,$num);
         
         if (!$game) return;
         
-        $this->results->totalGameCount++;
-        $gameModified = false;
+        $results->totalGameCount++;
         
         // TODO: Allow deleting game with negative number
         
@@ -70,12 +93,9 @@ class ScheduleGamesImportXLS extends BaseImport
         if ($dtBeg != $game->getDtBeg())
         {
             $game->setDtBeg($dtBeg);
-            if (!$gameModified) 
-            {
-                $this->results->modifiedGameCount++;
-                $gameModified = true;
-            }
-            $this->results->modifiedDateTimeCount++;
+            
+            $results->modifiedGameCountInc($game);
+            $results->modifiedDateTimeCount++;
             
             $dtEnd = new \DateTime($date . ' ' . $stop);
             $game->setDtEnd($dtEnd);
@@ -83,44 +103,59 @@ class ScheduleGamesImportXLS extends BaseImport
         
         // Fields
         $fieldName = $item['field'];
+        $venueName = $item['venue'];
         if ($fieldName != $game->getField()->getName())
         {
-            $gameField = $this->gameFieldRepo->findOneByProjectName($this->projectId,$fieldName);
+            $gameField = $gameFieldRepo->findOneByProjectName($this->projectId,$fieldName);
             if (!$gameField)
             {
                 // TODO: Allow creating new field here?
-                /*
                 $gameField = $gameFieldRepo->createGameField();
-                $gameField->setSort     ($fieldSort);
+              //$gameField->setSort     ($fieldSort);
                 $gameField->setName     ($fieldName);
-                $gameField->setVenue    ($fieldVenue);
-                $gameField->setProjectId($projectId);
+                $gameField->setVenue    ($venueName);
+                $gameField->setProjectId($this->projectId);
                 $gameFieldRepo->save($gameField);
                 
                 // If we didn't commit then need local cache nonsense
-                $gameFieldRepo->commit();*/
+                $gameFieldRepo->commit();
             }
-            else
-            {
-                $game->setField($gameField);
-                if (!$gameModified) 
-                {
-                    $this->results->modifiedGameCount++;
-                    $gameModified = true;
-                }
-                $this->results->modifiedFieldCount++;
-            }
+            $game->setField($gameField);
+            $results->modifiedGameCountInc($game);
+            $results->modifiedFieldCount++;
         }
-        
         // TODO: Handle venue changes as well
-        
+        if ($venueName != $game->getField()->getVenue())
+        {
+            $game->getField()->setVenue($venueName);
+            $results->modifiedGameCountInc($game);
+            $results->modifiedVenueCount++;
+        }
         /* ========================================================
          * TODO: Need to think about changing levels etc for a game
          */
+        $level = $item['level'];
+        $group = $item['group'];
+        $gt    = $item['gt'];
         
+        if ($level != $game->getLevelId())
+        {
+            $game->setLevelId($level);
+            $results->modifiedGameCountInc($game);
+        }
+        if ($group != $game->getGroup())
+        {
+            $game->setGroup($group);
+            $results->modifiedGameCountInc($game);
+        }
+        if ($gt != $game->getGroupType())
+        {
+            $game->setGroupType($gt);
+            $results->modifiedGameCountInc($game);
+        }
         /* ========================================================
          * The scheduler needs to update both names and groups
-         * They also need to update the game level
+         * They also need to update the game level and group
          */
         $homeTeamName = $item['homeTeam'];
         $awayTeamName = $item['awayTeam'];
@@ -136,12 +171,8 @@ class ScheduleGamesImportXLS extends BaseImport
             $homeTeam->setName ($homeTeamName);
             $homeTeam->setGroup($homeTeamGroup);
             
-            if (!$gameModified) 
-            {
-                $this->results->modifiedGameCount++;
-                $gameModified = true;
-            }
-            $this->results->modifiedHomeTeamCount++;
+            $results->modifiedGameCountInc($game);
+            $results->modifiedHomeTeamCount++;
             
         }
         if (($awayTeamName != $awayTeam->getName()) || ($awayTeamGroup != $awayTeam->getGroup()))
@@ -149,16 +180,10 @@ class ScheduleGamesImportXLS extends BaseImport
             $awayTeam->setName ($awayTeamName);
             $awayTeam->setGroup($awayTeamGroup);
             
-            if (!$gameModified) 
-            {
-                $this->results->modifiedGameCount++;
-                $gameModified = true;
-            }
-            $this->results->modifiedAwayTeamCount++;
+            $results->modifiedGameCountInc($game);
+            $results->modifiedAwayTeamCount++;
             
         }
-        return;
-        
     }
     /* ==============================================================
      * Almost like the load but with a few tweaks
@@ -167,6 +192,9 @@ class ScheduleGamesImportXLS extends BaseImport
      */
     public function import($params)
     {
+        $this->results->basename = $params['basename'];
+        $this->results->filepath = $params['filepath'];
+        
         $this->project   = $project = $params['project'];
         $this->projectId = $project->getId();
         
@@ -180,15 +208,6 @@ class ScheduleGamesImportXLS extends BaseImport
         $header = array_shift($rows);
         
         $this->processHeaderRow($header);
-        
-        $this->results = new ScheduleGamesImportResults();
-        $this->results->basename = $params['basename'];
-        $this->results->totalGameCount        = 0;
-        $this->results->modifiedGameCount     = 0;
-        $this->results->modifiedFieldCount    = 0;
-        $this->results->modifiedDateTimeCount = 0;
-        $this->results->modifiedHomeTeamCount = 0;
-        $this->results->modifiedAwayTeamCount = 0;
         
         // Insert each record
         foreach($rows as $row)
