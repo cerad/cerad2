@@ -156,6 +156,16 @@ cerad_tourn_schedule_official_list:
     requirements:
         _format:  html|csv|xls|pdf
         
+cerad_tourn_schedule_officials:
+    pattern:  /schedule/officials.{_format}
+    defaults: 
+        _controller: CeradAppBundle:Schedule/ScheduleOfficialList:list
+        _template: '@CeradApp/Schedule/Official/List/ScheduleOfficialIndex.html.twig'
+        _format: html
+        _role: ROLE_ADMIN
+    requirements:
+        _format:  html|csv|xls|pdf
+        
 # ==========================================
 # _controller is a service
 # DI is used to inject model into the controller's constructor

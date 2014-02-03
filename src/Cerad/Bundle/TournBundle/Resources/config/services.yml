@@ -25,6 +25,14 @@ services:
         class:  Cerad\Bundle\TournBundle\Listeners\ResponseListener
         tags:
             - { name: kernel.event_subscriber }
+            
+    cerad_tourn.request_role.listener:
+        class:  Cerad\Bundle\TournBundle\Listeners\RequestRoleListener
+        arguments:
+            - '@security.context'
+            - '@router'
+        tags:
+            - { name: kernel.event_subscriber }
 
     cerad_tourn.schedule_official_search.form_type:
         class: Cerad\Bundle\TournBundle\FormType\Schedule\Official\SearchFormType
