@@ -21,6 +21,10 @@ class GameRepository extends EntityRepository
     {
         return $this->findOneBy(array('projectId' => $projectId, 'num' => $num));    
     }
+    public function findAllByProject($projectKey)
+    {
+        return $this->findBy(array('projectId' => $projectKey));
+    }
     /* ==========================================================
      * Persistence
      */

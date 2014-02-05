@@ -170,16 +170,17 @@ cerad_tourn_schedule_officials:
 # _controller is a service
 # DI is used to inject model into the controller's constructor
 # TODO: Have a listener create the model and pass via the action
-cerad_tourn_schedule_official_selfassign:
-    pattern:  /schedule/official/selfassign/{game}/{slot}
+cerad_tourn.game_official.user_assign_slot:
+    pattern:  /game-official/user-assign-slot/{game}/{slot}
     defaults:
-       #_controllex: CeradTournBundle:Schedule/ScheduleOfficialSelfAssign:assign
-        _controller: cerad_tourn.schedule_official_selfassign.controller:assignAction
-       #_model:      cerad_tourn.schedule_official_selfassign.model
-        _template: '@CeradTourn/Schedule/Official/SelfAssign/ScheduleOfficialSelfAssignIndex.html.twig'
+        _controller: cerad_tourn.game_official.user_assign_slot.controller:assignAction
+        _model:      cerad_tourn.game_official.user_assign_slot.model
+        _template: '@CeradTourn/GameOfficial/UserAssignSlot/UserAssignSlotIndex.html.twig'
         _redirect:   cerad_tourn_schedule_official_list
+        _role:       ROLE_USER
+        game: 0
         slot: 0
-     
+        
 cerad_tourn_schedule_team_list:
     pattern:  /schedule/team
     defaults: { _controller: CeradTournBundle:Schedule/ScheduleTeamList:list }

@@ -1,11 +1,16 @@
 <?php
-namespace Cerad\Bundle\TournBundle\Controller\Schedule;
+namespace Cerad\Bundle\TournBundle\Controller\GameOfficial;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Cerad\Bundle\TournBundle\FormType\Schedule\Official\SelfAssignSlotFormType;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-class ScheduleOfficialSelfAssignModel
+/* =======================================================
+ * This model has dependencies from different bundles
+ * Good argument for leaving it in the tourn bundle?
+ */
+class GameOfficialUserAssignSlotModel
 {
     public $user;
     public $project;
@@ -14,6 +19,7 @@ class ScheduleOfficialSelfAssignModel
     public $slot;
     public $game;
     public $gameOfficial;
+    public $gameOfficialClone;
         
     public $person;  // AKA Official
     public $persons; // AKA Officials
@@ -23,7 +29,7 @@ class ScheduleOfficialSelfAssignModel
     protected $gameRepo;
     protected $personRepo;
     
-    public function __construct($request, $project, $user, $personRepo, $gameRepo)
+    public function __construct($project, $user, $personRepo, $gameRepo)
     {   
         $this->user = $user;
         
@@ -32,8 +38,6 @@ class ScheduleOfficialSelfAssignModel
         
         $this->gameRepo   = $gameRepo;
         $this->personRepo = $personRepo;
-        
-        $this->create($request);
     }
     /* =====================================================
      * Process a posted model
@@ -79,19 +83,36 @@ class ScheduleOfficialSelfAssignModel
     public function create(Request $request)
     {   
         // Need game
-        $game = $this->gameRepo->findOneByProjectNum($this->projectKey,$request->get('game'));
-        if (!$game) return;
-        
+        $num  = $request->attributes->get('game');
+        $game = $this->gameRepo->findOneByProjectNum($this->projectKey,$num);
+        if (!$game) {
+            throw new NotFoundHttpException(sprintf('Game %d does not exist.',$num));
+        }
         // Make sure the slot can be assigned
-        $slot = $request->get('slot');
+        $slot = $request->attributes->get('slot');
         $gameOfficial = $game->getOfficialForSlot($slot);
-        if (!$gameOfficial);
-        if (!$gameOfficial->isUserAssignable()) return;
-
+        if (!$gameOfficial) {
+            throw new NotFoundHttpException(sprintf('Game Slot %d,%id does not exist.',$num,$slot));
+        }
+        if (!$gameOfficial->isUserAssignable()) {
+            throw new AccessDeniedHttpException(sprintf('Game Slot %d,%id is not user assignable.',$num,$slot));
+        }
+        $gameOfficialClone = clone $gameOfficial;
+      //if ($gameOfficial->getAssignState() == 'Open') $gameOfficial->setAssignState('Requested');
+        
         // Must have a person
         $personGuid = $this->user ? $this->user->getPersonGuid() : null;
         $person = $this->personRepo->findOneByGuid($personGuid);
-        if (!$person) return;
+        if (!$person) 
+        {
+            throw new AccessDeniedHttpException(sprintf('Game Slot %d,%id, has no person record.',$num,$slot));
+        }
+        // Must be a referee
+        
+        
+        /* =================================================
+         * Enough checking for now
+         * 
         $personNameFull = $person->getName()->full;
         
         // Already have someone signed up
@@ -115,41 +136,21 @@ class ScheduleOfficialSelfAssignModel
         // Request assignment or request removal
         // Needs to be in SelfAssign workflow state
         if (!$gameOfficial->getState()) $gameOfficial->setState('Requested');
+        */
         
         // Want to see if person is part of a group for this project
         $persons = array($person);
         
         // Xfer the data
-        $this->slot         = $slot;
-        $this->game         = $game;
-        $this->gameOfficial = $gameOfficial;
+        $this->slot = $slot;
+        $this->game = $game;
+        
+        $this->gameOfficial      = $gameOfficial;
+        $this->gameOfficialClone = $gameOfficialClone;
         
         $this->person  = $person;  // AKA Official
         $this->persons = $persons; // AKA Officials
         
         $this->valid = true;
-    }
-    public function createForm()
-    {
-        $game = $this->game;
-        $slot = $this->slot;
-        
-        $builder = $this->helper->createFormBuilder($this);
-        
-        $builder->setAction($this->helper->generateUrl($this->route,
-            array('game' => $game->getNum(),'slot' => $slot)
-        ));
-      //$builder->setMethod('POST'); // default
-        
-      //$builder->add('slots','collection',array('type' => new SelfAssignSlotFormType($model['officials'])));
-        
-        $builder->add('gameOfficial',new SelfAssignSlotFormType());
-        
-        $builder->add('assign', 'submit', array(
-            'label' => 'Request Assignment',
-            'attr' => array('class' => 'submit'),
-        ));        
-         
-        return $builder->getForm();
     }
 }

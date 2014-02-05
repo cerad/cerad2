@@ -14,10 +14,14 @@ class AssignSlotFormType extends AbstractType
         $resolver->setDefaults(array(
             'data_class' => 'Cerad\Bundle\GameBundle\Entity\GameOfficial',
         ));
-    }    
-    public function __construct($officials)
+    }
+    public $gameOfficials; // A choice list
+    public $assignSlotWorkflow;
+    
+    public function __construct($assignSlotWorkflow,$gameOfficials)
     {
-        $this->officials = $officials;
+        $this->gameOfficials      = $gameOfficials;
+        $this->assignSlotWorkflow = $assignSlotWorkflow;
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -25,7 +29,7 @@ class AssignSlotFormType extends AbstractType
             'attr'      => array('size' => 10),
             'read_only' => true,
         ));
-        $subscriber = new AssignSlotSubscriber($builder->getFormFactory(),$this->officials);
+        $subscriber = new AssignSlotSubscriber($builder->getFormFactory(),$this);
         $builder->addEventSubscriber($subscriber);
     }
 }

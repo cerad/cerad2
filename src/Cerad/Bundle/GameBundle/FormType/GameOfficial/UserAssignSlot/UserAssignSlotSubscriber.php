@@ -1,24 +1,21 @@
 <?php
-namespace Cerad\Bundle\TournBundle\FormType\Schedule\Official;
-
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolverInterface;
+namespace Cerad\Bundle\GameBundle\FormType\GameOfficial\UserAssignSlot;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 
-class AssignSlotSubscriber implements EventSubscriberInterface
+class UserAssignSlotSubscriber implements EventSubscriberInterface
 {
     private $factory;
-    private $formType;
+    private $officials;
+    private $assignSlotWorkflow;
     
-    public function __construct(FormFactoryInterface $factory, $formType)
+    public function __construct(FormFactoryInterface $factory, $assignSlotWorkflow)
     {
-        $this->factory  = $factory;
-        $this->formType = $formType;
+        $this->factory            = $factory;
+        $this->assignSlotWorkflow = $assignSlotWorkflow;
     }
     public static function getSubscribedEvents()
     {
@@ -30,29 +27,29 @@ class AssignSlotSubscriber implements EventSubscriberInterface
         $gameOfficial = $event->getData();
         $form         = $event->getForm();
 
-        if (!$gameOfficial) return;
+        if (!$gameOfficial) return; // Called twice
         
+        /*
         $form->add($this->factory->createNamed('personNameFull','text', null, array(
             'label'           => 'Name',
             'required'        => false,
             'auto_initialize' => false,
-        )));
-        
+        )));*/
+        /*
         $form->add($this->factory->createNamed('personGuid','choice', null, array(
             'required'        => false,
             'empty_value'     => 'Select Official',
             'empty_data'      => null,
             'auto_initialize' => false,
-            'choices'         => $this->formType->gameOfficials,
-        )));
+            'choices'         => array($gameOfficial),
+        )));*/
         
-        $assignSlotWorkflow = $this->formType->assignSlotWorkflow;
-        $states = $assignSlotWorkflow->getStateOptionsForAssignorWorkflow($gameOfficial->getAssignState());
+        $states = $this->assignSlotWorkflow->getStateOptionsForUserWorkflow($gameOfficial->getAssignState());
         
         $form->add($this->factory->createNamed('state','choice', null, array(
-            'required'        => false,
-            'empty_value'     => 'Assignment Status',
-            'empty_data'      => null,
+            'required'        => true,
+          //'empty_value'     => 'Assignment Status',
+          //'empty_data'      => null,
             'auto_initialize' => false,
             'choices'         => $states,
         )));

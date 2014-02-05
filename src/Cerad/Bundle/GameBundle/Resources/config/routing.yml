@@ -1,3 +1,14 @@
-cerad_game_homepage:
-    pattern:  /hello/{name}
-    defaults: { _controller: CeradGameBundle:Default:index }
+# cerad_game_routing
+
+cerad_game__game_official__user_assign_slot:
+    pattern:  /game-official/user-assign-slot/{game}/{slot}
+    defaults:
+        _controller: cerad_game__game_official__user_assign_slot__controller:assignAction
+        _model:      cerad_game__game_official__user_assign_slot__model
+        _form:       cerad_game__game_official__user_assign_slot__form_factory
+        _template: '@CeradGame/GameOfficial/UserAssignSlot/UserAssignSlotIndex.html.twig'
+        _redirect:   cerad_tourn_schedule_officials
+        _role:       ROLE_USER
+        game: 0
+        slot: 0
+

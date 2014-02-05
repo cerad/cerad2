@@ -16,7 +16,8 @@ class GameOfficial extends AbstractEntity
     protected $slot; // 1-5 for arbiter
     protected $role; // Referee, AR1 etc
     
-    protected $assignRole; // // ROLE_USER, ROLE_ASSIGNOR
+    protected $assignRole;   // ROLE_USER, ROLE_ASSIGNOR
+    protected $assignState;  // Current state, see AssignmentWorkflow
     
     protected $personNameFull;
     protected $personNameLast;
@@ -42,6 +43,7 @@ class GameOfficial extends AbstractEntity
     public function getRole() { return $this->role;   }
     
     public function getAssignRole     () { return $this->assignRole;      }
+    public function getAssignState    () { return $this->state;           }
     
     public function getPersonNameFull () { return $this->personNameFull;  }
     public function getPersonNameLast () { return $this->personNameLast;  }
@@ -66,7 +68,8 @@ class GameOfficial extends AbstractEntity
     public function setSlot($value) { $this->onPropertySet('slot',  $value); } 
     public function setRole($value) { $this->onPropertySet('role',  $value); }
     
-    public function setAssignRole     ($value) { $this->onPropertySet('assignRole',$value); }
+    public function setAssignRole     ($value) { $this->onPropertySet('assignRole', $value); }
+    public function setAssignState    ($value) { $this->onPropertySet('state',      $value); }
      
     public function setPersonNameFull ($value) { $this->onPropertySet('personNameFull', $value); }
     public function setPersonNameLast ($value) { $this->onPropertySet('personNameLast', $value); }

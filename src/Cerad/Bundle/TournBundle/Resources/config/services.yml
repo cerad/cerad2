@@ -33,6 +33,13 @@ services:
             - '@router'
         tags:
             - { name: kernel.event_subscriber }
+            
+    cerad_tourn.request_model.listener:
+        class:  Cerad\Bundle\TournBundle\Listeners\RequestModelListener
+        calls:
+            - [setContainer, ['@service_container']]
+        tags:
+            - { name: kernel.event_subscriber }
 
     cerad_tourn.schedule_official_search.form_type:
         class: Cerad\Bundle\TournBundle\FormType\Schedule\Official\SearchFormType
@@ -82,30 +89,20 @@ services:
         calls:
              - [setContainer, ['@service_container']]
                                       
-    cerad_tourn.schedule_official_selfassign.model:
-        class: Cerad\Bundle\TournBundle\Controller\Schedule\ScheduleOfficialSelfAssignModel
-        scope: request
+    cerad_tourn.game_official_selfassign.model:
+        class: Cerad\Bundle\TournBundle\Controller\GameOfficial\GameOfficialSelfAssignModel
         arguments:
-            - '@request'
             - '@cerad_project.project_current'
             - '@cerad_user.user_current'
             - '@cerad_person.person_repository'
             - '@cerad_game.game_repository'
-            
-    cerad_tourn.schedule_official_selfassign.modelx:
-        class: Cerad\Bundle\TournBundle\Controller\Schedule\ScheduleOfficialSelfAssignModel
-        arguments:
-            - '@cerad_tourn.action_helper'
-            - '@cerad_project.find_default.in_memory'
-            - '@cerad_person.person_repository'
-            - '@cerad_game.game_repository'
-            
-    cerad_tourn.schedule_official_selfassign.controller:
-        class: Cerad\Bundle\TournBundle\Controller\Schedule\ScheduleOfficialSelfAssignController
-        scope: request
+                        
+    cerad_tourn.game_official_selfassign.controller:
+        class: Cerad\Bundle\TournBundle\Controller\GameOfficial\GameOfficialSelfAssignController
+       #scope: request
         arguments:
             - '@cerad_tourn.action_helper2'
-            - '@cerad_tourn.schedule_official_selfassign.model'
+        #   - '@cerad_tourn.schedule_official_selfassign.model'
 
 
             

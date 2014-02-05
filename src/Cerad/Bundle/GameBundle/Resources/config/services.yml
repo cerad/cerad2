@@ -1,3 +1,10 @@
+parameters:
+    cerad_game__game_official__assign_slot__workflow__class:
+        Cerad\Bundle\GameBundle\Service\GameOfficial\AssignSlot\AssignSlotWorkflow
+        
+    cerad_game__game_event_listener__class:
+        Cerad\Bundle\GameBundle\EventListener\GameEventListener
+
 services:
 
 # =============================================================
@@ -30,3 +37,52 @@ services:
         class: Cerad\Bundle\GameBundle\FormType\GameReport\Update\MasterFormType
         tags:
             - { name: form.type, alias: cerad_game_report_update_master } 
+            
+    cerad_game__action_helper:
+        class: Cerad\Bundle\GameBundle\Controller\ActionHelper
+        calls:
+             - [setContainer, ['@service_container']]
+    
+    cerad_game__game_event_listener:
+        class: '%cerad_game__game_event_listener__class%'
+        calls:
+             - [setContainer, ['@service_container']]
+        tags:
+            - { name: kernel.event_subscriber }
+        
+    # ====================================================
+    # Game Officials
+    cerad_game__game_official__user_assign_slot__model:
+        class: Cerad\Bundle\GameBundle\Controller\GameOfficial\UserAssignSlot\UserAssignSlotModel
+        calls:
+             - [setDispatcher,['@event_dispatcher']]
+        arguments:
+            - '@cerad_project.project_current'
+            - '@cerad_user.user_current'
+            - '@cerad_person.person_repository'
+            - '@cerad_game.game_repository'
+                        
+    cerad_game__game_official__user_assign_slot__form_factory:
+        class: Cerad\Bundle\GameBundle\Controller\GameOfficial\UserAssignSlot\UserAssignSlotFormFactory
+        calls:
+             - [setRouter,      ['@router']]
+             - [setFormFactory, ['@form.factory']]
+        arguments:
+            - '@cerad_game__game_official__user_assign_slot__form_type'
+            
+    cerad_game__game_official__user_assign_slot__controller:
+        class: Cerad\Bundle\GameBundle\Controller\GameOfficial\UserAssignSlot\UserAssignSlotController
+        calls:
+             - [setRouter,     ['@router']]
+             - [setTemplating, ['@templating']]
+
+    cerad_game__game_official__user_assign_slot__form_type:
+        class: Cerad\Bundle\GameBundle\FormType\GameOfficial\UserAssignSlot\UserAssignSlotFormType
+        arguments: 
+            - '@cerad_game__game_official__assign_slot__workflow'
+        tags:
+            - { name: form.type, alias: cerad_game__game_official__user_assign_slot } 
+            
+    cerad_game__game_official__assign_slot__workflow:
+        class: '%cerad_game__game_official__assign_slot__workflow__class%'
+

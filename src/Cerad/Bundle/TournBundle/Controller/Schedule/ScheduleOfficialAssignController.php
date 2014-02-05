@@ -95,6 +95,8 @@ class ScheduleOfficialAssignController extends MyBaseController
         $model['project']   = $project;
         $model['officials'] = $officials; // List of available officials
         
+        $model['assignSlotWorkflow'] = $this->get('cerad_game__game_official__assign_slot_workflow');
+        
         // Done
         return $model;
     }
@@ -108,11 +110,12 @@ class ScheduleOfficialAssignController extends MyBaseController
         $builder->setAction($this->generateUrl($route,array('game' => $game->getNum())));
         $builder->setMethod('POST');
         
-        $builder->add('slots','collection',array('type' => new AssignSlotFormType($model['officials'])));
+        $assignSlotFormType = new AssignSlotFormType($model['assignSlotWorkflow'],$model['officials']);
+        $builder->add('slots','collection',array('type' => $assignSlotFormType));
         
         $builder->add('assign', 'submit', array(
             'label' => 'Assign Officials',
-            'attr' => array('class' => 'submit'),
+            'attr'  => array('class' => 'submit'),
         ));        
          
         return $builder->getForm();
