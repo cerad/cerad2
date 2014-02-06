@@ -97,6 +97,14 @@ class GameOfficial extends AbstractEntity
     {
         return $this->assignRole == 'ROLE_USER' ? true : false;
     }
+    /* ==================================================
+     * The isUpdatable is used to indicate the current user actually
+     * has permission to update this entity
+     * 
+     * TODO: This stuff should really be in an GameOfficialActionModel wrapper
+     */
+    public $isUserUpdatable = false;
+    public $isSelected  = false;
     
     /* =========================================
      * Used to highlite objects

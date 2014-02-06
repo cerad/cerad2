@@ -26,20 +26,25 @@ class SearchSubscriber implements EventSubscriberInterface
     {
         // Tells the dispatcher that you want to listen on the form.pre_set_data
         // event and that the preSetData method should be called.
-        return array(FormEvents::PRE_SET_DATA => 'preSetData');
+        return array(
+            FormEvents::PRE_SET_DATA => array('onPreSetData'),
+            FormEvents::POST_SUBMIT  => array('onPostSubmit',900),
+        );
     }
-
-    public function preSetData(FormEvent $event)
+    public function onPostSubmit(FormEvent $event)
     {
-        $model = $event->getData();
+      //$event->stopPropagation();
+    }
+    public function onPreSetData(FormEvent $event)
+    {
+        $criteria = $event->getData();
 
-        if ($model === null) return;
+        if ($criteria === null) return;
         
         $form = $event->getForm();
         $factory = $this->factory;
         
-        $searches = $model['searches'];
-        foreach($searches as $key => $search)
+        foreach($criteria['searches'] as $key => $search)
         {
             $choices = $search['choices'];
             

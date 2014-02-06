@@ -97,32 +97,31 @@ class AssignSlotWorkflow
                  return array(
                     self::StateOpen      => self::StateOpen,
                     self::StateRequested => 'Request Assignment',
-                    self::StateIfNeeded  => 'If Needed',
+                    self::StateIfNeeded  => 'Will Do If Needed',
                 );
             case self::StateRequested:
                  return array(
                     self::StateRequested => 'Assignment Requested',
-                    self::StateRemove    => 'Remove me from assignment',
+                    self::StateRemove    => 'Remove Me From Assignment',
                 );
             case self::StateIfNeeded:
                  return array(
-                    self::StateIfNeeded  => 'If Needed',
-                    self::StateRemove    => 'Remove me from assignment',
-                    self::StateRequested => 'Request Assignment',
+                    self::StateIfNeeded  => 'Will Do If Needed',
+                    self::StateRemove    => 'Remove Me From Assignment',
                 );
             case self::StateReview:
                  return array(
-                    self::StateReview    => 'Assignment under Review',
-                    self::StateRemove    => 'Remove me from assignment',
+                    self::StateReview    => 'Assignment Under Review',
+                    self::StateRemove    => 'Remove Me From Assignment',
                 );
              case self::StateAccepted:
                  return array(
-                    self::StateAccepted => 'Assignment was Accepted',
+                    self::StateAccepted => 'Assignment Was Accepted',
                     self::StateTurnback => 'Turnback Assignment',
                 );
              case self::StateApproved:
                  return array(
-                    self::StateApproved => 'Assignment was Approved',
+                    self::StateApproved => 'Assignment Was Approved',
                     self::StateTurnback => 'Turnback Assignment',
                 );
        }

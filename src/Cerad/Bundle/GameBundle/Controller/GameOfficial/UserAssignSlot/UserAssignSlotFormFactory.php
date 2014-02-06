@@ -41,7 +41,7 @@ class UserAssignSlotFormFactory
         $builder->add('gameOfficial',$this->userAssignSlotFormType);
         
         $builder->add('assign', 'submit', array(
-            'label' => 'Assignment State',
+            'label' => 'Submit',
             'attr'  => array('class' => 'submit'),
         ));  
         return $builder->getForm();

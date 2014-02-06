@@ -33,25 +33,6 @@ class UserAssignSlotFormType extends AbstractType
             'read_only' => true,
         ));
         
-        // Needs to be dynamic
-        $states = array
-        (
-            'Turnback'  => 'Request Removal From Assignment',  // Official accepted but then bailed
-            
-            'Requested' => 'Requested', // Official has requested assignment
-            
-            'Approved'  => 'Approved',     // Assignor has approved request
-            'Reviewing' => 'Under Review', // Assignor is reviewing request
-          //'Rejected'  => 'Rejected',  // Assignor has rejected request
-        );
-        $builder->add('state','choice', array(
-            'required'        => true,
-            'empty_value'     => 'Assignment Status',
-            'empty_data'      => null,
-            'auto_initialize' => false,
-            'choices'         => $states,
-        ));
-        
         $subscriber = new UserAssignSlotSubscriber($builder->getFormFactory(),$this->assignSlotWorkflow);
         $builder->addEventSubscriber($subscriber);
     }

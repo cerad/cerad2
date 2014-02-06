@@ -138,31 +138,39 @@ class UserAssignSlotModel
         $num  = $requestAttributes->get('game');
         $slot = $requestAttributes->get('slot');
         
-        // Verify game
+        // Verify game exists
         $game = $this->gameRepo->findOneByProjectNum($this->projectKey,$num);
         if (!$game) {
             throw new NotFoundHttpException(sprintf('Game %d does not exist.',$num));
         }
-        // Make sure the slot can be assigned
+        // Verify slot exists
         $gameOfficial = $game->getOfficialForSlot($slot);
         if (!$gameOfficial) {
             throw new NotFoundHttpException(sprintf('Game Slot %d,%id does not exist.',$num,$slot));
         }
-        if (!$gameOfficial->isUserAssignable()) {
-            throw new AccessDeniedHttpException(sprintf('Game Slot %d,%id is not user assignable.',$num,$slot));
-        }
-        $gameOfficialClone = clone $gameOfficial;
-        
-        // Must have a person
+        // Verify have a person
         $personGuid = $this->user ? $this->user->getPersonGuid() : null;
         $person = $this->personRepo->findOneByGuid($personGuid);
         if (!$person) 
         {
             throw new AccessDeniedHttpException(sprintf('Game Slot %d,%id, has no person record.',$num,$slot));
         }
+        if (!$gameOfficial->isUserAssignable()) {
+            throw new AccessDeniedHttpException(sprintf('Game Slot %d,%id is not user assignable.',$num,$slot));
+        }
+        $gameOfficialClone = clone $gameOfficial;
+        
         // Must be a referee
+        $personPlan = $person->getPlan($this->projectKey,false);
         
-        
+        // This is okay for now
+        if (!$gameOfficial->getPersonNameFull())
+        {
+            if ($personPlan)
+            {
+                $gameOfficial->setPersonNameFull($personPlan->getPersonName());
+            }
+        }
         /* =================================================
          * Enough checking for now
          * 

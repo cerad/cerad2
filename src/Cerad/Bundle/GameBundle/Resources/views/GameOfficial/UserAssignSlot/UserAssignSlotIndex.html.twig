@@ -3,6 +3,17 @@
 
 {% block content %}
 {{ form_start(form) }}
+<table style="max-width: 100px;">
+    <tr>
+        <td>{{ form_widget(form.gameOfficial.role)           }}</td>
+        <td>{{ form_widget(form.gameOfficial.personNameFull) }}</td>
+        <td>{{ form_widget(form.gameOfficial.state)          }}</td>
+    </tr><tr>
+        <td>&nbsp;</td>
+        <td><a href="{{ redirectUrl }}">Back to Schedule</a></td>
+        <td>{{ form_widget(form.assign) }}</td>
+    </tr>
+</table>
 {{ form_rest (form) }}
 {{ form_end  (form) }}
 {% endblock %}
