@@ -2,13 +2,17 @@
 namespace Cerad\Bundle\GameBundle\Controller\GameOfficial\UserAssignSlot;
 
 use Symfony\Component\HttpFoundation\ParameterBag;
+
+use Symfony\Component\EventDispatcher\Event as PersonFindEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 // Make my own exceptions
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
-use Cerad\Bundle\GameBundle\Events as GameEvents;
+use Cerad\Bundle\PersonBundle\Events as PersonEvents;
+
+use Cerad\Bundle\GameBundle\Events   as GameEvents;
 use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 
 use Cerad\Bundle\GameBundle\Service\GameOfficial\AssignSlot\AssignSlotWorkflow as Workflow;
@@ -21,7 +25,8 @@ class UserAssignSlotModel
 {
     protected $dispatcher;
     
-    public $user;
+    public $userPerson;
+    
     public $project;
     public $projectKey;
     
@@ -36,19 +41,30 @@ class UserAssignSlotModel
     public $valid = false;
     
     protected $gameRepo;
-    protected $personRepo;
     
-    public function __construct($project, $user, $personRepo, $gameRepo)
+    public function __construct($project, $userPerson, $gameRepo)
     {   
-        $this->user = $user;
+        $this->userPerson = $userPerson;
         
         $this->project    = $project;
         $this->projectKey = $project->getKey();
         
         $this->gameRepo   = $gameRepo;
-        $this->personRepo = $personRepo;
     }
     public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
+    
+    protected function findPersonByGuid($guid)
+    {
+        if (!$guid) return null;
+        
+        $event = new PersonFindEvent;
+        $event->guid   = $guid;
+        $event->person = null;
+        
+        $this->dispatcher->dispatch(PersonEvents::FindPersonByGuid,$event);
+        
+        return $event->person;
+    }
     
     /* =====================================================
      * Process a posted model
@@ -100,34 +116,6 @@ class UserAssignSlotModel
         $this->dispatcher->dispatch(GameEvents::GAME_OFFICIAL_ASSIGN_SLOT__POST, $eventPost);
         
         return;
-        die('process model');
-        
-        $project = $model['project'];
-        $projectId = $project->getId();
-        
-        $personRepo = $this->get('cerad_person.person_repository');
-         
-        // Should point to original slots
-        $slots = $model['slots'];
-        foreach($slots as $slot)
-        {
-            $personGuid = $slot->getPersonGuid();
-            if ($personGuid)
-            {
-                $person = $personRepo->findOneByGuid($personGuid);
-                if ($person)
-                {
-                    $name = $person->getName();
-                    $slot->setPersonNameFull($name->full);
-                }
-            }
-            else
-            {
-                $person = $personRepo->findOneByProjectName($projectId,$slot->getPersonNameFull());
-                $personGuid = $person ? $person->getGuid() : null;
-                $slot->setPersonGuid($personGuid);
-            }
-        }
     }
     /* =========================================================================
      * Also holds logic to allow signing up for this particular game slot?
@@ -149,8 +137,9 @@ class UserAssignSlotModel
             throw new NotFoundHttpException(sprintf('Game Slot %d,%id does not exist.',$num,$slot));
         }
         // Verify have a person
-        $personGuid = $this->user ? $this->user->getPersonGuid() : null;
-        $person = $this->personRepo->findOneByGuid($personGuid);
+        //$personGuid = $this->user ? $this->user->getPersonGuid() : null;
+        //$person = $this->findPersonByGuid($personGuid);
+        $person = $this->userPerson;
         if (!$person) 
         {
             throw new AccessDeniedHttpException(sprintf('Game Slot %d,%id, has no person record.',$num,$slot));

@@ -36,6 +36,8 @@ class Person extends BaseModel implements PersonInterface
     protected $verified  = 'No';
     protected $status    = 'Active';
     
+    protected $user;
+    
     // Setting to array messes up qp left join
     protected $feds;    // = array();
     protected $plans;   // = array();
@@ -249,5 +251,10 @@ class Person extends BaseModel implements PersonInterface
         
         return $years;
     }
+    /* ==========================================
+     * External link
+     */
+    public function getUser()      { return  $this->user; }
+    public function setUser($user) { $this->user = $user; }
 }
 ?>

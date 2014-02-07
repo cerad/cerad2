@@ -102,16 +102,32 @@ class GameOfficial extends AbstractEntity
      * has permission to update this entity
      * 
      * TODO: This stuff should really be in an GameOfficialActionModel wrapper
+     *       Part of the yet to be defined ViewModel
+     * 
+     * Tried just making them public but Doctrine 2 complains.
      */
-    public $isUserUpdatable = false;
-    public $isSelected  = false;
+    protected $isSelected      = false;
+    protected $isUserUpdatable = false;
     
-    /* =========================================
-     * Used to highlite objects
-     */
-    protected $selected;
-    public function getSelected()       { return $this->selected; }
-    public function setSelected($value) { $this->selected = $value; return $this; }
+    public function __get($name)
+    {
+        switch($name)
+        {
+            case 'isSelected':
+            case 'isUserUpdateable':
+                return $this->$name;
+        }
+    }
+    public function __set($name,$value)
+    {
+        switch($name)
+        {
+            case 'isSelected':
+            case 'isUserUpdateable':
+                $this->$name = $value;
+                return $this;
+        }
+    }
 }
 
 ?>

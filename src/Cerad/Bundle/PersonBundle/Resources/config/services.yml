@@ -1,13 +1,16 @@
 # PersonBundle Services
 parameters:
-
-    # Did not work for alias
-    cerad_person.entity_manager.doctrine.service: doctrine.orm.default_entity_manager
     
-    cerad_person.aysov_referee_badge.form_type.class: Cerad\Bundle\PersonBundle\FormType\AYSO\RefereeBadgeFormType
+    cerad_person.aysov_referee_badge.form_type.class: 
+        Cerad\Bundle\PersonBundle\FormType\AYSO\RefereeBadgeFormType
+    
+    cerad_person__person_event_listener__class:
+        Cerad\Bundle\PersonBundle\EventListener\PersonEventListener
 
 services:
 
+# ===================================================================
+# Repository and listeners
     cerad_person.entity_manager.doctrine:
         alias: doctrine.orm.default_entity_manager
 
@@ -20,6 +23,13 @@ services:
             
     cerad_person.person_repository:
         alias: cerad_person.person_repository.doctrine
+        
+    cerad_person__person_event_listener:
+        class: '%cerad_person__person_event_listener__class%'
+        calls:
+             - [setContainer, ['@service_container']]
+        tags:
+            - { name: kernel.event_subscriber }
 
 # ====================================================
 # Data transformers

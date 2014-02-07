@@ -21,12 +21,12 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
     }
     protected function getPersonRepository()
     {
-        return $this->container('cerad_person.person_repository');
+        return $this->container->get('cerad_person.person_repository');
     }
     public function onFindPersonByGuid(Event $event)
     {
         // Just means a listener was available
-        $event->processed = true;
+        $event->stopPropagation();
         
         // Lookup
         $event->person = $this->getPersonRepository()->findOneByGuid($event->guid);
@@ -36,7 +36,7 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
     public function onFindPersonByProjectName(Event $event)
     {
         // Just means a listener was available
-        $event->processed = true;
+        $event->stopPropagation();
         
         // Lookup
         $event->person = $this->getPersonRepository()->findOneByByProjectName($event->projectKey,$event->personName);
@@ -46,7 +46,7 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
     public function onFindPersonByFedKey(Event $event)
     {
         // Just means a listener was available
-        $event->processed = true;
+        $event->stopPropagation();
         
         // Extract
         $fedKey = $event->fedKey;

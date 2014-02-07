@@ -1,5 +1,5 @@
 parameters:
-#    cerad_user.example.class: Cerad\Bundle\UserBundle\Example
+    cerad_user__user_current_factory__class: Cerad\Bundle\UserBundle\Security\UserCurrent
 
 services:
   
@@ -42,13 +42,26 @@ services:
         arguments:
             - '%cerad_user_master_password%'
             
-    cerad_user.user_current:
-        class: Symfony\Component\Security\Core\User\UserInterface
-       #factory_service: cerad_user.current_user_factory
-        factory_class:   Cerad\Bundle\UserBundle\Security\UserCurrent
-        factory_method:  get
+# =============================================================
+# Allows injecting the current user or the current user person
+#
+# Need classes for user and person to keep S2 happy
+    cerad_user__user_current_factory:
+        class: '%cerad_user__user_current_factory__class%'
         arguments:
             - '@security.context'
+            - '@event_dispatcher'
+            
+    cerad_user__user_current:
+        class: Cerad\Bundle\UserBundle\Model\User
+        factory_service: cerad_user__user_current_factory
+        factory_method:  getUser
+        
+    cerad_user__user_person_current:
+        class: Cerad\Bundle\PersonBundle\Model\Person
+        factory_service: cerad_user__user_current_factory
+        factory_method:  getUserPerson
+
       
     # ======================================================
     # Validators

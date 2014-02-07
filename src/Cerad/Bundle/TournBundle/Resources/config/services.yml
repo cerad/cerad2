@@ -88,21 +88,7 @@ services:
         class: Cerad\Bundle\TournBundle\Controller\ActionHelper2
         calls:
              - [setContainer, ['@service_container']]
-                                      
-    cerad_tourn.game_official_selfassign.model:
-        class: Cerad\Bundle\TournBundle\Controller\GameOfficial\GameOfficialSelfAssignModel
-        arguments:
-            - '@cerad_project.project_current'
-            - '@cerad_user.user_current'
-            - '@cerad_person.person_repository'
-            - '@cerad_game.game_repository'
-                        
-    cerad_tourn.game_official_selfassign.controller:
-        class: Cerad\Bundle\TournBundle\Controller\GameOfficial\GameOfficialSelfAssignController
-       #scope: request
-        arguments:
-            - '@cerad_tourn.action_helper2'
-        #   - '@cerad_tourn.schedule_official_selfassign.model'
+        
 
 
             

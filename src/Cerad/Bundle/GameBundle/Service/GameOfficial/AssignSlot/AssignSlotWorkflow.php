@@ -14,7 +14,7 @@ class AssignSlotWorkflow
     const StateNotified  = 'Notified';  // By assignor or system when user views assignment
     
     const StateAccepted  = 'Accepted';  // By user
-    const StateRefused   = 'Refused';   // Bu user
+    const StateDeclined  = 'Declined';  // By user
     
     const StateTurnback          = 'Turnback';          // By user for previously accepted assignment
     const StateTurnbackApproved  = 'TurnbackApproved';  // By assignor - acknowledge turnback
@@ -27,6 +27,30 @@ class AssignSlotWorkflow
     const StateApproved  = 'Approved'; // By assignor
     const StateRejected  = 'Rejected'; // By assignor
     const StateReview    = 'Review';   // By assignor, thinking about it
+    
+    /* ================================================
+     * Same states with role
+     */
+    const StateOpenedByAssignor    = 'Open';     // Went from pedning/published/notified back to open
+    const StatePendingByAssignor   = 'Pending';
+    const StatePublishedByAssignor = 'Published';
+    const StateNotifiedByAssignor  = 'Notified';
+    const StateApprovedByAssignor  = 'Approved';
+    
+    const StateRejectedByAssignor  = 'Rejected';
+    const StateRemovedByAssignor   = 'Removed';
+    const StateReviewByAssignor    = 'Review';
+    
+    const StateTurnbackApprovedByAssignor  = 'TurnbackApproved';
+   
+    
+    const StateAcceptedByAssignee  = 'Accepted';
+    const StateDeclinedByAssignee  = 'Declined';
+    const StateTurnbackByAssignee  = 'Turnback';
+
+    const StateRequestedByAssignee = 'Requested';
+    const StateIfNeededByAssignee  = 'IfNeeded';
+    const StateRemoveByAssignee    = 'Remove';
 
     /* =======================================================
      * Kind of mixing up some presentation logic here
@@ -61,12 +85,12 @@ class AssignSlotWorkflow
                 
             // Set by user
             case self::StateRemove:
-            case self::StateRefused:
+            case self::StateDeclined:
             case self::StateTurnback:
                  return array(
                     self::StateOpen     => self::StateOpen,
                     self::StateRemove   => self::StateRemove,
-                    self::StateRefused  => self::StateRefused,
+                    self::StateDeclined => self::StateDeclined,
                     self::StateTurnback => self::StateTurnback,
                 );
             // Requested by user, approved or rejected by assignor
@@ -123,6 +147,22 @@ class AssignSlotWorkflow
                  return array(
                     self::StateApproved => 'Assignment Was Approved',
                     self::StateTurnback => 'Turnback Assignment',
+                );
+            case self::StatePublished:  // By Assignor
+                 return array(
+                    self::StatePublished => 'Assignment Was Published',
+                    self::StateAccept    => 'Accept Assignment',
+                    self::StateDecline   => 'Decline Assignment',
+                );
+            case self::StateNotified:  // By Assignor
+                 return array(
+                    self::StateNotified => 'You Have Been Notified',
+                    self::StateAccept   => 'Accept Assignment',
+                    self::StateDecline  => 'Decline Assignment',
+                );
+            case self::StatePending:  // By Assignor, User should not see this?
+                 return array(
+                    self::StatePending => 'Assignment Not Yet published',
                 );
        }
        // Oops

@@ -171,11 +171,27 @@ class GameRepository extends EntityRepository
         {
             $ids[] = $gameId['id'];
         }
+        /* =====================================
+         * 07 Feb 2014
+         * Added joins for game fields and game officials
+         * TODO: Replcae game_field with fieldName and venueName
+         * TODO: Add wantOfficials flag
+         * 
+         */
+        $wantOfficials = true;
         
         // Game query
         $qbx = $this->createQueryBuilder('game');
         $qbx->addSelect('gameTeam');
+        $qbx->addSelect('gameField');
+        
+        if ($wantOfficials) $qbx->addSelect('gameOfficial');
+        
         $qbx->leftJoin ('game.teams','gameTeam');
+        $qbx->leftJoin ('game.field','gameField');
+        
+        if ($wantOfficials) $qbx->leftJoin ('game.officials','gameOfficial');
+        
         $qbx->andWhere ('game.id IN (:ids)');
         $qbx->setParameter('ids',$ids);
         
