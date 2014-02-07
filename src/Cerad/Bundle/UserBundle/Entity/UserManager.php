@@ -65,5 +65,9 @@ class UserManager extends UserModelManager
         
         return null;
     }
+    public function findUserByPersonGuid($personGuid)
+    {
+       return $this->userRepository->findOneBy(array('personGuid' => $personGuid));
+    }
 }
 ?>
