@@ -1,6 +1,8 @@
 <?php
 namespace Cerad\Bundle\GameBundle\Service\GameOfficial\AssignSlot;
 
+use Cerad\Bundle\GameBundle\Entity\GameOfficial;
+
 /* =========================================================
  * This could probably be encoded in a yaml file
  */
@@ -43,7 +45,6 @@ class AssignSlotWorkflow
     
     const StateTurnbackApprovedByAssignor  = 'TurnbackApproved';
    
-    
     const StateAcceptedByAssignee  = 'Accepted';
     const StateDeclinedByAssignee  = 'Declined';
     const StateTurnbackByAssignee  = 'Turnback';
@@ -148,11 +149,11 @@ class AssignSlotWorkflow
                     self::StateApproved => 'Assignment Was Approved',
                     self::StateTurnback => 'Turnback Assignment',
                 );
-            case self::StatePublished:  // By Assignor
+            case self::StatePublishedByAssignor:
                  return array(
-                    self::StatePublished => 'Assignment Was Published',
-                    self::StateAccept    => 'Accept Assignment',
-                    self::StateDecline   => 'Decline Assignment',
+                    self::StatePublishedByAssignor => 'Assignment Was Published',
+                    self::StateAcceptedByAssignee  => 'Accept Assignment',
+                    self::StateDeclinedByAssignee  => 'Decline Assignment',
                 );
             case self::StateNotified:  // By Assignor
                  return array(
@@ -167,6 +168,28 @@ class AssignSlotWorkflow
        }
        // Oops
        return array ($state => $state);
+    }
+    /* ============================================================
+     * Determine of the assignor should be notified on state change
+     */
+    public function notifyAssignor($gameOfficialNew,$gameOfficialOld)
+    {
+        // Verify a state change
+        $stateNew = $gameOfficialNew->getAssignState();
+        $stateOld = $gameOfficialOld->getAssignState();
+        if ($stateNew == $stateOld) return false;
+        
+        switch($stateNew)
+        {
+            case self::StateDeclinedByAssignee:
+            case self::StateTurnbackByAssignee:
+                return true;
+        }
+        return false;
+    }
+    public function notifyAssignee($gameOfficialNew,$gameOfficialOld)
+    {
+        
     }
 }
 ?>

@@ -80,13 +80,11 @@ class UserAssignSlotModel
         
         if ($assignStateNew == $assignStateOld) return;
         
-        
         // Tell the world about to change
         $eventPre = new AssignSlotEvent($gameOfficial,$gameOfficialClone);
-        $this->dispatcher->dispatch(GameEvents::GAME_OFFICIAL_ASSIGN_SLOT__PRE, $eventPre);
+        $this->dispatcher->dispatch(GameEvents::GameOfficialAssignSlotPre,$eventPre);
         
-        $person   = $this->person;
-        $gameRepo = $this->gameRepo;
+        $person = $this->person;
         
         // Need to dispatch an event when the state changes
         switch($assignStateNew)
@@ -104,16 +102,23 @@ class UserAssignSlotModel
                 $gameOfficial->setPersonNameFull(null);
                 break;
                 
-            case Workflow::StateTurnback:
+            // Notified assignor
+            case Workflow::StateDeclinedByAssignee:
                 $gameOfficial->setAssignState(Workflow::StateOpen);
                 $gameOfficial->setPersonGuid    (null);
                 $gameOfficial->setPersonNameFull(null);
                 break;
+            
+            case Workflow::StateTurnbackByAssignee:
+              //$gameOfficial->setAssignState(Workflow::StateOpen);
+              //$gameOfficial->setPersonGuid    (null);
+              //$gameOfficial->setPersonNameFull(null);
+                break;
         }
         // Tell the world changed
-        $gameRepo->commit();
+        $this->gameRepo->commit();
         $eventPost = new AssignSlotEvent($gameOfficial,$gameOfficialClone);
-        $this->dispatcher->dispatch(GameEvents::GAME_OFFICIAL_ASSIGN_SLOT__POST, $eventPost);
+        $this->dispatcher->dispatch(GameEvents::GameOfficialAssignSlotPost,$eventPost);
         
         return;
     }
