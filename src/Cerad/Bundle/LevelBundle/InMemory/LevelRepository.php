@@ -60,6 +60,8 @@ class LevelRepository implements LevelRepositoryInterface
     }
     protected function filterProperty($params,$name,$value)
     {
+        $value = strtolower($value);
+        
         if (!isset($params[$name])) return true;
         
         $props = $params[$name];
@@ -72,25 +74,9 @@ class LevelRepository implements LevelRepositoryInterface
             $parts = explode(',',$prop);
             foreach($parts as $part)
             {
-                if (trim($part) == $value) return true;
+                // Case insensitive like mysql
+                if (strtolower(trim($part)) == $value) return true;
             }
-        }
-        return false;
-    }
-    protected function filterPropertyx($params,$name,$value)
-    {
-        if (!isset($params[$name])) return true;
-        
-        $props = $params[$name];
-        if (!is_array($props))
-        {
-            return ($props == $value);
-        }
-        if (count($props) < 1) return true;
-        
-        foreach($props as $prop)
-        {
-            if ($prop == $value) return true;
         }
         return false;
     }
