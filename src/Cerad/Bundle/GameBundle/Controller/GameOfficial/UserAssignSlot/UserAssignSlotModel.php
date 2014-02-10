@@ -6,14 +6,14 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\EventDispatcher\Event as PersonFindEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-// Make my own exceptions
+// Make my own exceptions?
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\Security\Exception\AccessDeniedException;
 
 use Cerad\Bundle\PersonBundle\Events as PersonEvents;
 
-use Cerad\Bundle\GameBundle\Events   as GameEvents;
-use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
+//  Cerad\Bundle\GameBundle\Events   as GameEvents;
+//  Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 
 use Cerad\Bundle\GameBundle\Service\GameOfficial\AssignSlot\AssignSlotWorkflow as Workflow;
 
@@ -33,7 +33,6 @@ class UserAssignSlotModel
     public $slot;
     public $game;
     public $gameOfficial;
-    public $gameOfficialClone;
         
     public $person;  // AKA Official
     public $persons; // AKA Officials
@@ -41,15 +40,17 @@ class UserAssignSlotModel
     public $valid = false;
     
     protected $gameRepo;
+    protected $workflow;
     
-    public function __construct($project, $userPerson, $gameRepo)
+    public function __construct($project, $userPerson, $gameRepo, Workflow $workflow)
     {   
         $this->userPerson = $userPerson;
         
         $this->project    = $project;
         $this->projectKey = $project->getKey();
         
-        $this->gameRepo   = $gameRepo;
+        $this->gameRepo = $gameRepo;
+        $this->workflow = $workflow;
     }
     public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
     
@@ -68,58 +69,12 @@ class UserAssignSlotModel
     
     /* =====================================================
      * Process a posted model
+     * Turn everything over to the workflow
      */
     public function process()
     {   
-        // See if the state was changed
-        $gameOfficial      = $this->gameOfficial;
-        $gameOfficialClone = $this->gameOfficialClone;
-        
-        $assignStateNew = $gameOfficial->getAssignState();
-        $assignStateOld = $gameOfficialClone->getAssignState();
-        
-        if ($assignStateNew == $assignStateOld) return;
-        
-        // Tell the world about to change
-        $eventPre = new AssignSlotEvent($gameOfficial,$gameOfficialClone);
-        $this->dispatcher->dispatch(GameEvents::GameOfficialAssignSlotPre,$eventPre);
-        
-        $person = $this->person;
-        
-        // Need to dispatch an event when the state changes
-        switch($assignStateNew)
-        {
-            case Workflow::StateRequested:
-            case Workflow::StateIfNeeded:
-                $gameOfficial->setAssignState($assignStateNew);
-                $gameOfficial->setPersonGuid    ($person->getGuid());
-                $gameOfficial->setPersonNameFull($person->getName()->full);
-                break;
-                
-            case Workflow::StateRemove:
-                $gameOfficial->setAssignState(Workflow::StateOpen);
-                $gameOfficial->setPersonGuid    (null);
-                $gameOfficial->setPersonNameFull(null);
-                break;
-                
-            // Notified assignor
-            case Workflow::StateDeclinedByAssignee:
-                $gameOfficial->setAssignState(Workflow::StateOpen);
-                $gameOfficial->setPersonGuid    (null);
-                $gameOfficial->setPersonNameFull(null);
-                break;
-            
-            case Workflow::StateTurnbackByAssignee:
-              //$gameOfficial->setAssignState(Workflow::StateOpen);
-              //$gameOfficial->setPersonGuid    (null);
-              //$gameOfficial->setPersonNameFull(null);
-                break;
-        }
-        // Tell the world changed
+        $this->workflow->processPostByAssignee($this->gameOfficial,$this->personPlan);
         $this->gameRepo->commit();
-        $eventPost = new AssignSlotEvent($gameOfficial,$gameOfficialClone);
-        $this->dispatcher->dispatch(GameEvents::GameOfficialAssignSlotPost,$eventPost);
-        
         return;
     }
     /* =========================================================================
@@ -141,57 +96,32 @@ class UserAssignSlotModel
         if (!$gameOfficial) {
             throw new NotFoundHttpException(sprintf('Game Slot %d,%id does not exist.',$num,$slot));
         }
+        // Like an internal clone
+        $gameOfficial->saveOriginalInfo();
+        
         // Verify have a person
         //$personGuid = $this->user ? $this->user->getPersonGuid() : null;
         //$person = $this->findPersonByGuid($personGuid);
         $person = $this->userPerson;
         if (!$person) 
         {
-            throw new AccessDeniedHttpException(sprintf('Game Slot %d,%id, has no person record.',$num,$slot));
+            throw new AccessDeniedException(sprintf('Game Slot %d,%id, has no person record.',$num,$slot));
         }
         if (!$gameOfficial->isUserAssignable()) {
-            throw new AccessDeniedHttpException(sprintf('Game Slot %d,%id is not user assignable.',$num,$slot));
+            throw new AccessDeniedException(sprintf('Game Slot %d,%id is not user assignable.',$num,$slot));
         }
-        $gameOfficialClone = clone $gameOfficial;
-        
         // Must be a referee
         $personPlan = $person->getPlan($this->projectKey,false);
+        if (!$personPlan) 
+        {
+            throw new AccessDeniedException(sprintf('Game Slot %d,%id, has no person plan record.',$num,$slot));
+        }
         
-        // This is okay for now
+        // This should be okay and makes the single slot request form more usable
         if (!$gameOfficial->getPersonNameFull())
         {
-            if ($personPlan)
-            {
-                $gameOfficial->setPersonNameFull($personPlan->getPersonName());
-            }
+            $gameOfficial->setPersonNameFull($personPlan->getPersonName());
         }
-        /* =================================================
-         * Enough checking for now
-         * 
-        $personNameFull = $person->getName()->full;
-        
-        // Already have someone signed up
-        if ($gameOfficial->getPersonGuid())
-        {
-            // Okay - might want to request removal
-            if ($gameOfficial->getPersonGuid() != $personGuid) return;
-        }
-        // Check for name?
-        if ($gameOfficial->getPersonNameFull())
-        {
-            // Okay - might want to request removal
-            if ($gameOfficial->getPersonNameFull() != $personNameFull) return;
-        }
-        // Make sure the person is a referee
-        
-        // Actually assign the person here?
-        $gameOfficial->setPersonGuid    ($personGuid);
-        $gameOfficial->setPersonNameFull($personNameFull);
-        
-        // Request assignment or request removal
-        // Needs to be in SelfAssign workflow state
-        if (!$gameOfficial->getState()) $gameOfficial->setState('Requested');
-        */
         
         // Want to see if person is part of a group for this project
         $persons = array($person);
@@ -200,10 +130,11 @@ class UserAssignSlotModel
         $this->slot = $slot;
         $this->game = $game;
         
-        $this->gameOfficial      = $gameOfficial;
-        $this->gameOfficialClone = $gameOfficialClone;
+        $this->gameOfficial = $gameOfficial;
         
-        $this->person  = $person;  // AKA Official
+        $this->person     = $person;  // AKA Official
+        $this->personPlan = $personPlan;
+        
         $this->persons = $persons; // AKA Officials
         
         $this->valid = true;

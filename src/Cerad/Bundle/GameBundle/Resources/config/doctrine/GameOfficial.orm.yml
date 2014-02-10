@@ -94,7 +94,7 @@ Cerad\Bundle\GameBundle\Entity\GameOfficial:
             length:   20
             nullable: true
             
-        state:
+        assignState:
             column:   state
             type:     string
             length:   20

@@ -1,7 +1,7 @@
 <?php
 namespace Cerad\Bundle\GameBundle\Service\GameOfficial\AssignSlot;
 
-use Cerad\Bundle\GameBundle\Entity\GameOfficial;
+use Symfony\Component\Yaml\Yaml;
 
 /* =========================================================
  * This could probably be encoded in a yaml file
@@ -18,8 +18,8 @@ class AssignSlotWorkflow
     const StateAccepted  = 'Accepted';  // By user
     const StateDeclined  = 'Declined';  // By user
     
-    const StateTurnback          = 'Turnback';          // By user for previously accepted assignment
-    const StateTurnbackApproved  = 'TurnbackApproved';  // By assignor - acknowledge turnback
+    const StateTurnedBack          = 'TurnedBack';          // By user for previously accepted assignment
+    const StateTurnedBackApproved  = 'TurnedBackApproved';  // By assignor - acknowledge turnback
 
     // Self Assign Workflow
     const StateRequested = 'Requested'; // By user for self assigning
@@ -43,7 +43,7 @@ class AssignSlotWorkflow
     const StateRemovedByAssignor   = 'Removed';
     const StateReviewByAssignor    = 'Review';
     
-    const StateTurnbackApprovedByAssignor  = 'TurnbackApproved';
+    const StateTurnedBackApprovedByAssignor  = 'TurnedBackApproved';
    
     const StateAcceptedByAssignee  = 'Accepted';
     const StateDeclinedByAssignee  = 'Declined';
@@ -54,141 +54,102 @@ class AssignSlotWorkflow
     const StateRemoveByAssignee    = 'Remove';
 
     /* =======================================================
-     * Kind of mixing up some presentation logic here
+     * Initialize using yaml
      * 
-     * In theory we should have one case per state
-     * Need to handle some game change logic
+     * Next time get a name mismatch then do a verification
+     */
+    public function __construct($configFilePath)
+    {
+        $config = Yaml::parse(file_get_contents($configFilePath));
+        
+        $this->assigneeStateTransitions  = $config['assigneeStateTransitions'];
+        $this->assignorStateTransitions  = $config['assignorStateTransitions'];
+        $this->mapInternalToPostedStates = $config['assignStateMap'];
+        
+        $map = array();
+        foreach($this->mapInternalToPostedStates as $key => $value)
+        {
+            $map[$value] = $key;
+        }
+        $this->mapPostedToInternalStates = $map;
+    }
+    public function mapInternalStateToPostedState($state)
+    {
+        if (isset( $this->mapInternalToPostedStates[$state])) {
+            return $this->mapInternalToPostedStates[$state];
+        }
+        echo sprintf("Missing State: %s<br />\n",$state);
+        print_r(array_keys($this->mapInternalToPostedStates));
+        die();
+    }
+    public function mapPostedStateToInternalState($state)
+    {
+        if (isset( $this->mapPostedToInternalStates[$state])) {
+            return $this->mapPostedToInternalStates[$state];
+        }
+        echo sprintf("Missing State: %s<br />\n",$state);
+        print_r(array_keys($this->mapPostedToInternalStates));
+        die();
+    }
+    /* =======================================================
+     * Select options for current state
      */
     public function getStateOptionsForAssignorWorkflow($state)
     {
-        switch($state)
-        {
-            // Set by assignor
-            case self::StateOpen:
-            case self::StatePending:
-            case self::StatePublished:
-            case self::StateAccepted:
-                return array(
-                    self::StateOpen      => self::StateOpen,
-                    self::StatePending   => self::StatePending,
-                    self::StatePublished => self::StatePublished,
-                    self::StateNotified  => self::StateNotified,
-                    self::StateAccepted  => self::StateAccepted,
-                    self::StateApproved  => self::StateApproved,
-                );
-                
-            // Set by assignor
-            case self::StateApproved:
-                return array(
-                    self::StateApproved  => self::StateApproved,
-                    self::StateRemove    => 'Remove from game',
-                );
-                
-            // Set by user
-            case self::StateRemove:
-            case self::StateDeclined:
-            case self::StateTurnback:
-                 return array(
-                    self::StateOpen     => self::StateOpen,
-                    self::StateRemove   => self::StateRemove,
-                    self::StateDeclined => self::StateDeclined,
-                    self::StateTurnback => self::StateTurnback,
-                );
-            // Requested by user, approved or rejected by assignor
-            case self::StateRequested:
-            case self::StateIfNeeded:
-            case self::StateRejected:  // Should not occur
-            case self::StateReview:
-                 return array(
-                    self::StateRequested => 'Requested by User',
-                    self::StateIfNeeded  => 'If Needed',
-                    self::StateApproved  => 'Approve Request',
-                    self::StateRejected  => 'Reject Request',
-                    self::StateReview    => 'Under Review',
-                );               
-        }
-        // Oops
-        return array ($state => $state);
+        return $this->getStateOptions($state,$this->assignorStateTransitions);
     }
-    /* ====================================================
-     * The assumption is that the user has already been checked
-     * and is allowed to do these things
-     */
     public function getStateOptionsForUserWorkflow($state)
     {
-        switch($state)
-        {
-            case self::StateOpen:
-                 return array(
-                    self::StateOpen      => self::StateOpen,
-                    self::StateRequested => 'Request Assignment',
-                    self::StateIfNeeded  => 'Will Do If Needed',
-                );
-            case self::StateRequested:
-                 return array(
-                    self::StateRequested => 'Assignment Requested',
-                    self::StateRemove    => 'Remove Me From Assignment',
-                );
-            case self::StateIfNeeded:
-                 return array(
-                    self::StateIfNeeded  => 'Will Do If Needed',
-                    self::StateRemove    => 'Remove Me From Assignment',
-                );
-            case self::StateReview:
-                 return array(
-                    self::StateReview    => 'Assignment Under Review',
-                    self::StateRemove    => 'Remove Me From Assignment',
-                );
-             case self::StateAccepted:
-                 return array(
-                    self::StateAccepted => 'Assignment Was Accepted',
-                    self::StateTurnback => 'Turnback Assignment',
-                );
-             case self::StateApproved:
-                 return array(
-                    self::StateApproved => 'Assignment Was Approved',
-                    self::StateTurnback => 'Turnback Assignment',
-                );
-            case self::StatePublishedByAssignor:
-                 return array(
-                    self::StatePublishedByAssignor => 'Assignment Was Published',
-                    self::StateAcceptedByAssignee  => 'Accept Assignment',
-                    self::StateDeclinedByAssignee  => 'Decline Assignment',
-                );
-            case self::StateNotified:  // By Assignor
-                 return array(
-                    self::StateNotified => 'You Have Been Notified',
-                    self::StateAccept   => 'Accept Assignment',
-                    self::StateDecline  => 'Decline Assignment',
-                );
-            case self::StatePending:  // By Assignor, User should not see this?
-                 return array(
-                    self::StatePending => 'Assignment Not Yet published',
-                );
-       }
-       // Oops
-       return array ($state => $state);
+        return $this->getStateOptions($state,$this->assigneeStateTransitions);
+    }
+    protected function getStateOptions($state,$transitions)
+    {
+        $state = $this->mapPostedStateToInternalState($state);
+        
+        $items = $transitions[$state];
+        $options = array();
+        foreach($items as $state => $item)
+        {   
+            $state = $this->mapInternalStateToPostedState($state);   
+            $options[$state] = $item['desc'];
+        }
+        return $options;
     }
     /* ============================================================
-     * Determine of the assignor should be notified on state change
+     * Do all the updating and stuff
      */
-    public function notifyAssignor($gameOfficialNew,$gameOfficialOld)
+    public function processPostByAssignee($gameOfficialNew,$personPlan)
     {
-        // Verify a state change
-        $stateNew = $gameOfficialNew->getAssignState();
-        $stateOld = $gameOfficialOld->getAssignState();
-        if ($stateNew == $stateOld) return false;
+        $gameOfficialOrg = $gameOfficialNew->retrieveOriginalInfo();
         
-        switch($stateNew)
+        $assignStateNew = $this->mapPostedStateToInternalState($gameOfficialNew->getAssignState());
+        $assignStateOrg = $this->mapPostedStateToInternalState($gameOfficialOrg['assignState']);
+        
+        if ($assignStateNew == $assignStateOrg) return;
+        
+        $transition = $this->assigneeStateTransitions[$assignStateOrg][$assignStateNew];
+        
+        // Normally go directly to new state but sometimes want a different state
+        $assignStateMod = isset($transition['modState']) ? $transition['modState'] : $assignStateNew;
+        if ($assignStateMod != $assignStateNew)
         {
-            case self::StateDeclinedByAssignee:
-            case self::StateTurnbackByAssignee:
-                return true;
+            $gameOfficialNew->setAssignState($this->mapInternalStateToPostedState($assignStateMod));
         }
-        return false;
-    }
-    public function notifyAssignee($gameOfficialNew,$gameOfficialOld)
-    {
+        // Transfer or clear person
+        switch($assignStateMod)
+        {
+            case 'StateOpen':
+                $gameOfficialNew->setPerson(null);
+                break;
+            default:
+                $gameOfficialNew->setPerson($personPlan);
+        }
+        // Should we notify the assignor
+        $notifyAssignor = isset($transition['notifyAssignor']) ? true : false;
+        
+        if (!$notifyAssignor) return;
+        
+        // Need to setup message to the notify assignor listener
         
     }
 }

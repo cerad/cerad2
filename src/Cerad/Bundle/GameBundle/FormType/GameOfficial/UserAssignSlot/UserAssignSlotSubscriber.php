@@ -46,7 +46,7 @@ class UserAssignSlotSubscriber implements EventSubscriberInterface
         
         $states = $this->assignSlotWorkflow->getStateOptionsForUserWorkflow($gameOfficial->getAssignState());
         
-        $form->add($this->factory->createNamed('state','choice', null, array(
+        $form->add($this->factory->createNamed('assignState','choice', null, array(
             'required'        => true,
           //'empty_value'     => 'Assignment Status',
           //'empty_data'      => null,

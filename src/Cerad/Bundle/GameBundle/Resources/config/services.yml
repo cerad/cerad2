@@ -60,6 +60,7 @@ services:
             - '@cerad_project.project_current'
             - '@cerad_user__user_person_current'
             - '@cerad_game.game_repository'
+            - '@cerad_game__game_official__assign_slot__workflow'
                         
     cerad_game__game_official__user_assign_slot__form_factory:
         class: Cerad\Bundle\GameBundle\Controller\GameOfficial\UserAssignSlot\UserAssignSlotFormFactory
@@ -84,4 +85,6 @@ services:
             
     cerad_game__game_official__assign_slot__workflow:
         class: '%cerad_game__game_official__assign_slot__workflow__class%'
+        arguments:
+            - '%cerad_game__AssignSlotWorkfloe__file%'
 

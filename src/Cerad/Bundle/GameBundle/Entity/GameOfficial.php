@@ -16,8 +16,8 @@ class GameOfficial extends AbstractEntity
     protected $slot; // 1-5 for arbiter
     protected $role; // Referee, AR1 etc
     
-    protected $assignRole;   // ROLE_USER, ROLE_ASSIGNOR
-    protected $assignState;  // Current state, see AssignmentWorkflow
+    protected $assignRole;            // ROLE_USER, ROLE_ASSIGNOR
+    protected $assignState = 'Open';  // Current state, see AssignSlotWorkflow
     
     protected $personNameFull;
     protected $personNameLast;
@@ -32,7 +32,7 @@ class GameOfficial extends AbstractEntity
     protected $report;
     protected $status = 'Active';
    
-    protected $state;           // Workflow
+    // TODO: Rename to assignStateUpdated
     protected $stateUpdatedOn;
     protected $stateUpdatedBy;
     
@@ -43,7 +43,7 @@ class GameOfficial extends AbstractEntity
     public function getRole() { return $this->role;   }
     
     public function getAssignRole     () { return $this->assignRole;      }
-    public function getAssignState    () { return $this->state;           }
+    public function getAssignState    () { return $this->assignState;     }
     
     public function getPersonNameFull () { return $this->personNameFull;  }
     public function getPersonNameLast () { return $this->personNameLast;  }
@@ -60,7 +60,7 @@ class GameOfficial extends AbstractEntity
     public function getReport()          { return $this->report;          }
     public function getStatus()          { return $this->status;          }
     
-    public function getState()          { return $this->state;          }
+    public function getState         () { return $this->assignState;    }
     public function getStateUpdatedOn() { return $this->stateUpdatedOn; }
     public function getStateUpdatedBy() { return $this->stateUpdatedBy; }
 
@@ -69,7 +69,7 @@ class GameOfficial extends AbstractEntity
     public function setRole($value) { $this->onPropertySet('role',  $value); }
     
     public function setAssignRole     ($value) { $this->onPropertySet('assignRole', $value); }
-    public function setAssignState    ($value) { $this->onPropertySet('state',      $value); }
+    public function setAssignState    ($value) { $this->onPropertySet('assignState',$value); }
      
     public function setPersonNameFull ($value) { $this->onPropertySet('personNameFull', $value); }
     public function setPersonNameLast ($value) { $this->onPropertySet('personNameLast', $value); }
@@ -86,7 +86,6 @@ class GameOfficial extends AbstractEntity
     public function setReport         ($value) { $this->onPropertySet('report',         $value); }
     public function setStatus         ($value) { $this->onPropertySet('status',         $value); }
     
-    public function setState          ($value) { $this->onPropertySet('state',          $value); }
     public function setStateUpdatedOn ($value) { $this->onPropertySet('stateUpdatedOn', $value); }
     public function setStateUpdatedBy ($value) { $this->onPropertySet('stateUpdatedBy', $value); }
     
@@ -109,6 +108,21 @@ class GameOfficial extends AbstractEntity
     protected $isSelected      = false;
     protected $isUserUpdatable = false;
     
+    protected $originalInfo = array();
+    
+    public function saveOriginalInfo()
+    {
+        $this->originalInfo = array
+        (
+            'assignState'    => $this->assignState,
+            'personGuid'     => $this->personGuid,
+            'personNameFull' => $this->personNameFull,
+        );
+    }
+    public function retrieveOriginalInfo()
+    {
+        return $this->originalInfo;
+    }
     public function __get($name)
     {
         switch($name)
@@ -127,6 +141,19 @@ class GameOfficial extends AbstractEntity
                 $this->$name = $value;
                 return $this;
         }
+    }
+    // Copies or clears person info
+    public function setPerson($personPlan)
+    {
+        if (!$personPlan)
+        {
+            $this->setPersonGuid    (null);
+            $this->setPersonNameFull(null);
+            return;
+        }
+        $person = $personPlan->getPerson();
+        $this->setPersonGuid    ($person->getGuid());
+        $this->setPersonNameFull($personPlan->getPersonName());
     }
 }
 
