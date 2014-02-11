@@ -24,8 +24,11 @@ class AssignByAssignorController
      * Either assign or self assign
      * Model is injected, some checks have been made
      */
-    public function assignAction(Request $request, UserAssignSlotModel $model, FormInterface $form)
+  //public function assignAction(Request $request, UserAssignSlotModel $model, FormInterface $form)
+    public function assignAction(Request $request, $project, $game)
     {   
+        echo sprintf("Game %s %d\n",$project->getSlug(),$game->getNum());
+        die();
         // Standard redirect, can't decide if the model should be able to generate these
         $redirectRoute = $request->attributes->get('_redirect');
         $redirectUrl   = $this->router->generate($redirectRoute);

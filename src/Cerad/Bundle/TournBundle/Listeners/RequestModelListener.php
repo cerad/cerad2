@@ -28,6 +28,8 @@ class RequestModelListener extends ContainerAware implements EventSubscriberInte
     }
     public function onKernelRequest(GetResponseEvent $event)
     {
+        return;
+        
         // Only process routes with a model
         $request           = $event->getRequest();
         $requestAttributes = $request->attributes;

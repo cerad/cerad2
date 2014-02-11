@@ -31,6 +31,7 @@ class AppKernel extends Kernel
             
             new Cerad\Bundle\ApiV1Bundle\CeradApiV1Bundle(),
             new Cerad\Bundle\EaysoBundle\CeradEaysoBundle(),
+            new Cerad\Bundle\CoreBundle\CeradCoreBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

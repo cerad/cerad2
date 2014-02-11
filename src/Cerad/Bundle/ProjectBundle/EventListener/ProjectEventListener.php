@@ -6,8 +6,8 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
-//  Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -37,19 +37,25 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
     }
     public function onKernelRequest(GetResponseEvent $event)
     {
-        // Only process routes with a model
-        $request = $event->getRequest();
-        $projectSlug = $request->attributes->get('_project');
-        if (!$projectSlug) return;
-       
-        $project = $this->getProjectRepository()->findOneBySlug($projectSlug);
+        // Will a sub request ever change projects?
+        if (HttpKernel::MASTER_REQUEST != $event->getRequestType()) return;
         
-        if ($project)
+        // Only process routes asking for a project
+        if (!$event->getRequest()->attributes->has('_project')) return;
+
+        // Pull the slug
+        $request = $event->getRequest();
+        
+        $projectSlug = $request->attributes->get('_project');
+       
+        // Query the project
+        $project = $this->getProjectRepository()->findOneBySlug($projectSlug);
+        if (!$project)
         {
-            $request->attributes->set('project',$project);
-            return;
+            throw new NotFoundHttpException(sprintf('Project %s not found',$projectSlug));
         }
-        throw new NotFoundHttpException(sprintf('Project %s not found',$projectSlug));
+        // Stash it
+        $request->attributes->set('project',$project);
     }
     public function onFindProjectBySlug(Event $event)
     {

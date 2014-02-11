@@ -1,3 +1,7 @@
+cerad_core:
+    resource: "@CeradCoreBundle/Resources/config/routing.yml"
+    prefix:   /
+
 cerad_eayso:
     resource: "@CeradEaysoBundle/Resources/config/routing.yml"
     prefix:   /

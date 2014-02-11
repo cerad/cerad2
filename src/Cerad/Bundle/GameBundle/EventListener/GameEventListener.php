@@ -5,6 +5,7 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -38,10 +39,15 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
     }
     public function onKernelRequest(GetResponseEvent $event)
     {
-        // Only process routes with a model
+        // Will a sub request ever change projects?
+        if (HttpKernel::MASTER_REQUEST != $event->getRequestType()) return;
+        
+        // Only process routes asking for a game
+        if (!$event->getRequest()->attributes->has('_game')) return;
+        
+        // Pull the game number
         $request = $event->getRequest();
         $gameNum = $request->attributes->get('_game');
-        if (!$gameNum) return;
         
         // Must have already gotten the project
         if (!$request->attributes->has('project'))
@@ -51,15 +57,14 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         }
         $projectKey = $request->attributes->get('project')->getKey();
         
+        // Query Game
         $game = $this->getGameRepository()->findOneByProjectNum($projectKey,$gameNum);
-        
-        if ($game)
+        if (!$game)
         {
-            die('Found Game: ' . $game->getNum());
-            $request->attributes->set('game',$game);
-            return;
+            throw new NotFoundHttpException(sprintf('Game %s %d not found',$projectKey,$gameNum));
         }
-        throw new NotFoundHttpException(sprintf('Game %s %d not found',$projectKey,$gameNum));
+        // Stash It
+        $request->attributes->set('game',$game);
     }
     /* ====================================================================
      * Assignment stuff
