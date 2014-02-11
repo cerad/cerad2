@@ -35,9 +35,7 @@ class Person extends BaseModel implements PersonInterface
         
     protected $verified  = 'No';
     protected $status    = 'Active';
-    
-    protected $user;
-    
+        
     // Setting to array messes up qp left join
     protected $feds;    // = array();
     protected $plans;   // = array();
@@ -53,7 +51,6 @@ class Person extends BaseModel implements PersonInterface
         $this->feds    = array();
         $this->plans   = array();
         $this->persons = array();
-        
     }
     /* ======================================================================
      * Standard getters/setters/creators
@@ -166,14 +163,25 @@ class Person extends BaseModel implements PersonInterface
         
         $this->onPropertyChanged('plans');
     }
-    public function getPlan($projectId, $autoCreate = true, $autoAdd = true)
+    public function getPlan($projectKey = null, $autoCreate = true, $autoAdd = true)
     {
-        if (isset($this->plans[$projectId])) return $this->plans[$projectId];
+        if (!$projectKey)
+        {
+            // Should be a better way but reset does not like assoc arrays
+            // And array_keys does not like objects
+            // Seems to work okay even though returning in the middle of a foreach loop
+            // Use to array if need be
+            foreach($this->plans as $plan)
+            {
+                return $plan;
+            }
+        }
+        if (isset($this->plans[$projectKey])) return $this->plans[$projectKey];
         
         if (!$autoCreate) return null;
         
         $plan = $this->createPlan();
-        $plan->setProjectId($projectId);
+        $plan->setProjectId($projectKey);
         $plan->setPersonName($this->getName()->full);
         if (!$autoAdd) return $plan;
         
@@ -254,6 +262,7 @@ class Person extends BaseModel implements PersonInterface
     /* ==========================================
      * External link
      */
+    protected $user;
     public function getUser()      { return  $this->user; }
     public function setUser($user) { $this->user = $user; }
 }

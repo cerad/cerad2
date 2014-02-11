@@ -3,15 +3,12 @@ namespace Cerad\Bundle\CoreBundle\EventListener;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 
+use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-
-//  Symfony\Component\Security\Core\SecurityContextInterface;
-//  Symfony\Component\Routing\RouterInterface;
-//  Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /* ========================================================
  * Rather poorly named but takes care of creating the model,form and possible view
@@ -30,8 +27,6 @@ class CoreRequestListener extends ContainerAware implements EventSubscriberInter
     const PersonEventListenerPriority  =  -64;
     const ModelRequestListenerPriority = -256;
     
-    protected $redirectRoute = 'cerad_tourn_welcome';
-    
     public static function getSubscribedEvents()
     {
         return array
@@ -41,64 +36,41 @@ class CoreRequestListener extends ContainerAware implements EventSubscriberInter
     }
     public function onKernelRequest(GetResponseEvent $event)
     {
-        return;
+        // Will a sub request ever change this?
+        if (HttpKernel::MASTER_REQUEST != $event->getRequestType()) return;
+        
+        // Only process routes asking for a model
+        if (!$event->getRequest()->attributes->has('_model')) return;
         
         // Only process routes with a model
-        $request           = $event->getRequest();
-        $requestAttributes = $request->attributes;
+        $request      = $event->getRequest();
+        $requestAttrs = $request->attributes;
         
-        $modelFactoryServiceId = $requestAttributes->get('_model');
+        $modelFactoryServiceId = $requestAttrs->get('_model');
         
-        if (!$modelFactoryServiceId) return;
-   
-        // Probably getting too cute here
-        // $requestAttributes->set('refererUrl',$request->headers->get('referer'));
-        
-        // Create the model
         $modelFactory = $this->container->get($modelFactoryServiceId);
         
-        // Throws exceptions on errors
-        try 
-        {
-            $model = $modelFactory->create($requestAttributes);
-        }
-        catch (\Exception $e)
-        {
-            // TODO: Handle this in exception controller
-            // Or maybe just change the controller here?
-            throw $e;
-            
-            $router = $this->container->get('router');
-            
-            $redirect = $requestAttributes->get('_redirect');
-            
-            if (!$redirect) $redirect = $this->redirect;
-            
-            $url = $router->generate($this->redirect);
+        $model = $modelFactory->create($request);
         
-            $response = new RedirectResponse($url);
+        $requestAttrs->set('model',$model);
         
-            $event->setResponse($response);
-            
-            return;
-        }
-        $requestAttributes->set('model',$model);
+        return;
         
+         
         // Have a form?
-        $formFactoryServiceId = $requestAttributes->get('_form');
+        $formFactoryServiceId = $requestAttrs->get('_form');
         if (!$formFactoryServiceId) return;
         
         $formFactory = $this->container->get($formFactoryServiceId);
        
         try
         {
-            $form = $formFactory->create($requestAttributes,$model);
+            $form = $formFactory->create($requestAttrs,$model);
         }
         catch (\Exception $e)
         {
             throw $e;
         }
-        $requestAttributes->set('form',$form);
+        $requestAttrs->set('form',$form);
     }
 }
-?>

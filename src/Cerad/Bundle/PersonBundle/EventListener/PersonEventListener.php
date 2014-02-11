@@ -6,7 +6,7 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-use Cerad\Bundle\PersonBundle\Events;
+use Cerad\Bundle\PersonBundle\PersonEvents;
 
 class PersonEventListener extends ContainerAware implements EventSubscriberInterface
 {
@@ -14,14 +14,30 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
     {
         return array
         (
-            Events::FindPersonByGuid        => array('onFindPersonByGuid'  ),
-            Events::FindPersonByFedKey      => array('onFindPersonByFedKey'),
-            Events::FindPersonByProjectName => array('onFindPersonByProjectName'),
+            PersonEvents::FindPersonByGuid        => array('onFindPersonByGuid'  ),
+            PersonEvents::FindPersonByFedKey      => array('onFindPersonByFedKey'),
+            PersonEvents::FindPersonByProjectName => array('onFindPersonByProjectName'),
+            PersonEvents::FindOfficialsByProject  => array('onFindOfficialsByProject'),
         );
+    }
+    protected $personRepositoryServiceId;
+    
+    public function __construct($personRepositoryServiceId)
+    {
+        $this->personRepositoryServiceId = $personRepositoryServiceId;
     }
     protected function getPersonRepository()
     {
-        return $this->container->get('cerad_person.person_repository');
+        return $this->container->get($this->personRepositoryServiceId);
+    }
+    public function onFindOfficialsByProject(Event $event)
+    {
+        // Just means a listener was available
+        $event->stopPropagation();
+        
+        $projectKey = $event->project->getKey();
+        
+        $event->officials = $this->getPersonRepository()->findOfficialsByProject($projectKey);        
     }
     public function onFindPersonByGuid(Event $event)
     {

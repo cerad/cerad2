@@ -46,6 +46,27 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         
         return $qb->getQuery()->getResult();
     }
+    public function findOfficialsByProject($projectKey)
+    {
+        $qb = $this->createQueryBuilder('person');
+        
+        $qb->addSelect('personPlan');
+        $qb->leftJoin ('person.plans','personPlan');
+        
+        $qb->andWhere('personPlan.projectId IN (:projectKey)');
+        $qb->setParameter('projectKey',$projectKey);
+ 
+        $qb->orderBy('personPlan.personName');
+        
+        $persons = $qb->getQuery()->getResult();
+        $officials = array();
+        foreach($persons as $person)
+        {
+            $personPlan = $person->getPlan();
+            if ($personPlan->isOfficial()) $officials[] = $person;
+        }
+        return $officials;
+    }
     /* ===========================================================
      * Looking up person for a project by their full name
      * Take into account the possibility that there might be two people with the same name

@@ -135,6 +135,29 @@ class PersonPlan extends BaseModel
        
         $this->setBasic($basic);
     }
+    /* ====================================================
+     * This sort of fits here
+     * Want to be be able to customize by injecting something?
+     */
+    public function isOfficial()
+    {
+        $basic = $this->getBasic();
         
+        $willAttend  = isset($basic['attending' ]) ? $basic['attending']  : null;
+        switch(strtolower($willAttend))
+        {
+            case 'yes':
+            case 'we1';
+            case 'we2';
+            case 'we12':
+                break;
+            default:
+                return false;
+        }
+        $willReferee = isset($basic['refereeing']) ? $basic['refereeing'] : null;
+        if (strtolower($willReferee) != 'yes') return false;
+        
+        return true;
+    }        
 }
 ?>

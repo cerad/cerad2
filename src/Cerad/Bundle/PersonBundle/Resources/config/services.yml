@@ -24,12 +24,17 @@ services:
     cerad_person.person_repository:
         alias: cerad_person.person_repository.doctrine
         
+    cerad_person__person_repository:
+        alias: cerad_person.person_repository.doctrine
+        
     cerad_person__person_event_listener:
         class: '%cerad_person__person_event_listener__class%'
         calls:
              - [setContainer, ['@service_container']]
         tags:
             - { name: kernel.event_subscriber }
+        arguments:
+            - 'cerad_person__person_repository'
 
 # ====================================================
 # Data transformers

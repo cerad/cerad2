@@ -2,9 +2,11 @@
 
 namespace Cerad\Bundle\PersonBundle;
 
-final class Events
+final class PersonEvents
 {
     const FindPersonByGuid        = 'CeradPersonFindPersonByGuid';
     const FindPersonByFedKey      = 'CeradPersonFindPersonByFedKey';
     const FindPersonByProjectName = 'CeradPersonFindPersonByProjectName';
+    
+    const FindOfficialsByProject  = 'CeradPersonFindOfficialsByProject';
 }

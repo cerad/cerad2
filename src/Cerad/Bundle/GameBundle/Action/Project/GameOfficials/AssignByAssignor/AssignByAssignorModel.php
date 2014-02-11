@@ -1,21 +1,17 @@
 <?php
 namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor;
 
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\EventDispatcher\Event as PersonFindEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-// Make my own exceptions?
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\Security\Exception\AccessDeniedException;
-
-use Cerad\Bundle\PersonBundle\Events as PersonEvents;
+use Cerad\Bundle\PersonBundle\PersonEvents;
 
 //  Cerad\Bundle\GameBundle\Events   as GameEvents;
 //  Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 
-use Cerad\Bundle\GameBundle\Service\GameOfficial\AssignSlot\AssignSlotWorkflow as Workflow;
+use Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignWorkflow;
 
 /* =======================================================
  * This model has dependencies from different bundles
@@ -25,32 +21,19 @@ class AssignByAssignorModel
 {
     protected $dispatcher;
     
-    public $userPerson;
-    
-    public $project;
-    public $projectKey;
-    
-    public $slot;
     public $game;
-    public $gameOfficial;
-        
-    public $person;  // AKA Official
-    public $persons; // AKA Officials
+    public $gameOfficials;
     
-    public $valid = false;
+    public $projectOfficials;
+    public $projectOfficialsOptions;
     
     protected $gameRepo;
     protected $workflow;
     
-    public function __construct($project, $userPerson, $gameRepo, Workflow $workflow)
+    public function __construct(AssignWorkflow $workflow, $gameRepo)
     {   
-        $this->userPerson = $userPerson;
-        
-        $this->project    = $project;
-        $this->projectKey = $project->getKey();
-        
-        $this->gameRepo = $gameRepo;
         $this->workflow = $workflow;
+        $this->gameRepo = $gameRepo;
     }
     public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
     
@@ -80,66 +63,40 @@ class AssignByAssignorModel
     /* =========================================================================
      * Also holds logic to allow signing up for this particular game slot?
      */
-    public function create(ParameterBag $requestAttributes)
+    public function create(Request $request)
     {   
         // Extract
-        $num  = $requestAttributes->get('game');
-        $slot = $requestAttributes->get('slot');
+        $requestAttrs = $request->attributes;
         
-        // Verify game exists
-        $game = $this->gameRepo->findOneByProjectNum($this->projectKey,$num);
-        if (!$game) {
-            throw new NotFoundHttpException(sprintf('Game %d does not exist.',$num));
-        }
-        // Verify slot exists
-        $gameOfficial = $game->getOfficialForSlot($slot);
-        if (!$gameOfficial) {
-            throw new NotFoundHttpException(sprintf('Game Slot %d,%id does not exist.',$num,$slot));
-        }
-        // Like an internal clone
-        $gameOfficial->saveOriginalInfo();
+        $this->project       = $project = $requestAttrs->get('project');
+        $this->game          = $game    = $requestAttrs->get('game');
+        $this->gameOfficials = $gameOfficials = $game->getOfficials();
         
-        // Verify have a person
-        //$personGuid = $this->user ? $this->user->getPersonGuid() : null;
-        //$person = $this->findPersonByGuid($personGuid);
-        $person = $this->userPerson;
-        if (!$person) 
+        foreach($gameOfficials as $gameOfficial)
         {
-            throw new AccessDeniedException(sprintf('Game Slot %d,%id, has no person record.',$num,$slot));
+            // Like an internal clone
+            $gameOfficial->saveOriginalInfo();
         }
-        if (!$gameOfficial->isUserAssignable()) {
-            throw new AccessDeniedException(sprintf('Game Slot %d,%id is not user assignable.',$num,$slot));
-        }
-        // Must be a referee
-        $personPlan = $person->getPlan($this->projectKey,false);
-        if (!$personPlan) 
+        
+        // List of available referees
+        $event = new PersonFindEvent;
+        $event->project   = $project;
+        $event->officials = array();
+        
+        $this->dispatcher->dispatch(PersonEvents::FindOfficialsByProject,$event);
+
+        $this->projectOfficials = $projectOfficials = $event->officials;
+        
+        // Not sure if this really belongs here but it helps
+        $options = array();
+        foreach($projectOfficials as $projectOfficial)
         {
-            throw new AccessDeniedException(sprintf('Game Slot %d,%id, has no person plan record.',$num,$slot));
+            $plan = $projectOfficial->getPlan();
+            $options[$projectOfficial->getGuid()] = $plan->getPersonName();
         }
+        print_r($options); die();
+        $this->projectOfficialsOptions = $options;
         
-        // This should be okay and makes the single slot request form more usable
-        if (!$gameOfficial->getPersonNameFull())
-        {
-            $gameOfficial->setPersonNameFull($personPlan->getPersonName());
-        }
-        
-        // Want to see if person is part of a group for this project
-        $persons = array($person);
-        
-        // Xfer the data
-        $this->slot = $slot;
-        $this->game = $game;
-        
-        $this->gameOfficial = $gameOfficial;
-        
-        $this->person     = $person;  // AKA Official
-        $this->personPlan = $personPlan;
-        
-        $this->persons = $persons; // AKA Officials
-        
-        $this->valid = true;
-        
-        // Pretend I am a factory
         return $this;
     }
 }
