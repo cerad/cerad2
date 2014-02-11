@@ -10,10 +10,10 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use Cerad\Bundle\CoreBundle\EventListener\CoreRequestListener;
+
 use Cerad\Bundle\GameBundle\GameEvents;
 use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
-
-//  Cerad\Bundle\GameBundle\Service\GameOfficial\AssignSlot\AssignSlotWorkflow;
 
 class GameEventListener extends ContainerAware implements EventSubscriberInterface
 {
@@ -21,7 +21,7 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
     {
         return array
         (
-            KernelEvents::REQUEST => array(array('onKernelRequest', -16)), // Runs After ProjectListener
+            KernelEvents::REQUEST => array(array('onKernelRequest', CoreRequestListener::GameEventListenerPriority)),
             
             GameEvents::GameOfficialAssignSlotPre  => array('onGameOfficialAssignSlotPre' ),
             GameEvents::GameOfficialAssignSlotPost => array('onGameOfficialAssignSlotPost'),

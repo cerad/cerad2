@@ -11,6 +11,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use Cerad\Bundle\CoreBundle\EventListener\CoreRequestListener;
+
 use Cerad\Bundle\ProjectBundle\ProjectEvents;
 
 class ProjectEventListener extends ContainerAware implements EventSubscriberInterface
@@ -19,7 +21,7 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
     {
         return array
         (
-            KernelEvents::REQUEST => array(array('onKernelRequest', -8)), // Runs After RoleListener, before mdel listener
+            KernelEvents::REQUEST => array(array('onKernelRequest', CoreRequestListener::ProjectEventListenerPriority)),
 
             ProjectEvents::FindProjectByKey  => array('onFindProjectByKey'  ),
             ProjectEvents::FindProjectBySlug => array('onFindProjectBySlug' ),
