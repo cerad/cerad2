@@ -46,6 +46,10 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         
         return $qb->getQuery()->getResult();
     }
+    /* ====================================================
+     * Grabs everyone for a project then filters for officials
+     * Really should add a isOfficial column to the plan object
+     */
     public function findOfficialsByProject($projectKey)
     {
         $qb = $this->createQueryBuilder('person');
@@ -126,6 +130,29 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         if (!$id) return null;
         $repo = $this->_em->getRepository('CeradPersonBundle:PersonPlan');
         return $repo->find($id);        
+    }
+    // TODO: Maybe allow personGuid to be an array
+    public function findOnePersonPlanByProjectAndPersonGuid($projectKey,$personGuid)
+    {
+        if (!$personGuid) return null;
+        
+        if (is_object($projectKey)) $projectKey = $projectKey->getKey();
+        
+        $repo = $this->_em->getRepository('CeradPersonBundle:PersonPlan');
+        
+        $qb = $repo->createQueryBuilder('personPlan');
+        
+        $qb->addSelect('person');
+        $qb->leftJoin ('personPlan.person','person');
+        
+        $qb->andWhere('person.guid = :personGuid');
+        $qb->andWhere('personPlan.projectId = :projectKey' );
+        
+        $qb->setParameter('personGuid',$personGuid);
+        $qb->setParameter('projectKey',$projectKey);
+        
+        $items = $qb->getQuery()->getResult();
+        if (count($items) == 1) return $items[0];
     }
     public function findPersonPerson($id)
     {

@@ -1,4 +1,5 @@
 <?php
+
 namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor;
 
 use Symfony\Component\HttpFoundation\Request;
@@ -7,9 +8,6 @@ use Symfony\Component\EventDispatcher\Event as PersonFindEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 use Cerad\Bundle\PersonBundle\PersonEvents;
-
-//  Cerad\Bundle\GameBundle\Events   as GameEvents;
-//  Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 
 use Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignWorkflow;
 
@@ -25,10 +23,10 @@ class AssignByAssignorModel
     public $gameOfficials;
     
     public $projectOfficials;
-    public $projectOfficialsOptions;
+    
+    public $workflow;
     
     protected $gameRepo;
-    protected $workflow;
     
     public function __construct(AssignWorkflow $workflow, $gameRepo)
     {   
@@ -36,27 +34,32 @@ class AssignByAssignorModel
         $this->gameRepo = $gameRepo;
     }
     public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
-    
-    protected function findPersonByGuid($guid)
-    {
-        if (!$guid) return null;
         
-        $event = new PersonFindEvent;
-        $event->guid   = $guid;
-        $event->person = null;
-        
-        $this->dispatcher->dispatch(PersonEvents::FindPersonByGuid,$event);
-        
-        return $event->person;
-    }
-    
     /* =====================================================
      * Process a posted model
      * Turn everything over to the workflow
      */
     public function process()
     {   
-        $this->workflow->processPostByAssignee($this->gameOfficial,$this->personPlan);
+        foreach($this->gameOfficials as $official)
+        {
+            $personGuid = $official->getPersonGuid();
+            if ($personGuid)
+            {
+                $event = new PersonFindEvent;
+                $event->project = $this->project;
+                $event->guid    = $personGuid;
+                $event->person  = null;
+        
+                $this->dispatcher->dispatch(PersonEvents::FindPersonPlanByProjectAndPersonGuid,$event);
+
+                $personPlan = $event->personPlan;
+            }
+            else $personPlan = null;
+            
+            // All the real majic happens here
+            $this->workflow->processPostByAssignor($official,$personPlan);
+        }
         $this->gameRepo->commit();
         return;
     }
@@ -85,17 +88,7 @@ class AssignByAssignorModel
         
         $this->dispatcher->dispatch(PersonEvents::FindOfficialsByProject,$event);
 
-        $this->projectOfficials = $projectOfficials = $event->officials;
-        
-        // Not sure if this really belongs here but it helps
-        $options = array();
-        foreach($projectOfficials as $projectOfficial)
-        {
-            $plan = $projectOfficial->getPlan();
-            $options[$projectOfficial->getGuid()] = $plan->getPersonName();
-        }
-        print_r($options); die();
-        $this->projectOfficialsOptions = $options;
+        $this->projectOfficials = $event->officials;
         
         return $this;
     }

@@ -82,6 +82,7 @@ class AssignWorkflow
         if (isset( $this->mapInternalToPostedStates[$state])) {
             return $this->mapInternalToPostedStates[$state];
         }
+        return 'Open';
         echo sprintf("Missing State: %s<br />\n",$state);
         print_r(array_keys($this->mapInternalToPostedStates));
         die();
@@ -91,6 +92,9 @@ class AssignWorkflow
         if (isset( $this->mapPostedToInternalStates[$state])) {
             return $this->mapPostedToInternalStates[$state];
         }
+        // Prevent lockups on code errors
+        return 'StateOpen';
+        
         echo sprintf("Missing State: %s<br />\n",$state);
         print_r(array_keys($this->mapPostedToInternalStates));
         die();
@@ -143,10 +147,10 @@ class AssignWorkflow
         switch($assignStateMod)
         {
             case 'StateOpen':
-                $gameOfficialNew->setPerson(null);
+                $gameOfficialNew->setPersonFromPlan(null);
                 break;
             default:
-                $gameOfficialNew->setPerson($personPlan);
+                $gameOfficialNew->setPersonFromPlan($personPlan);
         }
         // Should we notify the assignor
         $notifyAssignor = isset($transition['notifyAssignor']) ? true : false;
@@ -155,5 +159,52 @@ class AssignWorkflow
         
         // Need to setup message to the notify assignor listener
         
+    }
+    /* ============================================================
+     * Do all the updating and stuff
+     */
+    public function processPostByAssignor($gameOfficialNew,$personPlan)
+    {
+        $gameOfficialOrg = $gameOfficialNew->retrieveOriginalInfo();
+        
+        $assignStateNew = $this->mapPostedStateToInternalState($gameOfficialNew->getAssignState());
+        $assignStateOrg = $this->mapPostedStateToInternalState($gameOfficialOrg['assignState']);
+        
+       // The assignor can type directly into the name
+        $personNameNew = $gameOfficialNew->getPersonNameFull();
+        $personNameOrg = $gameOfficialOrg['personNameFull'];
+        
+        if ($personNameNew != $personNameOrg)
+        {
+            $gameOfficialNew->setPersonFromPlan(null);
+            $gameOfficialNew->setPersonNameFull($personNameNew);
+            
+            // Bypass all the state checks etc for now
+            // Could check to see if the name was unique and link it
+            return;
+        }
+        if ($assignStateNew == $assignStateOrg) return;
+        
+        $transition = $this->assignorStateTransitions[$assignStateOrg][$assignStateNew];
+        
+        // Normally go directly to new state but sometimes want a different state
+        $assignStateMod = isset($transition['modState']) ? $transition['modState'] : $assignStateNew;
+        if ($assignStateMod != $assignStateNew)
+        {
+            $gameOfficialNew->setAssignState($this->mapInternalStateToPostedState($assignStateMod));
+        }
+        // Transfer or clear person
+        switch($assignStateMod)
+        {
+            case 'StateOpen':
+                $gameOfficialNew->setPersonFromPlan(null);
+                break;
+            default:
+                $gameOfficialNew->setPersonFromPlan($personPlan);
+        }
+        // Should we notify the assiignee
+        $notifyAssignee = isset($transition['notifyAssignee']) ? true : false;
+        
+        if (!$notifyAssignee) return;        
     }
 }

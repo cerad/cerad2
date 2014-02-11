@@ -54,23 +54,14 @@ class CoreRequestListener extends ContainerAware implements EventSubscriberInter
         
         $requestAttrs->set('model',$model);
         
-        return;
-        
-         
         // Have a form?
         $formFactoryServiceId = $requestAttrs->get('_form');
         if (!$formFactoryServiceId) return;
         
         $formFactory = $this->container->get($formFactoryServiceId);
        
-        try
-        {
-            $form = $formFactory->create($requestAttrs,$model);
-        }
-        catch (\Exception $e)
-        {
-            throw $e;
-        }
+        $form = $formFactory->create($request,$model);
+        
         $requestAttrs->set('form',$form);
     }
 }

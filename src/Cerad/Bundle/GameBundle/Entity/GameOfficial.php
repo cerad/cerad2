@@ -143,7 +143,7 @@ class GameOfficial extends AbstractEntity
         }
     }
     // Copies or clears person info
-    public function setPerson($personPlan)
+    public function setPersonFromPlan($personPlan)
     {
         if (!$personPlan)
         {

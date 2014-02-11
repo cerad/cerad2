@@ -1,0 +1,28 @@
+{# @CeradTourn/Schedule/Official/Assign/ScheduleOfficialAssignIndex.html.twig #}
+{% extends '@CeradGame/Layout.html.twig' %}
+
+{% block content %}
+<style>
+table.assign
+{
+    width: 700px;
+    color: red;
+}
+</style>
+<table class="assign">
+<tr><th colspan="3">Official Assignments for Game {{ game.num }} on {{ game.dtBeg.format('D d M H:i A')}} at {{ game.field.name }}</th></tr>
+
+{{ form_start(form) }}
+{% for slot in form.gameOfficials %}
+<tr><td colspan="4">{{ form_widget(slot.role) }}
+        {{ form_widget(slot.personNameFull) }}{{ form_widget(slot.personGuid) }}{{ form_widget(slot.assignState) }}
+    </td>
+</tr>
+{% endfor %}
+<tr><td style="height:2em; float:right; padding:10px">{{ form_widget(form.reset) }}{{ form_widget(form.assign) }}</td></tr>
+<tr><td style="height: 2em;float:right; padding:10px; margin: 10px 0"><a href="{{ redirectUrl }}">Back to Referee Schedule</a></td></tr>
+{{ form_rest(form) }}
+{{ form_end(form)  }}
+</table>
+
+{% endblock %}

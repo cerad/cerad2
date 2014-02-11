@@ -10,7 +10,7 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\EventDispatcher\Event as PersonFindEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Cerad\Bundle\PersonBundle\Events as PersonEvents;
+use Cerad\Bundle\PersonBundle\PersonEvents;
 
 use Cerad\Bundle\UserBundle\Model\UserManagerInterface;
 

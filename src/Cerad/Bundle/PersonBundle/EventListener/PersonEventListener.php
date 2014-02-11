@@ -18,6 +18,8 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             PersonEvents::FindPersonByFedKey      => array('onFindPersonByFedKey'),
             PersonEvents::FindPersonByProjectName => array('onFindPersonByProjectName'),
             PersonEvents::FindOfficialsByProject  => array('onFindOfficialsByProject'),
+            
+            PersonEvents::FindPersonPlanByProjectAndPersonGuid => array('onFindPersonPlanByProjectAndPersonGuid'),        
         );
     }
     protected $personRepositoryServiceId;
@@ -38,6 +40,15 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         $projectKey = $event->project->getKey();
         
         $event->officials = $this->getPersonRepository()->findOfficialsByProject($projectKey);        
+    }
+    public function onFindPersonPlanByProjectAndPersonGuid(Event $event)
+    {
+        // Just means a listener was available
+        $event->stopPropagation();
+        
+        $projectKey = $event->project->getKey();
+        
+        $event->personPlan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonGuid($projectKey,$event->guid);        
     }
     public function onFindPersonByGuid(Event $event)
     {
