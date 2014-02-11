@@ -2,7 +2,7 @@
 
 namespace Cerad\Bundle\GameBundle;
 
-final class Events
+final class GameEvents
 {
     const GameOfficialAssignSlotPre  = 'CeradGameOfficialAssignSlotPre';
     const GameOfficialAssignSlotPost = 'CeradGameOfficialAssignSlotPost';

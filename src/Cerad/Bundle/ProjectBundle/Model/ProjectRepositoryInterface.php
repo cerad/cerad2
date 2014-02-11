@@ -8,6 +8,6 @@ interface ProjectRepositoryInterface
     public function findAll();
     public function findAllByStatus($status);
     
-    public function findBySlug($slug);
+    public function findOneBySlug($slug);
 }
 ?>

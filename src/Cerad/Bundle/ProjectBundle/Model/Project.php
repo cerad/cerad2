@@ -7,7 +7,11 @@ namespace Cerad\Bundle\ProjectBundle\Model;
 class Project
 {
     protected $id;
-    protected $slugs;
+    
+    protected $slug;
+    
+    protected $slugs; // TODO: Remove after s1games
+    
     protected $status;
     protected $verified;
                 
@@ -28,6 +32,7 @@ class Project
     
     public function getId      () { return $this->id;       }
     public function getKey     () { return $this->id;       }
+    public function getSlug    () { return $this->slug;     }
     public function getSlugs   () { return $this->slugs;    }
     public function getStatus  () { return $this->status;   }
     public function getVerified() { return $this->verified; }
@@ -64,7 +69,6 @@ class Project
             $this->$name = $value;
         }
     }
-    // Just retrun first slug in list
-    public function getSlug() { return $this->slugs[0]; }
+    public function isActive() { return ('Active' == $this->status) ? true: false; }
 }
 ?>

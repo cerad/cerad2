@@ -1,0 +1,47 @@
+parameters:
+  
+services:
+    # ====================================================
+    # Assign game officials by assignor
+    cerad_game__project__game_officials__assign_by_assignor__model_factory:
+        class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor\AssignByAssignorModel
+        calls:
+             - [setDispatcher,['@event_dispatcher']]
+        arguments:
+            - '@cerad_project.project_current'
+            - '@cerad_user__user_person_current'
+            - '@cerad_game.game_repository'
+            - '@cerad_game__project__game_official__assign__workflow'
+                        
+    cerad_game__project__game_officials__assign_by_assignor__form_factory:
+        class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor\AssignByAssignorFormFactory
+        calls:
+             - [setRouter,      ['@router']]
+             - [setFormFactory, ['@form.factory']]
+        arguments:
+            - '@cerad_game__project__game_officials__assign_by_assignor__form_type'
+            
+    cerad_game__project__game_officials__assign_by_assignor__controller:
+        class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor\AssignByAssignorController
+        calls:
+             - [setRouter,     ['@router']]
+             - [setTemplating, ['@templating']]
+             
+    cerad_game__project__game_officials__assign_by_assignor__view_factory:
+        class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor\AssignByAssignorView
+        calls:
+             - [setRouter,     ['@router']]
+             - [setTemplating, ['@templating']]
+
+    cerad_game__project__game_officials__assign_by_assignor__form_type:
+        class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor\AssignByAssignorFormType
+        arguments: 
+            - '@cerad_game__project__game_official__assign__workflow'
+        tags:
+            - { name: form.type, alias: cerad_game__game_officials__assign_by_assignor } 
+            
+    cerad_game__project__game_official__assign__workflow:
+        class: 'Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignWorkFlow'
+        arguments:
+            - '%cerad_game__game_official__assign__workflow__file%'
+

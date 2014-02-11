@@ -11,4 +11,25 @@ cerad_game__game_official__user_assign_slot:
         _role:       ROLE_USER
         game: 0
         slot: 0
-
+        
+cerad_game__project__game_official__assign_by_user:
+    pattern:  /project/{_project}/game/{_game}/official/{_game_official}/assign-by-user
+    defaults:
+        _controller: cerad_game__project__game_official__assign_by_user__controller:assignAction
+        _model:      cerad_game__project__game_official__assign_by_user__model_factory
+        _form:       cerad_game__project__game_official__assign_by_user__form_factory
+        _view:       cerad_game__project__game_official__assign_by_user__view_factory
+        _template: '@CeradGame/Project/GameOfficial/AssignByUser/AssignByUserIndex.html.twig'
+        _redirect:   cerad_tourn_schedule_officials
+        _role:       ROLE_USER
+        
+cerad_game__project__game_officials__assign_by_assignor:
+    pattern:  /project/{_project}/game/{_game}/officials/assign-by-assignor
+    defaults:
+        _controller: cerad_game__project__game_officials__assign_by_assignor__controller:assignAction
+        _model:      cerad_game__project__game_officials__assign_by_assignor__model_factory
+        _form:       cerad_game__project__game_officials__assign_by_assignor__form_factory
+        _view:       cerad_game__project__game_officials__assign_by_assignor__view_factory
+        _template: '@CeradGame/Project/GameOfficials/AssignByAssignor/AssignByAssignorIndex.html.twig'
+        _redirect:   cerad_tourn_schedule_officials
+        _role:       ROLE_ASSIGNOR

@@ -23,12 +23,14 @@ class CeradGameExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        
+        $loader->load('services/services.yml');
+        $loader->load('services/assign.yml');
         
         $gameResourceDir = __DIR__ . '/../Resources';
         
         $container->setParameter('cerad_game__resources_dir',$gameResourceDir);
-        $container->setParameter('cerad_game__AssignSlotWorkfloe__file',$gameResourceDir . '/config/AssignSlotWorkflow.yml');
+        $container->setParameter('cerad_game__game_official__assign__workflow__file', $gameResourceDir . '/config/workflows/assign.yml');
         
      }
 }

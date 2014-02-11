@@ -42,6 +42,7 @@ class ProjectRepository implements ProjectRepositoryInterface
         }
         return $projects;
     }
+    // TODO: remove after s1games
     public function findBySlug($slug)
     {
         foreach($this->projects as $project)
@@ -53,6 +54,25 @@ class ProjectRepository implements ProjectRepositoryInterface
         }
         return null;
     }
+    public function findOneBySlug($slug)
+    {
+        $slug = trim(strtolower($slug));
+        if (!$slug) return null;
+        
+        foreach($this->projects as $project)
+        {
+            $slugProject = strtolower($project->getSlug());
+            
+            if ($slug == $slugProject) return $project;
+            
+            if (!$project->isActive()) break;
+
+            $slugDash = $slug . '-';
+            
+            if ($slugDash == substr($slugProject,0,strlen($slugDash))) return $project;
+        }
+        return null;
+     }
 }
 
 ?>

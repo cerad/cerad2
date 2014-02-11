@@ -42,6 +42,8 @@ class RequestRoleListener implements EventSubscriberInterface
     }
     public function onKernelRequest(GetResponseEvent $event)
     {
+        return;
+        
         if (HttpKernel::MASTER_REQUEST != $event->getRequestType()) {
             // don't do anything if it's not the master request
             return;

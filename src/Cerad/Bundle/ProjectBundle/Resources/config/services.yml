@@ -1,5 +1,7 @@
 parameters:
-#    cerad_project.example.class: Cerad\Bundle\ProjectBundle\Example
+
+    cerad_project__project_event_listener__class:
+        Cerad\Bundle\ProjectBundle\EventListener\ProjectEventListener
 
 services:
 
@@ -24,3 +26,13 @@ services:
         arguments:  
             - '@cerad_project.repository.in_memory'
             - '%cerad_project_project_default%'
+            
+    cerad_project__project_event_listener:
+        class: '%cerad_project__project_event_listener__class%'
+        calls:
+             - [setContainer, ['@service_container']]
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments:
+            - 'cerad_project.project_repository'
+ 

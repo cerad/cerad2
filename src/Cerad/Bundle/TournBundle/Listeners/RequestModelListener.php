@@ -23,7 +23,7 @@ class RequestModelListener extends ContainerAware implements EventSubscriberInte
         return array
         (
             KernelEvents::REQUEST => array(
-                array('onKernelRequest', -8), // Runs After RoleListener)
+                array('onKernelRequest', -256), // Want this run after all the app listeners
         ));
     }
     public function onKernelRequest(GetResponseEvent $event)

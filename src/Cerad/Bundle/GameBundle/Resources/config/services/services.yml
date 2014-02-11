@@ -23,6 +23,9 @@ services:
     cerad_game.game_repository:
         alias: cerad_game.game_repository.doctrine
         
+    cerad_game__game_repository:
+        alias: cerad_game.game_repository.doctrine
+        
     cerad_game.game_field_repository.doctrine:
         class:  Cerad\Bundle\GameBundle\EntityRepository\GameFieldRepository
         factory_service: 'cerad_game.entity_manager.doctrine'
@@ -49,6 +52,8 @@ services:
              - [setContainer, ['@service_container']]
         tags:
             - { name: kernel.event_subscriber }
+        arguments:
+            - 'cerad_game__game_repository'
         
     # ====================================================
     # Game Officials
@@ -86,5 +91,5 @@ services:
     cerad_game__game_official__assign_slot__workflow:
         class: '%cerad_game__game_official__assign_slot__workflow__class%'
         arguments:
-            - '%cerad_game__AssignSlotWorkfloe__file%'
+            - '%cerad_game__game_official__assign__workflow__file%'
 
