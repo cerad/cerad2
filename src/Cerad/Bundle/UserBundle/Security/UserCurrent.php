@@ -6,7 +6,7 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\EventDispatcher\Event as PersonFindEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Cerad\Bundle\PersonBundle\Events as PersonEvents;
+use Cerad\Bundle\PersonBundle\PersonEvents;
 
 /* ==============================================================
  * Used to inject the current user into a service

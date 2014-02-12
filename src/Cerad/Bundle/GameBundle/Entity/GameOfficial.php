@@ -92,7 +92,7 @@ class GameOfficial extends AbstractEntity
     /* ===================================================
      * Are users allowed to self assign?
      */
-    public function isUserAssignable()
+    public function isAssignableByUser()
     {
         return $this->assignRole == 'ROLE_USER' ? true : false;
     }
@@ -118,6 +118,12 @@ class GameOfficial extends AbstractEntity
             'personGuid'     => $this->personGuid,
             'personNameFull' => $this->personNameFull,
         );
+    }
+    public function restoreOriginalInfo()
+    {
+        $this->assignState    = $this->originalInfo['assignState'];
+        $this->personGuid     = $this->originalInfo['assignGuid'];
+        $this->personNameFull = $this->originalInfo['personNameFull'];
     }
     public function retrieveOriginalInfo()
     {

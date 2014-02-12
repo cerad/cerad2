@@ -47,21 +47,20 @@ class AssignByAssignorModel
             if ($personGuid)
             {
                 $event = new PersonFindEvent;
-                $event->project = $this->project;
-                $event->guid    = $personGuid;
-                $event->person  = null;
+                $event->project    = $this->project;
+                $event->personGuid = $personGuid;
+                $event->personPlan = null;
         
                 $this->dispatcher->dispatch(PersonEvents::FindPersonPlanByProjectAndPersonGuid,$event);
 
-                $personPlan = $event->personPlan;
+                $projectOfficial = $event->personPlan;
             }
-            else $personPlan = null;
+            else $projectOfficial = null; // Ok if only name was set
             
             // All the real majic happens here
-            $this->workflow->processPostByAssignor($official,$personPlan);
+            $this->workflow->process($official,$projectOfficial);
         }
         $this->gameRepo->commit();
-        return;
     }
     /* =========================================================================
      * Also holds logic to allow signing up for this particular game slot?

@@ -263,5 +263,11 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
         }
         $this->onPropertySet('passwordResetRequestExpiresAt',$date);
     }
+    /* ================================================
+     * Cross connect
+     */
+    protected $person;
+    public function getPerson() { return $this->person; }
+    public function setPerson($person) { $this->person = $person; }
 }
 ?>

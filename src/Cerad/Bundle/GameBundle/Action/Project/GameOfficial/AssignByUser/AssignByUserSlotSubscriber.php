@@ -1,25 +1,24 @@
 <?php
 
-namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor;
+namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficial\AssignByUser;
 
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvents;
 
-class AssignByAssignorSlotSubscriber implements EventSubscriberInterface
+class AssignByUserSlotSubscriber implements EventSubscriberInterface
 {
     private $factory;
     private $workflow;
     
-    private $personGuidOptions;
-    
-    public function __construct(FormFactoryInterface $factory, $workflow, $personGuidOptions)
+    public function __construct(FormFactoryInterface $factory, $workflow, $projectOfficial)
     {
         $this->factory  = $factory;
         $this->workflow = $workflow;
         
-        $this->personGuidOptions = $personGuidOptions;
+        $this->projectOfficial = $projectOfficial;
+        
     }
     public static function getSubscribedEvents()
     {
@@ -30,7 +29,7 @@ class AssignByAssignorSlotSubscriber implements EventSubscriberInterface
         $form         = $event->getForm();
         $gameOfficial = $event->getData();
 
-        if (!$gameOfficial) return; // Called twice
+        if (!$gameOfficial) return;
         
         $states = $this->workflow->getStateOptions($gameOfficial->getAssignState());
         
@@ -39,14 +38,18 @@ class AssignByAssignorSlotSubscriber implements EventSubscriberInterface
             'auto_initialize' => false,
             'choices'         => $states,
         )));
-        $form->add($this->factory->createNamed('personGuid','choice', null, array(
-            'required'        => false,
+        
+        // Fill in user name if empty
+        if (!$gameOfficial->getPersonNameFull())
+        {
+            $gameOfficial->setPersonNameFull($this->projectOfficial->getPersonName());
+        }
+        $form->add($this->factory->createNamed('personNameFull', 'text', null, array(
+            'attr'      => array('size' => 30),
+            'required'  => false,
+            'read_only' => true,
             'auto_initialize' => false,
-            'empty_value'     => 'Select Official',
-            'empty_data'      => null,
-            'choices'         => $this->personGuidOptions,
         )));
-         
         return;
         
     }

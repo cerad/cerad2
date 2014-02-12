@@ -65,6 +65,18 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         }
         // Stash It
         $request->attributes->set('game',$game);
+        
+        // Check for game official
+        if ($request->attributes->has('_game_official')) 
+        {
+            $slot = $request->attributes->get('_game_official');
+            $gameOfficial = $game->getOfficialForSlot($slot);
+            if (!$gameOfficial)
+            {
+                throw new NotFoundHttpException(sprintf('Game Official %s %d %d not found',$projectKey,$gameNum,$slot));
+            }
+            $request->attributes->set('gameOfficial',$gameOfficial);
+        }
     }
     /* ====================================================================
      * Assignment stuff

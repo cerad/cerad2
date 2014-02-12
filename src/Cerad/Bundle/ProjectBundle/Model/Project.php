@@ -32,7 +32,7 @@ class Project
     
     public function getId      () { return $this->id;       }
     public function getKey     () { return $this->id;       }
-    public function getSlug    () { return $this->slug;     }
+    public function getSlugx   () { return $this->slug;     }
     public function getSlugs   () { return $this->slugs;    }
     public function getStatus  () { return $this->status;   }
     public function getVerified() { return $this->verified; }
@@ -70,5 +70,18 @@ class Project
         }
     }
     public function isActive() { return ('Active' == $this->status) ? true: false; }
+    
+    /* =====================================================
+     * Want to stay backwards compatible for just a bit
+     * AppTourns needs this
+     */
+    public function getSlug()
+    {
+        if ($this->slug) return $this->slug;
+        
+        if (is_array($this->slugs)) return $this->slugs[0];
+        
+        return null;
+    }
 }
 ?>

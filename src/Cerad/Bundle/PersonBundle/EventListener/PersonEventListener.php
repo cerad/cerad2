@@ -43,12 +43,11 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
     }
     public function onFindPersonPlanByProjectAndPersonGuid(Event $event)
     {
-        // Just means a listener was available
-        $event->stopPropagation();
-        
         $projectKey = $event->project->getKey();
         
-        $event->personPlan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonGuid($projectKey,$event->guid);        
+        $event->personPlan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonGuid($projectKey,$event->personGuid);
+        
+        if ($event->personPlan) $event->stopPropagation();
     }
     public function onFindPersonByGuid(Event $event)
     {

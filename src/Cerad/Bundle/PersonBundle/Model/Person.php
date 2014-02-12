@@ -189,6 +189,14 @@ class Person extends BaseModel implements PersonInterface
         
         return $plan;
     }
+    public function getPlanByProject($project)
+    {
+        $projectKey = $project->getKey();
+        
+        if (!isset($this->plans[$projectKey])) return null;
+            
+        return $this->plans[$projectKey];
+    }
     /* ========================================================
      * PersonToPerson relation
      *
