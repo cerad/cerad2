@@ -4,6 +4,8 @@ namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign;
 
 use Symfony\Component\Yaml\Yaml;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 /* =========================================================
  * The actual workflow is encoded in a yaml file
  * 
@@ -11,6 +13,8 @@ use Symfony\Component\Yaml\Yaml;
  */
 class AssignWorkflow
 {
+    protected $dispatcher;
+    
     public function __construct($configFilePath)
     {
         $config = Yaml::parse(file_get_contents($configFilePath));
@@ -30,6 +34,8 @@ class AssignWorkflow
         }
         $this->mapPostedToInternalStates = $map;
     }
+    public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
+    
     public function mapInternalStateToPostedState($state)
     {
         if (isset( $this->mapInternalToPostedStates[$state])) {

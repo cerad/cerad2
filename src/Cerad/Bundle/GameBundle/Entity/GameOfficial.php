@@ -108,6 +108,7 @@ class GameOfficial extends AbstractEntity
     protected $isSelected      = false;
     protected $isUserUpdatable = false;
     
+    // Could also be done with a clone
     protected $originalInfo = array();
     
     public function saveOriginalInfo()
@@ -122,7 +123,7 @@ class GameOfficial extends AbstractEntity
     public function restoreOriginalInfo()
     {
         $this->assignState    = $this->originalInfo['assignState'];
-        $this->personGuid     = $this->originalInfo['assignGuid'];
+        $this->personGuid     = $this->originalInfo['personGuid'];
         $this->personNameFull = $this->originalInfo['personNameFull'];
     }
     public function retrieveOriginalInfo()

@@ -1,17 +1,5 @@
 # cerad_game_routing
 
-cerad_game__game_official__user_assign_slot:
-    pattern:  /game-official/user-assign-slot/{game}/{slot}
-    defaults:
-        _controller: cerad_game__game_official__user_assign_slot__controller:assignAction
-        _model:      cerad_game__game_official__user_assign_slot__model
-        _form:       cerad_game__game_official__user_assign_slot__form_factory
-        _template: '@CeradGame/GameOfficial/UserAssignSlot/UserAssignSlotIndex.html.twig'
-        _redirect:   cerad_tourn_schedule_officials
-        _role:       ROLE_USER
-        game: 0
-        slot: 0
-
 # Game Official (singular) implies only one slot
 cerad_game__project__game_official__assign_by_user:
     pattern:  /project/{_project}/game/{_game}/official/{_game_official}/assign-by-user

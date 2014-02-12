@@ -7,7 +7,9 @@ services:
         class: 'Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignByAssigneeWorkflow'
         arguments:
             - '%cerad_game__game_official__assign__workflow__file%'
-            
+        calls:
+             - [setDispatcher,['@event_dispatcher']]
+             
     cerad_game__project__game_official__assign_by_user__model_factory:
         class: Cerad\Bundle\GameBundle\Action\Project\GameOfficial\AssignByUser\AssignByUserModel
         calls:
@@ -61,4 +63,6 @@ services:
         class: 'Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignByAssignorWorkflow'
         arguments:
             - '%cerad_game__game_official__assign__workflow__file%'
-
+        calls:
+             - [setDispatcher,['@event_dispatcher']]
+ 

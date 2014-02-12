@@ -23,8 +23,7 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         (
             KernelEvents::REQUEST => array(array('onKernelRequest', CoreRequestListener::GameEventListenerPriority)),
             
-            GameEvents::GameOfficialAssignSlotPre  => array('onGameOfficialAssignSlotPre' ),
-            GameEvents::GameOfficialAssignSlotPost => array('onGameOfficialAssignSlotPost'),
+            GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot' ),
         );
     }
     protected $gameRepositoryServiceId;
@@ -79,14 +78,50 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         }
     }
     /* ====================================================================
-     * Assignment stuff
+     * Game Official Assignment
+     * Called before commit
      */
-    protected function getAssignSlotWorkflow()
+    public function onGameOfficialAssignSlot(AssignSlotEvent $event)
     {
-        return $this->container->get('cerad_game__game_official__assign_slot_workflow');
-    }
-    public function onGameOfficialAssignSlotPre(AssignSlotEvent $event)
-    {
+        // Check for assignor notification
+        $transition = $event->transition;
+        if (!isset($transition['notifyAssignor'])) return;
+        
+        $tplData = array();
+        $tplData['command']         = $event->command;
+        $tplData['game']            = $event->gameOfficial->getGame();
+        $tplData['gameOfficial']    = $event->gameOfficial;
+        $tplData['gameOfficialOrg'] = $event->gameOfficialOrg;
+        
+        $templating = $this->container->get('templating');
+        
+        // Pull from project maybe? Use event->by?
+        $tplEmailSubject = '@CeradGame/Project/GameOfficial/AssignByUser/AssignByUserEmailSubjectIndex.html.twig';
+        $tplEmailContent = '@CeradGame/Project/GameOfficial/AssignByUser/AssignByUserEmailContentIndex.html.twig';
+        
+        $subject = $templating->render($tplEmailSubject,$tplData);
+        $content = $templating->render($tplEmailContent,$tplData);
+        
+      //echo $subject . '<br />';
+      //echo nl2br($content);
+      //die();
+        
+        $adminName =  'Art Hundiak';
+        $adminEmail = 'ahundiak@gmail.com';
+        
+        // This goes to the assignor
+        $message1 = \Swift_Message::newInstance();
+        $message1->setSubject($subject);
+        $message1->setBody   ($content);
+        $message1->setFrom(array('admin@zayso.org' => '[S1Games]'));
+        $message1->setBcc (array($adminEmail => $adminName));
+        
+        $message1->setTo     (array($adminEmail => $adminName));
+      //$message1->setTo     (array($assignorEmail => $assignorName));
+      //$message1->setReplyTo(array($refereeEmail  => $refereeName));
+
+        $this->container->get('mailer')->send($message1);
+
         return;
     }
     public function onGameOfficialAssignSlotPost(AssignSlotEvent $event)

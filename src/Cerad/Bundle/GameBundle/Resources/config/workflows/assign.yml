@@ -65,12 +65,12 @@ assigneeStateTransitions:
   StatePublishedByAssignor:
     StatePublishedByAssignor: { desc: 'Assignment Was Published' }
     StateAcceptedByAssignee:  { desc: 'Accept Assignment' }
-    StateDeclinedByAssignee:  { desc: 'Decline Assignment', modState: StateOpen }
+    StateDeclinedByAssignee:  { desc: 'Decline Assignment', modState: StateOpen, notifyAssignor: true }
      
   StateAssigneeNotified:
     StateAssigneeNotified:   { desc: 'You Have Been Notified' }
     StateAcceptedByAssignee: { desc: 'Accept Assignment' }
-    StateDeclinedByAssignee: { desc: 'Decline Assignment', modState: StateOpen }
+    StateDeclinedByAssignee: { desc: 'Decline Assignment', modState: StateOpen, notifyAssignor: true }
      
   StatePendingByAssignor:
     StatePendingByAssignor:  { desc: 'Assignment Has Not Yet Been Published', viewableByUser: false }

@@ -2,6 +2,9 @@
 
 namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign;
 
+use Cerad\Bundle\GameBundle\GameEvents;
+use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
+
 /* =========================================================
  * TODO: Should be possible to have project specific workflows?
  * 
@@ -44,12 +47,15 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
             default:
                 $gameOfficial->setPersonFromPlan($projectOfficial);
         }
-        // Should we notify the assignor
-        $notifyAssignor = isset($transition['notifyAssignor']) ? true : false;
+        // Notify the world
+        $event = new AssignSlotEvent;
+        $event->gameOfficial    = $gameOfficial;
+        $event->gameOfficialOrg = $gameOfficialOrg;
+        $event->command         = $assignStateNew;
+        $event->workflow        = $this;
+        $event->transition      = $transition;
+        $event->by              = 'Assignee';
         
-        if (!$notifyAssignor) return;
-        
-        // Need to setup message to the notify assignor listener
-        
+        $this->dispatcher->dispatch(GameEvents::GameOfficialAssignSlot,$event);
     }
 }

@@ -1,0 +1,7 @@
+{# @CeradGame/Project/GameOfficial/AssignByUser/AssignByUserEmailContentIndex.html.twig #}
+{{ command | slice(5) }}
+{{ gameOfficialOrg.personNameFull }}
+Game #{{ game.num }} {{ gameOfficial.role }} 
+Level: {{ game.levelKey | slice(5) }} 
+Time:  {{ game.dtBeg.format('D d M H:i A')}} 
+Field: {{ game.field.name }}
