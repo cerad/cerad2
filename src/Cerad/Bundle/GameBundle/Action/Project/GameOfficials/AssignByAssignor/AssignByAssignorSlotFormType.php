@@ -38,7 +38,7 @@ class AssignByAssignorSlotFormType extends AbstractType
             'read_only' => true,
         ));
         $builder->add('personNameFull', 'text', array(
-            'attr'      => array('size' => 40),
+            'attr'      => array('size' => 30),
             'read_only' => false,
             'required'  => false,
         ));
