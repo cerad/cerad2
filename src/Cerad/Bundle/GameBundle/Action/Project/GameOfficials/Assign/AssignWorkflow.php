@@ -72,5 +72,5 @@ class AssignWorkflow
         return $options;
     }
     // Mark as abstract
-    public function process($gameOfficial, $projectOfficial) {}   
+    public function process($project,$gameOfficial, $projectOfficial) {}   
  }

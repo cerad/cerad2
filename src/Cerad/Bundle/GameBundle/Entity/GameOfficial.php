@@ -117,6 +117,7 @@ class GameOfficial extends AbstractEntity
         (
             'assignState'    => $this->assignState,
             'personGuid'     => $this->personGuid,
+            'personEmail'    => $this->personEmail,
             'personNameFull' => $this->personNameFull,
         );
     }
@@ -124,11 +125,27 @@ class GameOfficial extends AbstractEntity
     {
         $this->assignState    = $this->originalInfo['assignState'];
         $this->personGuid     = $this->originalInfo['personGuid'];
+        $this->personEmail    = $this->originalInfo['personEmail'];
         $this->personNameFull = $this->originalInfo['personNameFull'];
     }
     public function retrieveOriginalInfo()
     {
         return $this->originalInfo;
+    }
+    // Copies or clears person info
+    public function setPersonFromPlan($personPlan)
+    {
+        if (!$personPlan)
+        {
+            $this->setPersonGuid    (null);
+            $this->setPersonEmail   (null);
+            $this->setPersonNameFull(null);
+            return;
+        }
+        $person = $personPlan->getPerson();
+        $this->setPersonGuid    ($person->getGuid());
+        $this->setPersonEmail   ($person->getEmail());
+        $this->setPersonNameFull($personPlan->getPersonName());
     }
     public function __get($name)
     {
@@ -148,19 +165,6 @@ class GameOfficial extends AbstractEntity
                 $this->$name = $value;
                 return $this;
         }
-    }
-    // Copies or clears person info
-    public function setPersonFromPlan($personPlan)
-    {
-        if (!$personPlan)
-        {
-            $this->setPersonGuid    (null);
-            $this->setPersonNameFull(null);
-            return;
-        }
-        $person = $personPlan->getPerson();
-        $this->setPersonGuid    ($person->getGuid());
-        $this->setPersonNameFull($personPlan->getPersonName());
     }
 }
 

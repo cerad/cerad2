@@ -80,6 +80,10 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
     /* ====================================================================
      * Game Official Assignment
      * Called before commit
+     * Ideally these events should be stored on some sort of internel que
+     * and then processed as a group following a submit.
+     * 
+     * TODO: Consider moving this to the action directory
      */
     public function onGameOfficialAssignSlot(AssignSlotEvent $event)
     {
@@ -87,8 +91,14 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         $transition = $event->transition;
         if (!isset($transition['notifyAssignor'])) return;
         
+        // Make the subject and content
+        $project = $event->project;
+        $prefix  = $project->getPrefix();
+        
         $tplData = array();
         $tplData['command']         = $event->command;
+        $tplData['project']         = $project;
+        $tplData['prefix']          = $prefix;
         $tplData['game']            = $event->gameOfficial->getGame();
         $tplData['gameOfficial']    = $event->gameOfficial;
         $tplData['gameOfficialOrg'] = $event->gameOfficialOrg;
@@ -105,40 +115,42 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
       //echo $subject . '<br />';
       //echo nl2br($content);
       //die();
+      
+        // Assignor stuff
+        $assignor = $project->getAssignor();
+        $assignorName  = $assignor['name'];
+        $assignorEmail = $assignor['email'];
+
+        // Official stuff
+        $gameOfficial = $event->gameOfficial;
+        $gameOfficialName  = $gameOfficial->getPersonNameFull();
+        $gameOfficialEmail = $gameOfficial->getPersonEmail();
         
+        // From stuff
+        // TODO: Research differences between natgames and s1games
+        $fromName  = $prefix;
+        $fromEmail = 'admin@zayso.org';
+        
+        // bcc stuff
         $adminName =  'Art Hundiak';
         $adminEmail = 'ahundiak@gmail.com';
         
         // This goes to the assignor
-        $message1 = \Swift_Message::newInstance();
-        $message1->setSubject($subject);
-        $message1->setBody   ($content);
-        $message1->setFrom(array('admin@zayso.org' => '[S1Games]'));
-        $message1->setBcc (array($adminEmail => $adminName));
+        $assignorMessage = \Swift_Message::newInstance();
+        $assignorMessage->setSubject($subject);
+        $assignorMessage->setBody   ($content);
+        $assignorMessage->setFrom(array($fromEmail     => $fromName));
+        $assignorMessage->setBcc (array($adminEmail    => $adminName));
+        $assignorMessage->setTo  (array($assignorEmail => $assignorName));
         
-        $message1->setTo     (array($adminEmail => $adminName));
-      //$message1->setTo     (array($assignorEmail => $assignorName));
-      //$message1->setReplyTo(array($refereeEmail  => $refereeName));
-
-        $this->container->get('mailer')->send($message1);
-
-        return;
-    }
-    public function onGameOfficialAssignSlotPost(AssignSlotEvent $event)
-    {
-        $assignSlotWorkflow = $this->getAssignSlotWorkflow();
-        
-        $gameOfficialNew = $event->gameOfficialNew;
-        $gameOfficialOld = $event->gameOfficialOld;
-        
-        if (!$assignSlotWorkflow->notifyAssignor($gameOfficialNew,$gameOfficialOld)) return;
-        
-        die('notify assignor');
-        $assignState = $gameOfficialNew->getAssignState();
-        switch($state)
+        if ($gameOfficialEmail)
         {
-            
+            $assignorMessage->setReplyTo(array($gameOfficialEmail => $gameOfficialName));
         }
+        
+        // And send
+        $this->container->get('mailer')->send($assignorMessage);
+
         return;
     }
 }

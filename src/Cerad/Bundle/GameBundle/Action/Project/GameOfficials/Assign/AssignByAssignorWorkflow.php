@@ -9,7 +9,7 @@ class AssignByAssignorWorkflow extends AssignWorkflow
         return parent::getStateOptions($state,$this->assignorStateTransitions);
         if ($options);
     }
-    public function process($gameOfficialNew,$personPlan)
+    public function process($project,$gameOfficialNew,$personPlan)
     {
         $gameOfficialOrg = $gameOfficialNew->retrieveOriginalInfo();
         

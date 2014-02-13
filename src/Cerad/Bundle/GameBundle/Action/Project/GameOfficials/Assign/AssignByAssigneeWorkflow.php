@@ -17,7 +17,7 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
         return parent::getStateOptions($state,$this->assigneeStateTransitions);
         if ($transitions);
     }
-    public function process($gameOfficial,$projectOfficial)
+    public function process($project,$gameOfficial,$projectOfficial)
     {
         $gameOfficialOrg = $gameOfficial->retrieveOriginalInfo();
         
@@ -49,6 +49,7 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
         }
         // Notify the world
         $event = new AssignSlotEvent;
+        $event->project         = $project;
         $event->gameOfficial    = $gameOfficial;
         $event->gameOfficialOrg = $gameOfficialOrg;
         $event->command         = $assignStateNew;

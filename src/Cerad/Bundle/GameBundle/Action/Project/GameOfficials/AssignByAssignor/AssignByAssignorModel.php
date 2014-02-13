@@ -58,7 +58,7 @@ class AssignByAssignorModel
             else $projectOfficial = null; // Ok if only name was set
             
             // All the real majic happens here
-            $this->workflow->process($official,$projectOfficial);
+            $this->workflow->process($this->project,$official,$projectOfficial);
         }
         $this->gameRepo->commit();
     }

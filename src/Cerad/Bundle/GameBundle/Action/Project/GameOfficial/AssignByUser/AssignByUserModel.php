@@ -39,7 +39,7 @@ class AssignByUserModel
      */
     public function process()
     {   
-        $this->workflow->process($this->gameOfficial,$this->projectOfficial);
+        $this->workflow->process($this->project,$this->gameOfficial,$this->projectOfficial);
         $this->gameRepo->commit();
         return;
     }
