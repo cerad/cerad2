@@ -20,7 +20,7 @@ class ScheduleGamesExportXLS extends BaseExport
         'Level' => 16, 'Group' => 10, 'GT' => 4,
 
         'HT Group'  => 12, 'AT Group'  => 12,
-        'Home Team' => 26, 'Away Team' => 26,
+        'Home Team' => 12, 'Away Team' => 12,
     );
     protected $columnCenters = array
     (
