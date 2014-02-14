@@ -87,5 +87,9 @@ class GameTeam extends AbstractEntity
     { 
         $this->onPropertySet('report',$report->getData()); 
     }
+    /* ==========================================================
+     * Cheesy clone
+     */
+    public $namex;
 }
 ?>

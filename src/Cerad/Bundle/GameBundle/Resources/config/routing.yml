@@ -1,8 +1,19 @@
 # cerad_game_routing
 
+# Game Update By Scorer
+cerad_game__project__game__update__by_scorer:
+    path:  /project/{_project}/game/{_game}/update-by-scorer
+    defaults:
+        _role:       ROLE_SCORE_ADMIN
+        _model:      cerad_game__project__game__update__by_scorer__model_factory
+        _form:       cerad_game__project__game__update__by_scorer__form_factory
+        _controller: cerad_game__project__game__update__by_scorer__controller:updateAction
+        _template: '@CeradGame/Project/Game/Update/ByScorer/GameUpdateByScorerIndex.html.twig'
+        _redirect:   cerad_tourn_schedule_official_list
+        
 # Game Official (singular) implies only one slot
 cerad_game__project__game_official__assign_by_user:
-    pattern:  /project/{_project}/game/{_game}/official/{_game_official}/assign-by-user
+    path:  /project/{_project}/game/{_game}/official/{_game_official}/assign-by-user
     defaults:
         _controller: cerad_game__project__game_official__assign_by_user__controller:assignAction
         _model:      cerad_game__project__game_official__assign_by_user__model_factory
@@ -15,7 +26,7 @@ cerad_game__project__game_official__assign_by_user:
 
 # Game Officials (plural) implies multiple all officials for the game
 cerad_game__project__game_officials__assign_by_assignor:
-    pattern:  /project/{_project}/game/{_game}/officials/assign-by-assignor
+    path:  /project/{_project}/game/{_game}/officials/assign-by-assignor
     defaults:
         _controller: cerad_game__project__game_officials__assign_by_assignor__controller:assignAction
         _model:      cerad_game__project__game_officials__assign_by_assignor__model_factory

@@ -26,6 +26,9 @@ services:
     cerad_game__game_repository:
         alias: cerad_game.game_repository.doctrine
         
+    cerad_game__game__repository:
+        alias: cerad_game.game_repository.doctrine
+        
     cerad_game.game_field_repository.doctrine:
         class:  Cerad\Bundle\GameBundle\EntityRepository\GameFieldRepository
         factory_service: 'cerad_game.entity_manager.doctrine'
@@ -34,6 +37,9 @@ services:
             - 'Cerad\Bundle\GameBundle\Entity\GameField'
             
     cerad_game.game_field_repository:
+        alias: cerad_game.game_field_repository.doctrine
+        
+    cerad_game__game_field__repository:
         alias: cerad_game.game_field_repository.doctrine
         
     cerad_game.game_report_update_master.form_type:

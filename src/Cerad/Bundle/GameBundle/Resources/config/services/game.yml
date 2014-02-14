@@ -1,0 +1,25 @@
+parameters:
+  
+services:
+    # ====================================================
+    # Update Game 
+    cerad_game__project__game__update__by_scorer__model_factory:
+        class: Cerad\Bundle\GameBundle\Action\Project\Game\Update\ByScorer\GameUpdateByScorerModel
+        calls:
+             - [setDispatcher,['@event_dispatcher']]
+        arguments:
+            - '@cerad_game__game__repository'
+            - '@cerad_game__game_field__repository'
+            
+    cerad_game__project__game__update__by_scorer__form_factory:
+        class: Cerad\Bundle\GameBundle\Action\Project\Game\Update\ByScorer\GameUpdateByScorerFormFactory
+        calls:
+             - [setRouter,      ['@router']]
+             - [setFormFactory, ['@form.factory']]
+             
+    cerad_game__project__game__update__by_scorer__controller:
+        class: Cerad\Bundle\GameBundle\Action\Project\Game\Update\ByScorer\GameUpdateByScorerController
+        calls:
+             - [setRouter,     ['@router']]
+             - [setTemplating, ['@templating']]
+            

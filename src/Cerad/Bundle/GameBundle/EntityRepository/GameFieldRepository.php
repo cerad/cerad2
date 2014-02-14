@@ -18,9 +18,11 @@ class GameFieldRepository extends EntityRepository
     {
         return $this->findOneBy(array('projectId' => $projectId, 'name' => $name));    
     }
-    public function findByProject($projectId)
+    public function findByProject($project)
     {
-        return $this->findBy(array('projectId' => $projectId),array('venue','name'));    
+        $projectKey = is_object($project) ? $project->getKey() : $project;
+        
+        return $this->findBy(array('projectId' => $projectKey), array('venue' => 'ASC', 'name' => 'ASC'));    
     }
 
     /* ==========================================================

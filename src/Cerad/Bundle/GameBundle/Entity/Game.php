@@ -161,5 +161,12 @@ class Game extends AbstractEntity
     { 
         $this->onPropertySet('report',$report->getData()); 
     }
+    // Try this
+    public function getDateBegin() { return $this->dtBeg; }
+    public function getTimeBegin() { return $this->dtBeg; }
+    
+    // Need to use interval to adjust ending info as well
+    public function setDateBegin($value) { $this->onPropertySet('dtBeg',$value); }
+    public function setTimeBegin($value) { $this->onPropertySet('dtBeg',$value); }
 }
 ?>

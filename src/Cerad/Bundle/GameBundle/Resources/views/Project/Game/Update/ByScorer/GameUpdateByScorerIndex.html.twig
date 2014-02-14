@@ -1,0 +1,27 @@
+{# @CeradGame/Project/Game/Update/ByScorer/GameUpdateByScorerIndex.html.twig #}
+{% extends '@CeradGame/Layout.html.twig' %}
+
+{% block content %}
+{{ form_start(form) }}
+{{ form_row(form.num)   }}
+{{ form_row(form.dtBeg) }}
+{# form_row(form.timeBegin) #}
+{{ form_row(form.field) }}
+{{ form_row(form.levelKey) }}
+{{ form_row(form.group) }}
+<span>Team</span>
+{{ form_widget(form.homeTeam.role)  }}
+{{ form_widget(form.homeTeam.name)  }}
+{{ form_widget(form.homeTeam.namex) }}
+<br />
+<span>Team</span>
+{{ form_widget(form.awayTeam.role)  }}
+{{ form_widget(form.awayTeam.name)  }}
+{{ form_widget(form.awayTeam.namex) }}
+<br />
+{{ form_widget(form.reset)  }}
+{{ form_widget(form.update) }}
+{{ form_rest(form) }}
+{{ form_end (form) }}
+<a href="{{ redirectUrl }}">Back to Schedule</a>
+{% endblock %}
