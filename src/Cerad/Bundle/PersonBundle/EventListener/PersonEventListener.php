@@ -14,10 +14,13 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
     {
         return array
         (
+            PersonEvents::FindPersonById          => array('onFindPersonById'  ),
             PersonEvents::FindPersonByGuid        => array('onFindPersonByGuid'  ),
             PersonEvents::FindPersonByFedKey      => array('onFindPersonByFedKey'),
             PersonEvents::FindPersonByProjectName => array('onFindPersonByProjectName'),
             PersonEvents::FindOfficialsByProject  => array('onFindOfficialsByProject'),
+            
+            PersonEvents::FindPlanByProjectAndPerson => array('onFindPlanByProjectAndPerson'),
             
             PersonEvents::FindPersonPlanByProjectAndPersonGuid => array('onFindPersonPlanByProjectAndPersonGuid'),        
         );
@@ -41,6 +44,15 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         
         $event->officials = $this->getPersonRepository()->findOfficialsByProject($projectKey);        
     }
+    public function onFindPlanByProjectAndPerson(Event $event)
+    {
+        $projectKey = $event->project->getKey();
+        $personGuid = $event->person ->getGuid();
+        
+        $event->plan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonGuid($projectKey,$personGuid);
+        
+        if ($event->plan) $event->stopPropagation();
+    }
     public function onFindPersonPlanByProjectAndPersonGuid(Event $event)
     {
         $projectKey = $event->project->getKey();
@@ -48,6 +60,13 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         $event->personPlan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonGuid($projectKey,$event->personGuid);
         
         if ($event->personPlan) $event->stopPropagation();
+    }
+    public function onFindPersonById(Event $event)
+    {
+        // Lookup
+        $event->person = $this->getPersonRepository()->find($event->id);
+        
+        if ($event->person) $event->stopPropagation();
     }
     public function onFindPersonByGuid(Event $event)
     {
