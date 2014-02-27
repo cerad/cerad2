@@ -116,9 +116,15 @@ class GameReportUpdateController extends MyBaseController
         $model['game']       = $game;
         $model['gameReport'] = $game->getReport();
         
-        $model['homeTeamReport'] = $game->getHomeTeam()->getReport();
-        $model['awayTeamReport'] = $game->getAwayTeam()->getReport();
+        $model['homeTeamReport'] = $homeTeamReport = $game->getHomeTeam()->getReport();
+        $model['awayTeamReport'] = $awayTeamReport = $game->getAwayTeam()->getReport();
         
+        if ($this->container->hasParameter('cerad_project_sportsmanship_default'))
+        {
+            $sportsmanship = $this->container->getParameter('cerad_project_sportsmanship_default');
+            if ($homeTeamReport->getSportsmanship() === null) $homeTeamReport->setSportsmanship($sportsmanship);
+            if ($awayTeamReport->getSportsmanship() === null) $awayTeamReport->setSportsmanship($sportsmanship);
+        }
         return $model;
     }
     /* ==========================================
