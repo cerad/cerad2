@@ -198,7 +198,7 @@ class GameRepository extends EntityRepository
       // Sadly, this does not work, need to keep experimenting
       //$qbx->andWhere ('game.id IN (' . $qb->getDql() . ')');
 
-        $qbx->addOrderBy('game.dtBeg');
+        $qbx->addOrderBy('game.dtBeg,game.num');
 
         
         return $qbx->getQuery()->getResult();
