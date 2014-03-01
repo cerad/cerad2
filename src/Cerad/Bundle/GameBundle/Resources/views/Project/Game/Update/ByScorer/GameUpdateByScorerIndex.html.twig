@@ -2,6 +2,7 @@
 {% extends '@CeradGame/Layout.html.twig' %}
 
 {% block content %}
+<div id="update-game">
 {{ form_start(form) }}
 {{ form_row(form.num)   }}
 {{ form_row(form.dtBeg) }}
@@ -24,4 +25,5 @@
 {{ form_rest(form) }}
 {{ form_end (form) }}
 <a href="{{ redirectUrl }}">Back to Schedule</a>
+</div>
 {% endblock %}

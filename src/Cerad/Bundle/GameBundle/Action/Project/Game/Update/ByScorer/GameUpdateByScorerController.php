@@ -26,7 +26,7 @@ class GameUpdateByScorerController
         // Standard redirect, can't decide if the model should generate these
         $redirectRoute = $request->attributes->get('_redirect');
         $redirectUrl   = $this->router->generate($redirectRoute);
-        $redirectUrl  .= sprintf('#ref-sched-%d',$model->game->getNum()); // Class prefix needs to be injected
+        $redirectUrl  .= sprintf('#sched-%d',$model->game->getNum()); // Class prefix needs to be injected
 
         // Handle the form
         $form->handleRequest($request);
