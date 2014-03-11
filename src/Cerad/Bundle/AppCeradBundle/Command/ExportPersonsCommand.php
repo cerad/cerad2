@@ -12,7 +12,7 @@ class ExportPersonsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName       ('cerad_app:export:persons')
+            ->setName       ('cerad_app__persons__export')
             ->setDescription('Export Persons');
           //->addArgument   ('importFile', InputArgument::REQUIRED, 'Import File')
           //->addArgument   ('truncate',   InputArgument::OPTIONAL, 'Truncate')
@@ -23,15 +23,10 @@ class ExportPersonsCommand extends ContainerAwareCommand
         
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $export = $this->getService('cerad_app_cerad.persons.export_xml');
+        $export = $this->getService('cerad_app_cerad.persons.export_yaml');
         $writer = $export->process();
         
-      //echo $writer->flush(false);
-        
-        file_put_contents('data/Persons.xml',$writer->flush());
-        
-
-        
+        file_put_contents('data/Persons.yml',$writer->flush());
         return;
    }
 }
