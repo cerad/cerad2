@@ -12,7 +12,7 @@ class ImportPersonsCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this
-            ->setName       ('cerad_app:import:persons')
+            ->setName       ('cerad_app__persons__import')
             ->setDescription('Import Persons');
           //->addArgument   ('importFile', InputArgument::REQUIRED, 'Import File')
           //->addArgument   ('truncate',   InputArgument::OPTIONAL, 'Truncate')
@@ -23,7 +23,8 @@ class ImportPersonsCommand extends ContainerAwareCommand
         
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $import = $this->getService('cerad_app_cerad.persons.import_xml02');
+        $import = $this->getService('cerad_app_cerad.persons.import_yaml');
+        return;
         $params = array('filepath' => 'data/Persons5.xml', 'basename' => 'Persons5.xml');
         
         $results = $import->process($params);

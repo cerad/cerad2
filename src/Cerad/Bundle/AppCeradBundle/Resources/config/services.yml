@@ -13,6 +13,11 @@ services:
         arguments:
             - '@doctrine.dbal.default_connection'
             
+    cerad_app_cerad.persons.import_yaml:
+        class: Cerad\Bundle\AppCeradBundle\Services\Persons\PersonsImport01YAML
+        arguments:
+           #- '%my_scope.mailer.driver%'
+            
     cerad_app_cerad.persons.import_xml:
         class: Cerad\Bundle\AppCeradBundle\Services\Persons\PersonsImportXML
         arguments:
