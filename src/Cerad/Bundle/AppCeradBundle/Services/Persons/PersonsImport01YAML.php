@@ -1,6 +1,7 @@
 <?php
 namespace Cerad\Bundle\AppCeradBundle\Services\Persons;
 
+use Symfony\Component\Yaml\Yaml;
 
 class PersonsImport01YAMLResults
 {
@@ -8,183 +9,209 @@ class PersonsImport01YAMLResults
     public $filepath;
     public $basename;
     
+    public $newPersonCount = 0;
     public $totalPersonCount = 0;
+    public $existingPersonCount = 0;
+    
+    public function __toString()
+    {
+        return sprintf(
+            "Imported %s\n" . 
+            "Total    Persons: %d\n" .
+            "New      Persons: %d\n" .
+            "Existing Persons: %d\n",
+                
+            $this->basename,
+            $this->totalPersonCount,
+            $this->newPersonCount,
+            $this->existingPersonCount
+        );
+    }
 }
 class PersonsImport01YAML
 {
-    protected $conn;
-    protected $reader;
+    protected $userRepo;
+    protected $personRepo;
     
-    public function __construct($conn)
+    public function __construct($personRepo,$userRepo)
     {
-        $this->conn = $conn;
+        $this->personRepo  = $personRepo;
+        $this->userRepo    = $userRepo;
     }
-    public function setDriver($conn)
-    {
-         die('setDriver ' . get_class($conn));       
-    }
-    /* ======================================================
-     * Reset the database
+    /* =================================================
+     * Check all the fed keys and see if any match
      */
-    public function resetDatabase()
+    protected function findPersonByFedKey($personx)
     {
-        $conn = $this->conn;
-        
-        $conn->executeUpdate('DELETE FROM person_fed_certs;' );
-        $conn->executeUpdate('DELETE FROM person_fed_orgs;' );
-        $conn->executeUpdate('DELETE FROM person_feds;' );
-        $conn->executeUpdate('DELETE FROM persons;' );
-       
-        $conn->executeUpdate('ALTER TABLE person_fed_certs AUTO_INCREMENT = 1;');        
-        $conn->executeUpdate('ALTER TABLE person_fed_orgs  AUTO_INCREMENT = 1;');        
-        $conn->executeUpdate('ALTER TABLE person_feds      AUTO_INCREMENT = 1;');        
-        $conn->executeUpdate('ALTER TABLE persons          AUTO_INCREMENT = 1;');        
-    }
-    /* ======================================================
-     * Statement functions
-     * Load column names from the database
-     */    
-    protected $tableColumnNames = array();
-    protected $tableInsertStatements = array();
-    protected $tableUpdateStatements = array();
-    
-    protected function getTableColumnNames($tableName)
-    {
-        if (isset($this->tableColumnNames[$tableName])) return $this->tableColumnNames[$tableName];
-        
-        $columns = $this->conn->getSchemaManager()->listTableColumns($tableName);
-        
-        $colNames = array();
-        foreach($columns as $column)
+        foreach($personx['feds'] as $fed)
         {
-            $colNames[] = $column->getName();  // getType
+            $person = $this->personRepo->findOneByFedKey($fed['fedKey']);
+            if ($person) return $person;
         }
-        return $this->tableColumnNames[$tableName] = $colNames;
+        return null;
     }
-    protected function getTableInsertStatement($tableName)
+    protected function processPersonNew($personx)
     {
-        if (isset($this->tableInsertStatements[$tableName])) return $this->tableInsertStatements[$tableName];
+        $this->results->newPersonCount++;
         
-        $colNames = $this->getTableColumnNames($tableName);
+        $person = $this->personRepo->createPerson();
         
-        $sql = sprintf("INSERT INTO %s \n(%s)\nVALUES(:%s);",
-            $tableName,
-            implode(',', $colNames),
-            implode(',:',$colNames)
-        );
-        return $this->tableInsertStatements[$tableName] = $this->conn->prepare($sql);
-    }
-    /* =========================================================================
-     * Process PersonFedOrg elements
-     */
-    protected function processPersonFedOrg($reader,$personFed)
-    {
-        $personFedOrg = array();
-        foreach($this->getTableColumnNames('person_fed_orgs') as $key)
+        $person->setGuid  ($personx['guid']);
+        $person->setEmail ($personx['email']);
+        $person->setPhone ($personx['phone']);
+        $person->setGender($personx['gender']);
+        
+        $person->setNotes   ($personx['notes']);
+        $person->setStatus  ($personx['status']);
+        $person->setVerified($personx['verified']);
+        
+        if ($personx['dob'])
         {
-            $personFedOrg[$key] = $reader->getAttribute($key);;
+            $dob = new \DateTime($personx['dob']);
+            $person->setDob($dob);
         }
-        $personFedOrg['fed_id'] = $personFed['id'];
+        $personName = $person->getName();
+        $personName->full   = $personx['nameFull'];
+        $personName->first  = $personx['nameFirst'];
+        $personName->last   = $personx['nameLast'];
+        $personName->nick   = $personx['nameNick'];
+        $personName->middle = $personx['nameMiddle'];
+        $person->setName($personName);
         
-        $personFedOrgInsertStatement = $this->getTableInsertStatement('person_fed_orgs');
-        $personFedOrgInsertStatement->execute($personFedOrg);
-    }
-    /* =========================================================================
-     * Process PersonFedCert elements
-     */
-    protected function processPersonFedCert($reader,$personFed)
-    {
-        $personFedCert = array();
-        foreach($this->getTableColumnNames('person_fed_certs') as $key)
+        $personAddress = $person->getAddress();
+        $personAddress->city    = $personx['addressCity'];
+        $personAddress->state   = $personx['addressState'];
+        $personAddress->zipcode = $personx['addressZipcode'];
+        $person->setAddress($personAddress);
+        
+        /* Now do the feds */
+        foreach($personx['feds'] as $personFedx)
         {
-            $personFedCert[$key] = $reader->getAttribute($key);;
-        }
-        $personFedCert['fed_id'] = $personFed['id'];
-        
-        $personFedCertInsertStatement = $this->getTableInsertStatement('person_fed_certs');
-        $personFedCertInsertStatement->execute($personFedCert);
-        
-        // Not sure if really need this but guess it doesn't hurt
-        // It does hurt, the second cert is consumed
-        // Possible because person_fed_cert has only attributes?
-        //while($reader->read() && $reader->name !== 'person_fed_cert') {}
-    }
-    /* =========================================================================
-     * Process PersonFed elements
-     */
-    protected function processPersonFed($reader,$person)
-    {
-        $personFed = array(
-            'id'          => $reader->getAttribute('fed_id'),
-            'person_id'   => $person['id'],
-            'fed_role_id' => $reader->getAttribute('fed_role_id'),
-            'status'      => $reader->getAttribute('status'),
-            'verified'    => $reader->getAttribute('verified'),
-        );
-        $personFedInsertStatement = $this->getTableInsertStatement('person_feds');
-        $personFedInsertStatement->execute($personFed);
-        
-        // This only works for autoinc/sequences
-      //$personFed['id'] = $this->conn->lastInsertId();
-        
-        // Might be fooling myself here, could be consuming subsequent person_feds
-        while($reader->read() && $reader->name != 'person_fed')
-        {
-            // Avoid getting the closing element tags
-            if ($reader->nodeType == \XMLReader::ELEMENT)
-            {    
-                switch($reader->name)
-                {
-                    case 'person_fed_cert':
-                      //echo sprintf("%s person_fed_cert\n",$personFed['id']);
-                        $this->processPersonFedCert($reader,$personFed);
-                        break;
-                    
-                    case 'person_fed_org':
-                        $this->processPersonFedOrg($reader,$personFed);
-                        break;
-                }
+            $personFed = $person->createFed();
+            $personFed->setPersonVerified($personFedx['personVerified']);
+            $personFed->setFed           ($personFedx['fed']);
+            $personFed->setFedRole       ($personFedx['fedRole']);
+            $personFed->setFedKey        ($personFedx['fedKey']);
+            $personFed->setFedKeyVerified($personFedx['fedKeyVerified']);
+            $personFed->setOrgKey        ($personFedx['orgKey']);
+            $personFed->setOrgKeyVerified($personFedx['orgKeyVerified']);
+            $personFed->setMemYear       ($personFedx['memYear']);
+            $personFed->setStatus        ($personFedx['status']);
+            
+            if ($personFedx['fedRoleDate'])
+            {
+                $fedRoleDate = new \DateTime($personFedx['fedRoleDate']);
+                $personFed->setFedRoleDate($fedRoleDate);
             }
-        }    
+            $person->addFed($personFed);
+            
+            // And the certs
+            foreach($personFedx['certs'] as $certx)
+            {
+                $cert = $personFed->createCert();
+                
+                $roleDate  = $certx['roleDate']  ? new \DateTime($certx['roleDate'])  : null;
+                $badgeDate = $certx['badgeDate'] ? new \DateTime($certx['badgeDate']) : null;
+                
+                $cert->setRole         ($certx['role']);
+                $cert->setRoleDate     ($roleDate);
+                $cert->setBadge        ($certx['badge']);
+                $cert->setBadgeDate    ($badgeDate);
+                $cert->setBadgeVerified($certx['badgeVerified']);
+                $cert->setBadgeUser    ($certx['badgeUser']);
+                $cert->setUpgrading    ($certx['upgrading']);
+                $cert->setOrgKey       ($certx['orgKey']);
+                $cert->setMemYear      ($certx['memYear']);
+                $cert->setStatus       ($certx['status']);
+                
+                $personFed->addCert($cert);
+            }
+        }
+        
+        // Do the accounts
+        foreach($personx['users'] as $userx)
+        {
+            // These are new so don't expecting existing accounts
+            $userByGuid = $this->userRepo->findOneByPersonGuid($userx['personGuid']);
+            if ($userByGuid)
+            {
+                echo sprintf("*** Have User for Guid %d\n",$userByGuid->getId());
+                die();
+            }
+            // Might or might not have this
+            $userByName = $this->userRepo->findOneBy(array('username' => $userx['username']));
+            if ($userByName)
+            {
+                // On a clean database this is okay
+                // Once we start adding persons then this picks up
+                // Ignore for now
+                echo sprintf("*** Have User for Name %s %s %s\n",
+                        $userByName->getUsername(),
+                        $userByName->getAccountName(),
+                        $userx['personGuid']);
+            }
+            else
+            {
+                $user = $this->userRepo->createUser();
+                
+                $user->setPersonGuid     ($userx['personGuid']);
+                $user->setPersonStatus   ($userx['personStatus']);
+                $user->setPersonVerified ($userx['personVerified']);
+              //$user->setPersonConfirmed($userx['personConfirmed']);
+                
+                $user->setUsername         ($userx['username']);
+                $user->setUsernameCanonical($userx['usernameCanonical']);
+                $user->setEmail            ($userx['email']);
+                $user->setEmailCanonical   ($userx['emailCanonical']);
+              //$user->setEmailConfirmed   ($userx['emailConfirmed']);
+                
+                $user->setSalt        ($userx['salt']);
+                $user->setPassword    ($userx['password']);
+                $user->setPasswordHint($userx['passwordHint']);
+                $user->setAccountName ($userx['accountName']);
+                
+                $user->setRoles($userx['roles']);
+               
+                $this->userRepo->save($user);
+            }
+        }
+        // Want to make this go away eventually
+        $person->getPersonPersonPrimary();
+        
+        // Commit
+        $this->personRepo->save($person);
+        $this->personRepo->commit();
+        $this->userRepo->commit();
+        
+      //echo sprintf("Added Person %d\n",$person->getId());
+        
+      //die();
     }
-    /* ==========================================================================
-     * Process a person and all nested records
+    /* ==================================================
+     * Determines if have a new or existing person
      */
-    protected function processPerson($reader)
+    protected function processPerson($personx)
     {
         $this->results->totalPersonCount++;
         
-        $person = array();
-        foreach($this->getTableColumnNames('persons') as $key)
+        // See if the person is already in the database
+        $personGuid = $personx['guid'];
+        $personExisting = $this->personRepo->findOneByGuid($personGuid);
+        if ($personExisting)
         {
-            $person[$key] = $reader->getAttribute($key);;
+            print_r($personx); 
+            echo "\n*** Already in database ***\n";
+            die();
         }
-        $personInsertStatement = $this->getTableInsertStatement('persons');
-        $personInsertStatement->execute($person);
-        $person['id'] = $this->conn->lastInsertId();
-                
-        // Read through all the sub nodes until hit person END_ELEMENT
-        while($reader->read() && $reader->name !== 'person')
+        // See if fed id exists
+        $personFedExisting = $this->findPersonByFedKey($personx);
+        if ($personFedExisting)
         {
-            // Avoid getting the closing element tags
-            if ($reader->nodeType == \XMLReader::ELEMENT)
-            {    
-                switch($reader->name)
-                {
-                    case 'person_fed':
-                        $this->processPersonFed($reader,$person);
-                        break;
-                    
-                    case 'person_fed_cert':
-                    case 'person_fed_certs':
-                    case 'person_plan':
-                    case 'person_user':
-                      //echo sprintf("%s\n",$reader->name);
-                }
-            }
+            $this->results->existingPersonCount++;
+            return;
         }
-        // \XMLReader::END_ELEMENT = 15
-        // echo sprintf("Person type %d\n",$reader->nodeType);
+        // Brand new person
+        $this->processPersonNew($personx);
     }
     /* ==========================================================================
      * Main entry point
@@ -193,11 +220,19 @@ class PersonsImport01YAML
      */
     public function process($params)
     {   
-        $this->resetDatabase();
-        
-        $this->results = $results = new PersonsImportXMLResults();
+        $this->results = $results = new PersonsImport01YAMLResults();
         $results->filepath = $params['filepath'];
         $results->basename = $params['basename'];
+        
+        $data = Yaml::parse(file_get_contents($params['filepath']));
+        $persons = $data['persons'];
+        
+        foreach($persons as $person)
+        {
+            $this->processPerson($person);
+        }
+        
+        return $results;
         
         // Open
         $this->reader = $reader = new MyXMLReader();

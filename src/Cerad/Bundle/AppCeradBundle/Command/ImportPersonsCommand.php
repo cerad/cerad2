@@ -24,12 +24,12 @@ class ImportPersonsCommand extends ContainerAwareCommand
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $import = $this->getService('cerad_app_cerad.persons.import_yaml');
-        return;
-        $params = array('filepath' => 'data/Persons5.xml', 'basename' => 'Persons5.xml');
+        
+        $params = array('filepath' => 'data/Persons.yml', 'basename' => 'Persons.yml');
         
         $results = $import->process($params);
         
-        print_r($results);
+        echo $results . "\n";
         
         return;
     }

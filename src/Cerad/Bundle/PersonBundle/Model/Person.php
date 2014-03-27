@@ -208,7 +208,23 @@ class Person extends BaseModel implements PersonInterface
      */
     public function createPersonPerson($params = null) { return new PersonPerson($params); }
     
-    public function getPersonPersons() { return  $this->persons; }
+    // 27 Mar 2014 - Create fake primary if necessary
+    public function getPersonPersons() 
+    { 
+        return $this->persons;
+        
+        $persons = $this->persons->toArray();
+        if (isset($persons[PersonPerson::RolePrimary])) return $persons;
+        
+        $personPerson = $this->createPersonPerson();
+        $personPerson->setRole(PersonPerson::RolePrimary);
+        $personPerson->setChild ($this);
+        $personPerson->setParent($this);
+        
+        $persons[] = $personPerson;
+        
+        return  $persons; 
+    }
 
     public function addPersonPerson(PersonPerson $personPerson)
     {

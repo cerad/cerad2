@@ -115,6 +115,10 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
      * Roles stuff
      * String only for now
      */
+    public function setRoles($roles)
+    {
+        $this->roles = $roles;
+    }
     public function getRoles()
     {
         if (in_array(self::ROLE_DEFAULT,$this->roles,true)) return $this->roles;
