@@ -8,8 +8,8 @@ services:
         calls:
              - [setDispatcher,['@event_dispatcher']]
         arguments:
-            - '@cerad_game__game__repository'
-            - '@cerad_game__game_field__repository'
+            - '@cerad_game__game_repository'
+           #- '@cerad_game__game_field__repository'
             
     cerad_game__project__game__update__by_scorer__form_factory:
         class: Cerad\Bundle\GameBundle\Action\Project\Game\Update\ByScorer\GameUpdateByScorerFormFactory

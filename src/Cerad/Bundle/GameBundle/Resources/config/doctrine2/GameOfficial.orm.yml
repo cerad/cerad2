@@ -1,0 +1,106 @@
+Cerad\Bundle\GameBundle\Doctrine\Entity\GameOfficial:
+    type:  entity
+    table: game_officials
+    uniqueConstraints:
+       game_official_game_slot_index:
+           columns: gameId, slot
+
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+            
+    manyToOne:
+          
+        game:
+            targetEntity: Game
+            inversedBy:   officials
+            nullable:     false
+            joinColumn:
+                name:                 gameId
+                referencedColumnName: id
+      
+    fields:
+            
+        slot:
+            column:   slot
+            type:     integer
+            nullable: false
+            
+        role:
+            column:   role
+            type:     string
+            length:   20
+            nullable: false
+                
+        assignRole:
+            column:   assignRole
+            type:     string
+            length:   40
+            nullable: true
+            
+        assignState:
+            column:   assignState
+            type:     string
+            length:   20
+            nullable: true
+            
+        personNameFull:
+            column:   personNameFull
+            type:     string
+            length:   80
+            nullable: true
+            
+        personNameLast:
+            column:   personNameLast
+            type:     string
+            length:   40
+            nullable: true
+            
+        personNameFirst:
+            column:   personNameFirst
+            type:     string
+            length:   40
+            nullable: true
+            
+        personEmail:
+            column:   personEmail
+            type:     string
+            length:   80
+            nullable: true
+            
+        personPhone:
+            column:   personPhone
+            type:     string
+            length:   20
+            nullable: true
+            
+        personBadge:
+            column:   personBadge
+            type:     string
+            length:   20
+            nullable: true
+        
+        personGuid:
+            column:   personGuid
+            type:     string
+            length:   40
+            nullable: true
+            
+        personFedKey:
+            column:   personFedKey
+            type:     string
+            length:   40
+            nullable: true
+            
+        personOrgKey:
+            column:   personOrgKey
+            type:     string
+            length:   40
+            nullable: true
+        
+        status:
+            column:   status
+            type:     string
+            length:   20
+            nullable: true

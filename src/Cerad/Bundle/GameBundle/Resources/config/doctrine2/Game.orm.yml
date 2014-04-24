@@ -1,0 +1,108 @@
+Cerad\Bundle\GameBundle\Doctrine\Entity\Game:
+    type:  entity
+    table: games
+    repositoryClass: Cerad\Bundle\GameBundle\Doctrine\EntityRepository\GameRepository
+
+    uniqueConstraints:
+       game_project_num_index:
+           columns: projectKey, num
+
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+            
+    oneToMany:
+   
+       teams:
+           targetEntity: GameTeam
+           mappedBy:     game
+           indexBy:      slot
+           cascade:      ['all']
+            
+       officials:
+           targetEntity: GameOfficial
+           mappedBy:     game
+           indexBy:      slot
+           cascade:      ['all']     
+      
+    fields:
+            
+        projectKey:
+            column:   projectKey
+            type:     string
+            length:   80
+            nullable: false
+          
+        num:
+            column:   num
+            type:     integer
+            nullable: false
+            
+        role:
+            column:   role
+            type:     string
+            length:   20
+            nullable: false
+            
+        venueName:
+            column:   venueName
+            type:     string
+            length:   40
+            nullable: true
+            
+        fieldName:
+            column:   fieldName
+            type:     string
+            length:   40
+            nullable: true
+            
+        levelKey:
+            column:   levelKey
+            type:     string
+            length:   80
+            nullable: true
+            
+        groupKey:
+            column:   groupKey
+            type:     string
+            length:   40
+            nullable: true
+            
+        groupType:
+            column:   groupType
+            type:     string
+            length:   20
+            nullable: true
+            
+        dtBeg:
+            column:   dtBeg
+            type:     datetime
+            nullable: false
+            
+        dtEnd:
+            column:   dtEnd
+            type:     datetime
+            nullable: true      # Maybe a TBD or BYE flag?
+            
+        link:
+            column:   link
+            type:     integer
+            nullable: true
+            
+        orgKey:
+            column:   orgKey
+            type:     string
+            length:   40
+            nullable: true
+            
+        report:
+            column:   report
+            type:     array
+            nullable: true
+            
+        status:
+            column:   status
+            type:     string
+            length:   20
+            nullable: false

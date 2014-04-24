@@ -8,8 +8,8 @@ services:
     cerad_tourn_admin.schedule_games.import_xls:
         class: Cerad\Bundle\TournAdminBundle\Schedule\Games\ScheduleGamesImportXLS
         arguments:  
-            - '@cerad_game.game_repository'
-            - '@cerad_game.game_field_repository'
+            - '@cerad_game__game_repository'
+           #- '@cerad_game.game_field_repository'
             
     cerad_tourn_admin.persons.export_xls:
         class: Cerad\Bundle\TournAdminBundle\Services\Persons\PersonsExportXLS

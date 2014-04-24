@@ -24,7 +24,7 @@ class CeradGameExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         
-        $loader->load('services/services.yml');
+        $loader->load('services/services2.yml');
         $loader->load('services/game.yml');
         $loader->load('services/assign.yml');
         

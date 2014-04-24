@@ -1,0 +1,75 @@
+Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
+    type:  entity
+    table: game_teams
+    uniqueConstraints:
+       game_team_game_slot_index:
+           columns: gameId, slot
+
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+            
+    manyToOne:
+          
+        game:
+            targetEntity: Game
+            inversedBy:   teams
+            nullable:     false
+            joinColumn:
+                name:                 gameId
+                referencedColumnName: id
+      
+    fields:
+            
+        slot:
+            column:   slot
+            type:     integer
+            nullable: false
+            
+        role:
+            column:   role
+            type:     string
+            length:   20
+            nullable: false
+            
+        levelKey:
+            column:   levelKey
+            type:     string
+            length:   80
+            nullable: true
+                
+        groupSlot:
+            column:   groupSlot
+            type:     string
+            length:   40
+            nullable: true
+            
+        name:
+            column:   name
+            type:     string
+            length:   80
+            nullable: false
+                        
+        score:
+            column:   score
+            type:     integer
+            nullable: true
+             
+        orgKey:
+            column:   orgKey
+            type:     string
+            length:   40
+            nullable: true
+            
+        conduct:
+            column:   conduct
+            type:     text
+            nullable: true
+
+        status:
+            column:   status
+            type:     string
+            length:   20
+            nullable: true
+             
