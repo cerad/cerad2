@@ -9,6 +9,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Cerad\Bundle\CoreBundle\EventListener\CoreRequestListener;
@@ -17,11 +18,16 @@ use Cerad\Bundle\ProjectBundle\ProjectEvents;
 
 class ProjectEventListener extends ContainerAware implements EventSubscriberInterface
 {
+    const ProjectControllerEventListenerPriority = -1300;
+    
     public static function getSubscribedEvents()
     {
         return array
         (
-            KernelEvents::REQUEST => array(array('onKernelRequest', CoreRequestListener::ProjectEventListenerPriority)),
+            KernelEvents::CONTROLLER => array(
+                array('onControllerProject', self::ProjectControllerEventListenerPriority),
+            ),
+          //KernelEvents::REQUEST => array(array('onKernelRequest', CoreRequestListener::ProjectEventListenerPriority)),
 
             ProjectEvents::FindProjectByKey  => array('onFindProjectByKey'  ),
             ProjectEvents::FindProjectBySlug => array('onFindProjectBySlug' ),
@@ -37,8 +43,30 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
     {
         return $this->container->get($this->projectRepositoryServiceId);
     }
+    public function onControllerProject(FilterControllerEvent $event)
+    {
+        // Only process routes asking for a project
+        if (!$event->getRequest()->attributes->has('_project')) return;
+        
+        $projectSlug = $event->getRequest()->attributes->get('_project');
+      //$projectSearch = $this->container->getParameter('cerad_project_project_default');
+      
+        // Query the project
+        $project = $this->getProjectRepository()->findOneBySlug($projectSlug);
+        if (!$project)
+        {
+            throw new NotFoundHttpException(sprintf('Project %s not found',$projectSlug));
+        }
+        // Stash it
+        $event->getRequest()->attributes->set('project',$project);
+        
+        // Twig global
+        $twig = $this->container->get('twig');
+        $twig->addGlobal('project',$project);
+    }
     public function onKernelRequest(GetResponseEvent $event)
     {
+        die('Project Request Listenerx');
         // Will a sub request ever change projects?
         if (HttpKernel::MASTER_REQUEST != $event->getRequestType()) return;
         

@@ -1,0 +1,65 @@
+{% if searchForm is defined  %}
+{% set form = searchForm     %}
+{{ form_start(form) }}
+<table><tr>
+<td><table border="1">
+    <tr><td>Fri</td><td>Sat</td><td>Sun</td></tr>
+    <tr><td>{{ form_widget(form.Fri) }}</td>
+        <td>{{ form_widget(form.Sat) }}</td>
+        <td>{{ form_widget(form.Sun) }}</td>
+    </tr>
+</table></td>
+<td><table border="1">
+    <tr><td>U10B</td><td>U10G</td><td>U12B</td><td>U12G</td><td>U14G</td><td>U19G</td></tr>
+    <tr>
+        <td>{{ form_widget(form.U10B) }}</td>
+        <td>{{ form_widget(form.U10G) }}</td>
+        <td>{{ form_widget(form.U12B) }}</td>
+        <td>{{ form_widget(form.U12G) }}</td>
+        <td>{{ form_widget(form.U14G) }}</td>
+        <td>{{ form_widget(form.U19G) }}</td>
+    </tr>
+</table></td>
+</tr></table>
+{{ form_rest(form) }}
+{{ form_end (form) }}
+{#
+<div class="schedule-search">
+<form action="{{ path('cerad_game_schedule') }}" method="POST" {{ form_enctype(form) }}>
+<table border="1" style="width: 1000px;">
+<tr>
+<td colspan="2">
+<table>
+    <tr>
+        <td>{{ form_widget(form.date1)      }}{{ form_errors(form.date1)      }}</td>
+        <td>{{ form_widget(form.date1On)    }}{{ form_label (form.date1On)    }}</td>
+        <td>{{ form_widget(form.date1Ignore)}}{{ form_label (form.date1Ignore)}}</td>
+    </tr><tr>
+        <td>{{ form_widget(form.date2)      }}{{ form_errors(form.date2)      }}</td>
+        <td>{{ form_widget(form.date2On)    }}{{ form_label (form.date2On)    }}</td>
+        <td>{{ form_widget(form.date2Ignore)}}{{ form_label (form.date2Ignore)}}</td>
+    </tr>
+</table>
+</td>
+{#
+<td>{{ form_widget(form.seasons)  }}</td>
+<td>{{ form_widget(form.sports)   }}</td>
+<td>{{ form_widget(form.statuses) }}</td>
+
+</tr>
+<tr>
+    <td>{{ form_widget(form.domains)   }}</td>
+    <td>{{ form_widget(form.domainSubs)}}</td>
+    <td>{{ form_widget(form.levels)    }}</td>
+    <td>{{ form_widget(form.teams)     }}</td>
+    <td>{{ form_widget(form.fields)    }}</td>
+</tr>
+<tr>
+    <td colspan="8" align="right"><input type="submit" name="schSearchSubmit" value="Search" /></td>
+</tr>
+</table>
+<div style="display: none;">{{ form_rest(form) }}</div>
+</form>        
+</div>
+#}
+{% endif %}

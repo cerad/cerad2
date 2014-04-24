@@ -35,3 +35,21 @@ cerad_game__project__game_officials__assign_by_assignor:
         _template: '@CeradGame/Project/GameOfficials/AssignByAssignor/AssignByAssignorIndex.html.twig'
         _redirect:   cerad_tourn_schedule_official_list
         _role:       ROLE_ASSIGNOR
+        
+# RefereeSchedule
+cerad_game__project__referee_schedule__show:
+    path:  /project/{_project}/referee-schedule
+    defaults: 
+        _controller: cerad_game__project__referee_schedule__show_controller:action
+        _model:      cerad_game__project__referee_schedule__show_model_factory
+        _form:       cerad_game__project__referee_schedule__show_form_factory
+        _template: '@CeradGame\RefereeSchedule\Show\RefereeScheduleShowPage.html.twig'
+        
+cerad_game__referee_schedule__show:
+    path:  /referee-schedule
+    defaults: 
+        _controller: cerad_game__project__referee_schedule__show_controller:action
+        _model:      cerad_game__project__referee_schedule__show_model_factory
+        _form:       cerad_game__project__referee_schedule__show_form_factory
+        _template: '@CeradGame\RefereeSchedule\Show\RefereeScheduleShowPage.html.twig'
+        _project:    ~

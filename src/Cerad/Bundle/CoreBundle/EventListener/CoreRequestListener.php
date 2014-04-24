@@ -32,6 +32,8 @@ class CoreRequestListener extends ContainerAware implements EventSubscriberInter
     const PersonEventListenerPriority  =  -64;
     const ModelRequestListenerPriority = -256;
     
+    const ProjectControllerEventListenerPriority =  -1300;
+    
     public static function getSubscribedEvents()
     {
         return array
@@ -115,7 +117,7 @@ class CoreRequestListener extends ContainerAware implements EventSubscriberInter
         
         // Only process routes asking for a model
         if (!$event->getRequest()->attributes->has('_model')) return;
-        
+die('needModel');        
         // Only process routes with a model
         $request      = $event->getRequest();
         $requestAttrs = $request->attributes;
