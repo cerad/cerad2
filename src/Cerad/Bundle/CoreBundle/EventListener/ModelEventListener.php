@@ -39,7 +39,7 @@ class ModelEventListener extends ContainerAware implements EventSubscriberInterf
                 
                 array('onControllerRole',  self::ControllerRoleEventListenerPriority),
                 array('onControllerModel', self::ControllerModelEventListenerPriority),
-                array('doControllerForm',  self::ControllerFormEventListenerPriority),
+                array('onControllerForm',  self::ControllerFormEventListenerPriority),
             ),
             KernelEvents::VIEW => array(
                 array('onView', self::ViewEventListenerPriority),

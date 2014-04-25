@@ -1,5 +1,5 @@
 <div class="schedule-games-list">
-    <table id="schedule" class="schedule-games-list">
+    <table id="schedule" class="schedule-games-list" border="1">
     <thead>
         <tr><th colspan="20">Referee Schedule - Count: {{ games | length }}</th></tr>
         <tr>
@@ -32,8 +32,8 @@
            <td><table>
                 {% for gameTeam in game.teams %}
                     <tr>
-                        <td style="width: 15px;">{{ cerad_game_score(gameTeam.score) }}</td>
-                        <td>{{ gameTeam.name }}</td>
+                        <td style="width: 15px;">{# cerad_game_score(gameTeam.score) #}&nbsp;</td>
+                        <td>{{ gameTeam.groupSlot }}</td>
                     </tr>
                 {% endfor %}
             </table></td>

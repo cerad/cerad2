@@ -4,6 +4,7 @@ namespace Cerad\Bundle\GameBundle\Action\Project\RefereeSchedule\Show;
 use Cerad\Bundle\CoreBundle\Action\ActionController;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class RefereeScheduleShowController extends ActionController
 {
@@ -13,8 +14,10 @@ class RefereeScheduleShowController extends ActionController
         if ($form->isValid()) 
         {   
             $model->process($request,$form->getData());
-            return $this->redirectResponse('cerad_tourn__referee_schedule__show');
-        }
+            
+            $formAction = $form->getConfig()->getAction();
+            return new RedirectResponse($formAction);  // To form
+         }
 
         $games = $model->loadGames();
         

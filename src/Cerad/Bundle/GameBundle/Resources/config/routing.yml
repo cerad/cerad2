@@ -43,7 +43,7 @@ cerad_game__project__referee_schedule__show:
         _controller: cerad_game__project__referee_schedule__show_controller:action
         _model:      cerad_game__project__referee_schedule__show_model_factory
         _form:       cerad_game__project__referee_schedule__show_form_factory
-        _template: '@CeradGame\RefereeSchedule\Show\RefereeScheduleShowPage.html.twig'
+        _template: '@CeradGame\Project\RefereeSchedule\Show\RefereeScheduleShowPage.html.twig'
         
 cerad_game__referee_schedule__show:
     path:  /referee-schedule
@@ -51,5 +51,5 @@ cerad_game__referee_schedule__show:
         _controller: cerad_game__project__referee_schedule__show_controller:action
         _model:      cerad_game__project__referee_schedule__show_model_factory
         _form:       cerad_game__project__referee_schedule__show_form_factory
-        _template: '@CeradGame\RefereeSchedule\Show\RefereeScheduleShowPage.html.twig'
+        _template: '@CeradGame\Project\RefereeSchedule\Show\RefereeScheduleShowPage.html.twig'
         _project:    ~
