@@ -1,30 +1,31 @@
 {% if searchForm is defined  %}
 {% set form = searchForm     %}
 {{ form_start(form) }}
-    <fieldset>
-    <table>
-      <tr>
+<fieldset>
+<table>
+  <tr>
 
-      {% if form.dates is defined %}
+    {% if form.dates is defined %}
       {% set items = form.dates %}
       <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
-      {% endif %}
-
-      {% if form.genders is defined %}
-      {% set items = form.genders %}
-      <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
-      {% endif %}
-
-      {% if form.ages is defined %}
-      {% set items = form.ages %}
-      <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
-      {% endif %}
+    {% endif %}
       
-      {% if form.programs is defined %}
+    {% if form.programs is defined %}
       {% set items = form.programs %}
       <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
-      {% endif %}
-      </tr>
+    {% endif %}
+
+    {% if form.genders is defined %}
+      {% set items = form.genders %}
+      <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
+    {% endif %}
+
+    {% if form.ages is defined %}
+      {% set items = form.ages %}
+      <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
+    {% endif %}
+      
+  </tr>
 {#
       <tr>
 
@@ -34,13 +35,13 @@
       {% endif %}
       </tr>
 #}
-    </table>
+</table>
 {#
     <div style="padding:0 2em; float: left;"><a href="{{ path('cerad_tourn_schedule_list', { '_format': 'xls'}) }}">Export to Excel</a></div>
     <div style="padding-right: 2em; float: left;"><a href="{{ path('cerad_tourn_schedule_list', { '_format': 'csv'}) }}"> Export to Text</a></div>
 #}
-        <div class="controls">{{ form_widget(form.search) }}</div>
-    </fieldset>
+  <div class="controls">{{ form_widget(form.search) }}</div>
+</fieldset>
 <div style="display:none">{{ form_rest(form) }}</div>
 {{ form_end (form) }}
 {% endif %}
