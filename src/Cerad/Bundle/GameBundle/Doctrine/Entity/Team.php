@@ -1,0 +1,65 @@
+<?php
+namespace Cerad\Bundle\GameBundle\Doctrine\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+
+class Team
+{
+    const RolePhysical = 'RolePhysical';
+    
+    protected $id;
+    
+    protected $orgKey;
+    protected $levelKey;
+    protected $projectKey;
+    
+    protected $num;
+    protected $role = self::RolePhysical;
+    protected $name;
+    protected $coach;
+    
+    protected $status = 'Active';
+    
+    protected $games;
+   
+    public function getId()      { return $this->id;      }
+    public function getNum()     { return $this->num;     }
+    public function getRole()    { return $this->role;    }
+    public function getName()    { return $this->name;    }
+    public function getCoach()   { return $this->coach;   }
+    public function getStatus()  { return $this->status;  }
+    
+    public function getOrgKey()     { return $this->orgKey;     }
+    public function getLevelKey()   { return $this->levelKey;   }
+    public function getProjectKey() { return $this->projectKey; }
+    
+    public function setNum      ($value) { $this->num    = $value; }
+    public function setRole     ($value) { $this->role   = $value; }
+    public function setName     ($value) { $this->name   = $value; }
+    public function setCoach    ($value) { $this->coach  = $value; }
+    public function setStatus   ($value) { $this->status = $value; }
+    
+    public function setOrgKey    ($value) { $this->orgKey     = $value; }
+    public function setLevelKey  ($value) { $this->levelKey   = $value; }
+    public function setProjectKey($value) { $this->projectKey = $value; }
+    
+    public function __construct()
+    {
+        $this->games = new ArrayCollection();
+    }
+    /* ============
+     * Game Team stuff
+     */
+   public function getGames() 
+    { 
+        return $this->games->toArray();
+    }
+    public function addGame($game)
+    {
+        // Not indexed
+        $this->games[] = $game;
+        
+        $game->setTeam($this);
+    }
+}
+?>

@@ -1,0 +1,68 @@
+Cerad\Bundle\GameBundle\Doctrine\Entity\Team:
+    type:  entity
+    table: teams
+    repositoryClass: Cerad\Bundle\GameBundle\Doctrine\EntityRepository\TeamRepository
+    
+    uniqueConstraints:
+       team_project_level_num_index:
+           columns: projectKey, levelKey, num
+
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+            
+    oneToMany:
+      games:
+        targetEntity: GameTeam
+        mappedBy:     team
+      
+    fields:
+            
+        role:
+            column:   role
+            type:     string
+            length:   20
+            nullable: false
+            
+        num:
+            column:   num
+            type:     integer
+            nullable: false
+            
+        name:
+            column:   name
+            type:     string
+            length:   80
+            nullable: true
+            
+        coach:
+            column:   coach
+            type:     string
+            length:   80
+            nullable: true
+            
+        projectKey:
+            column:   projectKey
+            type:     string
+            length:   80
+            nullable: false
+                
+        levelKey:
+            column:   levelKey
+            type:     string
+            length:   80
+            nullable: false
+                
+        orgKey:
+            column:   orgKey
+            type:     string
+            length:   80
+            nullable: true
+            
+        status:
+            column:   status
+            type:     string
+            length:   20
+            nullable: true
+             

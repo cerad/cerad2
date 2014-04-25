@@ -1,6 +1,6 @@
 Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
     type:  entity
-    table: game_teams
+    table: game_team
     uniqueConstraints:
        game_team_game_slot_index:
            columns: gameId, slot
@@ -15,10 +15,18 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
         game:
             targetEntity: Game
             inversedBy:   teams
-            nullable:     false
             joinColumn:
                 name:                 gameId
                 referencedColumnName: id
+                nullable:             false
+                
+        team:
+            targetEntity: Team
+            inversedBy:   games
+            joinColumn:
+                name:                 teamId
+                referencedColumnName: id
+                nullable:             true
       
     fields:
             
