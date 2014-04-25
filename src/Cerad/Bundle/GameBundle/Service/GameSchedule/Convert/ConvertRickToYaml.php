@@ -9,8 +9,9 @@ class ConvertRickToYaml extends BaseLoader
     protected $record = array
     (
         'num'   => array('cols' => 'Game #','req' => true),
-        'dtBeg' => array('cols' => 'Start', 'req' => true),
-        'dtEnd' => array('cols' => 'Stop',  'req' => true),
+        'date'  => array('cols' => 'Date',  'req' => true),
+        'time1' => array('cols' => 'Start', 'req' => true),
+        'time2' => array('cols' => 'Stop',  'req' => true),
         
         'venueName' => array('cols' => 'Site',  'req' => true),
         'fieldName' => array('cols' => 'Field', 'req' => true),
@@ -39,9 +40,13 @@ class ConvertRickToYaml extends BaseLoader
         $game['num'] = $num;
         $game['type'] = 'Game';    
         
-        $game['dtBeg'] = $this->processDateTime($item['dtBeg']);
-        $game['dtEnd'] = $this->processDateTime($item['dtEnd']);
+        $date  = $this->processDate($item['date']);
+        $time1 = $this->processTime($item['time1']);
+        $time2 = $this->processTime($item['time2']);
         
+        $game['dtBeg'] = $date . ' ' . $time1;
+        $game['dtEnd'] = $date . ' ' . $time2;
+     
         $game['sportKey' ] = 'Soccer';
         $game['levelKey' ] = $item['levelKey'];
         $game['groupKey' ] = $item['groupKey'];

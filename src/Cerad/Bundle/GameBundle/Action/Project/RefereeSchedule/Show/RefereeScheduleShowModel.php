@@ -13,10 +13,12 @@ class RefereeScheduleShowModel extends ActionModelFactory
     public $criteria;
     
     protected $gameRepo;
+    protected $levelRepo;
     
-    public function __construct($gameRepo)
+    public function __construct($gameRepo,$levelRepo)
     {
-        $this->gameRepo = $gameRepo;
+        $this->gameRepo  = $gameRepo;
+        $this->levelRepo = $levelRepo;
     }
     public function create(Request $request)
     {   
@@ -57,7 +59,12 @@ class RefereeScheduleShowModel extends ActionModelFactory
     }
     public function loadGames()
     {        
-        $this->games = $this->gameRepo->queryGameSchedule($this->criteria);
+        $criteria = $this->criteria;
+        
+        // Could be an event
+        $criteria['levelKeys'] = $this->levelRepo->queryKeys($criteria);
+        
+        $this->games = $this->gameRepo->queryGameSchedule($criteria);
         
         return $this->games;
     }
