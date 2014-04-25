@@ -46,7 +46,7 @@
                 {% for referee in game.officials %}
                     <tr>
                         <td>
-                            {% if is_granted('ROLE_USER') %}
+                            {% if is_granted('ROLE_USERx') %}
                                 <a href="{{ path('cerad_game__project__game_official__assign_by_user', 
     { '_project' : project.slugPrefix, '_game': game.num, '_gameOfficial': referee.slot }) }}">
                                 {{ referee.role }}</a>
