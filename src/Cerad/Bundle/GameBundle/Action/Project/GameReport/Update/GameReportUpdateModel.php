@@ -1,27 +1,34 @@
 <?php
-namespace Cerad\Bundle\GameBundle\Action\Project\RefereeSchedule\Show;
+namespace Cerad\Bundle\GameBundle\Action\Project\GameReport\Update;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
-class RefereeScheduleShowModel extends ActionModelFactory
+class GameReportUpdateModel extends ActionModelFactory
 {
     const SessionCriteria = 'RefereeScheduleShow';
     
     public $project;
-    public $criteria;
+    public $game;
     
     protected $gameRepo;
-    protected $levelRepo;
     
-    public function __construct($gameRepo,$levelRepo)
+    public function __construct($gameRepo)
     {
         $this->gameRepo  = $gameRepo;
-        $this->levelRepo = $levelRepo;
     }
     public function create(Request $request)
     {   
+        $this->project = $project = $request->attributes->get('project');
+        $this->game    = $game    = $request->attributes->get('game');
+        
+        $this->gameReport     = $game->getReport();
+        $this->homeTeamReport = $game->getHomeTeam()->getReport();
+        $this->awayTeamReport = $game->getAwayTeam()->getReport();
+        
+        die('game report update model');
+        
         $criteria = array();
 
         $this->project = $project = $request->attributes->get('project');

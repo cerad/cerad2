@@ -60,6 +60,8 @@ class LevelRepository implements LevelRepositoryInterface
     }
     protected function filterProperty($params,$name,$value)
     {
+      //print_r($params); 
+      //echo sprintf("<br />   %s %s\n",$name,$value); die();
         $value = strtolower($value);
         
         if (!isset($params[$name])) return true;

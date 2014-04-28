@@ -66,7 +66,7 @@ class ConvertRickToYaml extends BaseLoader
             'AR1'     => null,
             'AR2'     => null,
         );
-        if ($game['levelKey'] == 'AYSO_U19B_Core')
+        if ($game['levelKey'] == 'AYSO_U19B_Core' || true)
         {
             $game = $this->transform($game);
         }
@@ -123,15 +123,16 @@ class ConvertRickToYaml extends BaseLoader
         'PP' => 'PP',
         'QF1' => 'QF', 'QF2' => 'QF', 'QF3'  => 'QF', 'QF4'  => 'QF',
         'CH5' => 'SF', 'CH6' => 'SF', 'CB9'  => 'SF', 'CB10' => 'SF',
-        'CH7' => 'FM', 'CH8' => 'CM', 'CB11' => 'FM', 'CB12' => 'CM',
+//      'CH7' => 'FM', 'CH8' => 'CM', 'CB11' => 'FM', 'CB12' => 'CM',
+        'CH7' => 'FM', 'CH8' => 'FM', 'CB11' => 'FM', 'CB12' => 'FM',
     );
     protected $groupPoolTransform = array
     (
         'QF1' => 'QF 1', 'QF2' => 'QF 2', 'QF3' => 'QF 3', 'QF4'  => 'QF 4',
         'SF5' => 'SF 1', 'SF6' => 'SF 2', 'CB9' => 'SF 3', 'CB10' => 'SF 4',
         
-        'FM7' => 'FM 1', 'CB11' => 'FM 2',
-        'CM8' => 'CM 1', 'CB12' => 'CM 2',
+        'FM7' => 'FM 1', 'CB11' => 'FM 3',
+        'CM8' => 'FM 2', 'CB12' => 'FM 4',
     );
     protected $teamGroupSlotTransform = array
     (

@@ -17,13 +17,11 @@ class GameUpdateByScorerModel
     
     // Injected
     protected $gameRepo;
-    protected $gameFieldRepo;
     protected $dispatcher;
     
-    public function __construct($gameRepo,$gameFieldRepo)
+    public function __construct($gameRepo)
     {   
-        $this->gameRepo      = $gameRepo;
-        $this->gameFieldRepo = $gameFieldRepo;
+        $this->gameRepo = $gameRepo;
     }
     public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
     
@@ -87,6 +85,7 @@ class GameUpdateByScorerModel
     }
     public function getGameFields()
     {
+        return array();
         return $this->gameFieldRepo->findByProject($this->project);
     }
     public function getTeamNameChoices()

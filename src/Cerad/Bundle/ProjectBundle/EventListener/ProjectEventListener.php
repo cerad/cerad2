@@ -47,7 +47,7 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
     {
         // Only process routes asking for a project
         if (!$event->getRequest()->attributes->has('_project')) return;
-        
+
         $projectSlug = $event->getRequest()->attributes->get('_project');
       //$projectSearch = $this->container->getParameter('cerad_project_project_default');
       

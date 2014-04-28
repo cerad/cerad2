@@ -5,9 +5,8 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-use Symfony\Component\HttpKernel\HttpKernel;
 use Symfony\Component\HttpKernel\KernelEvents;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Cerad\Bundle\CoreBundle\EventListener\CoreRequestListener;
@@ -17,11 +16,15 @@ use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 
 class GameEventListener extends ContainerAware implements EventSubscriberInterface
 {
+    const ControllerGameEventListenerPriority = -1600;
+    
     public static function getSubscribedEvents()
     {
         return array
         (
-            KernelEvents::REQUEST => array(array('onKernelRequest', CoreRequestListener::GameEventListenerPriority)),
+            KernelEvents::CONTROLLER => array(
+                array('onControllerGame', self::ControllerGameEventListenerPriority),
+            ),
             
             GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot' ),
         );
@@ -36,11 +39,8 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
     {
         return $this->container->get($this->gameRepositoryServiceId);
     }
-    public function onKernelRequest(GetResponseEvent $event)
+    public function onControllerGame(FilterControllerEvent $event)
     {
-        // Will a sub request ever change projects?
-        if (HttpKernel::MASTER_REQUEST != $event->getRequestType()) return;
-        
         // Only process routes asking for a game
         if (!$event->getRequest()->attributes->has('_game')) return;
         
