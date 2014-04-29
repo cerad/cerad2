@@ -1,0 +1,11 @@
+parameters:
+  
+services:
+  cerad_game__results_natgames:
+    class: Cerad\Bundle\GameBundle\Service\Results\NatGamesResults
+    
+  cerad_game__results_s1games:
+    class: Cerad\Bundle\GameBundle\Service\Results\S1GamesResults
+    
+  cerad_game__results_s5games:
+    class: Cerad\Bundle\GameBundle\Service\Results\S5GamesResults

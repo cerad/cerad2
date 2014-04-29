@@ -13,6 +13,7 @@ use Cerad\Bundle\CoreBundle\EventListener\CoreRequestListener;
 
 use Cerad\Bundle\GameBundle\GameEvents;
 use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
+use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
 
 class GameEventListener extends ContainerAware implements EventSubscriberInterface
 {
@@ -26,6 +27,7 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
                 array('onControllerGame', self::ControllerGameEventListenerPriority),
             ),
             
+            FindResultsEvent::EventName  => array('onFindResults' ),
             GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot' ),
         );
     }
@@ -76,6 +78,20 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
             }
             $request->attributes->set('gameOfficial',$gameOfficial);
         }
+    }
+    /* ====================================================================
+     * Finds the results/scoring service for a given project
+     */
+    public function onFindResults(FindResultsEvent $event)
+    {
+        $key = $event->getProject()->getResults();
+        
+        $resultsServiceId = sprintf('cerad_game__results_%s',$key);
+        $results = $this->container->get($resultsServiceId);
+        
+        $event->setResults($results);
+        $event->stopPropagation();
+        return;
     }
     /* ====================================================================
      * Game Official Assignment

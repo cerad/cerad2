@@ -1,11 +1,9 @@
 <?php
-namespace Cerad\Bundle\GameBundle\Entity;
+namespace Cerad\Bundle\GameBundle\Doctrine\Entity;
 
 /* =============================================
  * Value object
  * This summarizes the results for a team in a given pool
- * 
- * Just extendfor now and add some methods
  */
 class PoolTeamReport extends GameTeamReport
 {

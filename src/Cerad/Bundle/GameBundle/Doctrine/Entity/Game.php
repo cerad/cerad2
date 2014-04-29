@@ -143,5 +143,16 @@ class Game
         
         return null;
     }
+    /* ======================================================
+     * Report is a value object
+     */
+    public function getReport()
+    {
+        return new GameReport($this->report);
+    }
+    public function setReport($report)
+    {
+        $this->report = $report ? $report->getData() : null;
+    }
 }
 ?>

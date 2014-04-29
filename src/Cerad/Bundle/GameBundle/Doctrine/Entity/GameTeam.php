@@ -40,7 +40,7 @@ class GameTeam
     protected $groupSlot;  // U10B A1, A2 etc
     
     protected $score;
-    protected $conduct;  // Misconduct etc, sendoff caution sportsmanship
+    protected $report;  // Misconduct etc, sendoff caution sportsmanship injuries
     
     protected $status = 'Active'; // Really need?
     
@@ -54,7 +54,6 @@ class GameTeam
     public function getGroupSlot() { return $this->groupSlot; }
     public function getScore()     { return $this->score;     }
     public function getStatus()    { return $this->status;    }
-    public function getConduct()   { return $this->conduct;   }
     
     public function setSlot     ($value) { $this->slot      = $value; }
     public function setRole     ($value) { $this->role      = $value; }
@@ -65,7 +64,6 @@ class GameTeam
     public function setGroupSlot($value) { $this->groupSlot = $value; }
     public function setScore    ($value) { $this->score     = $value; }
     public function setStatus   ($value) { $this->status    = $value; }
-    public function setConduct  ($value) { $this->conduct   = $value; }
     
     public function getProjectKey() { return $this->game->getProjectKey(); }
     
@@ -77,6 +75,17 @@ class GameTeam
             case self::SlotAway: return self::RoleAway;
         }
         return self::RoleSlot . $slot;
+    }
+    /* ======================================================
+     * Report is a value object
+     */
+    public function getReport()
+    {
+        return new GameTeamReport($this->report);
+    }
+    public function setReport($report)
+    {
+        $this->report = $report ? $report->getData() : null;
     }
 }
 ?>

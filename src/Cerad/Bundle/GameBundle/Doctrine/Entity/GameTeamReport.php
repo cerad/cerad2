@@ -1,10 +1,10 @@
 <?php
-namespace Cerad\Bundle\GameBundle\Entity;
+namespace Cerad\Bundle\GameBundle\Doctrine\Entity;
 
 /* =============================================
  * Value object
  */
-class GameTeamReport extends AbstractEntity
+class GameTeamReport
 {
     protected $team;
     protected $status; // Just because
@@ -30,6 +30,8 @@ class GameTeamReport extends AbstractEntity
     protected $specWarnings;
     protected $specEjections;
  
+    protected $injuries;
+    
     static function getPropNames()
     {
         return array(
@@ -37,10 +39,9 @@ class GameTeamReport extends AbstractEntity
             'sportsmanship','fudgeFactor',
             'playerWarnings','playerEjections','coachWarnings','coachEjections',
             'benchWarnings','benchEjections','specWarnings','specEjections',
+            'injuries',
         );
     }
-    
-    public function getId()     { return $this->id;     }
     public function getTeam()   { return $this->team;   }
     public function getStatus() { return $this->status; }
     
@@ -51,6 +52,7 @@ class GameTeamReport extends AbstractEntity
     
     public function getSportsmanship  ()  { return $this->sportsmanship;  }
     public function getFudgeFactor    ()  { return $this->fudgeFactor;    }
+    public function getInjuries       ()  { return $this->injuries;       }
     
     public function getPlayerWarnings ()  { return $this->playerWarnings; }
     public function getPlayerEjections()  { return $this->playerEjections;}
@@ -61,25 +63,26 @@ class GameTeamReport extends AbstractEntity
     public function getSpecWarnings   ()  { return $this->specWarnings;   }
     public function getSpecEjections  ()  { return $this->specEjections;  }
     
-    public function setTeam  ($value) { return $this->onPropertySet('team',   $value); }
-    public function setStatus($value) { return $this->onPropertySet('status', $value); }
+    public function setTeam  ($value) { return $this->onPropertySet('team',     $value); }
+    public function setStatus($value) { return $this->onPropertySet('status',   $value); }
     
-    public function setGoalsScored    ($value)  { return $this->onPropertySet('goalsScored',    $value);  }
-    public function setGoalsAllowed   ($value)  { return $this->onPropertySet('goalsAllowed',   $value);  }
-    public function setPointsEarned   ($value)  { return $this->onPropertySet('pointsEarned',   $value);  }
-    public function setPointsMinus    ($value)  { return $this->onPropertySet('pointsMinus',    $value);  }
+    public function setGoalsScored    ($value)  { return $this->goalsScored     = $value;  }
+    public function setGoalsAllowed   ($value)  { return $this->goalsAllowed    = $value;  }
+    public function setPointsEarned   ($value)  { return $this->pointsEarned    = $value;  }
+    public function setPointsMinus    ($value)  { return $this->pointsMinus     = $value;  }
     
-    public function setSportsmanship  ($value)  { return $this->onPropertySet('sportsmanship',  $value);  }
-    public function setFudgeFactor    ($value)  { return $this->onPropertySet('fudgeFactor',    $value);  }
+    public function setSportsmanship  ($value)  { return $this->sportsmanship   = $value;  }
+    public function setFudgeFactor    ($value)  { return $this->fudgeFactor     = $value;  }
+    public function setInjuries       ($value)  { return $this->injuries        = $value;  }
     
-    public function setPlayerWarnings ($value)  { return $this->onPropertySet('playerWarnings', $value);  }
-    public function setPlayerEjections($value)  { return $this->onPropertySet('playerEjections',$value);  }
-    public function setCoachWarnings  ($value)  { return $this->onPropertySet('coachWarnings',  $value);  }
-    public function setCoachEjections ($value)  { return $this->onPropertySet('coachEjections', $value);  }
-    public function setBenchWarnings  ($value)  { return $this->onPropertySet('benchWarnings',  $value);  }
-    public function setBenchEjections ($value)  { return $this->onPropertySet('benchEjections', $value);  }
-    public function setSpecWarnings   ($value)  { return $this->onPropertySet('specWarnings',   $value);  }
-    public function setSpecEjections  ($value)  { return $this->onPropertySet('specEjections',  $value);  }
+    public function setPlayerWarnings ($value)  { return $this->playerWarnings  = $value;  }
+    public function setPlayerEjections($value)  { return $this->playerEjections = $value;  }
+    public function setCoachWarnings  ($value)  { return $this->coachWarnings   = $value;  }
+    public function setCoachEjections ($value)  { return $this->coachEjections  = $value;  }
+    public function setBenchWarnings  ($value)  { return $this->benchWarnings   = $value;  }
+    public function setBenchEjections ($value)  { return $this->benchEjections  = $value;  }
+    public function setSpecWarnings   ($value)  { return $this->specWarnings    = $value;  }
+    public function setSpecEjections  ($value)  { return $this->specEjections   = $value;  }
     
     public function getTotalWarnings()  
     { 
@@ -120,10 +123,5 @@ class GameTeamReport extends AbstractEntity
         }
         return $data;
     }
-
-    /* ================================================================
-     * Maybe mess around with a change listener later
-     * Don't expect to be doing mass updates anyways
-     */
 }
 ?>

@@ -70,9 +70,9 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
             length:   40
             nullable: true
             
-        conduct:
-            column:   conduct
-            type:     text
+        report:
+            column:   report
+            type:     array
             nullable: true
 
         status:

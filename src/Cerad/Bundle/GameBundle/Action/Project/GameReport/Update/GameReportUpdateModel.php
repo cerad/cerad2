@@ -5,18 +5,22 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
+use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
+
 class GameReportUpdateModel extends ActionModelFactory
-{
-    const SessionCriteria = 'RefereeScheduleShow';
-    
+{  
     public $project;
+    
     public $game;
+    public $gameReport;
+    public $homeTeamReport;
+    public $awayTeamReport;
     
     protected $gameRepo;
     
     public function __construct($gameRepo)
     {
-        $this->gameRepo  = $gameRepo;
+        $this->gameRepo = $gameRepo;
     }
     public function create(Request $request)
     {   
@@ -27,52 +31,61 @@ class GameReportUpdateModel extends ActionModelFactory
         $this->homeTeamReport = $game->getHomeTeam()->getReport();
         $this->awayTeamReport = $game->getAwayTeam()->getReport();
         
-        die('game report update model');
-        
-        $criteria = array();
-
-        $this->project = $project = $request->attributes->get('project');
-        $criteria['projects'] = array($project->getKey());
-
-        $criteria['teams' ]  = array();
-        $criteria['fields']  = array();
-        
-        $this->searches = $searches = $project->getSearches();
-      
-      //echo implode(',',array_keys($searches)); die();
-        
-        foreach($searches as $name => $search)
-        {
-            $criteria[$name] = $search['default']; // Array of defaults
-        }
-      //print_r($criteria); die();
-        
-        // Merge form session
-        $session = $request->getSession();
-        if ($session->has(self::SessionCriteria))
-        {
-            $criteriaSession = $session->get(self::SessionCriteria);
-            $criteria = array_merge($criteria,$criteriaSession);
-        }
-        $this->criteria = $criteria;
-        
         return $this;
     }
-    public function process(Request $request,$criteria)
+    public function process()
     {
-        $this->criteria = $criteria;
+        // Extract
+        $game           = $this->game;
+        $gameReport     = $this->gameReport;
+        $homeTeamReport = $this->homeTeamReport;
+        $awayTeamReport = $this->awayTeamReport;
         
-        $request->getSession()->set(self::SessionCriteria,$criteria);
-    }
-    public function loadGames()
-    {        
-        $criteria = $this->criteria;
+        $homeTeam = $game->getHomeTeam();
+        $awayTeam = $game->getAwayTeam();
         
-        // Could be an event
-        $criteria['levelKeys'] = $this->levelRepo->queryKeys($criteria);
-//print_r($criteria); die();        
-        $this->games = $this->gameRepo->queryGameSchedule($criteria);
+        // Is it a clear operation?
+        $gameReportStatus = $gameReport->getStatus();
+        if ($gameReportStatus == 'Clear')
+        {
+            $game->setReport    (null);
+            $homeTeam->setReport(null);
+            $awayTeam->setReport(null);
+            
+            $this->gameRepo->flush();
+            return $this;
+        }
+        // Need the results service
+        $findResultsEvent = new FindResultsEvent($this->project);
+        $this->dispatcher->dispatch(FindResultsEvent::EventName,$findResultsEvent);
+        $results = $findResultsEvent->getResults();
+       
+        // Calculate points earned
+        $results->calcPointsEarnedForTeam($homeTeamReport,$awayTeamReport);
+        $results->calcPointsEarnedForTeam($awayTeamReport,$homeTeamReport);
         
-        return $this->games;
+        // Update status if goals were entered
+        if (($homeTeamReport->getGoalsScored() !== null) && ($awayTeamReport->getGoalsScored() !== null))
+        {
+            if ($gameReportStatus == 'Pending') $gameReport->setStatus('Submitted');
+            
+            switch($game->getStatus())
+            {
+                case 'Normal':
+                case 'In Progress':
+                    $game->setStatus('Played');
+                    break;
+            }
+        }
+        // Save the results
+        $game->setReport    ($gameReport);
+        $homeTeam->setReport($homeTeamReport);
+        $awayTeam->setReport($awayTeamReport);
+        
+        // And persist
+        $this->gameRepo->commit();
+        
+        // Done
+        return $this;
     }
 }

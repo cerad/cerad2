@@ -8,9 +8,8 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class GameReportUpdateController extends ActionController
 {
-    public function action(Request $request, RefereeScheduleShowModel $model, $form)
+    public function action(Request $request, GameReportUpdateModel $model, $form)
     {
-        die('game report update controller');
         $form->handleRequest($request);
         if ($form->isValid()) 
         {   
@@ -18,14 +17,12 @@ class GameReportUpdateController extends ActionController
             
             $formAction = $form->getConfig()->getAction();
             return new RedirectResponse($formAction);  // To form
-         }
-
-        $games = $model->loadGames();
-        
-        // And render
+        }   
         $tplData = array();
-        $tplData['searchForm'] = $form->createView();
-        $tplData['games'] = $games;
+        $tplData['form']       = $form->createView();
+        $tplData['formErrors'] = $form->getErrors();
+        $tplData['game']       = $model->game;
+
         return $this->regularResponse($request->get('_template'),$tplData);
     }
 }

@@ -1,18 +1,21 @@
 <?php
 
-namespace Cerad\Bundle\GameBundle\Action\Project\RefereeSchedule\Show;
+namespace Cerad\Bundle\GameBundle\Action\Project\GameReport\Update;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionFormFactory;
 
-class RefereeScheduleShowFormFactory extends ActionFormFactory
+class GameReportUpdateFormFactory extends ActionFormFactory
 {
     public function create(Request $request, $model)
     {   
         $actionUrl = $this->generateUrl(
-            'cerad_game__project__referee_schedule__show',
-            array('_project' => $request->attributes->get('_project'))
+            'cerad_game__project__game_report__update',
+            array(
+                '_project' => $request->attributes->get('_project'),
+                '_game'    => $request->attributes->get('_game'),
+            )
         );
         $formOptions = array(
             'method' => 'POST',
@@ -22,25 +25,23 @@ class RefereeScheduleShowFormFactory extends ActionFormFactory
             ),
             'required' => false,
         );
-
-        $builder = $this->formFactory->create('form',$model->criteria,$formOptions);
-
-        foreach($model->searches as $key => $search)
-        {
-            $builder->add($this->formFactory->createNamed($key, 'choice', null, array(
-                'label'     => $search['label'],
-                'required'  => true,
-                'choices'   => $search['choices'],
-                'expanded'  => true,
-                'multiple'  => true,
-                'auto_initialize' => false,
-            )));     
-        }
-        $builder->add('search', 'submit', array(
-            'label' => 'Search',
+        $formData = array(
+            'game'           => $model->game,
+            'gameReport'     => $model->gameReport,
+            'homeTeamReport' => $model->homeTeamReport,
+            'awayTeamReport' => $model->awayTeamReport,
+        );
+        $builder = $this->formFactory->create('form',$formData,$formOptions);
+        
+        $builder->add('game',           new FormType\GameFormType());
+        $builder->add('gameReport',     new FormType\GameReportFormType());
+        $builder->add('homeTeamReport', new FormType\GameTeamReportFormType());
+        $builder->add('awayTeamReport', new FormType\GameTeamReportFormType());
+ 
+        $builder->add('save', 'submit', array(
+            'label' => 'Save',
             'attr' => array('class' => 'submit'),
         ));        
-       
         return $builder;        
     }
 }
