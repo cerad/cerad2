@@ -23,6 +23,7 @@ class GameRepository extends EntityRepository
         $nums        = $this->getArrayValue($criteria,'nums');
         $dates       = $this->getArrayValue($criteria,'dates');
         $levelKeys   = $this->getArrayValue($criteria,'levelKeys');
+        $groupTypes  = $this->getArrayValue($criteria,'groupTypes');
         $projectKeys = $this->getArrayValue($criteria,'projectKeys');
         
         $teamNames  = $this->getArrayValue($criteria,'teams');
@@ -82,6 +83,11 @@ class GameRepository extends EntityRepository
         {
             $qb->andWhere('gameTeam.levelKey IN (:levelKeys)');
             $qb->setParameter('levelKeys',$levelKeys);
+        }
+        if ($groupTypes)
+        {
+            $qb->andWhere('game.groupType IN (:groupTypes)');
+            $qb->setParameter('groupTypes',$groupTypes);
         }
         /* ============================================
          * This is what makes me grab gamesIds first

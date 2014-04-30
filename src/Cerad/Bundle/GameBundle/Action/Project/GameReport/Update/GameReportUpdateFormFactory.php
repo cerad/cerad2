@@ -15,6 +15,7 @@ class GameReportUpdateFormFactory extends ActionFormFactory
             array(
                 '_project' => $request->attributes->get('_project'),
                 '_game'    => $request->attributes->get('_game'),
+                'back'     => $request->query->get('back'),
             )
         );
         $formOptions = array(

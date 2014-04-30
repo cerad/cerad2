@@ -62,7 +62,8 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
         
         // Twig global
         $twig = $this->container->get('twig');
-        $twig->addGlobal('project',$project);
+        $twig->addGlobal( 'project',$project);
+        $twig->addGlobal('_project',$projectSlug);
     }
     public function onKernelRequest(GetResponseEvent $event)
     {

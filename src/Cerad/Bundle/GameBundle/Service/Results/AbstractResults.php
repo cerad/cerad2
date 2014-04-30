@@ -195,15 +195,15 @@ class AbstractResults
     
     protected function getPoolTeamReport($pool,$team)
     {
-        $group = $team->getGroup();
+        $groupSlot = $team->getGroupSlot();
         
-        if (isset($this->pools[$pool]['teams'][$group])) return $this->pools[$pool]['teams'][$group];
+        if (isset($this->pools[$pool]['teams'][$groupSlot])) return $this->pools[$pool]['teams'][$groupSlot];
         
-        $report = $team->createPoolTeamReport();
+        $report = new PoolTeamReport();
         
         $report->setTeam($team);
         
-        $this->pools[$pool]['teams'][$group] = $report;
+        $this->pools[$pool]['teams'][$groupSlot] = $report;
         
         return $report;
     }
@@ -244,7 +244,7 @@ class AbstractResults
             //$this->calcPointsEarnedForGame($game);
             
             // 
-            $pool = $game->getGroup();
+            $pool = $game->getGroupKey();
             
             $this->processPoolGame($game,$pool,$poolFilter);
         } // die();
@@ -284,6 +284,7 @@ class AbstractResults
         // Head to head
         $compare = $this->compareHeadToHead($team1,$team2);
         if ($compare) return $compare;
+        return 0;
         
         // Games won
         $gw1 = $team1->getGamesWon();
@@ -330,20 +331,20 @@ class AbstractResults
         foreach($this->poolGames as $game)
         {
             // Group will be unique within a pool
-            $homeTeamGroup = $game->getHomeTeam()->getGroup();
-            $awayTeamGroup = $game->getAwayTeam()->getGroup();
+            $homeTeamGroupSlot = $game->getHomeTeam()->getGroupSlot();
+            $awayTeamGroupSlot = $game->getAwayTeam()->getGroupSlot();
             
-            $team1Group = $team1->getTeam()->getGroup();
-            $team2Group = $team2->getTeam()->getGroup();
+            $team1GroupSlot = $team1->getTeam()->getGroupSlot();
+            $team2GroupSlot = $team2->getTeam()->getGroupSlot();
             
-            if (($homeTeamGroup == $team1Group) && ($awayTeamGroup == $team2Group))
+            if (($homeTeamGroupSlot == $team1GroupSlot) && ($awayTeamGroupSlot == $team2GroupSlot))
             {
                 $score1 = $game->getHomeTeam()->getReport()->getGoalsScored();
                 $score2 = $game->getAwayTeam()->getReport()->getGoalsScored();
                 if ($score1 > $score2) $team1Wins++;
                 if ($score1 < $score2) $team2Wins++;
             }
-            if ($homeTeamGroup == $team2Group && ($awayTeamGroup == $team1Group))
+            if ($homeTeamGroupSlot == $team2GroupSlot && ($awayTeamGroupSlot == $team1GroupSlot))
             {
                 $score2 = $game->getHomeTeam()->getReport()->getGoalsScored();
                 $score1 = $game->getAwayTeam()->getReport()->getGoalsScored();

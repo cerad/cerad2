@@ -49,7 +49,7 @@ class GameTeam
     public function getRole()      { return $this->role;      }
     public function getGame()      { return $this->game;      }
     public function getTeam()      { return $this->team;      }
-    public function getName()      { return $this->name;      }
+  //public function getName()      { return $this->name;      }
     public function getLevelKey()  { return $this->levelKey;  }
     public function getGroupSlot() { return $this->groupSlot; }
     public function getScore()     { return $this->score;     }
@@ -67,6 +67,10 @@ class GameTeam
     
     public function getProjectKey() { return $this->game->getProjectKey(); }
     
+    public function getName()      
+    { 
+        return $this->name ? $this->name : $this->groupSlot;      
+    }
     public function getRoleForSlot($slot)
     {
         switch($slot)

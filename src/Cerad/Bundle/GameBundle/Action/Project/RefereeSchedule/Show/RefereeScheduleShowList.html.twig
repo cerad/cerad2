@@ -22,7 +22,12 @@
             <td class="schedule-game">
                 {{ game.num }}<br />
                 <a href="{{ path('cerad_game__project__game__update__by_scorer', { '_project' : project.slug, '_game': game.num })}}">Update</a><br />
-                <a href="{{ path('cerad_game__project__game_report__update',     { '_project' : project.slug, '_game': game.num })}}">Report</a>
+                <a href="{{ path('cerad_game__project__game_report__update',     
+                   { 
+                      '_project': _project, 
+                         '_game': game.num,
+                          'back': app.request.requestUri ~ '#ref-sched-'
+                   }) }}">Report</a>
             </td>
             <td class="schedule-dow" >{{ game.dtBeg.format('D'    ) }}</td>
             <td class="schedule-time">{{ game.dtBeg.format('g:i A') }}</td>    

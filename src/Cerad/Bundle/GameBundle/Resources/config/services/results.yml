@@ -1,6 +1,7 @@
 parameters:
   
 services:
+  # Poolplay Results calculator
   cerad_game__results_natgames:
     class: Cerad\Bundle\GameBundle\Service\Results\NatGamesResults
     
@@ -9,3 +10,25 @@ services:
     
   cerad_game__results_s5games:
     class: Cerad\Bundle\GameBundle\Service\Results\S5GamesResults
+    
+  # Show Poolplay Results
+  cerad_game__project__results_poolplay__show_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show\ResultsPoolplayShowModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__game_repository'
+      - '@cerad_level__level_repository'
+
+  cerad_game__project__results_poolplay__show_form_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show\ResultsPoolplayShowFormFactory
+    calls:
+      - [setRouter,      ['@router']]
+      - [setFormFactory, ['@form.factory']]
+      - [setDispatcher,  ['@event_dispatcher']]
+             
+  cerad_game__project__results_poolplay__show_controller:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show\ResultsPoolplayShowController
+    calls:
+      - [setRouter,     ['@router']]
+      - [setTemplating, ['@templating']]

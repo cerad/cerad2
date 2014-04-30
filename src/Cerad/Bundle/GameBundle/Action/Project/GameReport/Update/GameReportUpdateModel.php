@@ -11,6 +11,7 @@ class GameReportUpdateModel extends ActionModelFactory
 {  
     public $project;
     
+    public $back;
     public $game;
     public $gameReport;
     public $homeTeamReport;
@@ -30,6 +31,8 @@ class GameReportUpdateModel extends ActionModelFactory
         $this->gameReport     = $game->getReport();
         $this->homeTeamReport = $game->getHomeTeam()->getReport();
         $this->awayTeamReport = $game->getAwayTeam()->getReport();
+        
+        $this->back = $request->query->get('back');
         
         return $this;
     }

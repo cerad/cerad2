@@ -22,7 +22,8 @@ class GameReportUpdateController extends ActionController
         $tplData['form']       = $form->createView();
         $tplData['formErrors'] = $form->getErrors();
         $tplData['game']       = $model->game;
-
+        $tplData['back']       = $model->back;
+        
         return $this->regularResponse($request->get('_template'),$tplData);
     }
 }
