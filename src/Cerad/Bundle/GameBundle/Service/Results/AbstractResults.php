@@ -210,11 +210,8 @@ class AbstractResults
     /* ===========================================================
      * Processing one game here
      */
-    protected function processPoolGame($game,$pool,$poolFilter)
+    protected function processPoolGame($game,$pool)
     {
-        // Never have a filter for now
-        if ($poolFilter && $poolFilter != substr($pool,8,1)) return;
-
         $this->pools[$pool]['games'][$game->getId()] = $game;
         
         $homeGameTeam = $game->getHomeTeam();
@@ -232,8 +229,9 @@ class AbstractResults
     }
     /* ================================================================
      * Given a list of games, pull the pool information from them
+     * Games are already filtered before we get here
      */
-    public function getPools($games, $poolFilter = null)
+    public function getPools($games)
     {
         $this->games = $games;
         $this->pools = array();
@@ -246,8 +244,8 @@ class AbstractResults
             // 
             $pool = $game->getGroupKey();
             
-            $this->processPoolGame($game,$pool,$poolFilter);
-        } // die();
+            $this->processPoolGame($game,$pool);
+        }
         
         $pools = $this->pools;
         
