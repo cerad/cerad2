@@ -30,8 +30,10 @@ class ResultsPoolplayShowController extends ActionController
             {
                 foreach(array('U10','U12','U14','U16','U19') as $age)
                 {
-                    $level = sprintf('AYSO_%s%s_%s',$age,substr($gender,0,1),$program);
-                    $routes[$program][$gender][$age][$age] = $this->generateUrl(
+                    $ageGender = $age . substr($gender,0,1);
+                    
+                    $level = sprintf('AYSO_%s_%s',$ageGender,$program);
+                    $routes[$program][$gender][$age][$ageGender] = $this->generateUrl(
                         'cerad_game__project__results_poolplay__show',
                         array('_project' => $_project, 'level' => $level,
                     ));
