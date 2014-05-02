@@ -4,7 +4,7 @@ namespace Cerad\Bundle\GameBundle\Service\GameSchedule\Convert;
 
 use Cerad\Bundle\CoreBundle\Excel\Loader as BaseLoader;
 
-class ConvertRickToYaml extends BaseLoader
+class ConvertGamesRickToYaml extends BaseLoader
 {
     protected $record = array
     (

@@ -10,9 +10,15 @@ class TeamRepository extends EntityRepository
     /* ==========================================================
      * Find stuff
      */
-    public function findOneByProjectNum($projectKey,$num)
+    public function findOneByProjectLevelNum($project,$level,$num)
     {
-        return $this->findOneBy(array('projectKey' => $projectKey, 'num' => $num));    
+        $num = (int)$num;
+        if (!$num) return null;
+        
+        $levelKey   = is_object($level)   ? $level->getKey()   : $level;
+        $projectKey = is_object($project) ? $project->getKey() : $project;
+        
+        return $this->findOneBy(array('projectKey' => $projectKey, 'levelKey' => $levelKey, 'num' => $num));    
     }
 }
 ?>

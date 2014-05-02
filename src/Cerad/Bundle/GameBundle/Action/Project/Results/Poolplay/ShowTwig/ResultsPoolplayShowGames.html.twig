@@ -3,7 +3,6 @@
 <tr class="tbl-title"><th colspan="16">Game Pool Scores - {{ poolKey }}</th></tr>
 <tr class="tbl-hdr">
     <th>Game</th>
-    <!--<th>Game</th>-->
     <th>Report</th>
     <th>Day & Time</th>
     <th>Field</th>
@@ -33,11 +32,11 @@
 {% else %}
     <td>{{ game.num }}</td>
 {%endif %}
-    <!--<td>{{ game.status         }}</td>-->
-    <td>{{ game.report.status  }}</td>
+    <!--<td>{{ game.status        }}</td>-->
+    <td>{{ game.report.status     }}</td>
     <td>{{ game.dtBeg.format('D') }} {{ game.dtBeg.format('g:i A') }}</td>
-    <td>{{ game.fieldName     }}</td>
-    <td>{{ game.groupKey          }}</td>
+    <td>{{ game.fieldName         }}</td>
+  {# <td>{{ game.groupKey          }}</td> #}
 
     {% set homeTeam = game.homeTeam %}
     {% set awayTeam = game.awayTeam %}
@@ -45,7 +44,14 @@
     {% set homeTeamReport = homeTeam.report %}
     {% set awayTeamReport = awayTeam.report %}
 
-    <td>{{ homeTeam.name }} <br/> {{ awayTeam.name }}</td>
+    <td>
+        {{ homeTeam.groupSlot | slice(-2) }}<br/>
+        {{ awayTeam.groupSlot | slice(-2) }}
+    </td>
+    <td style="text-align:left">
+        {{ homeTeam.name }}<br/>
+        {{ awayTeam.name }}
+    </td>
     {% if game.report.status is not empty %}
     <td>{{ homeTeamReport.goalsScored | default(0)    }}<br/>{{ awayTeamReport.goalsScored| default(0)     }}</td>
     <td>{{ homeTeamReport.sportsmanship| default(0)   }}<br/>{{ awayTeamReport.sportsmanship| default(0)   }}</td>

@@ -19,9 +19,19 @@ services:
         factory_method:  'getRepository'
         arguments:  
             - 'Cerad\Bundle\GameBundle\Doctrine\Entity\Game'
+            
+    cerad_game__team_repository__doctrine:
+        class:  Cerad\Bundle\GameBundle\Doctrine\EntityRepository\TeamRepository
+        factory_service: 'cerad_game__entity_manager__doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\GameBundle\Doctrine\Entity\Team'
         
     cerad_game__game_repository:
         alias: cerad_game__game_repository__doctrine
+        
+    cerad_game__team_repository:
+        alias: cerad_game__team_repository__doctrine
             
     cerad_game__game_event_listener:
         class: '%cerad_game__game_event_listener__class%'
@@ -32,13 +42,27 @@ services:
         arguments:
             - 'cerad_game__game_repository'
         
-    cerad_game__convert__rick_to_yaml:
-        class: Cerad\Bundle\GameBundle\Service\GameSchedule\Convert\ConvertRickToYaml
+    cerad_game__convert_games__rick_to_yaml:
+        class: Cerad\Bundle\GameBundle\Service\GameSchedule\Convert\ConvertGamesRickToYaml
+        
+    cerad_game__convert_teams__rick_to_yaml:
+        class: Cerad\Bundle\GameBundle\Service\GameSchedule\Convert\ConvertTeamsRickToYaml
         
     cerad_game__load_games:
         class: Cerad\Bundle\GameBundle\Service\GameSchedule\Load\LoadGames
         arguments:
             - '@cerad_game__game_repository'
+        
+    cerad_game__load_teams:
+        class: Cerad\Bundle\GameBundle\Service\GameSchedule\Load\LoadTeams
+        arguments:
+            - '@cerad_game__team_repository'
+            
+    cerad_game__link_teams:
+        class: Cerad\Bundle\GameBundle\Service\GameSchedule\Load\LinkTeams
+        arguments:
+            - '@cerad_game__game_repository'
+            - '@cerad_game__team_repository'
         
     # ====================================================
     # Game Officials

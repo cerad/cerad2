@@ -18,6 +18,8 @@ class Team
     protected $name;
     protected $coach;
     
+    protected $points = 0; // Soccerfest points
+    
     protected $status = 'Active';
     
     protected $games;
@@ -27,6 +29,7 @@ class Team
     public function getRole()    { return $this->role;    }
     public function getName()    { return $this->name;    }
     public function getCoach()   { return $this->coach;   }
+    public function getPoints()  { return $this->points;  }
     public function getStatus()  { return $this->status;  }
     
     public function getOrgKey()     { return $this->orgKey;     }
@@ -37,6 +40,7 @@ class Team
     public function setRole     ($value) { $this->role   = $value; }
     public function setName     ($value) { $this->name   = $value; }
     public function setCoach    ($value) { $this->coach  = $value; }
+    public function setPoints   ($value) { $this->points = $value; }
     public function setStatus   ($value) { $this->status = $value; }
     
     public function setOrgKey    ($value) { $this->orgKey     = $value; }

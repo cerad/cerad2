@@ -160,7 +160,6 @@ class AbstractResults
         
         $poolTeamReport->addSportsmanship($gameTeamReport->getSportsmanship());
         
-        // Missing from national?
         $poolTeamReport->addGamesTotal(1);
         
         if ($gameTeamReport->getGoalsScored() !== null)
@@ -173,14 +172,20 @@ class AbstractResults
         }
         
         /* ===========================================================
-         * Keep for now as documentation
+         * Winning percent formula
+         * NG2014
+         * WP = (PoolPlayPts + SoccerfestPts) / ( NumberOfGamesPlayed × 10) + 6
+         * 
+         * Note: This is different than 2012?
          */
-        // WPF
         if ($poolTeamReport->getGamesPlayed())
         {
-            // The 6 comes from the six soccer fest points
-            $spf = 0; // 6;
-            $wpf = $poolTeamReport->getPointsEarned() / (($poolTeamReport->getGamesPlayed() * 10) + $spf);
+            // The physical team (if any) holds the soccer fest points
+            $physicalTeam = $poolTeamReport->getTeam()->getTeam();
+            
+            $sfPoints = $physicalTeam ? $physicalTeam->getPoints() : 0;  // 6 or 0
+            
+            $wpf = ($poolTeamReport->getPointsEarned()) + $sfPoints / (($poolTeamReport->getGamesPlayed() * 10) + 6);
             
             $winPercent = sprintf('%.3f',$wpf);
         }
@@ -270,6 +275,7 @@ class AbstractResults
     }
     /* =====================================================
      * Standings sort based on PoolTeamReports
+     * This will usually be overridden
      */
     protected function compareTeamStandings($team1,$team2)
     {   
@@ -282,7 +288,6 @@ class AbstractResults
         // Head to head
         $compare = $this->compareHeadToHead($team1,$team2);
         if ($compare) return $compare;
-        return 0;
         
         // Games won
         $gw1 = $team1->getGamesWon();

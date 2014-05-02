@@ -63,6 +63,45 @@ class NatGamesResults extends AbstractResults
         
         return;     
     }
-
+    /* =====================================================
+     * Standings sort based on PoolTeamReports
+     */
+    protected function compareTeamStandings($team1,$team2)
+    {   
+        // WP
+        $wp1 = $team1->getWinPercent();
+        $wp2 = $team2->getWinPercent();
+        if ($wp1 < $wp2) return  1;
+        if ($wp1 > $wp2) return -1;
+        
+        // Points earned
+        /*
+        $pe1 = $team1->getPointsEarned();
+        $pe2 = $team2->getPointsEarned();
+        if ($pe1 < $pe2) return  1;
+        if ($pe1 > $pe2) return -1; */
+        
+        // Head to head
+        $compare = $this->compareHeadToHead($team1,$team2);
+        if ($compare) return $compare;
+        
+        // Sportsmanship
+        $sp1 = $team1->getSportsmanship();
+        $sp2 = $team2->getSportsmanship();
+        if ($sp1 < $sp2) return  1;
+        if ($sp1 > $sp2) return -1;
+         
+        // Goals Allowed
+        $ga1 = $team1->getGoalsAllowed();
+        $ga2 = $team2->getGoalsAllowed();
+        if ($ga1 < $ga2) return -1;
+        if ($ga1 > $ga2) return  1;
+                
+        // Just the key
+        $key1 = $team1->getTeam()->getGroupSlot();
+        $key2 = $team2->getTeam()->getGroupSlot();
+        
+        return strcmp($key1,$key2);
+    }
 }
 ?>
