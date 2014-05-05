@@ -48,7 +48,7 @@ class GameTeam
     public function getSlot()      { return $this->slot;      }
     public function getRole()      { return $this->role;      }
     public function getGame()      { return $this->game;      }
-    public function getTeam()      { return $this->team;      }
+  //public function getTeam()      { return $this->team;      }
   //public function getName()      { return $this->name;      }
     public function getLevelKey()  { return $this->levelKey;  }
     public function getGroupSlot() { return $this->groupSlot; }
@@ -70,6 +70,16 @@ class GameTeam
     public function getName()      
     { 
         return $this->name ? $this->name : $this->groupSlot;      
+    }
+    
+    // Create a physical team if none is linked
+    protected $teamx;
+    public function getTeam()
+    { 
+        if ($this->team)  return $this->team;
+        if ($this->teamx) return $this->teamx;
+        
+        return $this->teamx = new Team();
     }
     public function getRoleForSlot($slot)
     {
