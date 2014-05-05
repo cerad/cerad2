@@ -45,7 +45,7 @@ cerad_game__project__game_officials__assign_by_assignor:
         _redirect:   cerad_tourn_schedule_official_list
         _role:       ROLE_ASSIGNOR
         
-# RefereeSchedule
+# Schedules
 cerad_game__project__referee_schedule__show:
     path:  /project/{_project}/referee-schedule
     defaults: 
@@ -54,14 +54,14 @@ cerad_game__project__referee_schedule__show:
         _form:       cerad_game__project__referee_schedule__show_form_factory
         _template: '@CeradGame\Project\RefereeSchedule\Show\RefereeScheduleShowPage.html.twig'
         
-cerad_game__referee_schedule__show:
-    path:  /referee-schedule
+cerad_game__project__schedule_team__show:
+    path:  /project/{_project}/schedule-team
     defaults: 
-        _controller: cerad_game__project__referee_schedule__show_controller:action
-        _model:      cerad_game__project__referee_schedule__show_model_factory
-        _form:       cerad_game__project__referee_schedule__show_form_factory
-        _template: '@CeradGame/Project/RefereeSchedule/Show/RefereeScheduleShowPage.html.twig'
-        _project:    ~
+        _controller: cerad_game__project__schedule_team__show_controller:action
+        _model:      cerad_game__project__schedule_team__show_model_factory
+        _form:       cerad_game__project__schedule_team__show_form_factory
+        _template: '@CeradGame\Project\Schedule\Team\Show\Twig\ScheduleTeamShowPage.html.twig'
+        
 
 # Results Poolplay
 cerad_game__project__results_poolplay__show:

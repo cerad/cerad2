@@ -27,6 +27,8 @@ class Project
     protected $prefix;
     protected $assignor;
     
+    protected $programs;
+    
     protected $basic;
     protected $searches;
     
@@ -53,6 +55,7 @@ class Project
     
     public function getBasic() { return $this->basic; }
     
+    public function getPrograms() { return $this->programs; }
     public function getSearches() { return $this->searches; }
     
     public function __construct($config)

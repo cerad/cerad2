@@ -28,6 +28,8 @@ class GameRepository extends EntityRepository
         
         $teamNames  = $this->getArrayValue($criteria,'teams');
         $fieldNames = $this->getArrayValue($criteria,'fields');
+        
+        $physicalTeamIds  = $this->getArrayValue($criteria,'physicalTeamIds');
        
         /* =================================================
          * Dates are always so much fun
@@ -96,6 +98,11 @@ class GameRepository extends EntityRepository
         {
             $qb->andWhere('gameTeam.name IN (:teamNames)');
             $qb->setParameter('teamNames',$teamNames);
+        }
+        if ($physicalTeamIds)
+        {
+            $qb->andWhere('gameTeam.team IN (:physicalTeamIds)');
+            $qb->setParameter('physicalTeamIds',$physicalTeamIds);
         }
         
         if ($date1On and $date2On)

@@ -20,5 +20,23 @@ class TeamRepository extends EntityRepository
         
         return $this->findOneBy(array('projectKey' => $projectKey, 'levelKey' => $levelKey, 'num' => $num));    
     }
+    public function findAllByProjectLevels($projectKey,$levelKeys)
+    {
+        $qb = $this->createQueryBuilder('team');
+        
+        $qb->select('team');
+        
+        $qb->andWhere('team.projectKey = :projectKey');
+        $qb->setParameter('projectKey',$projectKey);
+        
+        $qb->andWhere('team.levelKey IN (:levelKeys)');
+        $qb->setParameter('levelKeys',$levelKeys);
+        
+        $qb->addOrderBy('team.levelKey');
+        $qb->addOrderBy('team.name');
+        
+        return $qb->getQuery()->getResult();
+        
+    }
 }
 ?>
