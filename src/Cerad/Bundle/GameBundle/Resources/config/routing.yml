@@ -28,7 +28,7 @@ cerad_game__project__game_official__assign_by_user:
         _model:      cerad_game__project__game_official__assign_by_user__model_factory
         _form:       cerad_game__project__game_official__assign_by_user__form_factory
         _view:       cerad_game__project__game_official__assign_by_user__view_factory
-        _template: '@CeradGame/Project/GameOfficial/AssignByUser/AssignByUserIndex.html.twig'
+        _template: '@CeradGame/Project/GameOfficial/AssignByUser/Twig/AssignByUserPage.html.twig'
         _redirect:   cerad_tourn_schedule_official_list
         _role:       ROLE_USER
         _user_person: required
@@ -41,7 +41,7 @@ cerad_game__project__game_officials__assign_by_assignor:
         _model:      cerad_game__project__game_officials__assign_by_assignor__model_factory
         _form:       cerad_game__project__game_officials__assign_by_assignor__form_factory
         _view:       cerad_game__project__game_officials__assign_by_assignor__view_factory
-        _template: '@CeradGame/Project/GameOfficials/AssignByAssignor/AssignByAssignorIndex.html.twig'
+        _template: '@CeradGame/Project/GameOfficials/AssignByAssignor/Twig/AssignByAssignorPage.html.twig'
         _redirect:   cerad_tourn_schedule_official_list
         _role:       ROLE_ASSIGNOR
         

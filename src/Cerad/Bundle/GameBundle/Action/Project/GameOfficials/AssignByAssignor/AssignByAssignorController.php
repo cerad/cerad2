@@ -24,9 +24,10 @@ class AssignByAssignorController
     {   
         // Standard redirect, can't decide if the model should be able to generate these
         $redirectRoute = $request->attributes->get('_redirect');
-        $redirectUrl   = $this->router->generate($redirectRoute);
-        $redirectUrl  .= sprintf('#ref-sched-%d',$model->game->getNum());
-
+      //$redirectUrl   = $this->router->generate($redirectRoute);
+      //$redirectUrl  .= sprintf('#ref-sched-%d',$model->game->getNum());
+        $redirectUrl = null;
+        
         // Handle the form
         $form->handleRequest($request);
 
