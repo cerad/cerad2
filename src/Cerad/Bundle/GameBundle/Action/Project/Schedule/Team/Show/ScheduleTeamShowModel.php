@@ -76,6 +76,8 @@ class ScheduleTeamShowModel extends ActionModelFactory
         {
             $physicalTeamIds = array_merge($physicalTeamIds,$criteria[$program . 'Teams']);
         }
+        // print_r($physicalTeamIds); die();
+        // TODO: Handle Array ( [0] => 4 [1] => 0 )
         if (count($physicalTeamIds) < 1) return array();
         
         $criteria['physicalTeamIds'] = $physicalTeamIds;
@@ -92,7 +94,8 @@ class ScheduleTeamShowModel extends ActionModelFactory
         $levelKeys = $this->levelRepo->queryKeys(array('programs' => $program));
 
         $teams = $this->teamRepo->findAllByProjectLevels($this->project->getKey(),$levelKeys);
-        $teamChoices = array();
+        
+        $teamChoices = array(0 => 'None');
 
         foreach($teams as $team)
         {

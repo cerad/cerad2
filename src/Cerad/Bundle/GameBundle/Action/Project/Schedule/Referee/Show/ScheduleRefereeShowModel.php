@@ -1,13 +1,13 @@
 <?php
-namespace Cerad\Bundle\GameBundle\Action\Project\RefereeSchedule\Show;
+namespace Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
-class RefereeScheduleShowModel extends ActionModelFactory
+class ScheduleRefereeShowModel extends ActionModelFactory
 {
-    const SessionCriteria = 'RefereeScheduleShow';
+    const SessionCriteria = 'ScheduleRefereeShow';
     
     public $project;
     public $criteria;

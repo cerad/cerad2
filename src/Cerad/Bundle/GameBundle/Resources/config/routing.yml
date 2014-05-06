@@ -46,13 +46,13 @@ cerad_game__project__game_officials__assign_by_assignor:
         _role:       ROLE_ASSIGNOR
         
 # Schedules
-cerad_game__project__referee_schedule__show:
-    path:  /project/{_project}/referee-schedule
+cerad_game__project__schedule_referee__show:
+    path:  /project/{_project}/schedule-referee
     defaults: 
-        _controller: cerad_game__project__referee_schedule__show_controller:action
-        _model:      cerad_game__project__referee_schedule__show_model_factory
-        _form:       cerad_game__project__referee_schedule__show_form_factory
-        _template: '@CeradGame\Project\RefereeSchedule\Show\RefereeScheduleShowPage.html.twig'
+        _controller: cerad_game__project__schedule_referee__show_controller:action
+        _model:      cerad_game__project__schedule_referee__show_model_factory
+        _form:       cerad_game__project__schedule_referee__show_form_factory
+        _template: '@CeradGame\Project\Schedule\Referee\Show\Twig\ScheduleRefereeShowPage.html.twig'
         
 cerad_game__project__schedule_team__show:
     path:  /project/{_project}/schedule-team
@@ -62,7 +62,22 @@ cerad_game__project__schedule_team__show:
         _form:       cerad_game__project__schedule_team__show_form_factory
         _template: '@CeradGame\Project\Schedule\Team\Show\Twig\ScheduleTeamShowPage.html.twig'
         
-
+cerad_game__project__schedule_game__show:
+    path:  /project/{_project}/schedule-game
+    defaults: 
+        _controller: cerad_game__project__schedule_game__show_controller:action
+        _model:      cerad_game__project__schedule_game__show_model_factory
+        _form:       cerad_game__project__schedule_game__show_form_factory
+        _template: '@CeradGame\Project\Schedule\Game\Show\Twig\ScheduleGameShowPage.html.twig'
+        
+cerad_game__project__schedule_my__show:
+    path:  /project/{_project}/schedule-my
+    defaults: 
+        _controller: cerad_game__project__schedule_my__show_controller:action
+        _model:      cerad_game__project__schedule_my__show_model_factory
+        _form:       cerad_game__project__schedule_my__show_form_factory
+        _template: '@CeradGame\Project\Schedule\My\Show\Twig\ScheduleMyShowPage.html.twig'
+        
 # Results Poolplay
 cerad_game__project__results_poolplay__show:
     path:  /project/{_project}/results-poolplay

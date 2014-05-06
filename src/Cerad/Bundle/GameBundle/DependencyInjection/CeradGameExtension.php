@@ -28,6 +28,7 @@ class CeradGameExtension extends Extension
         $loader->load('services/game.yml');
         $loader->load('services/assign.yml');
         $loader->load('services/results.yml');
+        $loader->load('services/schedule.yml');
         
         $gameResourceDir = __DIR__ . '/../Resources';
         

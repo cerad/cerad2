@@ -1,0 +1,53 @@
+parameters:
+  
+services:
+  
+# =======================================================================
+# Action: ScheduleRefereeShow
+#
+  cerad_game__project__schedule_referee__show_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show\ScheduleRefereeShowModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__game_repository'
+      - '@cerad_level__level_repository'
+
+  cerad_game__project__schedule_referee__show_form_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show\ScheduleRefereeShowFormFactory
+    calls:
+      - [setRouter,      ['@router']]
+      - [setFormFactory, ['@form.factory']]
+      - [setDispatcher,  ['@event_dispatcher']]
+             
+  cerad_game__project__schedule_referee__show_controller:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show\ScheduleRefereeShowController
+    calls:
+      - [setRouter,     ['@router']]
+      - [setTemplating, ['@templating']]
+      
+# =======================================================================
+# Action: ScheduleTeamShow
+#
+  cerad_game__project__schedule_team__show_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show\ScheduleTeamShowModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__game_repository'
+      - '@cerad_level__level_repository'
+      - '@cerad_game__team_repository'
+
+  cerad_game__project__schedule_team__show_form_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show\ScheduleTeamShowFormFactory
+    calls:
+      - [setRouter,      ['@router']]
+      - [setDispatcher,  ['@event_dispatcher']]
+      - [setFormFactory, ['@form.factory']]
+             
+  cerad_game__project__schedule_team__show_controller:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show\ScheduleTeamShowController
+    calls:
+      - [setRouter,     ['@router']]
+      - [setTemplating, ['@templating']]
+      
