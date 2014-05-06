@@ -7,22 +7,22 @@
 
     {% if form.dates is defined %}
       {% set items = form.dates %}
-      <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
+      <td>{% include '@CeradGame/Project/Schedule/Twig/ScheduleSearchCheckboxes.html.twig' %}</td>
     {% endif %}
       
     {% if form.programs is defined %}
       {% set items = form.programs %}
-      <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
+      <td>{% include '@CeradGame/Project/Schedule/Twig/ScheduleSearchCheckboxes.html.twig' %}</td>
     {% endif %}
 
     {% if form.genders is defined %}
       {% set items = form.genders %}
-      <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
+      <td>{% include '@CeradGame/Project/Schedule/Twig/ScheduleSearchCheckboxes.html.twig' %}</td>
     {% endif %}
 
     {% if form.ages is defined %}
       {% set items = form.ages %}
-      <td>{% include '@CeradGame/Schedule/ScheduleSearchCheckboxes.html.twig' %}</td>
+      <td>{% include '@CeradGame/Project/Schedule/Twig/ScheduleSearchCheckboxes.html.twig' %}</td>
     {% endif %}
       
   </tr>

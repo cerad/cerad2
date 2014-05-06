@@ -7,7 +7,7 @@ cerad_game__project__game_report__update:
         _model:      cerad_game__project__game_report__update__model_factory
         _form:       cerad_game__project__game_report__update__form_factory
         _controller: cerad_game__project__game_report__update__controller:action
-        _template: '@CeradGame/Project/GameReport/Update/GameReportUpdatePage.html.twig'
+        _template: '@CeradGame/Project/GameReport/Update/Twig/GameReportUpdatePage.html.twig'
 
 # Game Update By Scorer
 cerad_game__project__game__update__by_scorer:
@@ -85,4 +85,4 @@ cerad_game__project__results_poolplay__show:
         _controller: cerad_game__project__results_poolplay__show_controller:action
         _model:      cerad_game__project__results_poolplay__show_model_factory
         _formx:      cerad_game__project__results_poolplay__show_form_factory
-        _template: '@CeradGame/Project/Results/Poolplay/ShowTwig/ResultsPoolplayShowPage.html.twig'
+        _template: '@CeradGame/Project/Results/Poolplay/Show/Twig/ResultsPoolplayShowPage.html.twig'
