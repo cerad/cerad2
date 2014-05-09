@@ -13,7 +13,7 @@ class AssignByUserSlotFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Cerad\Bundle\GameBundle\Entity\GameOfficial',
+            'data_class' => 'Cerad\Bundle\GameBundle\Doctrine\Entity\GameOfficial',
         ));
     }
     protected $workflow;

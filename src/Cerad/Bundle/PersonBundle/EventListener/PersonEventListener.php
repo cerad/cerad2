@@ -6,12 +6,28 @@ use Symfony\Component\DependencyInjection\ContainerAware;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-use Cerad\Bundle\PersonBundle\PersonEvents;
+use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+
+use Cerad\Bundle\CoreBundle\Event\FindPersonEvent;
 
 class PersonEventListener extends ContainerAware implements EventSubscriberInterface
 {
+    const ControllerPersonEventListenerPriority = -1400;
+    
     public static function getSubscribedEvents()
     {
+        return array
+        (
+            KernelEvents::CONTROLLER => array(
+                array('onControllerPerson', self::ControllerPersonEventListenerPriority),
+            ),       
+            FindPersonEvent::FindByGuidEventName  => array('onFindPersonByGuid' ),
+        );
+    }
+    public static function getSubscribedEventsOld()
+    {
+        /*
         return array
         (
             PersonEvents::FindPersonById          => array('onFindPersonById'  ),
@@ -23,7 +39,7 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             PersonEvents::FindPlanByProjectAndPerson => array('onFindPlanByProjectAndPerson'),
             
             PersonEvents::FindPersonPlanByProjectAndPersonGuid => array('onFindPersonPlanByProjectAndPersonGuid'),        
-        );
+        ); */
     }
     protected $personRepositoryServiceId;
     
@@ -35,6 +51,26 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
     {
         return $this->container->get($this->personRepositoryServiceId);
     }
+    public function onControllerPerson(FilterControllerEvent $event)
+    {
+        // TODO: Finish implementation
+        if (!$event->getRequest()->attributes->has('_person')) return;
+    }
+    public function onFindPersonByGuid(FindPersonEvent $event)
+    {
+        // Just means a listener was available
+        $event->stopPropagation();
+        
+        // Lookup
+        $person = $this->getPersonRepository()->findOneByGuid($event->getSearch());
+        
+        $event->setPerson($person);
+        
+        return;
+    }
+    /* ========================================================
+     * TODO: Review and update
+     */
     public function onFindOfficialsByProject(Event $event)
     {
         // Just means a listener was available
@@ -67,16 +103,6 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         $event->person = $this->getPersonRepository()->find($event->id);
         
         if ($event->person) $event->stopPropagation();
-    }
-    public function onFindPersonByGuid(Event $event)
-    {
-        // Just means a listener was available
-        $event->stopPropagation();
-        
-        // Lookup
-        $event->person = $this->getPersonRepository()->findOneByGuid($event->guid);
-        
-        return;
     }
     public function onFindPersonByProjectName(Event $event)
     {

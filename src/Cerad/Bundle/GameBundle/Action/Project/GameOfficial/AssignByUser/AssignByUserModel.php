@@ -5,7 +5,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Symfony\Component\Security\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignWorkflow;
 
@@ -20,6 +20,7 @@ class AssignByUserModel
     
     public $game;
     public $gameOfficial;
+    public $gameOfficialClone;
         
     public $projectOfficial; // The current user's project plan
     
@@ -39,8 +40,16 @@ class AssignByUserModel
      */
     public function process()
     {   
-        $this->workflow->process($this->project,$this->gameOfficial,$this->projectOfficial);
-        $this->gameRepo->commit();
+        $changed = $this->workflow->process(
+            $this->project,
+            $this->gameOfficialClone,
+            $this->gameOfficial,
+            $this->projectOfficial
+        );
+        if ($changed)
+        {
+            $this->gameRepo->commit();
+        }
         return;
     }
     /* =========================================================================
@@ -59,18 +68,18 @@ class AssignByUserModel
         
         if (!$gameOfficial->isAssignableByUser()) 
         {
-            throw new AccessDeniedException(sprintf('Game Slot %d, %id is not user assignable.',$game->getNum(),$gameOfficial->getSlot()));
+          //throw new AccessDeniedException(sprintf('Game Slot %d, %d is not user assignable.',$game->getNum(),$gameOfficial->getSlot()));
         }
         // Must be in the project, the commit checks for permissions
         $userPersonPlan = $userPerson->getPlanByProject($project);
         if (!$userPersonPlan)
         {
-            throw new AccessDeniedException(sprintf('Game Slot %d, %id user is not in project.',$game->getNum(),$gameOfficial->getSlot()));
+            throw new AccessDeniedException(sprintf('Game Slot %d, %d user is not in project.',$game->getNum(),$gameOfficial->getSlot()));
         }
         $this->projectOfficial = $userPersonPlan;
        
         // Adjust the official
-        $gameOfficial->saveOriginalInfo();
+        $this->gameOfficialClone = clone $gameOfficial;
         if (!$gameOfficial->getPersonNameFull())
         {
             $gameOfficial->setPersonNameFull($userPersonPlan->getPersonName());

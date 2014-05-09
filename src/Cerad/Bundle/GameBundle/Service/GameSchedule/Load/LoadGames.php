@@ -61,6 +61,10 @@ class LoadGames
                 $official->setPersonNameFull($gameOfficialName);
                 $official->setAssignState('Open');
                
+                if ($game->getGroupType() == 'PP')
+                {
+                    $official->setAssignRole('ROLE_USER');
+                }
                 $game->addOfficial($official);
             }
         }

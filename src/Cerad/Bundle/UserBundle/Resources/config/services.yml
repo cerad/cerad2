@@ -1,5 +1,8 @@
 parameters:
     cerad_user__user_current_factory__class: Cerad\Bundle\UserBundle\Security\UserCurrent
+    
+    cerad_user__user_event_listener__class:
+        Cerad\Bundle\UserBundle\EventListener\UserEventListener
 
 services:
   
@@ -16,6 +19,9 @@ services:
             - 'Cerad\Bundle\UserBundle\Entity\User'
             
     cerad_user.user_repository:
+        alias: cerad_user.user_repository.doctrine
+        
+    cerad_user__user_repository:
         alias: cerad_user.user_repository.doctrine
             
     cerad_user.user_manager.doctrine:
@@ -41,6 +47,15 @@ services:
         class:  Cerad\Bundle\UserBundle\Security\UserEncoder
         arguments:
             - '%cerad_user_master_password%'
+            
+    cerad_user__user_event_listener:
+        class: '%cerad_user__user_event_listener__class%'
+        calls:
+             - [setContainer, ['@service_container']]
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments:
+            - 'cerad_user__user_repository'
             
 # =============================================================
 # Allows injecting the current user or the current user person

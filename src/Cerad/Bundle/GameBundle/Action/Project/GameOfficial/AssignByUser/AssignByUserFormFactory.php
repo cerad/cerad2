@@ -24,9 +24,9 @@ class AssignByUserFormFactory
         $actionRoute = $request->attributes->get('_route');
         $actionUrl = $this->router->generate($actionRoute,array
         (
-            '_game'          => $model->game->getNum(),
-            '_game_official' => $model->gameOfficial->getSlot(),
-            '_project'       => $request->attributes->get('_project'),
+            '_game'         => $model->game->getNum(),
+            '_gameOfficial' => $model->gameOfficial->getSlot(),
+            '_project'      => $request->attributes->get('_project'),
         ));
         $builder->setAction($actionUrl);
         

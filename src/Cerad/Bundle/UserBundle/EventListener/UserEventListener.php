@@ -1,5 +1,5 @@
 <?php
-namespace Cerad\Bundle\GameBundle\EventListener;
+namespace Cerad\Bundle\UserBundle\EventListener;
 
 use Symfony\Component\DependencyInjection\ContainerAware;
 
@@ -9,78 +9,87 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use Cerad\Bundle\CoreBundle\EventListener\CoreRequestListener;
+use Cerad\Bundle\CoreBundle\Event\FindPersonEvent;
 
-use Cerad\Bundle\GameBundle\GameEvents;
-use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
-use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
-
-class GameEventListener extends ContainerAware implements EventSubscriberInterface
+class UserEventListener extends ContainerAware implements EventSubscriberInterface
 {
-    const ControllerGameEventListenerPriority = -1600;
+    const ControllerUserEventListenerPriority       = -1200;
+    const ControllerUserPersonEventListenerPriority = -1210;
     
     public static function getSubscribedEvents()
     {
         return array
         (
             KernelEvents::CONTROLLER => array(
-                array('onControllerGame', self::ControllerGameEventListenerPriority),
+                array('onControllerUser',       self::ControllerUserEventListenerPriority),
+                array('onControllerUserPerson', self::ControllerUserPersonEventListenerPriority),
             ),
-            
+/*            
             FindResultsEvent::EventName  => array('onFindResults' ),
-            GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot' ),
+            GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot' ), */
         );
     }
-    protected $gameRepositoryServiceId;
+    protected $userRepositoryServiceId;
     
-    public function __construct($gameRepositoryServiceId)
+    public function __construct($userRepositoryServiceId)
     {
-        $this->gameRepositoryServiceId = $gameRepositoryServiceId;
+        $this->userRepositoryServiceId = $userRepositoryServiceId;
     }
-    protected function getGameRepository()
+    protected function getUserRepository()
     {
-        return $this->container->get($this->gameRepositoryServiceId);
+        return $this->container->get($this->userRepositoryServiceId);
     }
-    public function onControllerGame(FilterControllerEvent $event)
+    public function onControllerUser(FilterControllerEvent $event)
     {
         // Only process routes asking for a game
-        if (!$event->getRequest()->attributes->has('_game')) return;
+        if (!$event->getRequest()->attributes->has('_user')) return;
+        if ( $event->getRequest()->attributes->has( 'user')) return;
         
-        // Pull the game number
+        $securityContext = $this->container->get('security.context');
+        
+        // Follow the logic in S2 Controller::getUser
+        $event->getRequest()->attributes->set('user',null);
+        
+        $token = $securityContext->getToken();
+        if (!$token) return;
+        
+        $user = $token->getUser();
+        if (!is_object($user)) return;
+      
+        $event->getRequest()->attributes->set('user',$user);
+    }
+    public function onControllerUserPerson(FilterControllerEvent $event)
+    {
+        if (!$event->getRequest()->attributes->has('_userPerson')) return;
+        
+        // Need a user first
         $request = $event->getRequest();
-        $gameNum = $request->attributes->get('_game');
-        
-        // Must have already gotten the project
-        if (!$request->attributes->has('project'))
+        if (!$request->attributes->has('user'))
         {
-            // Could be invalid request?
-            throw new NotFoundHttpException(sprintf('Project missing for game: %d',$gameNum));
+            $request->attributes->set('_user',true);
+            $this->onControllerUser($event);
         }
-        $projectKey = $request->attributes->get('project')->getKey();
+        $user = $request->attributes->get('user');
         
-        // Query Game
-        $game = $this->getGameRepository()->findOneByProjectNum($projectKey,$gameNum);
-        if (!$game)
-        {
-            throw new NotFoundHttpException(sprintf('Game %s %d not found',$projectKey,$gameNum));
-        }
-        // Stash It
-        $request->attributes->set('game',$game);
+        if (!$user) return;
         
-        // Check for game official
-        if ($request->attributes->has('_gameOfficial')) 
+        // Find The Person
+        $findPersonEvent = new FindPersonEvent($user->getPersonGuid());
+        $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher->dispatch(FindPersonEvent::FindByGuidEventName,$findPersonEvent);
+        
+        $person = $findPersonEvent->getPerson();
+        
+        if (!$person) 
         {
-            $slot = $request->attributes->get('_gameOfficial');
-            $gameOfficial = $game->getOfficialForSlot($slot);
-            if (!$gameOfficial)
-            {
-                throw new NotFoundHttpException(sprintf('Game Official %s %d %d not found',$projectKey,$gameNum,$slot));
-            }
-            $request->attributes->set('gameOfficial',$gameOfficial);
+            $message = sprintf('No Person For User, %s %s',$user->getAccountName(),$user->getPersonGuid());
+            throw new NotFoundHttpException($message);
         }
+        $request->attributes->set('userPerson',$person);
     }
     /* ====================================================================
-     * Finds the results/scoring service for a given project
+     * Copied from the game listener
+     * TODO: replace with User events
      */
     public function onFindResults(FindResultsEvent $event)
     {
