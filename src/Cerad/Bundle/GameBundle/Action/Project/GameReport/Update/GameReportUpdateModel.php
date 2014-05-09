@@ -10,6 +10,7 @@ use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
 class GameReportUpdateModel extends ActionModelFactory
 {  
     public $project;
+    public $_project;
     
     public $back;
     public $game;
@@ -25,6 +26,8 @@ class GameReportUpdateModel extends ActionModelFactory
     }
     public function create(Request $request)
     {   
+        $this->_project = $request->attributes->get('_project');
+        
         $this->project = $project = $request->attributes->get('project');
         $this->game    = $game    = $request->attributes->get('game');
         

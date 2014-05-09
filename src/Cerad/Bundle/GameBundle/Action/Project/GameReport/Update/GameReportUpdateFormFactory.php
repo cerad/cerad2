@@ -31,6 +31,7 @@ class GameReportUpdateFormFactory extends ActionFormFactory
             'gameReport'     => $model->gameReport,
             'homeTeamReport' => $model->homeTeamReport,
             'awayTeamReport' => $model->awayTeamReport,
+            'nextGameNum'    => $model->game->getNum() + 1,
         );
         $builder = $this->formFactory->create('form',$formData,$formOptions);
         
@@ -38,9 +39,15 @@ class GameReportUpdateFormFactory extends ActionFormFactory
         $builder->add('gameReport',     new FormType\GameReportFormType());
         $builder->add('homeTeamReport', new FormType\GameTeamReportFormType());
         $builder->add('awayTeamReport', new FormType\GameTeamReportFormType());
+        
+        $builder->add('nextGameNum','integer');
  
         $builder->add('save', 'submit', array(
             'label' => 'Save',
+            'attr' => array('class' => 'submit'),
+        ));        
+        $builder->add('next', 'submit', array(
+            'label' => 'Save Then Next',
             'attr' => array('class' => 'submit'),
         ));        
         return $builder;        

@@ -13,10 +13,25 @@ class GameReportUpdateController extends ActionController
         $form->handleRequest($request);
         if ($form->isValid()) 
         {   
-            $model->process($request,$form->getData());
+            // Always process?
+            $formData = $form->getData();
+            $model->process($request,$formData);
             
-            $formAction = $form->getConfig()->getAction();
-            return new RedirectResponse($formAction);  // To form
+            $gameNum = $model->game->getNum();
+            
+            if ($form->get('next')->isClicked())
+            {
+                $gameNum = $formData['nextGameNum'];
+            }
+            $actionUrl = $this->generateUrl(
+                'cerad_game__project__game_report__update',
+                array(
+                    '_project' => $model->_project,
+                    '_game'    => $gameNum,
+                    'back'     => $model->back,
+                ));
+          //$formAction = $form->getConfig()->getAction();
+            return new RedirectResponse($actionUrl);  // To form
         }   
         $tplData = array();
         $tplData['form']       = $form->createView();

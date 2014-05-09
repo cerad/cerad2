@@ -94,7 +94,10 @@
   <tr>
     <td style="min-width:275px;">&nbsp;</td>
     <td style="min-width:275px;">&nbsp;</td>
-    <td style="min-width:100px;">{{ form_widget(form.save) }}</td>
+    <td style="min-width:100px;">
+        {{ form_widget(form.save) }}
+        {{ form_widget(form.next) }}
+        {{ form_widget(form.nextGameNum) }}</td>
     <td style="min-width:225px;"><a href="{{ back }}{{ game.num }}">Return to Schedule</a></td>
   </tr>
 </table>
