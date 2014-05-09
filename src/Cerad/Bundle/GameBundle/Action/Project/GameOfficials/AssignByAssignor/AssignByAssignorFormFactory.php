@@ -24,6 +24,7 @@ class AssignByAssignorFormFactory
         $actionRoute = $request->attributes->get('_route');
         $actionUrl = $this->router->generate($actionRoute,array
         (
+             'back'    => $model->back,
             '_game'    => $model->game->getNum(),
             '_project' => $request->attributes->get('_project'),
         ));

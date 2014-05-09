@@ -17,18 +17,19 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
         return parent::getStateOptions($state,$this->assigneeStateTransitions);
         if ($transitions);
     }
-    public function process($project,$gameOfficial,$projectOfficial)
-    {
-        $gameOfficialOrg = $gameOfficial->retrieveOriginalInfo();
-        
-        $assignStateNew = $this->mapPostedStateToInternalState($gameOfficial->getAssignState());
-        $assignStateOrg = $this->mapPostedStateToInternalState($gameOfficialOrg['assignState']);
+    /* =========================
+     * Returns false if unchanged
+     */
+    public function process($project,$gameOfficialOrg,$gameOfficialNew,$projectOfficial)
+    {   
+        $assignStateNew = $this->mapPostedStateToInternalState($gameOfficialNew->getAssignState());
+        $assignStateOrg = $this->mapPostedStateToInternalState($gameOfficialOrg->getAssignState());
         
         if ($assignStateNew == $assignStateOrg) 
         {
             // Reset orginal info
-            $gameOfficial->restoreOriginalInfo();
-            return;
+            // $gameOfficial->restoreOriginalInfo();
+            return false;
         }
         $transition = $this->assigneeStateTransitions[$assignStateOrg][$assignStateNew];
         
@@ -36,21 +37,21 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
         $assignStateMod = isset($transition['modState']) ? $transition['modState'] : $assignStateNew;
         if ($assignStateMod != $assignStateNew)
         {
-            $gameOfficial->setAssignState($this->mapInternalStateToPostedState($assignStateMod));
+            $gameOfficialNew->setAssignState($this->mapInternalStateToPostedState($assignStateMod));
         }
         // Transfer or clear person
         switch($assignStateMod)
         {
             case 'StateOpen':
-                $gameOfficial->setPersonFromPlan(null);
+                $gameOfficialNew->setPersonFromPlan(null);
                 break;
             default:
-                $gameOfficial->setPersonFromPlan($projectOfficial);
+                $gameOfficialNew->setPersonFromPlan($projectOfficial);
         }
         // Notify the world
         $event = new AssignSlotEvent;
         $event->project         = $project;
-        $event->gameOfficial    = $gameOfficial;
+        $event->gameOfficial    = $gameOfficialNew;
         $event->gameOfficialOrg = $gameOfficialOrg;
         $event->command         = $assignStateNew;
         $event->workflow        = $this;
@@ -58,5 +59,7 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
         $event->by              = 'Assignee';
         
         $this->dispatcher->dispatch(GameEvents::GameOfficialAssignSlot,$event);
+        
+        return $true;
     }
 }

@@ -46,6 +46,7 @@ class AssignByAssignorController
         $tplData = array();
         $tplData['form'] = $form->createView();
         $tplData['game'] = $model->game;
+        $tplData['back'] = $model->back;
         
         $tplData['redirectUrl'] = $redirectUrl;
         

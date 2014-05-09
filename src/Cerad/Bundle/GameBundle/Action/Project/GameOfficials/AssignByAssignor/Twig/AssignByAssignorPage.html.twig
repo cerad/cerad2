@@ -22,7 +22,7 @@ table.assign
 </td></tr>
 {% endfor %}
 <tr><td style="height:2em; float:right; padding:10px">{{ form_widget(form.reset) }}{{ form_widget(form.assign) }}</td></tr>
-<tr><td style="height: 2em;float:right; padding:10px; margin: 10px 0"><a href="{{ redirectUrl }}">Back to Referee Schedule</a></td></tr>
+<tr><td style="height: 2em;float:right; padding:10px; margin: 10px 0"><a href="{{ back }}{{ game.num }}">Back to Schedule</a></td></tr>
 {{ form_rest(form) }}
 {{ form_end(form)  }}
 </table>

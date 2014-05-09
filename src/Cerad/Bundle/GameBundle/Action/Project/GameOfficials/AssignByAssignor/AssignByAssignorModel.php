@@ -20,6 +20,7 @@ class AssignByAssignorModel
     protected $dispatcher;
     
     public $game;
+    public $back;
     public $gameOfficials;
     public $gameOfficialClones;
     
@@ -73,6 +74,8 @@ class AssignByAssignorModel
     public function create(Request $request)
     {   
         // Extract
+        $this->back = $request->query->get('back');
+
         $requestAttrs = $request->attributes;
         
         $this->project       = $project = $requestAttrs->get('project');

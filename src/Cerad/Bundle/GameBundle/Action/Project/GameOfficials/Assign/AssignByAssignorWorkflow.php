@@ -9,16 +9,14 @@ class AssignByAssignorWorkflow extends AssignWorkflow
         return parent::getStateOptions($state,$this->assignorStateTransitions);
         if ($options);
     }
-    public function process($project,$gameOfficialNew,$personPlan)
+    public function process($project,$gameOfficialOrg,$gameOfficialNew,$personPlan)
     {
-        $gameOfficialOrg = $gameOfficialNew->retrieveOriginalInfo();
-        
         $assignStateNew = $this->mapPostedStateToInternalState($gameOfficialNew->getAssignState());
-        $assignStateOrg = $this->mapPostedStateToInternalState($gameOfficialOrg['assignState']);
+        $assignStateOrg = $this->mapPostedStateToInternalState($gameOfficialOrg->getAssignState());
         
        // The assignor can type directly into the name
         $personNameNew = $gameOfficialNew->getPersonNameFull();
-        $personNameOrg = $gameOfficialOrg['personNameFull'];
+        $personNameOrg = $gameOfficialOrg->getPersonNameFull();
         
         if ($personNameNew != $personNameOrg)
         {
@@ -51,6 +49,8 @@ class AssignByAssignorWorkflow extends AssignWorkflow
         // Should we notify the assiignee
         $notifyAssignee = isset($transition['notifyAssignee']) ? true : false;
         
-        if (!$notifyAssignee) return;        
+        if (!$notifyAssignee) return;
+        
+        // TBD - Kick off notification
     }
 }
