@@ -51,17 +51,23 @@ class ModelEventListener extends ContainerAware implements EventSubscriberInterf
      */
     public function onView(GetResponseForControllerResultEvent $event)
     {
-        if (!$event->getRequest()->attributes->has('_view')) return;
-        
         $request = $event->getRequest();
+       
+        if ($request->attributes->has('_format')) 
+        {
+            $viewAttrName = '_view_' . $request->attributes->get('_format');
+        }
+        else $viewAttrName = '_view';
         
-        $viewServiceId = $request->attributes->get('_view');
+        if (!$request->attributes->has($viewAttrName)) return;
+        
+        $viewServiceId = $request->attributes->get($viewAttrName);
         
         $view = $this->container->get($viewServiceId);
      
-        $viewResponse = $view->renderResponse($request); // Maybe should just be model?
+        $response = $view->renderResponse($request); // Maybe should just be model?
         
-        $event->setResponse($viewResponse);
+        $event->setResponse($response);
     }
     /* =============================================================
      * Allows protecting each route while defining the route

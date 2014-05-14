@@ -7,6 +7,8 @@ namespace Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show;
  */
 class ScheduleTeamExportCSV
 {
+    public function getFileExtension() { return 'csv'; }
+    public function getContentType()   { return 'text/csv'; }
     public function generate($games)
     {
         $fp = fopen('php://temp','r+');

@@ -51,3 +51,25 @@ services:
       - [setRouter,     ['@router']]
       - [setTemplating, ['@templating']]
       
+  cerad_game__project__schedule_team__show_view_html:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show\ScheduleTeamShowView
+    calls:
+      - [setRouter,     ['@router']]
+      - [setTemplating, ['@templating']]
+      
+  cerad_game__project__schedule_team__show_view_csv:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show\ScheduleTeamShowViewFile
+    arguments:
+      - '@cerad_game__project__schedule_team__export_csv'
+      
+  cerad_game__project__schedule_team__show_view_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show\ScheduleTeamShowViewFile
+    arguments:
+      - '@cerad_game__project__schedule_team__export_xls'
+      
+  cerad_game__project__schedule_team__export_csv:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show\ScheduleTeamExportCSV
+    
+  cerad_game__project__schedule_team__export_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show\ScheduleTeamExportXLS
+    

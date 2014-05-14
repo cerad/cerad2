@@ -140,5 +140,7 @@ class ScheduleTeamExportXLS extends ExcelExport
         $objWriter->save('php://output'); // Instead of file name
         return ob_get_clean();
     }
+    public function getFileExtension() { return 'xlsx'; }
+    public function getContentType()   { return 'application/vnd.ms-excel'; }
 }
 ?>

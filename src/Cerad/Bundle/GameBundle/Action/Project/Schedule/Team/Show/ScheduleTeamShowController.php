@@ -19,6 +19,8 @@ class ScheduleTeamShowController extends ActionController
             $formAction = $form->getConfig()->getAction();
             return new RedirectResponse($formAction);  // To form
         }
+        return;
+        
         $games = $model->loadGames();
         
         // Spreadsheet
@@ -42,7 +44,7 @@ class ScheduleTeamShowController extends ActionController
         
             $outFileName = 'TeamSchedule' . date('Ymd-Hi') . '.csv';
         
-            $response->headers->set('Content-Type',       'text/csv;');
+            $response->headers->set('Content-Type',       'text/csv');
             $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"',$outFileName));
             return $response;
         }

@@ -59,7 +59,10 @@ cerad_game__project__schedule_team__show:
         _model:      cerad_game__project__schedule_team__show_model_factory
         _form:       cerad_game__project__schedule_team__show_form_factory
         _template: '@CeradGame\Project\Schedule\Team\Show\Twig\ScheduleTeamShowPage.html.twig'
-        _format: html
+        _format:     html
+        _view_csv:   cerad_game__project__schedule_team__show_view_csv
+        _view_xls:   cerad_game__project__schedule_team__show_view_xls
+        _view_html:  cerad_game__project__schedule_team__show_view_html
     requirements:
         _format:  html|csv|xls|pdf
         
