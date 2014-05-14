@@ -3,9 +3,9 @@ namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficial\AssignByUser;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
+use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
 use Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignWorkflow;
 
@@ -13,11 +13,12 @@ use Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignWorkflow;
  * This model has dependencies from different bundles
  * Good argument for leaving it in the tourn bundle?
  */
-class AssignByUserModel
+class AssignByUserModel extends ActionModelFactory
 {
     public $project;
     public $workflow;
     
+    public $back;
     public $game;
     public $gameOfficial;
     public $gameOfficialClone;
@@ -25,14 +26,12 @@ class AssignByUserModel
     public $projectOfficial; // The current user's project plan
     
     protected $gameRepo;
-    protected $dispatcher;
     
     public function __construct(AssignWorkflow $workflow, $gameRepo)
     {   
         $this->workflow = $workflow;
         $this->gameRepo = $gameRepo;
     }
-    public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
     
     /* =====================================================
      * Process a posted model
@@ -57,7 +56,9 @@ class AssignByUserModel
      */
     public function create(Request $request)
     { 
-       // Extract
+        // Extract
+        $this->back = $request->query->get('back');
+
         $requestAttrs = $request->attributes;
         
         // These will be set or never get here

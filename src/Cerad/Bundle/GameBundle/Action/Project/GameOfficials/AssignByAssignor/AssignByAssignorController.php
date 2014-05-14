@@ -10,24 +10,14 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\RouterInterface;
 use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
 
-class AssignByAssignorController
-{
-    protected $router;
-    protected $templating;
-    
+use Cerad\Bundle\CoreBundle\Action\ActionController;
+
+class AssignByAssignorController extends ActionController
+{   
     public function __construct() {}
-    
-    public function setRouter    (RouterInterface $router)     { $this->router     = $router;     }
-    public function setTemplating(EngineInterface $templating) { $this->templating = $templating; }
     
     public function assignAction(Request $request, AssignByAssignorModel $model, FormInterface $form)
     {   
-        // Standard redirect, can't decide if the model should be able to generate these
-        $redirectRoute = $request->attributes->get('_redirect');
-      //$redirectUrl   = $this->router->generate($redirectRoute);
-      //$redirectUrl  .= sprintf('#ref-sched-%d',$model->game->getNum());
-        $redirectUrl = null;
-        
         // Handle the form
         $form->handleRequest($request);
 
@@ -35,8 +25,6 @@ class AssignByAssignorController
         {   
             // Maybe try/catch
             $model->process($request);
-
-          //return new RedirectResponse($redirectUrl); // To schedule
             
             $formAction = $form->getConfig()->getAction();
             return new RedirectResponse($formAction);  // To form
@@ -47,8 +35,6 @@ class AssignByAssignorController
         $tplData['form'] = $form->createView();
         $tplData['game'] = $model->game;
         $tplData['back'] = $model->back;
-        
-        $tplData['redirectUrl'] = $redirectUrl;
         
         $tplName = $request->attributes->get('_template');
         

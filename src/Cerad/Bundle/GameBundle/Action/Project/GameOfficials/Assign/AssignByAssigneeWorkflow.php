@@ -60,6 +60,6 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
         
         $this->dispatcher->dispatch(GameEvents::GameOfficialAssignSlot,$event);
         
-        return $true;
+        return true;
     }
 }

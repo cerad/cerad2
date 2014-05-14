@@ -7,27 +7,14 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Symfony\Component\Form\FormInterface;
 
-use Symfony\Component\Routing\RouterInterface;
+use Cerad\Bundle\CoreBundle\Action\ActionController;
 
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-
-class AssignByUserController
-{
-    protected $router;
-    protected $templating;
-    
+class AssignByUserController extends ActionController
+{   
     public function __construct() {}
     
-    public function setRouter    (RouterInterface $router)     { $this->router     = $router;     }
-    public function setTemplating(EngineInterface $templating) { $this->templating = $templating; }
-    
     public function assignAction(Request $request, AssignByUserModel $model, FormInterface $form)
-    {   
-        // Standard redirect, can't decide if the model should generate these
-        $redirectRoute = $request->attributes->get('_redirect');
-        $redirectUrl   = $this->router->generate($redirectRoute);
-        $redirectUrl  .= sprintf('#ref-sched-%d',$model->game->getNum());
-
+    {
         // Handle the form
         $form->handleRequest($request);
 
@@ -46,8 +33,7 @@ class AssignByUserController
         $tplData = array();
         $tplData['form'] = $form->createView();
         $tplData['game'] = $model->game;
-        
-        $tplData['redirectUrl'] = $redirectUrl;
+        $tplData['back'] = $model->back;
         
         $tplName = $request->attributes->get('_template');
         

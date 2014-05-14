@@ -4,18 +4,10 @@ namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Symfony\Component\Routing\RouterInterface;
+use Cerad\Bundle\CoreBundle\Action\ActionFormFactory;
 
-use Symfony\Component\Form\FormFactoryInterface;
-
-class AssignByAssignorFormFactory
-{
-    protected $router;
-    protected $formFactory;
-    
-    public function setRouter     (RouterInterface      $router)      { $this->router      = $router; }
-    public function setFormFactory(FormFactoryInterface $formFactory) { $this->formFactory = $formFactory; }
-    
+class AssignByAssignorFormFactory extends ActionFormFactory
+{   
     public function create(Request $request, AssignByAssignorModel $model)
     {   
         // The 'form' is actually the type

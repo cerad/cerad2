@@ -4,21 +4,15 @@ namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Symfony\Component\EventDispatcher\Event as PersonFindEvent;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
-use Cerad\Bundle\PersonBundle\PersonEvents;
+use Cerad\Bundle\CoreBundle\Event\FindOfficialsEvent;
+use Cerad\Bundle\CoreBundle\Event\FindPersonPlanEvent;
 
 use Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignWorkflow;
 
-/* =======================================================
- * This model has dependencies from different bundles
- * Good argument for leaving it in the tourn bundle?
- */
-class AssignByAssignorModel
-{
-    protected $dispatcher;
-    
+class AssignByAssignorModel extends ActionModelFactory
+{   
     public $game;
     public $back;
     public $gameOfficials;
@@ -35,7 +29,6 @@ class AssignByAssignorModel
         $this->workflow = $workflow;
         $this->gameRepo = $gameRepo;
     }
-    public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
         
     /* =====================================================
      * Process a posted model
@@ -48,14 +41,11 @@ class AssignByAssignorModel
             $personGuid = $gameOfficial->getPersonGuid();
             if ($personGuid)
             {
-                $event = new PersonFindEvent;
-                $event->project    = $this->project;
-                $event->personGuid = $personGuid;
-                $event->personPlan = null;
+                $event = new FindPersonPlanEvent($this->project,$personGuid);
         
-                $this->dispatcher->dispatch(PersonEvents::FindPersonPlanByProjectAndPersonGuid,$event);
+                $this->dispatcher->dispatch(FindPersonPlanEvent::FindByProjectGuidEventName,$event);
 
-                $projectOfficial = $event->personPlan;
+                $projectOfficial = $event->getPlan();
             }
             else $projectOfficial = null; // Ok if only name was set
             
@@ -91,13 +81,11 @@ class AssignByAssignorModel
         }
         
         // List of available referees
-        $event = new PersonFindEvent;
-        $event->project   = $project;
-        $event->officials = array();
+        $event = new FindOfficialsEvent($project);
         
-        $this->dispatcher->dispatch(PersonEvents::FindOfficialsByProject,$event);
+        $this->dispatcher->dispatch(FindOfficialsEvent::FindOfficialsEventName,$event);
 
-        $this->projectOfficials = $event->officials;
+        $this->projectOfficials = $event->getOfficials();
         
         return $this;
     }

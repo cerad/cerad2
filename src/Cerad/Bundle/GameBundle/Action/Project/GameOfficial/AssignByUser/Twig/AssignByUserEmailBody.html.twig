@@ -1,0 +1,38 @@
+{# @CeradGame/GameOfficial/UserAssignSlot/UserAssignSlotEmailBody.html.twig #}
+{% autoescape false %}
+{% if person.name.nick is empty %}
+Thank you.  Your plans have been updated:
+{% else %}
+{{ person.name.nick }},
+Your plans have been updated:
+{% endif %}
+
+
+    Account Name:{{ person.name.full }}
+
+    AYSO Section/Area/Region:{{ fed.orgKey | cerad_org_sar }}
+    ASYO ID: {{ fed.fedKey | slice(5) }}
+    Referee Certification: {{ certReferee.badge | replace('_', ' ') }}
+    Email: {{ person.email }}
+    Phone: {{ person.phone | cerad_phone }}
+
+{% set basic = plan.basic %}
+    Will Attend:  {{ basic.attending | cerad_plan_attending_desc }}
+    Will Referee: {{ basic.refereeing }}
+
+  Your Notes:
+    {{ basic.notes }}
+---
+
+Update your account and tournament plans at: {{ asset('zayso','S1Games') }} ‎
+
+Thank you for your support,
+
+{{ assignor.name }}
+{#
+{{ project.title }}
+{{ assignor.phone }}
+{{ assignor.email }}
+#}
+
+{% endautoescape %}

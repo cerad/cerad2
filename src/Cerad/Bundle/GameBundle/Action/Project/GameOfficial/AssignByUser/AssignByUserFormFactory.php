@@ -4,18 +4,10 @@ namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficial\AssignByUser;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Symfony\Component\Routing\RouterInterface;
+use Cerad\Bundle\CoreBundle\Action\ActionFormFactory;
 
-use Symfony\Component\Form\FormFactoryInterface;
-
-class AssignByUserFormFactory
-{
-    protected $router;
-    protected $formFactory;
-    
-    public function setRouter     (RouterInterface      $router)      { $this->router      = $router; }
-    public function setFormFactory(FormFactoryInterface $formFactory) { $this->formFactory = $formFactory; }
-    
+class AssignByUserFormFactory extends ActionFormFactory
+{   
     public function create(Request $request, AssignByUserModel $model)
     {   
         // The 'form' is actually the type
@@ -24,6 +16,7 @@ class AssignByUserFormFactory
         $actionRoute = $request->attributes->get('_route');
         $actionUrl = $this->router->generate($actionRoute,array
         (
+             'back'         => $model->back,
             '_game'         => $model->game->getNum(),
             '_gameOfficial' => $model->gameOfficial->getSlot(),
             '_project'      => $request->attributes->get('_project'),

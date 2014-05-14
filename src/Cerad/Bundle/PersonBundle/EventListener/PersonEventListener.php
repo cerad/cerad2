@@ -10,6 +10,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 
 use Cerad\Bundle\CoreBundle\Event\FindPersonEvent;
+use Cerad\Bundle\CoreBundle\Event\FindPersonPlanEvent;
+use Cerad\Bundle\CoreBundle\Event\FindOfficialsEvent;
 
 class PersonEventListener extends ContainerAware implements EventSubscriberInterface
 {
@@ -22,24 +24,12 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             KernelEvents::CONTROLLER => array(
                 array('onControllerPerson', self::ControllerPersonEventListenerPriority),
             ),       
-            FindPersonEvent::FindByGuidEventName  => array('onFindPersonByGuid' ),
+            FindPersonEvent    ::FindByGuidEventName         => array('onFindPersonByGuid' ),
+            
+            FindPersonPlanEvent::FindByProjectGuidEventName  => array('onFindPersonPlanByProjectGuid' ),
+            
+            FindOfficialsEvent ::FindOfficialsEventName      => array('onFindOfficials' ),
         );
-    }
-    public static function getSubscribedEventsOld()
-    {
-        /*
-        return array
-        (
-            PersonEvents::FindPersonById          => array('onFindPersonById'  ),
-            PersonEvents::FindPersonByGuid        => array('onFindPersonByGuid'  ),
-            PersonEvents::FindPersonByFedKey      => array('onFindPersonByFedKey'),
-            PersonEvents::FindPersonByProjectName => array('onFindPersonByProjectName'),
-            PersonEvents::FindOfficialsByProject  => array('onFindOfficialsByProject'),
-            
-            PersonEvents::FindPlanByProjectAndPerson => array('onFindPlanByProjectAndPerson'),
-            
-            PersonEvents::FindPersonPlanByProjectAndPersonGuid => array('onFindPersonPlanByProjectAndPersonGuid'),        
-        ); */
     }
     protected $personRepositoryServiceId;
     
@@ -68,18 +58,33 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         
         return;
     }
-    /* ========================================================
-     * TODO: Review and update
-     */
-    public function onFindOfficialsByProject(Event $event)
+    public function onFindOfficials(FindOfficialsEvent $event)
     {
         // Just means a listener was available
         $event->stopPropagation();
         
-        $projectKey = $event->project->getKey();
+        $projectKey = $event->getProject()->getKey();
         
-        $event->officials = $this->getPersonRepository()->findOfficialsByProject($projectKey);        
+        $officials = $this->getPersonRepository()->findOfficialsByProject($projectKey);
+        
+        $event->setOfficials($officials);
     }
+    public function onFindPersonPlanByProjectGuid(FindPersonPlanEvent $event)
+    {
+        $projectKey = $event->getProject()->getKey();
+        $personGuid = $event->getSearch();
+        
+        $plan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonGuid($projectKey,$personGuid);
+        
+        if ($plan) 
+        {
+            $event->setPlan($plan);
+            $event->stopPropagation();
+        }
+    }
+    /* ========================================================
+     * TODO: Review and update
+     */
     public function onFindPlanByProjectAndPerson(Event $event)
     {
         $projectKey = $event->project->getKey();
@@ -88,14 +93,6 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         $event->plan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonGuid($projectKey,$personGuid);
         
         if ($event->plan) $event->stopPropagation();
-    }
-    public function onFindPersonPlanByProjectAndPersonGuid(Event $event)
-    {
-        $projectKey = $event->project->getKey();
-        
-        $event->personPlan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonGuid($projectKey,$event->personGuid);
-        
-        if ($event->personPlan) $event->stopPropagation();
     }
     public function onFindPersonById(Event $event)
     {
