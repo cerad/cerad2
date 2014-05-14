@@ -53,12 +53,15 @@ cerad_game__project__schedule_referee__show:
         _template: '@CeradGame\Project\Schedule\Referee\Show\Twig\ScheduleRefereeShowPage.html.twig'
         
 cerad_game__project__schedule_team__show:
-    path:  /project/{_project}/schedule-team
+    path:  /project/{_project}/schedule-team.{_format}
     defaults: 
         _controller: cerad_game__project__schedule_team__show_controller:action
         _model:      cerad_game__project__schedule_team__show_model_factory
         _form:       cerad_game__project__schedule_team__show_form_factory
         _template: '@CeradGame\Project\Schedule\Team\Show\Twig\ScheduleTeamShowPage.html.twig'
+        _format: html
+    requirements:
+        _format:  html|csv|xls|pdf
         
 cerad_game__project__schedule_game__show:
     path:  /project/{_project}/schedule-game
