@@ -5,8 +5,12 @@
 
 {{ form_start(form, { 'attr' : { 'class' : 'app_form' }}) }}
 
+<fieldset><legend><span>Account Info</span></legend>
+{{ form_row(form.user.accountName) }}
+{{ form_row(form.user.username)    }}
+{{ form_row(form.user.email)       }}
+</fieldset>
 <fieldset><legend><span>Person Info</span></legend>
-{{ form_row(form.user.accountName)  }}
 {{ form_row(form.person.name.full)  }}
 {{ form_row(form.person.name.first) }}
 {{ form_row(form.person.name.last)  }}

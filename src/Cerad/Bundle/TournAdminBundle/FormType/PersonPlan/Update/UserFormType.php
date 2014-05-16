@@ -34,6 +34,24 @@ class UserFormType extends AbstractType
             ),
             'attr' => array('size' => 30),
         )); 
+        $builder->add('username','text', array(
+            'required' => false,
+            'label'    => 'Account User',
+            'trim'     => true,
+            'constraints' => array(
+              //new NotBlankConstraint(),
+            ),
+            'attr' => array('size' => 30),
+        )); 
+        $builder->add('email','email', array(
+            'required' => false,
+            'label'    => 'Account Email',
+            'trim'     => true,
+            'constraints' => array(
+              //new NotBlankConstraint(),
+            ),
+            'attr' => array('size' => 30),
+        )); 
     }
 }
 ?>

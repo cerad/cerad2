@@ -69,8 +69,8 @@ class PersonPlanUpdateController extends MyBaseController
         if ($user->getId())
         {
             // Commit it
-            $userRepo = $this->get('cerad_user.user_repository');
-            $userRepo->commit();
+            $userManager = $this->get('cerad_user.user_manager');
+            $userManager->updateUser($user);
         }
         return;
     }
