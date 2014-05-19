@@ -7,8 +7,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 /* ==================================================================
- * Use this to collect and partially validate a region number
- * The transformer will yield AYSORxxxx
+ * Used by the admin person form.
+ * TODO: Needs to accept a project as input or elase be replaced with a dynamic form
  */
 class WillAttendFormType extends AbstractType
 {   
@@ -37,9 +37,10 @@ class WillAttendFormType extends AbstractType
         'yesx'  => 'Yesx',
         'maybe' => 'Maybe',
         
-        'we12' => 'Both weekends',
-        'we1'  => 'First Weekend',
-        'we2'  => 'Second Weekend',
+      // Need to feed a project to here
+      //'we12' => 'Both weekends',
+      //'we1'  => 'First Weekend',
+      //'we2'  => 'Second Weekend',
                 
       //'SeeNotes' => 'See Notes',
    );    
