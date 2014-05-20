@@ -61,8 +61,6 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     
     public function __construct()
     {
-        //$this->id   = $this->genId();
-        
         $this->salt = base_convert(sha1(uniqid(mt_rand(), true)), 16, 36);
         
         $this->authens = array();
@@ -223,6 +221,16 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
      */
     public function getAuthens() { return $this->authens; }
     
+    public function createAuthen()
+    {
+        return new UserAuthen();
+    }
+    public function addAuthen($authen)
+    {
+        $this->authens[] = $authen;
+        
+        $authen->setUser($this);
+    }
     /* =========================================================================
      * Password token stuff
      */

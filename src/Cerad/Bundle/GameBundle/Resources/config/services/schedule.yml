@@ -3,6 +3,30 @@ parameters:
 services:
   
 # =======================================================================
+# Action: ScheduleGameShow
+#
+  cerad_game__project__schedule_game__show_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameShowModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__game_repository'
+      - '@cerad_level__level_repository'
+
+  cerad_game__project__schedule_game__show_form_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameShowFormFactory
+    calls:
+      - [setRouter,      ['@router']]
+      - [setFormFactory, ['@form.factory']]
+      - [setDispatcher,  ['@event_dispatcher']]
+             
+  cerad_game__project__schedule_game__show_controller:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameShowController
+    calls:
+      - [setRouter,     ['@router']]
+      - [setTemplating, ['@templating']]
+      
+# =======================================================================
 # Action: ScheduleRefereeShow
 #
   cerad_game__project__schedule_referee__show_model_factory:

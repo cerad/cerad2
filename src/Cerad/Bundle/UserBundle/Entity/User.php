@@ -17,5 +17,9 @@ class User extends UserModel
 
         $this->authens = new ArrayCollection();
     }
+    public function createAuthen()
+    {
+        return new UserAuthen();
+    }
 }
 ?>

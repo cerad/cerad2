@@ -61,9 +61,9 @@ class PersonsImport01YAML
         $person->setPhone ($personx['phone']);
         $person->setGender($personx['gender']);
         
-        $person->setNotes   ($personx['notes']);
-        $person->setStatus  ($personx['status']);
-        $person->setVerified($personx['verified']);
+        if (isset($personx['notes']))    $person->setNotes($personx['notes']);
+        if (isset($personx['status']))   $person->setStatus  ($personx['status']);
+        if (isset($personx['verified'])) $person->setVerified($personx['verified']);
         
         if ($personx['dob'])
         {
@@ -75,30 +75,42 @@ class PersonsImport01YAML
         $personName->first  = $personx['nameFirst'];
         $personName->last   = $personx['nameLast'];
         $personName->nick   = $personx['nameNick'];
-        $personName->middle = $personx['nameMiddle'];
+        
+        if (isset($personx['nameMiddle'])) $personName->middle = $personx['nameMiddle'];
+        
         $person->setName($personName);
         
         $personAddress = $person->getAddress();
         $personAddress->city    = $personx['addressCity'];
         $personAddress->state   = $personx['addressState'];
-        $personAddress->zipcode = $personx['addressZipcode'];
+        
+        if (isset($personx['addressZipCode'])) $personAddress->zipcode = $personx['addressZipcode'];
+        
         $person->setAddress($personAddress);
         
         /* Now do the feds */
         foreach($personx['feds'] as $personFedx)
         {
             $personFed = $person->createFed();
-            $personFed->setPersonVerified($personFedx['personVerified']);
-            $personFed->setFed           ($personFedx['fed']);
-            $personFed->setFedRole       ($personFedx['fedRole']);
-            $personFed->setFedKey        ($personFedx['fedKey']);
-            $personFed->setFedKeyVerified($personFedx['fedKeyVerified']);
-            $personFed->setOrgKey        ($personFedx['orgKey']);
-            $personFed->setOrgKeyVerified($personFedx['orgKeyVerified']);
-            $personFed->setMemYear       ($personFedx['memYear']);
-            $personFed->setStatus        ($personFedx['status']);
             
-            if ($personFedx['fedRoleDate'])
+            if (isset($personFedx['personVerified']))
+                $personFed->setPersonVerified($personFedx['personVerified']);
+            
+            $personFed->setFed    ($personFedx['fed']);
+            $personFed->setFedRole($personFedx['fedRole']);
+            $personFed->setFedKey ($personFedx['fedKey']);
+            $personFed->setOrgKey ($personFedx['orgKey']);
+            
+            if (isset($personFedx['fedKeyVerified']))
+                $personFed->setFedKeyVerified($personFedx['fedKeyVerified']);
+            
+            if (isset($personFedx['orgKeyVerified']))    
+                $personFed->setOrgKeyVerified($personFedx['orgKeyVerified']);
+            
+            $personFed->setMemYear($personFedx['memYear']);
+            $personFed->setStatus ($personFedx['status']);
+            
+            if (isset($personFedx['fedRoleDate']) && $personFedx['fedRoleDate'])
             {
                 $fedRoleDate = new \DateTime($personFedx['fedRoleDate']);
                 $personFed->setFedRoleDate($fedRoleDate);
@@ -110,19 +122,36 @@ class PersonsImport01YAML
             {
                 $cert = $personFed->createCert();
                 
-                $roleDate  = $certx['roleDate']  ? new \DateTime($certx['roleDate'])  : null;
-                $badgeDate = $certx['badgeDate'] ? new \DateTime($certx['badgeDate']) : null;
+                $cert->setRole ($certx['role']);
+                $cert->setBadge($certx['badge']);
                 
-                $cert->setRole         ($certx['role']);
-                $cert->setRoleDate     ($roleDate);
-                $cert->setBadge        ($certx['badge']);
-                $cert->setBadgeDate    ($badgeDate);
-                $cert->setBadgeVerified($certx['badgeVerified']);
-                $cert->setBadgeUser    ($certx['badgeUser']);
-                $cert->setUpgrading    ($certx['upgrading']);
-                $cert->setOrgKey       ($certx['orgKey']);
-                $cert->setMemYear      ($certx['memYear']);
-                $cert->setStatus       ($certx['status']);
+                if (isset($certx['roleDate']) && $certx['roleDate'])
+                {
+                    $roleDate  = new \DateTime($certx['roleDate']);
+                    $cert->setRoleDate($roleDate);
+                }
+                if (isset($certx['badgeDate']) && $certx['badgeDate'])
+                {
+                    $badgeDate  = new \DateTime($certx['badgeDate']);
+                    $cert->setBadgeDate($badgeDate);
+                }
+                if (isset($certx['badgeVerified']))
+                    $cert->setBadgeVerified($certx['badgeVerified']);
+                
+                if (isset($certx['badgeUser']))
+                    $cert->setBadgeUser($certx['badgeUser']);
+                
+                if (isset($certx['upgrading']))
+                    $cert->setUpgrading($certx['upgrading']);
+                
+                if (isset($certx['orgKey']))
+                    $cert->setOrgKey($certx['orgKey']);
+                
+                if (isset($certx['memYear']))
+                    $cert->setMemYear($certx['memYear']);
+                
+                if (isset($certx['status']))
+                    $cert->setStatus($certx['status']);
                 
                 $personFed->addCert($cert);
             }
@@ -154,25 +183,43 @@ class PersonsImport01YAML
             {
                 $user = $this->userRepo->createUser();
                 
-                $user->setPersonGuid     ($userx['personGuid']);
-                $user->setPersonStatus   ($userx['personStatus']);
-                $user->setPersonVerified ($userx['personVerified']);
-              //$user->setPersonConfirmed($userx['personConfirmed']);
+                $user->setPersonGuid($userx['personGuid']);
                 
+                if (isset($userx['personStatus']))
+                    $user->setPersonStatus($userx['personStatus']);
+                
+                if (isset($userx['personVerified']))
+                    $user->setPersonVerified($userx['personVerified']);
+              
                 $user->setUsername         ($userx['username']);
                 $user->setUsernameCanonical($userx['usernameCanonical']);
                 $user->setEmail            ($userx['email']);
                 $user->setEmailCanonical   ($userx['emailCanonical']);
-              //$user->setEmailConfirmed   ($userx['emailConfirmed']);
                 
                 $user->setSalt        ($userx['salt']);
                 $user->setPassword    ($userx['password']);
-                $user->setPasswordHint($userx['passwordHint']);
-                $user->setAccountName ($userx['accountName']);
+                
+                if (isset($userx['passwordHint']))
+                    $user->setPasswordHint($userx['passwordHint']);
+                
+                $user->setAccountName($userx['accountName']);
                 
                 $user->setRoles($userx['roles']);
                
                 $this->userRepo->save($user);
+                
+                // Authens 
+                foreach($userx['authens'] as $authenx)
+                {
+                    $authen = $user->createAuthen();
+                    
+                    $authen->setId     ($authenx['identifier']);
+                    $authen->setSource ($authenx['source']);
+                    $authen->setStatus ($authenx['status']);
+                    $authen->setProfile($authenx['profile']);
+                    
+                    $user->addAuthen($authen);
+                }
             }
         }
         // Want to make this go away eventually
@@ -180,12 +227,6 @@ class PersonsImport01YAML
         
         // Commit
         $this->personRepo->save($person);
-        $this->personRepo->commit();
-        $this->userRepo->commit();
-        
-      //echo sprintf("Added Person %d\n",$person->getId());
-        
-      //die();
     }
     /* ==================================================
      * Determines if have a new or existing person
@@ -224,52 +265,15 @@ class PersonsImport01YAML
         $results->filepath = $params['filepath'];
         $results->basename = $params['basename'];
         
-        $data = Yaml::parse(file_get_contents($params['filepath']));
-        $persons = $data['persons'];
+        $persons = Yaml::parse(file_get_contents($params['filepath']));
         
         foreach($persons as $person)
         {
             $this->processPerson($person);
         }
+        $this->personRepo->commit();
+        $this->userRepo->commit();
         
-        return $results;
-        
-        // Open
-        $this->reader = $reader = new MyXMLReader();
-        $status = $reader->open($params['filepath'],null,LIBXML_COMPACT | LIBXML_NOWARNING);
-        if (!$status)
-        {
-            $results->message = sprintf("Unable to open: %s",$params['filepath']);
-            return $results;
-        }
-        // Export details
-        if (!$reader->next('export')) 
-        {
-            $results->message = '*** Not a Export file';
-            $reader->close();
-            return $results;
-        }
-        // Verify report type
-        $results->name = $reader->getAttribute('name');
-        
-        // Persons collection
-        // Can't do a next for sub trees?
-        while($reader->read() && $reader->name !== 'person');
-        
-        // Individual Person
-        //$reader->read();
-        while($reader->name == 'person')
-        {
-            $this->processPerson($reader);
-            
-            // On to the next one
-            // Done by processPerson
-            $reader->next('person');
-        }
-        
-        // Done
-        $reader->close();
-        $results->message = "Import completed";
         return $results;
         
     }

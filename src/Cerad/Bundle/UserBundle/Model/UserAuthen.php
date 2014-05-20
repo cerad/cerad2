@@ -11,11 +11,13 @@ class UserAuthen
    
     protected $status = 'Active';
     
+    public function setId       ($value) { $this->id        = $value; }
     public function setUser     ($value) { $this->user      = $value; }
     public function setSource   ($value) { $this->source    = $value; }
     public function setStatus   ($value) { $this->status    = $value; }
     public function setProfile  ($value) { $this->profile   = $value; }
     
+    public function getId()        { return $this->id;        }
     public function getUser()      { return $this->user;      }
     public function getSource()    { return $this->source;    }
     public function getStatus()    { return $this->status;    }
