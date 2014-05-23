@@ -51,6 +51,10 @@ class BaseController extends Controller
     {
         return $this->get('security.context')->isGranted('ROLE_USER');
     }
+    protected function hasRoleStaff($projectId = null)
+    {
+        return $this->get('security.context')->isGranted('ROLE_STAFF');
+    }
     protected function hasRoleAdmin($projectId = null)
     {
         return $this->get('security.context')->isGranted('ROLE_ADMIN');
