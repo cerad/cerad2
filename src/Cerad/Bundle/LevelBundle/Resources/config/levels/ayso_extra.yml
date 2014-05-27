@@ -1,6 +1,15 @@
 # ====================================
 # Bunch of levels
 
+AYSO_VIP_Extra:
+    name:      VIP_Extra
+    div:       Extra
+    age:       VIP
+    gender:    VIP
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+
 AYSO_U10B_Extra:
     name:      U10B_Extra
     div:       Extra

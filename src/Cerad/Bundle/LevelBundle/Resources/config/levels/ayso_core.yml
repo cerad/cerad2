@@ -1,6 +1,15 @@
 # ====================================
 # Bunch of levels
 
+AYSO_VIP_Core:
+    name:      VIP_Core
+    div:       Core
+    age:       VIP
+    gender:    VIP
+    sport:     Soccer
+    domain:    AYSO
+    domainSub: AYSO
+    
 AYSO_U10B_Core:
     name:      U10B_Core
     div:       Core
