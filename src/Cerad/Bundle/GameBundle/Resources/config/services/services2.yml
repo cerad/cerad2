@@ -47,19 +47,23 @@ services:
         
     cerad_game__convert_teams__rick_to_yaml:
         class: Cerad\Bundle\GameBundle\Service\GameSchedule\Convert\ConvertTeamsRickToYaml
+        scope: prototype
         
     cerad_game__load_games:
         class: Cerad\Bundle\GameBundle\Service\GameSchedule\Load\LoadGames
+        scope: prototype
         arguments:
             - '@cerad_game__game_repository'
         
     cerad_game__load_teams:
         class: Cerad\Bundle\GameBundle\Service\GameSchedule\Load\LoadTeams
+        scope: prototype
         arguments:
             - '@cerad_game__team_repository'
             
     cerad_game__link_teams:
         class: Cerad\Bundle\GameBundle\Service\GameSchedule\Load\LinkTeams
+        scope: prototype
         arguments:
             - '@cerad_game__game_repository'
             - '@cerad_game__team_repository'

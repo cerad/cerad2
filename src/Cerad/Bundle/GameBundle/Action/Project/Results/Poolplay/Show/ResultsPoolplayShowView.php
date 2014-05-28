@@ -1,45 +1,42 @@
 <?php
 namespace Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show;
 
-use Cerad\Bundle\CoreBundle\Action\ActionController;
+use Cerad\Bundle\CoreBundle\Action\ActionView;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class ResultsPoolplayShowView extends ActionController
+class ResultsPoolplayShowView extends ActionView
 {
-    public function action(Request $request, ResultsPoolplayShowModel $model)
+    protected $projectPools;
+    
+    public function __construct($projectPools)
     {
-        /*
-        $form->handleRequest($request);
-        if ($form->isValid()) 
-        {   
-            $model->process($request,$form->getData());
-            
-            $formAction = $form->getConfig()->getAction();
-            return new RedirectResponse($formAction);  // To form
-         }*/
+        $this->projectPools = $projectPools;
+    }
+    public function renderResponse(Request $request)
+    {
+        $model = $request->attributes->get('model');
 
         $_project = $request->attributes->get('_project');
         
+        $projectPools = $this->projectPools;
+        
         $routes = array();
         
-        foreach(array('Core','Extra') as $program)
+        foreach($projectPools as $program => $genders)
         {
-            foreach(array('Boys','Girls') as $gender)
+           
+            foreach($genders as $gender => $ages)
             {
-                foreach(array('U10','U12','U14','U16','U19') as $age)
+                foreach($ages as $age => $pools)
                 {
-                    $level = sprintf('AYSO_%s%s_%s',$age,substr($gender,0,1),$program);
-                    $routes[$program][$gender][$age][$age] = $this->generateUrl(
+                    $ageGender = $age . substr($gender,0,1);
+                    
+                    $level = sprintf('AYSO_%s_%s',$ageGender,$program);
+                    $routes[$program][$gender][$age][$ageGender] = $this->generateUrl(
                         'cerad_game__project__results_poolplay__show',
                         array('_project' => $_project, 'level' => $level,
-                    ));
-                    
-                    // Need to apply proram as well
-                    $pools = array('A','B','C','D');
-                    if ($age == 'U10') $pools = array('A','B','C','D','E','F','G','H','I','J','K','L');
-                    
+                    ));                    
                     foreach($pools as $pool)
                     {
                         $routes[$program][$gender][$age][$pool] = $this->generateUrl(
@@ -50,11 +47,10 @@ class ResultsPoolplayShowView extends ActionController
                 }
             }
         }
-        $pools = $model->loadPools();
        
         // And render
         $tplData = array();
-        $tplData['pools']  = $pools;
+        $tplData['pools']  = $model->loadPools();
         $tplData['routes'] = $routes;
         return $this->regularResponse($request->get('_template'),$tplData);
     }

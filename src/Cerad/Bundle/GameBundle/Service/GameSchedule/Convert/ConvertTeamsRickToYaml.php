@@ -8,6 +8,15 @@ class ConvertTeamsRickToYaml extends BaseLoader
 {
     protected $record = array
     (
+        'teamNum'   => array('cols' => 'TEAM NO.',  'req' => true),
+        'region'    => array('cols' => 'REGION',    'req' => true),
+        'pool'      => array('cols' => 'Pool',      'req' => true),
+        'poolFri'   => array('cols' => 'Fri Pool',  'req' => true),
+        'poolThu'   => array('cols' => 'Thurs Pool','req' => true),
+        'points'    => array('cols' => 'Points',    'req' => true),
+    );
+    protected $recordx = array
+    (
         'num'       => array('cols' => 'Team #', 'req' => true),
         'name'      => array('cols' => 'Name',   'req' => true),
         'levelKey'  => array('cols' => 'Level',  'req' => true),
@@ -22,15 +31,30 @@ class ConvertTeamsRickToYaml extends BaseLoader
     }
     protected function processItem($item)
     {
-        $num = (int)$item['num'];
-        if (!$num) return;
+        // Extraxt the team number 19G-08
+        $teamNum = $item['teamNum'];
+        if (!$teamNum) return;
+        $teamNumParts = explode('-',$teamNum);
+        if (count($teamNumParts) != 2) { print_r($item); die(); }
+        $num = (int)$teamNumParts[1];
         
+        // Extract keys U19G Core D5
+        $groupSlot = $item['poolThu'] ? $item['poolThu'] : $item['pool'];
+        $groupSlotParts = explode(' ',$groupSlot);
+        if (count($groupSlotParts) != 3) { print_r($item); die(); }
+        
+        $levelKey = sprintf('AYSO_%s_%s',$groupSlotParts[0],$groupSlotParts[1]);
+        
+        // Points
+        $points = $item['points'] ? (int)$item['points'] : 0;
+        
+        // Create team
         $team = array();
         $team['num']        = $num;
-        $team['name']       = $item['name'];
-        $team['points']     = (int)$item['points'];
-        $team['levelKey']   = $item['levelKey'];
-        $team['groupSlot']  = $item['groupSlot'];
+        $team['name']       = $item['region'];
+        $team['points']     = $points;
+        $team['levelKey']   = $levelKey;
+        $team['groupSlot']  = $groupSlot;
         $team['projectKey'] = $this->projectKey;
         
         $this->items[] = $team;

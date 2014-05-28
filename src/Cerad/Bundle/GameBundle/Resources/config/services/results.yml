@@ -32,3 +32,11 @@ services:
     calls:
       - [setRouter,     ['@router']]
       - [setTemplating, ['@templating']]
+      
+  cerad_game__project__results_poolplay__show_view:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show\ResultsPoolplayShowView
+    calls:
+      - [setRouter,     ['@router']]
+      - [setTemplating, ['@templating']]
+    arguments:
+      - '%cerad_project_pools%'

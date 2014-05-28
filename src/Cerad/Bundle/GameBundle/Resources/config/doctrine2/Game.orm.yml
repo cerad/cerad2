@@ -6,6 +6,9 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\Game:
     uniqueConstraints:
        game_project_num_index:
            columns: projectKey, num
+    indexes:
+      game_project_level_key_index:
+        columns: projectKey, levelKey
 
     id:
         id:
