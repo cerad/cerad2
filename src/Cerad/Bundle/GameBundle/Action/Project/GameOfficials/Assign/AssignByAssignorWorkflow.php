@@ -9,12 +9,21 @@ class AssignByAssignorWorkflow extends AssignWorkflow
         return parent::getStateOptions($state,$this->assignorStateTransitions);
         if ($options);
     }
+    /* ==============================================
+     * TODO: Make a bit cleaner an prevent state errors
+     */
     public function process($project,$gameOfficialOrg,$gameOfficialNew,$personPlan)
     {
         $assignStateNew = $this->mapPostedStateToInternalState($gameOfficialNew->getAssignState());
         $assignStateOrg = $this->mapPostedStateToInternalState($gameOfficialOrg->getAssignState());
         
-       // The assignor can type directly into the name
+        // Default to Pending if a person is assigned
+        if ($gameOfficialNew->getPersonGuid() && $assignStateNew == 'StateOpen')
+        {
+            $assignStateNew = 'StatePendingByAssignor';
+            $gameOfficialNew->setAssignState($this->mapInternalStateToPostedState($assignStateNew));
+        }
+        // The assignor can type directly into the name
         $personNameNew = $gameOfficialNew->getPersonNameFull();
         $personNameOrg = $gameOfficialOrg->getPersonNameFull();
         
@@ -49,7 +58,7 @@ class AssignByAssignorWorkflow extends AssignWorkflow
         // Should we notify the assiignee
         $notifyAssignee = isset($transition['notifyAssignee']) ? true : false;
         
-        if (!$notifyAssignee) return;
+        if (!$notifyAssignee) return; if ($project);
         
         // TBD - Kick off notification
     }
