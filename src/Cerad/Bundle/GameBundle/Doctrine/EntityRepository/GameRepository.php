@@ -31,6 +31,9 @@ class GameRepository extends EntityRepository
         
         $physicalTeamIds  = $this->getArrayValue($criteria,'physicalTeamIds');
        
+        // Little strange, want to default to true
+        $wantOfficials = isset($criteria['wantOfficials']) ? $criteria['wantOfficials'] : true;
+        
         /* =================================================
          * Dates are always so much fun
          */
@@ -140,9 +143,15 @@ class GameRepository extends EntityRepository
         
         // Game query
         $qbx = $this->createQueryBuilder('game');
-        $qbx->addSelect('gameTeam,gameOfficial');
-        $qbx->leftJoin ('game.teams',    'gameTeam');
-        $qbx->leftJoin ('game.officials','gameOfficial');
+        
+        $qbx->addSelect('gameTeam');
+        $qbx->leftJoin ('game.teams','gameTeam');
+        
+        if ($wantOfficials) 
+        {
+            $qbx->addSelect('gameTeam,gameOfficial');
+            $qbx->leftJoin ('game.officials','gameOfficial');
+        }
         $qbx->andWhere ('game.id IN (:ids)');
         $qbx->setParameter('ids',$ids);
         

@@ -1,17 +1,17 @@
 <?php
 
-namespace Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show;
+namespace Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionFormFactory;
 
-class ScheduleRefereeShowFormFactory extends ActionFormFactory
+class ScheduleGameShowFormFactory extends ActionFormFactory
 {
     public function create(Request $request, $model)
     {   
         $actionUrl = $this->generateUrl(
-            'cerad_game__project__schedule_referee__show',
+            'cerad_game__project__schedule_game__show',
             array('_project' => $request->attributes->get('_project'))
         );
         $formOptions = array(

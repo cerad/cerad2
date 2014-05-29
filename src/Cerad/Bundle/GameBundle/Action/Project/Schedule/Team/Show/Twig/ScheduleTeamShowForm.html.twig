@@ -8,6 +8,14 @@
     <td>{{ form_widget(form.CoreTeams)  }}</td>
     <td>{{ form_widget(form.ExtraTeams) }}</td>
 </tr></table>
+        
+<div class="layout-block">
+  {% set excelUrl = path('cerad_game__project__schedule_team__show', { '_project' : _project, '_format': 'xls'}) %}
+  {% set   csvUrl = path('cerad_game__project__schedule_team__show', { '_project' : _project, '_format': 'csv'}) %}
+  <div class="controls">{{ form_widget(form.search) }}</div>
+  <div style="padding: 10px 0 0 25%; float: left;"><a href="{{ excelUrl }}">Export to Excel</a></div>
+  <div style="padding: 10px 0 0 4em; float: left;"><a href="{{   csvUrl }}">Export to Text</a></div>
+</div>
 
 {#
     <div style="padding:0 2em; float: left;"><a href="{{ path('cerad_tourn_schedule_list', { '_format': 'xls'}) }}">Export to Excel</a></div>

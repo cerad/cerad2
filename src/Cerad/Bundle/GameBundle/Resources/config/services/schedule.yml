@@ -6,12 +6,14 @@ services:
 # Action: ScheduleGameShow
 #
   cerad_game__project__schedule_game__show_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameShowModel
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowModel
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
       - '@cerad_game__game_repository'
       - '@cerad_level__level_repository'
+      - 'ScheduleGameShow'
+      - false
 
   cerad_game__project__schedule_game__show_form_factory:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameShowFormFactory
@@ -21,11 +23,33 @@ services:
       - [setDispatcher,  ['@event_dispatcher']]
              
   cerad_game__project__schedule_game__show_controller:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameShowController
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowController
+      
+  cerad_game__project__schedule_game__show_view_html:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowView
     calls:
       - [setRouter,     ['@router']]
       - [setTemplating, ['@templating']]
       
+  cerad_game__project__schedule_game__show_view_csv:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
+    arguments:
+      - '@cerad_game__project__schedule_game__export_csv'
+      - 'GameSchedule'
+      
+  cerad_game__project__schedule_game__show_view_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
+    arguments:
+      - '@cerad_game__project__schedule_game__export_xls'
+      - 'GameSchedule'
+      
+  cerad_game__project__schedule_game__export_csv:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameExportCSV
+    
+  cerad_game__project__schedule_game__export_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameExportXLS
+    
+
 # =======================================================================
 # Action: ScheduleRefereeShow
 #

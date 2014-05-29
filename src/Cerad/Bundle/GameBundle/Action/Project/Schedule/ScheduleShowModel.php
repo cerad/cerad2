@@ -1,27 +1,42 @@
 <?php
-namespace Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show;
+namespace Cerad\Bundle\GameBundle\Action\Project\Schedule;
 
 use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
-class ScheduleRefereeShowModel extends ActionModelFactory
-{
-    const SessionCriteria = 'ScheduleRefereeShow';
-    
+class ScheduleShowModel extends ActionModelFactory
+{   
     public $project;
     public $criteria;
+    
+    protected $sessionName;
+    protected $wantOfficials;
     
     protected $gameRepo;
     protected $levelRepo;
     
-    public function __construct($gameRepo,$levelRepo)
+    protected $program = null;
+    
+    public function __construct($gameRepo,$levelRepo,$sessionName = 'ScheduleShow',$wantOfficials = true)
     {
         $this->gameRepo  = $gameRepo;
         $this->levelRepo = $levelRepo;
+        
+        $this->sessionName = $sessionName;
+        $this->wantOfficials = $wantOfficials;
     }
     public function create(Request $request)
     {   
+        /* =============================================
+         * Check to see if program was passed as a request parameter
+         */
+        if ($request->query->has('program'))
+        {
+            $this->program = $request->query->get('program');
+        }
+        
+        // From form
         $criteria = array();
 
         $this->project = $project = $request->attributes->get('project');
@@ -42,9 +57,9 @@ class ScheduleRefereeShowModel extends ActionModelFactory
         
         // Merge form session
         $session = $request->getSession();
-        if ($session->has(self::SessionCriteria))
+        if ($session->has($this->sessionName))
         {
-            $criteriaSession = $session->get(self::SessionCriteria);
+            $criteriaSession = $session->get($this->sessionName);
             $criteria = array_merge($criteria,$criteriaSession);
         }
         $this->criteria = $criteria;
@@ -55,15 +70,19 @@ class ScheduleRefereeShowModel extends ActionModelFactory
     {
         $this->criteria = $criteria;
         
-        $request->getSession()->set(self::SessionCriteria,$criteria);
+        $request->getSession()->set($this->sessionName,$criteria);
     }
     public function loadGames()
-    {        
+    {
         $criteria = $this->criteria;
+        
+        if ($this->program) $criteria = array('programs' => $this->program);
         
         // Could be an event
         $criteria['levelKeys'] = $this->levelRepo->queryKeys($criteria);
-//print_r($criteria); die();        
+        
+        $criteria['wantOfficials'] = $this->wantOfficials;
+     
         $this->games = $this->gameRepo->queryGameSchedule($criteria);
         
         return $this->games;
