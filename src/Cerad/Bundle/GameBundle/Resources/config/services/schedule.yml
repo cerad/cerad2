@@ -54,12 +54,14 @@ services:
 # Action: ScheduleRefereeShow
 #
   cerad_game__project__schedule_referee__show_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show\ScheduleRefereeShowModel
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowModel
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
       - '@cerad_game__game_repository'
       - '@cerad_level__level_repository'
+      - 'ScheduleRefereeShow'
+      - true
 
   cerad_game__project__schedule_referee__show_form_factory:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show\ScheduleRefereeShowFormFactory
@@ -69,11 +71,32 @@ services:
       - [setDispatcher,  ['@event_dispatcher']]
              
   cerad_game__project__schedule_referee__show_controller:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show\ScheduleRefereeShowController
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowController
+      
+  cerad_game__project__schedule_referee__show_view_html:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowView
     calls:
       - [setRouter,     ['@router']]
       - [setTemplating, ['@templating']]
       
+  cerad_game__project__schedule_referee__show_view_csv:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
+    arguments:
+      - '@cerad_game__project__schedule_referee__export_csv'
+      - 'RefereeSchedule'
+      
+  cerad_game__project__schedule_referee__show_view_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
+    arguments:
+      - '@cerad_game__project__schedule_referee__export_xls'
+      - 'RefereeSchedule'
+      
+  cerad_game__project__schedule_referee__export_csv:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show\ScheduleRefereeExportCSV
+    
+  cerad_game__project__schedule_referee__export_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show\ScheduleRefereeExportXLS
+    
 # =======================================================================
 # Action: ScheduleTeamShow
 #
