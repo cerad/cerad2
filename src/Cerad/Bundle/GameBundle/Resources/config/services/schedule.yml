@@ -144,3 +144,33 @@ services:
   cerad_game__project__schedule_team__export_xls:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Team\Show\ScheduleTeamExportXLS
     
+# =======================================================================
+# Action: ScheduleUserShow
+#
+  cerad_game__project__schedule_user__show_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\User\Show\ScheduleUserShowModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__game_repository'
+      - '@cerad_level__level_repository'
+      - '@cerad_game__team_repository'
+
+  cerad_game__project__schedule_user__show_controller:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\User\Show\ScheduleUserShowController
+      
+  cerad_game__project__schedule_user__show_view_html:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowView
+    calls:
+      - [setRouter,     ['@router']]
+      - [setTemplating, ['@templating']]
+      
+  cerad_game__project__schedule_user__show_view_csv:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleViewFile
+    arguments:
+      - '@cerad_game__project__schedule_referee__export_csv'
+      
+  cerad_game__project__schedule_user__show_view_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
+    arguments:
+      - '@cerad_game__project__schedule_referee__export_xls'

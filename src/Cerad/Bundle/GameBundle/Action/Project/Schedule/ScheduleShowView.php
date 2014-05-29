@@ -16,8 +16,10 @@ class ScheduleShowView extends ActionView
         
         $tplData = array();
         $tplData['games'] = $model->loadGames();
-        $tplData['searchForm'] = $form->createView();
-        
+        if ($form)
+        {
+            $tplData['searchForm'] = $form->createView();
+        }
         return $this->templating->renderResponse($tplName,$tplData);
     }
 }

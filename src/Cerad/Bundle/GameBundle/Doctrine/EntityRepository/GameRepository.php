@@ -34,6 +34,8 @@ class GameRepository extends EntityRepository
         // Little strange, want to default to true
         $wantOfficials = isset($criteria['wantOfficials']) ? $criteria['wantOfficials'] : true;
         
+        $personGuids = $this->getArrayValue($criteria,'personGuids');
+        
         /* =================================================
          * Dates are always so much fun
          */
@@ -94,6 +96,12 @@ class GameRepository extends EntityRepository
             $qb->andWhere('game.groupType IN (:groupTypes)');
             $qb->setParameter('groupTypes',$groupTypes);
         }
+        if ($personGuids)
+        {
+            $qb->leftJoin ('game.officials','gamePerson');
+            $qb->andWhere ('gamePerson.personGuid IN (:personGuids)');
+            $qb->setParameter('personGuids',$personGuids);
+         }
         /* ============================================
          * This is what makes me grab gamesIds first
          */
