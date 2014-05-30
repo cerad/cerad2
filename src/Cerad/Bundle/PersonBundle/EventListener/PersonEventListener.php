@@ -24,7 +24,8 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             KernelEvents::CONTROLLER => array(
                 array('onControllerPerson', self::ControllerPersonEventListenerPriority),
             ),       
-            FindPersonEvent    ::FindByGuidEventName         => array('onFindPersonByGuid' ),
+            FindPersonEvent    ::FindByGuidEventName   => array('onFindPersonByGuid' ),
+            FindPersonEvent    ::FindByFedKeyEventName => array('onFindPersonByFedKey' ),
             
             FindPersonPlanEvent::FindByProjectGuidEventName  => array('onFindPersonPlanByProjectGuid' ),
             
@@ -57,6 +58,35 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         $event->setPerson($person);
         
         return;
+    }
+    public function onFindPersonByFedKey(Event $event)
+    {
+        // Just means a listener was available
+        $event->stopPropagation();
+        
+        // Lookup
+        $fedKey = $event->getSearch();
+        
+        $personRepo = $this->getPersonRepository();
+        
+        $person = $personRepo->findOneByFedKey($fedKey);
+        
+        if ($person)
+        {
+            $event->setPerson($person);
+            return;
+        }
+        
+        // Try different prefixes, inject these later
+        foreach(array('AYSOV','USSFC','NFHSC') as $prefix)
+        {
+            $person = $personRepo->findOneByFedKey($prefix . $fedKey);
+            if ($person)
+            {
+                $event->setPerson($person);
+                return;
+            }
+        }
     }
     public function onFindOfficials(FindOfficialsEvent $event)
     {
@@ -109,28 +139,6 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         // Lookup
         $event->person = $this->getPersonRepository()->findOneByByProjectName($event->projectKey,$event->personName);
         
-        return;
-    }
-    public function onFindPersonByFedKey(Event $event)
-    {
-        // Just means a listener was available
-        $event->stopPropagation();
-        
-        // Extract
-        $fedKey = $event->fedKey;
-        if (!$fedKey) return;
-        
-        // Lookup
-        $personRepo = $this->getPersonRepository();
-        $event->person = $personRepo->findOneByFedKey($fedKey);
-        if ($event->person) return;
-        
-        // Try different prefixes
-        foreach(array('AYSOV','USSFC','NFHSC') as $prefix)
-        {
-            $event->person = $personRepo->findOneByFedKey($prefix . $fedKey);
-            if ($event->person) return;
-        }
         return;
     }
 }

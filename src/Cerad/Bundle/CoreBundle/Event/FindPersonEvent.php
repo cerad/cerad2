@@ -6,7 +6,8 @@ use Symfony\Component\EventDispatcher\Event;
 
 class FindPersonEvent extends Event
 {
-    const FindByGuidEventName = 'CeradPersonFindByGuid';
+    const FindByGuidEventName   = 'CeradPersonFindByGuid';
+    const FindByFedKeyEventName = 'CeradPersonFindByFedKey';
     
     protected $search;
     protected $person;

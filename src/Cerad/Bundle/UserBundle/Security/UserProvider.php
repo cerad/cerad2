@@ -10,9 +10,9 @@ use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\EventDispatcher\Event as PersonFindEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Cerad\Bundle\PersonBundle\PersonEvents;
-
 use Cerad\Bundle\UserBundle\Model\UserManagerInterface;
+
+use Cerad\Bundle\CoreBundle\Event\FindPersonEvent;
 
 class UserProvider implements UserProviderInterface
 {
@@ -38,6 +38,7 @@ class UserProvider implements UserProviderInterface
     
     public function loadUserByUsername($username)
     {
+        //die($username);
         // The basic way
         $user1 = $this->userManager->findUserByUsernameOrEmail($username);
         if ($user1) return $user1;
@@ -45,13 +46,11 @@ class UserProvider implements UserProviderInterface
         // Check for social network identifiers
         
         // See if a fed person exists
-        $event = new PersonFindEvent;
-        $event->fedKey = $username;
-        $event->person = null;
+        $event = new FindPersonEvent($username);
         
-        $this->dispatcher->dispatch(PersonEvents::FindPersonByFedKey,$event);
+        $this->dispatcher->dispatch(FindPersonEvent::FindByFedKeyEventName,$event);
         
-        $person = $event->person;
+        $person = $event->getPerson();
         if ($person)
         {
             $user = $this->userManager->findUserByPersonGuid($person->getGuid());

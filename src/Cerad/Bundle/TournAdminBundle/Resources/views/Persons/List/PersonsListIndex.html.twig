@@ -33,6 +33,7 @@
         <p>Username: {{ user.username }}</p>
         <p>Email: {{ user.email       }}</p>
         <p>Account Name:{{ user.accountName }}</p>
+        <p>Role: {{ user.roles|join(',') }}</p>
     </td>
     <td><table class="person-info">
         <tr><td>Name </td><td><a href="{{ path('cerad_tourn_admin_person_plan_update',{ 'person' : person.id }) }}">{{ name.full }}</a></td></tr>
