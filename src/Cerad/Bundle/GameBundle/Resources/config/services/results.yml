@@ -11,7 +11,8 @@ services:
   cerad_game__results_s5games:
     class: Cerad\Bundle\GameBundle\Service\Results\S5GamesResults
     
-  # Show Poolplay Results
+  # ============================================================
+  # ResultsPoolplayShow
   cerad_game__project__results_poolplay__show_model_factory:
     class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show\ResultsPoolplayShowModel
     calls:
@@ -38,5 +39,23 @@ services:
     calls:
       - [setRouter,     ['@router']]
       - [setTemplating, ['@templating']]
+    arguments:
+      - '%cerad_project_pools%'
+      
+  # ============================================================
+  # ResultsPoolplayExport
+  cerad_game__project__results_poolplay__export_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Export\ResultsPoolplayExportModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__game_repository'
+      - '@cerad_level__level_repository'
+             
+  cerad_game__project__results_poolplay__export_controller:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Export\ResultsPoolplayExportController
+      
+  cerad_game__project__results_poolplay__export_view:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Export\ResultsPoolplayExportView
     arguments:
       - '%cerad_project_pools%'
