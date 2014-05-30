@@ -12,12 +12,11 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use Cerad\Bundle\CoreBundle\EventListener\CoreRequestListener;
-
 use Cerad\Bundle\ProjectBundle\ProjectEvents;
 
 class ProjectEventListener extends ContainerAware implements EventSubscriberInterface
 {
+    // Can I make a static setPriority and call from di extension?
     const ProjectControllerEventListenerPriority = -1300;
     
     public static function getSubscribedEvents()
@@ -34,10 +33,13 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
         );
     }
     protected $projectRepositoryServiceId;
+    protected $projectSlugDefault;
     
-    public function __construct($projectRepositoryServiceId)
+    public function __construct($projectRepositoryServiceId,$projectSlugDefault = null)
     {
         $this->projectRepositoryServiceId = $projectRepositoryServiceId;
+        
+        $this->projectSlugDefault = $projectSlugDefault;
     }
     protected function getProjectRepository()
     {
@@ -45,11 +47,13 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
     }
     public function onControllerProject(FilterControllerEvent $event)
     {
-        // Only process routes asking for a project
-        if (!$event->getRequest()->attributes->has('_project')) return;
-
+        // Pull project from _project or from the default
+        if (!$event->getRequest()->attributes->has('_project')) 
+        {
+            if (!$this->projectSlugDefault) return;
+            $event->getRequest()->attributes->set('_project',$this->projectSlugDefault);
+        }
         $projectSlug = $event->getRequest()->attributes->get('_project');
-      //$projectSearch = $this->container->getParameter('cerad_project_project_default');
       
         // Query the project
         $project = $this->getProjectRepository()->findOneBySlug($projectSlug);
@@ -59,6 +63,7 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
         }
         // Stash it
         $event->getRequest()->attributes->set('project',$project);
+        $this->container->set('cerad_project__request', $project);
         
         // Twig global
         $twig = $this->container->get('twig');
