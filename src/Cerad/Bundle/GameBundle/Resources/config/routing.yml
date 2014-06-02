@@ -131,3 +131,10 @@ cerad_game__project__results_poolplay__export:
         _controller: cerad_game__project__results_poolplay__export_controller:action
         _view:       cerad_game__project__results_poolplay__export_view
         _model:      cerad_game__project__results_poolplay__export_model_factory
+        
+cerad_game__project__results__export:
+    path:  /project/{_project}/results-export
+    defaults: 
+        _controller: cerad_game__project__results__export_controller:action
+        _view:       cerad_game__project__results__export_view
+        _model:      cerad_game__project__results__export_model_factory

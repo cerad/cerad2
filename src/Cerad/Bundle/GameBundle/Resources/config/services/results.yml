@@ -1,15 +1,20 @@
 parameters:
-  
+  cerad_game__project__results__export_xls__class: 
+    Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsExportXLS
+    
 services:
   # Poolplay Results calculator
   cerad_game__results_natgames:
     class: Cerad\Bundle\GameBundle\Service\Results\NatGamesResults
+    scope: prototype
     
   cerad_game__results_s1games:
     class: Cerad\Bundle\GameBundle\Service\Results\S1GamesResults
+    scope: prototype
     
   cerad_game__results_s5games:
     class: Cerad\Bundle\GameBundle\Service\Results\S5GamesResults
+    scope: prototype
     
   # ============================================================
   # ResultsPoolplayShow
@@ -59,3 +64,25 @@ services:
     class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Export\ResultsPoolplayExportView
     arguments:
       - '%cerad_project_pools%'
+      
+  # ============================================================
+  # ResultsExport
+  cerad_game__project__results__export_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsExportModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__game_repository'
+      - '@cerad_level__level_repository'
+             
+  cerad_game__project__results__export_controller:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsExportController
+      
+  cerad_game__project__results__export_view:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsExportView
+    arguments:
+      - '@cerad_game__project__results__export_xls'
+      
+  cerad_game__project__results__export_xls:
+    class: '%cerad_game__project__results__export_xls__class%'
+    

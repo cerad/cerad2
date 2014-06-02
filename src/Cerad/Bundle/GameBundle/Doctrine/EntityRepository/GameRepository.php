@@ -157,7 +157,7 @@ class GameRepository extends EntityRepository
         
         if ($wantOfficials) 
         {
-            $qbx->addSelect('gameTeam,gameOfficial');
+            $qbx->addSelect('gameOfficial');
             $qbx->leftJoin ('game.officials','gameOfficial');
         }
         $qbx->andWhere ('game.id IN (:ids)');

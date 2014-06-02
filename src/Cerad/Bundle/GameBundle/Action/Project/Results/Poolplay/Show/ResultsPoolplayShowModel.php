@@ -40,6 +40,7 @@ class ResultsPoolplayShowModel extends ActionModelFactory
         $criteria['projectKeys'] = $this->project->getKey();
         $criteria['levelKeys']   = $this->levelKey;
         $criteria['groupTypes']  = 'PP';
+        $criteria['wantOfficials'] = false;
         
 //print_r($criteria); die();        
         $games = $this->gameRepo->queryGameSchedule($criteria);

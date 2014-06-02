@@ -38,7 +38,7 @@ class LevelRepository implements LevelRepositoryInterface
     public function queryKeys($params)
     {
         // Hack to make VIP gender nuetral
-        if (isset($params['ages']))
+        if (isset($params['ages']) && is_array($params['ages']))
         {
             if (in_array('VIP',$params['ages']))
             {
