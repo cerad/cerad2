@@ -7,7 +7,9 @@ use Symfony\Component\EventDispatcher\Event;
 class FindPersonPlanEvent extends Event
 {
     const FindByProjectGuidEventName = 'CeradPersonPlanFindByProjectGuid';
+    const FindByProjectNameEventName = 'CeradPersonPlanFindByProjectName';
     
+    protected $plan;
     protected $search;
     protected $project;
     

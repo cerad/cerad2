@@ -26,7 +26,7 @@ assignStateMap:
   StateAssigneeNotified:      Notified
   StateRemovedByAssignor:     RemoveByAssignor # Command
   
-# This is what populates the slect lists on the assing forms
+# This is what populates the select lists on the assigning forms
 # Keep it real simple
 # states are really commands which in turn changes the states
 

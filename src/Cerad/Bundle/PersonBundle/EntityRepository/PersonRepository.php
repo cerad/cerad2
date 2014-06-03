@@ -154,6 +154,28 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         $items = $qb->getQuery()->getResult();
         if (count($items) == 1) return $items[0];
     }
+    public function findOnePersonPlanByProjectAndPersonName($project,$personName)
+    {
+        if (!$personName) return null;
+        
+        $projectKey = is_object($project) ? $project->getKey() : $project;
+        
+        $repo = $this->_em->getRepository('CeradPersonBundle:PersonPlan');
+        
+        $qb = $repo->createQueryBuilder('personPlan');
+        
+        $qb->addSelect('person');
+        $qb->leftJoin ('personPlan.person','person');
+        
+        $qb->andWhere('personPlan.personName = :personName');
+        $qb->andWhere('personPlan.projectId  = :projectKey' );
+        
+        $qb->setParameter('personName',$personName);
+        $qb->setParameter('projectKey',$projectKey);
+        
+        $items = $qb->getQuery()->getResult();
+        if (count($items) == 1) return $items[0];
+    }
     public function findPersonPerson($id)
     {
         if (!$id) return null;

@@ -6,6 +6,11 @@ namespace Cerad\Bundle\CoreBundle\Excel;
  * This is intened to be extended by import routines
  * 
  * Might be metter to just use $excel directly
+ * 
+ * 03 June 2014
+ * This is always consfusing whenever I look at it
+ * Excel should be reader
+ * Do I really need Loader and Reader?
  */
 class Loader
 {

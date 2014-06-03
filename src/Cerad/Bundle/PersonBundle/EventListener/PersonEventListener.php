@@ -28,6 +28,7 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             FindPersonEvent    ::FindByFedKeyEventName => array('onFindPersonByFedKey' ),
             
             FindPersonPlanEvent::FindByProjectGuidEventName  => array('onFindPersonPlanByProjectGuid' ),
+            FindPersonPlanEvent::FindByProjectNameEventName  => array('onFindPersonPlanByProjectName' ),
             
             FindOfficialsEvent ::FindOfficialsEventName      => array('onFindOfficials' ),
         );
@@ -112,18 +113,22 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             $event->stopPropagation();
         }
     }
+    public function onFindPersonPlanByProjectName(FindPersonPlanEvent $event)
+    {
+        $project    = $event->getProject();
+        $personName = $event->getSearch();
+        
+        $plan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonName($project,$personName);
+        
+        if ($plan) 
+        {
+            $event->setPlan($plan);
+            $event->stopPropagation();
+        }
+    }
     /* ========================================================
      * TODO: Review and update
      */
-    public function onFindPlanByProjectAndPerson(Event $event)
-    {
-        $projectKey = $event->project->getKey();
-        $personGuid = $event->person ->getGuid();
-        
-        $event->plan = $this->getPersonRepository()->findOnePersonPlanByProjectAndPersonGuid($projectKey,$personGuid);
-        
-        if ($event->plan) $event->stopPropagation();
-    }
     public function onFindPersonById(Event $event)
     {
         // Lookup

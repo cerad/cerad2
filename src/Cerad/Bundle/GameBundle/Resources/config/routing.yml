@@ -46,11 +46,11 @@ cerad_game__project__game_officials__assign_by_assignor:
 cerad_game__project__game_officials__assign_by_import:
     path:  /project/{_project}/officials/assign-by-import
     defaults:
-        _controller: cerad_game__project__game_officials__assign_by_import__controller:assignAction
+        _controller: cerad_game__project__game_officials__assign_by_import__controller:action
         _model:      cerad_game__project__game_officials__assign_by_import__model_factory
         _form:       cerad_game__project__game_officials__assign_by_import__form_factory
         _view:       cerad_game__project__game_officials__assign_by_import__view_factory
-        _template: '@CeradGame/Project/GameOfficials/AssignByImport/Twig/AssignByImportPage.html.twig'
+        _template: '@CeradGame/Project/GameOfficials/AssignByImport/AssignByImportTwigPage.html.twig'
         _role:       ROLE_ASSIGNOR
         
 # Schedules
