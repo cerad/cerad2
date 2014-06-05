@@ -42,6 +42,15 @@ services:
         arguments:
             - 'cerad_game__game_repository'
         
+# ====================================================================
+# Some data transformers
+    cerad_game__transformer:
+      class: Cerad\Bundle\GameBundle\DataTransformer\GameTransformer
+      arguments:
+        - '@cerad_level__level_repository'
+        
+# ====================================================================
+# Assorted loaders and exporters
     cerad_game__convert_games__rick_to_yaml:
         class: Cerad\Bundle\GameBundle\Service\GameSchedule\Convert\ConvertGamesRickToYaml
         
@@ -68,41 +77,3 @@ services:
             - '@cerad_game__game_repository'
             - '@cerad_game__team_repository'
         
-    # ====================================================
-    # Game Officials
-    cerad_game__game_official__user_assign_slot__model:
-        class: Cerad\Bundle\GameBundle\Controller\GameOfficial\UserAssignSlot\UserAssignSlotModel
-        calls:
-             - [setDispatcher,['@event_dispatcher']]
-        arguments:
-            - '@cerad_project.project_current'
-            - '@cerad_user__user_person_current'
-            - '@cerad_game__game_repository'
-            - '@cerad_game__game_official__assign_slot__workflow'
-                        
-    cerad_game__game_official__user_assign_slot__form_factory:
-        class: Cerad\Bundle\GameBundle\Controller\GameOfficial\UserAssignSlot\UserAssignSlotFormFactory
-        calls:
-             - [setRouter,      ['@router']]
-             - [setFormFactory, ['@form.factory']]
-        arguments:
-            - '@cerad_game__game_official__user_assign_slot__form_type'
-            
-    cerad_game__game_official__user_assign_slot__controller:
-        class: Cerad\Bundle\GameBundle\Controller\GameOfficial\UserAssignSlot\UserAssignSlotController
-        calls:
-             - [setRouter,     ['@router']]
-             - [setTemplating, ['@templating']]
-
-    cerad_game__game_official__user_assign_slot__form_type:
-        class: Cerad\Bundle\GameBundle\FormType\GameOfficial\UserAssignSlot\UserAssignSlotFormType
-        arguments: 
-            - '@cerad_game__game_official__assign_slot__workflow'
-        tags:
-            - { name: form.type, alias: cerad_game__game_official__user_assign_slot } 
-            
-    cerad_game__game_official__assign_slot__workflow:
-        class: '%cerad_game__game_official__assign_slot__workflow__class%'
-        arguments:
-            - '%cerad_game__game_official__assign__workflow__file%'
-

@@ -48,8 +48,45 @@ services:
     
   cerad_game__project__schedule_game__export_xls:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameExportXLS
-    
+    arguments:
+      - '@cerad_game__transformer'
 
+# =======================================================================
+# Action: ScheduleGameImport
+#
+  cerad_game__project__schedule_game__import_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Import\ScheduleGameImportModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__project__schedule_game__import_xls'
+      
+  cerad_game__project__schedule_game__import_form_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Import\ScheduleGameImportFormFactory
+    calls:
+      - [setRouter,      ['@router']]
+      - [setFormFactory, ['@form.factory']]
+      - [setDispatcher,  ['@event_dispatcher']]
+             
+  cerad_game__project__schedule_game__import_controller:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Import\ScheduleGameImportController
+    calls:
+      - [setTemplating, ['@templating']]
+              
+  cerad_game__project__schedule_game__import_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Import\ScheduleGameImportFromXLS
+    arguments:
+      - '@event_dispatcher'
+      - '@cerad_game__game_repository'
+      - '@cerad_game__transformer'
+
+  cerad_game__project__schedule_game__import_read_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Import\ScheduleGameImportReadXLS
+    arguments:
+      - '@cerad_game__transformer'
+      - '%cerad_project__game_slot_durations%'
+      - '@cerad_level__level_repository'
+      
 # =======================================================================
 # Action: ScheduleRefereeShow
 #
@@ -166,7 +203,7 @@ services:
       - [setTemplating, ['@templating']]
       
   cerad_game__project__schedule_user__show_view_csv:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleViewFile
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
     arguments:
       - '@cerad_game__project__schedule_referee__export_csv'
       

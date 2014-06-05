@@ -49,7 +49,6 @@ cerad_game__project__game_officials__assign_by_import:
         _controller: cerad_game__project__game_officials__assign_by_import__controller:action
         _model:      cerad_game__project__game_officials__assign_by_import__model_factory
         _form:       cerad_game__project__game_officials__assign_by_import__form_factory
-        _view:       cerad_game__project__game_officials__assign_by_import__view_factory
         _template: '@CeradGame/Project/GameOfficials/AssignByImport/AssignByImportTwigPage.html.twig'
         _role:       ROLE_ASSIGNOR
         
@@ -97,14 +96,10 @@ cerad_game__project__schedule_game__show:
 cerad_game__project__schedule_game__import:
     path:  /project/{_project}/schedule-game-import
     defaults: 
-        _controller: cerad_game__project__schedule_game__show_controller:action
-        _model:      cerad_game__project__schedule_game__show_model_factory
-        _form:       cerad_game__project__schedule_game__show_form_factory
-        _template: '@CeradGame\Project\Schedule\Game\Show\Twig\ScheduleGameShowPage.html.twig'
-        _format:     html
-        _view_csv:   cerad_game__project__schedule_game__show_view_csv
-        _view_xls:   cerad_game__project__schedule_game__show_view_xls
-        _view_html:  cerad_game__project__schedule_game__show_view_html
+        _controller: cerad_game__project__schedule_game__import_controller:action
+        _model:      cerad_game__project__schedule_game__import_model_factory
+        _form:       cerad_game__project__schedule_game__import_form_factory
+        _template: '@CeradGame\Project\Schedule\Game\Import\ScheduleGameImportTwigPage.html.twig'
         
 cerad_game__project__schedule_user__show:
     path:  /project/{_project}/schedule-user.{_format}

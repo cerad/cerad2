@@ -11,8 +11,9 @@ namespace Cerad\Bundle\CoreBundle\Excel;
 
 class Export
 {
-    protected function createSpreadSheet()
+    protected function createSpreadSheet($myValueBinder = false)
     {
+        if ($myValueBinder) \PHPExcel_Cell::setValueBinder( new ExcelValueBinder() );
         return new \PHPExcel();
     }
     protected function createWriter($ss)

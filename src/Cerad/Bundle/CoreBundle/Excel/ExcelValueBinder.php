@@ -9,9 +9,55 @@ namespace Cerad\Bundle\CoreBundle\Excel;
  * Will not cause problems
  * 
  * Know score 2-2 will cause issues
+ * 
+ * ==============================
+ * 04 June 2014
+ * Updated this to Excel 1.7.9 - styling changes from previous versions
+ * 
+ * The idea is to let the advance value binder do it's thing then override the date/time formats
+ * If this messes up someother stuff then derive from value
  */
 class ExcelValueBinder extends \PHPExcel_Cell_AdvancedValueBinder
 {
+    public function bindValue(\PHPExcel_Cell $cell, $value = null)
+    {
+        $parentBindValueResult = parent::bindValue($cell,$value);
+        
+        // sanitize UTF-8 strings
+        if (is_string($value)) {
+            $value = \PHPExcel_Shared_String::SanitizeUTF8($value);
+        }
+
+        // Find out data type
+        $dataType = parent::dataTypeForValue($value);
+
+        // Style logic - strings
+        if (($dataType !== \PHPExcel_Cell_DataType::TYPE_STRING) || ($value instanceof \PHPExcel_RichText)) {
+            return $parentBindValueResult;
+        }
+        // Date
+        if (($d = \PHPExcel_Shared_Date::stringToExcel($value)) !== false) 
+        {
+            $formatCode = 'm/d/yyyy';
+            
+            $cell->getWorksheet()->getStyle( $cell->getCoordinate() )
+                ->getNumberFormat()->setFormatCode($formatCode);
+            
+            return true;
+        }
+        // Check for time without seconds e.g. '9:45', '09:45'
+        if (preg_match('/^(\d|[0-1]\d|2[0-3]):[0-5]\d$/', $value)) 
+        {
+            $formatCode = 'h:mm AM/PM';
+            
+            $cell->getWorksheet()->getStyle( $cell->getCoordinate() )
+                 ->getNumberFormat()->setFormatCode($formatCode);
+            
+            return true;
+        }
+        return $parentBindValueResult;
+    }
+
     /* ------------------------------------------
      * Checks for mm/dd/yyyy
      * Returns yyyy-mm-dd if found
@@ -59,7 +105,7 @@ class ExcelValueBinder extends \PHPExcel_Cell_AdvancedValueBinder
         return sprintf('%02d:%02d',$hours,$minutes);
     }
     // The binder
-    public function bindValue(\PHPExcel_Cell $cell, $value = null)
+    public function bindValuex(\PHPExcel_Cell $cell, $value = null)
     {
         // sanitize UTF-8 strings
         if (is_string($value)) 

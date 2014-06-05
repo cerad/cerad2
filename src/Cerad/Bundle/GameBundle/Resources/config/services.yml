@@ -1,3 +1,6 @@
+#
+# 04 June 2014 - No longer used, see the services directory
+
 parameters:
     cerad_game__game_official__assign_slot__workflow__class:
         Cerad\Bundle\GameBundle\Service\GameOfficial\AssignSlot\AssignSlotWorkflow

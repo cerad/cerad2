@@ -1,0 +1,37 @@
+{% extends '@CeradGame/Layout.html.twig' %}
+
+{% block content %}
+{% include '@CeradGame/Project/Schedule/Game/Import/ScheduleGameImportTwigHelp.html.twig' %}
+<hr>
+<div class="import_controls">
+{{ form_start(form) }}
+{{ form_row(form.commit) }}
+{{ form_row(form.attachment, {'label': ' '}) }}
+{{ form_row(form.import, {'label': ' Import Game Changes'}) }}
+{{ form_rest(form) }}
+{{ form_end(form)  }}
+</div>
+{% if results %}
+<hr>
+<div class="import_controls">
+    
+{% if results.commit %}
+  {% set commit = 'Database was updated.' %}
+{% else %}
+  {% set commit = 'Database was NOT updated.' %}
+{% endif %}
+<h4>Results: {{ results.basename }}, Total Games: {{ results.totalGameCount }}, {{ commit }}</h4>
+
+{# List any unverified persons
+<table border="1" style="width: 400px;">
+<tr><th colspan="3">Persons not found or unverified {{ results.unverifiedPersons | length }} </th><tr>
+{% for log in results.unverifiedPersons %}
+  <tr><td>{{ log.game }}</td><td>{{ log.slot }}</td><td>{{ log.name }}</td><tr>
+{% endfor %}
+</table>
+<br />
+#}
+
+</div>
+{% endif %}
+{% endblock %}

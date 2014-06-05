@@ -6,6 +6,12 @@ use Cerad\Bundle\CoreBundle\Excel\Export as ExcelExport;
 
 class ScheduleGameExportXLS extends ExcelExport
 {
+    protected $gameTransformer;
+    
+    public function __construct($gameTransformer)
+    {
+        $this->gameTransformer = $gameTransformer;
+    }
     protected $counts = array();
     
     protected $widths = array
@@ -14,8 +20,13 @@ class ScheduleGameExportXLS extends ExcelExport
 
         'DOW' =>  5, 'Date' =>  12, 'Time' => 10,
         
-        'Venue' => 16, 'Field' =>  6, 'Type' => 5, 'Group' => 12, 'Level' => 12,
-            
+        'Venue' => 16, 'Field' =>  6, 'Type' => 5, 'Group' => 22, 'Level' => 12,
+        'Division' => 16,
+        
+        'Home Team Slot' => 12, 'Away Team Slot' => 12,
+        
+        'HT Slot' => 10, 'AT Slot' => 10,
+        
         'Home Team Group' => 26, 'Away Team Group' => 26,
         'Home Team Name'  => 26, 'Away Team Name'  => 26,
         
@@ -27,6 +38,7 @@ class ScheduleGameExportXLS extends ExcelExport
     (
         'Game',
     );
+    
     protected function setHeaders($ws,$map,$row = 1)
     {
         $col = 0;
@@ -66,12 +78,12 @@ class ScheduleGameExportXLS extends ExcelExport
             'Time'     => 'time',
             'Venue'    => 'venue',
             'Field'    => 'field',
-            'Level'    => 'level',
-            'Group'    => 'group',
-            'Type'     => 'type',
-            
-            'Home Team Group' => 'homeTeamGroup',
-            'Away Team Group' => 'homeTeamGroup',
+          //'Level'    => 'level',
+          //'Group'    => 'group',
+          //'Type'     => 'type',
+            'Group'    => 'groupKey',
+            'HT Slot'  => 'homeTeamGroupSlot',
+            'AT Slot'  => 'awayTeamGroupSlot',
             'Home Team Name'  => 'homeTeamName',
             'Away Team Name'  => 'awayTeamName',
         );
@@ -86,11 +98,18 @@ class ScheduleGameExportXLS extends ExcelExport
             $row++;
             $col = 0;
             
+            // Teams
+            $homeTeam = $game->getHomeTeam();
+            $awayTeam = $game->getAwayTeam();
+            
             // Date/Time
             $dt   = $game->getDtBeg();
             $dow  = $dt->format('D');
-            $date = $dt->format('n/j/Y'); // 'M d y'
-            $time = $dt->format('g:i A'); // 'H:i A'
+          //$date = $dt->format('n/j/Y'); // 'M d y'
+          //$time = $dt->format('g:i A'); // 'H:i A'
+            
+            $time = $dt->format('G:i');   // 13:45
+            $date = $dt->format('Y-m-d'); // yyyy-mm-dd
             
             // Skip on time changes
             if ($timex != $time)
@@ -104,14 +123,19 @@ class ScheduleGameExportXLS extends ExcelExport
             $ws->setCellValueByColumnAndRow($col++,$row,$time);
             $ws->setCellValueByColumnAndRow($col++,$row,$game->getVenueName());
             $ws->setCellValueByColumnAndRow($col++,$row,$game->getFieldName());
-            $ws->setCellValueByColumnAndRow($col++,$row,$game->getLevelKey());
-            $ws->setCellValueByColumnAndRow($col++,$row,$game->getGroupKey());
-            $ws->setCellValueByColumnAndRow($col++,$row,$game->getGroupType());
             
-            $ws->setCellValueByColumnAndRow($col++,$row,$game->getHomeTeam()->getGroupSlot());
-            $ws->setCellValueByColumnAndRow($col++,$row,$game->getAwayTeam()->getGroupSlot());
-            $ws->setCellValueByColumnAndRow($col++,$row,$game->getHomeTeam()->getName());
-            $ws->setCellValueByColumnAndRow($col++,$row,$game->getAwayTeam()->getName());
+          //$ws->setCellValueByColumnAndRow($col++,$row,$game->getLevelKey());
+            $ws->setCellValueByColumnAndRow($col++,$row,substr($game->getGroupKey(),0));
+          //$ws->setCellValueByColumnAndRow($col++,$row,$game->getGroupType());
+          //$ws->setCellValueByColumnAndRow($col++,$row,$this->gameTransformer->gameLevel($game));
+            
+          //$ws->setCellValueByColumnAndRow($col++,$row,$this->gameTransformer->gameTeamGroup($homeTeam));
+          //$ws->setCellValueByColumnAndRow($col++,$row,$this->gameTransformer->gameTeamGroup($awayTeam));
+            $ws->setCellValueByColumnAndRow($col++,$row,$homeTeam->getGroupSlot());
+            $ws->setCellValueByColumnAndRow($col++,$row,$awayTeam->getGroupSlot());
+            
+            $ws->setCellValueByColumnAndRow($col++,$row,$homeTeam->getName());
+            $ws->setCellValueByColumnAndRow($col++,$row,$awayTeam->getName());
         }
         return;
     }
@@ -121,7 +145,7 @@ class ScheduleGameExportXLS extends ExcelExport
     public function generate($games)
     {
         // Spreadsheet
-        $ss = $this->createSpreadsheet(); 
+        $ss = $this->createSpreadsheet(true); 
         $ws = $ss->getSheet(0);
         
         $ws->getPageSetup()->setOrientation(\PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
@@ -132,9 +156,6 @@ class ScheduleGameExportXLS extends ExcelExport
         $ws->setPrintGridLines(true);
         
         $this->generateGames($ws,$games);
-        
-      //$ws1 = $ss->createSheet(1);
-      //$this->processOfficials($ws1,$games);
         
         // Output
         $ss->setActiveSheetIndex(0);
