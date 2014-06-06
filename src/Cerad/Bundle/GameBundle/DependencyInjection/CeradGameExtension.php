@@ -24,8 +24,10 @@ class CeradGameExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         
+        // Really just need to search the directory
         $loader->load('services/services2.yml');
         $loader->load('services/game.yml');
+        $loader->load('services/teams.yml');
         $loader->load('services/assign.yml');
         $loader->load('services/results.yml');
         $loader->load('services/schedule.yml');

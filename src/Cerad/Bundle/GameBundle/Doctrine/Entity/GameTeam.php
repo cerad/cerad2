@@ -58,7 +58,7 @@ class GameTeam
     public function setSlot     ($value) { $this->slot      = $value; }
     public function setRole     ($value) { $this->role      = $value; }
     public function setGame     ($value) { $this->game      = $value; }
-    public function setTeam     ($value) { $this->team      = $value; }
+  //public function setTeam     ($value) { $this->team      = $value; }
     public function setName     ($value) { $this->name      = $value; }
     public function setLevelKey ($value) { $this->levelKey  = $value; }
     public function setGroupSlot($value) { $this->groupSlot = $value; }
@@ -80,6 +80,11 @@ class GameTeam
         if ($this->teamx) return $this->teamx;
         
         return $this->teamx = new Team();
+    }
+    public function setTeam($team)
+    {
+        $this->team = $team;
+        $this->name = $team->getName();
     }
     public function getRoleForSlot($slot)
     {

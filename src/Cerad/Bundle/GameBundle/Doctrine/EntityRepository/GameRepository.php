@@ -258,5 +258,35 @@ class GameRepository extends EntityRepository
         
         return $qb->getQuery()->getResult();
     }
+    public function findAllGameTeamsByGroupSlot($project,$level,$groupType,$groupName,$groupSlot)
+    {
+        $levelKey   = is_object($level)   ? $level->getKey()   : $level;
+        $projectKey = is_object($project) ? $project->getKey() : $project;
+
+        $gameTeamRepo = $this->_em->getRepository('CeradGameBundle:GameTeam');
+        
+        $qb = $gameTeamRepo->createQueryBuilder('gameTeam');
+        
+        $qb->select('gameTeam');
+        
+        $qb->leftJoin('gameTeam.game','game');
+        
+        $qb->andWhere('game.projectKey = :projectKey');
+        $qb->setParameter('projectKey',$projectKey);
+        
+        $qb->andWhere('game.levelKey = :levelKey');
+        $qb->setParameter('levelKey',$levelKey);
+        
+        $qb->andWhere('game.groupType = :groupType');
+        $qb->setParameter('groupType',$groupType);
+        
+        $qb->andWhere('game.groupName = :groupName');
+        $qb->setParameter('groupName',$groupName);
+        
+        $qb->andWhere('gameTeam.groupSlot = :groupSlot');
+        $qb->setParameter('groupSlot',$groupSlot);
+        
+        return $qb->getQuery()->getResult();
+    }
 }
 ?>

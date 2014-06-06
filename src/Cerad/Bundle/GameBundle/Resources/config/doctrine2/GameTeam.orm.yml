@@ -57,7 +57,7 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
             column:   name
             type:     string
             length:   80
-            nullable: false
+            nullable: true
                         
         score:
             column:   score

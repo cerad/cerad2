@@ -5,7 +5,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 class Team
 {
-    const RolePhysical = 'RolePhysical';
+    const RolePhysical = 'Physical';
     
     protected $id;
     

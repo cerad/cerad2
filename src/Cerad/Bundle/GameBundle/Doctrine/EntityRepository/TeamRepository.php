@@ -33,7 +33,7 @@ class TeamRepository extends EntityRepository
         $qb->setParameter('levelKeys',$levelKeys);
         
         $qb->addOrderBy('team.levelKey');
-        $qb->addOrderBy('team.name');
+        $qb->addOrderBy('team.num');
         
         return $qb->getQuery()->getResult();
         

@@ -20,8 +20,9 @@ class Game
     protected $num;   // Unique within project
     protected $role = self::RoleGame;
     
-    protected $groupKey;
+  //protected $groupKey;
     protected $groupType; // PP QF SF FM CM SM
+    protected $groupName; // A B Gold Silver
     
     protected $link;   // Maybe to link crews?
     
@@ -37,7 +38,7 @@ class Game
     protected $venueName; // Very handy to have
     
     protected $report;
-    protected $status;
+    protected $status = 'Active';
     
     protected $teams;
     protected $officials;
@@ -55,8 +56,9 @@ class Game
     
     public function getLevelKey()   { return $this->levelKey;   }
     public function getProjectKey() { return $this->projectKey; }
-    public function getGroupKey()   { return $this->groupKey;   }
+  //public function getGroupKey()   { return $this->groupKey;   }
     public function getGroupType()  { return $this->groupType;  }
+    public function getGroupName()  { return $this->groupName;  }
     
     public function setNum      ($value) { $this->num    = $value; }
     public function setRole     ($value) { $this->role   = $value; }
@@ -70,13 +72,21 @@ class Game
     
     public function setLevelKey  ($value) { $this->levelKey   = $value; }
     public function setProjectKey($value) { $this->projectKey = $value; }
-    public function setGroupKey  ($value) { $this->groupKey   = $value; }
+  //public function setGroupKey  ($value) { $this->groupKey   = $value; }
     public function setGroupType ($value) { $this->groupType  = $value; }
+    public function setGroupName ($value) { $this->groupName  = $value; }
     
     public function __construct()
     {
         $this->teams   = new ArrayCollection();
         $this->persons = new ArrayCollection();  // Rename to officials some time
+    }
+    /* =======================================
+     * Group stuff
+     */
+    public function getGroupKey()
+    {
+        return sprintf('%s:%s:%s',$this->levelKey,$this->groupType,$this->groupName);
     }
     /* =======================================
      * Team stuff

@@ -89,10 +89,13 @@ cerad_game__project__schedule_game__show:
         _form:       cerad_game__project__schedule_game__show_form_factory
         _template: '@CeradGame\Project\Schedule\Game\Show\Twig\ScheduleGameShowPage.html.twig'
         _format:     html
+        _view_pdf:   cerad_game__project__schedule_game__show_view_pdf
         _view_csv:   cerad_game__project__schedule_game__show_view_csv
         _view_xls:   cerad_game__project__schedule_game__show_view_xls
         _view_html:  cerad_game__project__schedule_game__show_view_html
-        
+    requirements:
+        _format:  html|csv|xls|pdf
+         
 cerad_game__project__schedule_game__import:
     path:  /project/{_project}/schedule-game-import
     defaults: 
@@ -155,3 +158,36 @@ cerad_game__project__results__export:
         _controller: cerad_game__project__results__export_controller:action
         _view:       cerad_game__project__results__export_view
         _model:      cerad_game__project__results__export_model_factory
+
+# ========================================================================
+# Teams
+cerad_game__project__teams__show:
+    path:  /project/{_project}/teams.{_format}
+    defaults: 
+        _controller: cerad_game__project__teams__show_controller:action
+        _model:      cerad_game__project__teama__show_model_factory
+        _form:       cerad_game__project__teams__show_form_factory
+        _template: '@CeradGame\Project\Teams\Show\TeamsShowTwigPage.html.twig'
+        _format:     html
+        _view_csv:   cerad_game__project__teams__show_view_csv
+        _view_csv:   cerad_game__project__teams__show_view_xls
+        _view_xls:   cerad_game__project__teams__show_view_pdf
+        _view_html:  cerad_game__project__teams__show_view_html
+    requirements:
+        _format:  html|csv|xls|pdf
+        
+cerad_game__project__teams__export:
+    path:  /project/{_project}/teams-export
+    defaults: 
+        _controller: cerad_game__project__teams__export_controller:action
+        _model:      cerad_game__project__teams__export_model_factory
+        _view:       cerad_game__project__teams__export_view
+        
+cerad_game__project__teams__import:
+    path:  /project/{_project}/teams-import
+    defaults: 
+        _controller: cerad_game__project__teams__import_controller:action
+        _model:      cerad_game__project__teams__import_model_factory
+        _form:       cerad_game__project__teams__import_form_factory
+        _template: '@CeradGame\Project\Teams\Import\TeamsImportTwigPage.html.twig'
+

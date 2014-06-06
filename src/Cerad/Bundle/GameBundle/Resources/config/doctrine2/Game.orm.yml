@@ -66,14 +66,14 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\Game:
             length:   80
             nullable: true
             
-        groupKey:
-            column:   groupKey
-            type:     string
-            length:   40
-            nullable: true
-            
         groupType:
             column:   groupType
+            type:     string
+            length:   20
+            nullable: true
+            
+        groupName:
+            column:   groupName
             type:     string
             length:   20
             nullable: true
