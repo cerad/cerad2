@@ -267,7 +267,7 @@ class GameRepository extends EntityRepository
         
         $qb = $gameTeamRepo->createQueryBuilder('gameTeam');
         
-        $qb->select('gameTeam');
+        $qb->select('gameTeam,game');
         
         $qb->leftJoin('gameTeam.game','game');
         
@@ -285,6 +285,23 @@ class GameRepository extends EntityRepository
         
         $qb->andWhere('gameTeam.groupSlot = :groupSlot');
         $qb->setParameter('groupSlot',$groupSlot);
+        
+        return $qb->getQuery()->getResult();
+    }
+    public function findAllGameTeamsByTeam($team)
+    {
+        $gameTeamRepo = $this->_em->getRepository('CeradGameBundle:GameTeam');
+        
+        $qb = $gameTeamRepo->createQueryBuilder('gameTeam');
+        
+        $qb->select('gameTeam,game');
+        
+        $qb->leftJoin('gameTeam.game','game');
+        
+        $qb->andWhere('gameTeam.team = :team');
+        $qb->setParameter('team',$team);
+        
+        $qb->addOrderBy('game.dtBeg');
         
         return $qb->getQuery()->getResult();
     }

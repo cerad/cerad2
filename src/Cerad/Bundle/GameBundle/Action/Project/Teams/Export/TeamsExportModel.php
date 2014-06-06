@@ -10,11 +10,13 @@ class TeamsExportModel extends ActionModelFactory
     protected $project;
     
     protected $teamRepo;
+    protected $gameRepo;
     protected $levelRepo;
     
-    public function __construct($teamRepo,$levelRepo)
+    public function __construct($teamRepo,$gameRepo,$levelRepo)
     {
         $this->teamRepo  = $teamRepo;
+        $this->gameRepo  = $gameRepo;
         $this->levelRepo = $levelRepo;
     }
     public function create(Request $request)
@@ -28,5 +30,10 @@ class TeamsExportModel extends ActionModelFactory
         
         return $this->teamRepo->findAllByProjectLevels($this->project->getKey(),$levelKeys);
     }
-    public function getPrograms() { return array('Core','Extra'); }
+    public function findAllGameTeamsByTeam($team)
+    {
+        return $this->gameRepo->findAllGameTeamsByTeam($team);
+    }
+    // Should be injected or come from project
+    public function getPrograms() { return $this->project->getPrograms(); }
 }

@@ -1,29 +1,32 @@
 <?php
 
-namespace Cerad\Bundle\GameBundle\Action\Project\Teams\Export;
+namespace Cerad\Bundle\GameBundle\Action\Project\Teams\Util;
 
 use Cerad\Bundle\CoreBundle\Excel\Export as ExcelExport;
 
-class TeamsExportXLS extends ExcelExport
+class TeamsUtilDumpXLS extends ExcelExport
 {
-    protected $widths = array
-    (
-        'Level'  => 20,
-        'Team'   =>  6,
-        'Region' => 12,
-        'Name'   => 20,
-        'Pts'    =>  4,        
-        'Slots'  => 24,        
-    );
     protected function setHeaders($ws,$map,$row = 1)
     {
         $col = 0;
-        foreach(array_keys($map) as $header)
+        
+        foreach($map as $item)
         {
-            $ws->getColumnDimensionByColumn($col)->setWidth($this->widths[$header]);
-            $ws->setCellValueByColumnAndRow($col++,$row,$header);
+            $width = isset($item['width']) ? $item['width'] : 12;
+            $ws->getColumnDimensionByColumn($col)->setWidth($width);
+            
+            $center = isset($item['center']) ? $item['center'] : false;
+            if ($center)
+            {
+                $colx = chr(ord('A') + $col);
+                $colAlign = $ws->getStyle($colx)->getAlignment();
+                $colAlign->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER); 
+            }
+            $ws->setCellValueByColumnAndRow($col,$row,$item['hdr']);
+            
+            $col++;
         }
-        return $row;
+        return $row++;
     }
     /* =======================================================================
      * Process a team
@@ -31,7 +34,7 @@ class TeamsExportXLS extends ExcelExport
     protected function processTeam($ws,$model,$program,$team,&$row)
     {
         $region = $team->getOrgKey();
-        if (!$region)
+        if (!$region && false)
         {
             $region = $team->getName();
             if (strpos($region,'Team ') === 0) $region = null;
@@ -42,21 +45,37 @@ class TeamsExportXLS extends ExcelExport
         $ws->setCellValueByColumnAndRow($col++,$row,$region);
         $ws->setCellValueByColumnAndRow($col++,$row,$team->getName());
         $ws->setCellValueByColumnAndRow($col++,$row,$team->getPoints());
+        
+        $gameTeams = $model->findAllGameTeamsByTeam($team);
+        $slots = array();
+        foreach($gameTeams as $gameTeam)
+        {
+            $game = $gameTeam->getGame();
+            $slot = sprintf('%s:%s:%s',$game->getGroupType(),$game->getGroupName(),$gameTeam->getGroupSlot());
+            if (!isset($slots[$slot]))
+            {
+                $ws->setCellValueByColumnAndRow($col++,$row,$slot);
+                $slots[$slot] = true;
+            }
+        }
         $row++;
     }
-     /* =======================================================================
+    /* =======================================================================
      * Process each program
      */
     protected function processProgram($ss,&$sheetNum,$model,$program)
     {
         $map = array(
-            'Level'  => 'levelKey',
-            'Team'   => 'num',
-            'Region' => 'orgKey',
-            'Name'   => 'name',
-            'Pts'    => 'points', 
+            array('hdr' => 'Level', 'key' => 'levelKey','width' => 20 ),
+            array('hdr' => 'Team',  'key' => 'num',     'width' =>  6, 'center' => true),
+            array('hdr' => 'Region','key' => 'orgKey',  'width' => 12 ),
+            array('hdr' => 'Name',  'key' => 'name',    'width' => 20 ),
+            array('hdr' => 'SfP',   'key' => 'points',  'width' =>  4, 'center' => true ),
+            array('hdr' => 'Slots', 'key' => null,      'width' => 16 ),
             
-            'Slots'  => null,        
+            array('hdr' => 'Fri U10PP Or QF', 'key' => null, 'width' => 16 ),
+            array('hdr' => 'Sat U10PP Or SF', 'key' => null, 'width' => 16 ),
+            array('hdr' => 'Sun          FM', 'key' => null, 'width' => 16 ),
         );
         
         $ws = $ss->createSheet($sheetNum++);
@@ -71,6 +90,7 @@ class TeamsExportXLS extends ExcelExport
         
         $ws->setTitle($program . ' Teams');
         $row = $this->setHeaders($ws,$map);
+        
         $levelKey = null;
         $teams = $model->loadTeams($program);
         foreach($teams as $team)

@@ -16,7 +16,7 @@ class TeamsUtilReadXLS extends BaseLoader
         
         'region' => array('cols' => 'Region', 'req' => true),
         'name'   => array('cols' => 'Name',   'req' => true),
-        'points' => array('cols' => 'Pts',    'req' => true),
+        'points' => array('cols' => 'SfP',    'req' => true),
 
         'slot1' => array('cols' => 'Slots', 'req' => true),
         'slot2' => array('cols' => 'Slots', 'req' => true, 'plus' => 1),
