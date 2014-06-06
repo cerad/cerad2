@@ -7,21 +7,11 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Symfony\Component\Form\FormInterface;
 
-use Symfony\Component\Routing\RouterInterface;
+use Cerad\Bundle\CoreBundle\Action\ActionController;
 
-use Symfony\Bundle\FrameworkBundle\Templating\EngineInterface;
-
-class GameUpdateByScorerController
-{
-    protected $router;
-    protected $templating;
-    
-    public function __construct() {}
-    
-    public function setRouter    (RouterInterface $router)     { $this->router     = $router;     }
-    public function setTemplating(EngineInterface $templating) { $this->templating = $templating; }
-    
-    public function updateAction(Request $request, GameUpdateByScorerModel $model, FormInterface $form)
+class GameUpdateByScorerController extends ActionController
+{   
+    public function updateAction(Request $request, $model, FormInterface $form)
     {   
         // Standard redirect, can't decide if the model should generate these
         $redirectRoute = $request->attributes->get('_redirect');

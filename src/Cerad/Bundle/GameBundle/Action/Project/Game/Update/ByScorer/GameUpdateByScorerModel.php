@@ -4,26 +4,29 @@ namespace Cerad\Bundle\GameBundle\Action\Project\Game\Update\ByScorer;
 
 use Symfony\Component\HttpFoundation\Request;
 
+use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
+
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class GameUpdateByScorerModel
+class GameUpdateByScorerModel extends ActionModelFactory
 {
     // Request
     public $game;
     public $project;
+    public $_project;
     
     // Generated
     public $gameClone;
+    public $gameTeamHomeClone;
+    public $gameTeamAwayClone;
     
     // Injected
     protected $gameRepo;
-    protected $dispatcher;
     
     public function __construct($gameRepo)
     {   
         $this->gameRepo = $gameRepo;
     }
-    public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
     
     /* =====================================================
      * Process a posted model
@@ -64,15 +67,15 @@ class GameUpdateByScorerModel
         $requestAttrs = $request->attributes;
         
         // These will be set or never get here
-        $this->game    = $game    = $requestAttrs->get('game');
-        $this->project = $project = $requestAttrs->get('project');
+        $this->game     = $game    = $requestAttrs->get('game');
+        $this->project  = $project = $requestAttrs->get('project');
+        $this->_project = $request->attributes->get('_project');
         
+        $this->back = $request->query->get('back');
+       
         // Want to allow updating name by either select or text
         $homeTeam = $game->getHomeTeam();
         $awayTeam = $game->getAwayTeam();
-        
-        $homeTeam->namex = $homeTeam->getName();
-        $awayTeam->namex = $awayTeam->getName();
         
         // Need to override game clonner to get teams and officials
         // Might be better to store the clone in the game itself $game->createClone();
