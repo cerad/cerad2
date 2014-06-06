@@ -96,8 +96,19 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         
         $projectKey = $event->getProject()->getKey();
         
-        $officials = $this->getPersonRepository()->findOfficialsByProject($projectKey);
+        $game = $event->getGame();
+        if ($game)
+        {
+            $projectKey = $game->getProjectKey();
+            
+            $levelParts = explode('_',$game->getLevelKey());
+            
+            $program = strtolower($levelParts[2]);
+        }
+        else $program = null;
         
+        $officials = $this->getPersonRepository()->findOfficialsByProject($projectKey,$program);
+ 
         $event->setOfficials($officials);
     }
     public function onFindPersonPlanByProjectGuid(FindPersonPlanEvent $event)

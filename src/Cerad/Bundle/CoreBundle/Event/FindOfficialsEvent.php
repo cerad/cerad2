@@ -11,12 +11,14 @@ class FindOfficialsEvent extends Event
     protected $project;
     protected $officials = array();
     
-    public function __construct($project)
+    public function __construct($project,$game = null)
     {
+        $this->game    = $game;
         $this->project = $project;
     }
     public function getOfficials()           { return $this->officials;     }
     public function setOfficials($officials) { $this->officials = $officials; }
 
+    public function getGame()    { return $this->game;    }
     public function getProject() { return $this->project; }
 }

@@ -27,7 +27,12 @@ class AssignByAssignorSlotFormType extends AbstractType
         foreach($officials as $official)
         {
             $plan = $official->getPlan();
-            $guids[$official->getGuid()] = $plan->getPersonName();
+            $name = $plan->getPersonName();
+            $program = substr(strtoupper($plan->getProgram()),0,1);
+
+            $desc = $program ? sprintf('%s {%s)',$name,$program) : $name;
+            
+            $guids[$official->getGuid()] = $desc;
         }
         $this->officialGuidOptions = $guids;
     }

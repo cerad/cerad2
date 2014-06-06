@@ -48,9 +48,8 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
     }
     /* ====================================================
      * Grabs everyone for a project then filters for officials
-     * Really should add a isOfficial column to the plan object
      */
-    public function findOfficialsByProject($projectKey)
+    public function findOfficialsByProject($projectKey, $program = null)
     {
         $qb = $this->createQueryBuilder('person');
         
@@ -66,8 +65,25 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         $officials = array();
         foreach($persons as $person)
         {
+            $selected = false;
+            
             $personPlan = $person->getPlan();
-            if ($personPlan->isOfficial()) $officials[] = $person;
+            
+            if ($personPlan->isOfficial()) $selected = true;
+            
+            if ($selected && $program)
+            {
+                $personPlanProgram = $personPlan->getProgram();
+                switch($personPlanProgram)
+                {
+                    case null:    break;  // Is this legal?
+                    case 'other': break;
+                    default:
+                        if ($program != $personPlanProgram) $selected = false;
+                }
+            }
+            
+            if ($selected) $officials[] = $person;
         }
         return $officials;
     }

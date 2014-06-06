@@ -81,8 +81,8 @@ class AssignByAssignorModel extends ActionModelFactory
         }
         
         // List of available referees
-        $event = new FindOfficialsEvent($project);
-        
+        $event = new FindOfficialsEvent($project,$game);
+      
         $this->dispatcher->dispatch(FindOfficialsEvent::FindOfficialsEventName,$event);
 
         $this->projectOfficials = $event->getOfficials();

@@ -158,6 +158,14 @@ class PersonPlan extends BaseModel
         if (strtolower($willReferee) != 'yes') return false;
         
         return true;
-    }        
+    }
+    public function getProgram()
+    {
+        $basic = $this->getBasic();
+        
+        $program  = isset($basic['venue' ]) ? $basic['venue']  : null;
+        
+        return $program;
+    }
 }
 ?>
