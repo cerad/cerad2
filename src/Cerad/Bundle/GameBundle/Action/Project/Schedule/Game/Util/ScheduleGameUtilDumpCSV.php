@@ -1,23 +1,23 @@
 <?php
 
-namespace Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show;
+namespace Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Util;
 
 /* ============================================
  * Basic referee schedule exporter
  */
-class ScheduleGameExportCSV
+class ScheduleGameUtilDumpCSV
 {
     public function getFileExtension() { return 'csv'; }
     public function getContentType()   { return 'text/csv'; }
-    public function generate($games)
+    public function dump($games)
     {
         $fp = fopen('php://temp','r+');
 
         // Header
         $row = array(
             "Game","Date","DOW","Time","Venue","Field",
-            "Level","Group","Type",
-            "Home Team Group","Home Team","Away Team",'Away Team Group',
+            "Group","HT Slot","AT Slot",
+            "Home Team Name",'Away Team Name',
         );
         fputcsv($fp,$row);
 
@@ -39,14 +39,12 @@ class ScheduleGameExportCSV
             $row[] = $game->getVenueName();
             $row[] = $game->getFieldName();
     
-            $row[] = $game->getLevelKey();
             $row[] = $game->getGroupKey();
-            $row[] = $game->getGroupType();
             
             $row[] = $game->getHomeTeam()->getGroupSlot();
+            $row[] = $game->getAwayTeam()->getGroupSlot();
             $row[] = $game->getHomeTeam()->getName();
             $row[] = $game->getAwayTeam()->getName();
-            $row[] = $game->getAwayTeam()->getGroupSlot();
     
             fputcsv($fp,$row);
         }
