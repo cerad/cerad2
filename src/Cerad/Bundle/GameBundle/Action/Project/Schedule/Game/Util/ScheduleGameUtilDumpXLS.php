@@ -7,38 +7,6 @@ use Cerad\Bundle\CoreBundle\Excel\ExcelDump;
 class ScheduleGameUtilDumpXLS extends ExcelDump
 {
     /* =======================================================================
-     * Process a team
-     */
-    protected function processTeam($ws,$model,$program,$team,&$row)
-    {
-        $region = $team->getOrgKey();
-        if (!$region && false)
-        {
-            $region = $team->getName();
-            if (strpos($region,'Team ') === 0) $region = null;
-        }
-        $col = 0;
-        $ws->setCellValueByColumnAndRow($col++,$row,$team->getLevelKey());
-        $ws->setCellValueByColumnAndRow($col++,$row,$team->getNum());
-        $ws->setCellValueByColumnAndRow($col++,$row,$region);
-        $ws->setCellValueByColumnAndRow($col++,$row,$team->getName());
-        $ws->setCellValueByColumnAndRow($col++,$row,$team->getPoints());
-        
-        $gameTeams = $model->findAllGameTeamsByTeam($team);
-        $slots = array();
-        foreach($gameTeams as $gameTeam)
-        {
-            $game = $gameTeam->getGame();
-            $slot = sprintf('%s:%s:%s',$game->getGroupType(),$game->getGroupName(),$gameTeam->getGroupSlot());
-            if (!isset($slots[$slot]))
-            {
-                $ws->setCellValueByColumnAndRow($col++,$row,$slot);
-                $slots[$slot] = true;
-            }
-        }
-        $row++;
-    }
-    /* =======================================================================
      * Process each program
      */
     protected function dumpGames($ws,$games,$dumpOfficials)
