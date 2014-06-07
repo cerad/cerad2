@@ -1,6 +1,11 @@
 <?php
 /* ==================================================
  * Wrap interface to the excel spreasheet processing
+ * 
+ * 07 Jun 2014 
+ * Neither Dump nor Export extends this - why?
+ * Really need is a SpreadSheet wrapper and possibly a WorkSheet wrapper
+ * Don't think anyone is using these
  */
 namespace Cerad\Bundle\CoreBundle\Excel;
 
@@ -8,6 +13,7 @@ class Excel
 {
     public function __construct()
     {
+        die('CoreBundle::Excel::__construct');
         // Verify still need this for game schedule date/times
         // 
         // \PHPExcel_Cell::setValueBinder( new ExcelValueBinder() );

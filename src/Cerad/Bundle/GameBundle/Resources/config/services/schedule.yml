@@ -40,14 +40,14 @@ services:
   cerad_game__project__schedule_game__show_view_xls:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
     arguments:
-      - '@cerad_game__project__schedule_game__export_xls'
-      - 'GameSchedule'
+      - '@cerad_game__project__schedule_game__util_dump_xls'
+      - 'ScheduleGame'
       
   cerad_game__project__schedule_game__export_csv:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameExportCSV
     
-  cerad_game__project__schedule_game__export_xls:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameExportXLS
+  cerad_game__project__schedule_game__util_dump_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Util\ScheduleGameUtilDumpXLS
     arguments:
       - '@cerad_game__transformer'
 

@@ -2,47 +2,28 @@
 
 namespace Cerad\Bundle\GameBundle\Action\Project\Teams\Util;
 
-use Cerad\Bundle\CoreBundle\Excel\Export as ExcelExport;
+use Cerad\Bundle\CoreBundle\Excel\ExcelDump;
 
-class TeamsUtilDumpXLS extends ExcelExport
+class TeamsUtilDumpXLS extends ExcelDump
 {
-    protected function setHeaders($ws,$map,$row = 1)
-    {
-        $col = 0;
-        
-        foreach($map as $item)
-        {
-            $width = isset($item['width']) ? $item['width'] : 12;
-            $ws->getColumnDimensionByColumn($col)->setWidth($width);
-            
-            $center = isset($item['center']) ? $item['center'] : false;
-            if ($center)
-            {
-                $colx = chr(ord('A') + $col);
-                $colAlign = $ws->getStyle($colx)->getAlignment();
-                $colAlign->setHorizontal(\PHPExcel_Style_Alignment::HORIZONTAL_CENTER); 
-            }
-            $ws->setCellValueByColumnAndRow($col,$row,$item['hdr']);
-            
-            $col++;
-        }
-        return $row++;
-    }
     /* =======================================================================
-     * Process a team
+     * Dump Team
      */
-    protected function processTeam($ws,$model,$program,$team,&$row)
+    protected function dumpTeam($ws,$model,$program,$team,&$row)
     {
+        /* =============================================
+         * Used for conversion
         $region = $team->getOrgKey();
         if (!$region && false)
         {
             $region = $team->getName();
             if (strpos($region,'Team ') === 0) $region = null;
         }
+        */
         $col = 0;
         $ws->setCellValueByColumnAndRow($col++,$row,$team->getLevelKey());
         $ws->setCellValueByColumnAndRow($col++,$row,$team->getNum());
-        $ws->setCellValueByColumnAndRow($col++,$row,$region);
+        $ws->setCellValueByColumnAndRow($col++,$row,$team->getOrgKey());
         $ws->setCellValueByColumnAndRow($col++,$row,$team->getName());
         $ws->setCellValueByColumnAndRow($col++,$row,$team->getPoints());
         
@@ -61,9 +42,9 @@ class TeamsUtilDumpXLS extends ExcelExport
         $row++;
     }
     /* =======================================================================
-     * Process each program
+     * Dump each program
      */
-    protected function processProgram($ss,&$sheetNum,$model,$program)
+    protected function dumpProgram($ss,&$sheetNum,$model,$program)
     {
         $map = array(
             array('hdr' => 'Level', 'key' => 'levelKey','width' => 20 ),
@@ -78,15 +59,8 @@ class TeamsUtilDumpXLS extends ExcelExport
             array('hdr' => 'Sun          FM', 'key' => null, 'width' => 16 ),
         );
         
-        $ws = $ss->createSheet($sheetNum++);
-        
-        $pageSetup = $ws->getPageSetup();
-        $pageSetup->setOrientation(\PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
-        $pageSetup->setPaperSize  (\PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
-        $pageSetup->setFitToPage  (true);
-        $pageSetup->setFitToWidth (1);
-        $pageSetup->setFitToHeight(0);
-        $ws->setPrintGridLines    (true);
+        // Landscape formatted worksheet
+        $ws = $this->createWorkSheet($ss,$sheetNum++);
         
         $ws->setTitle($program . ' Teams');
         $row = $this->setHeaders($ws,$map);
@@ -100,13 +74,13 @@ class TeamsUtilDumpXLS extends ExcelExport
                 $row++;
                 $levelKey = $team->getLevelKey();
             }
-            $this->processTeam($ws,$model,$program,$team,$row);
+            $this->dumpTeam($ws,$model,$program,$team,$row);
         }        
     }
     /* =======================================================================
      * Main entry point
      */
-    public function generate($model)
+    public function dump($model)
     {
         // Spreadsheet
         $ss = $this->createSpreadsheet(); 
@@ -115,17 +89,12 @@ class TeamsUtilDumpXLS extends ExcelExport
         $programs = $model->getPrograms();
         foreach($programs as $program)
         {
-            $this->processProgram($ss,$sheetNum,$model,$program);
+            $this->dumpProgram($ss,$sheetNum,$model,$program);
         }
-        // Output
         $ss->setActiveSheetIndex(0);
-        $objWriter = $this->createWriter($ss);
-
-        ob_start();
-        $objWriter->save('php://output'); // Instead of file name
-        return ob_get_clean();
+        
+        // Output
+        return $this->getBuffer($ss);
     }
-    public function getFileExtension() { return 'xlsx'; }
-    public function getContentType()   { return 'application/vnd.ms-excel'; }
 }
 ?>

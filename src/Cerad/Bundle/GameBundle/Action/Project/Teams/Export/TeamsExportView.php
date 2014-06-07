@@ -8,25 +8,25 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TeamsExportView extends ActionView
 {
-    protected $export;
+    protected $dumper;
     protected $prefix;
     
-    public function __construct($export, $prefix = 'Teams')
+    public function __construct($dumper, $prefix = 'Teams')
     {
-        $this->export = $export;
+        $this->dumper = $dumper;
         $this->prefix = $prefix;
     }
     public function renderResponse(Request $request)
     {   
         $model = $request->attributes->get('model');
         
-        $export = $this->export;
+        $dumper = $this->dumper;
         
-        $response = new Response($export->generate($model));
+        $response = new Response($dumper->dump($model));
         
-        $outFileName = $this->prefix . date('Ymd-Hi') . '.' . $export->getFileExtension();
+        $outFileName = $this->prefix . date('Ymd-Hi') . '.' . $dumper->getFileExtension();
         
-        $response->headers->set('Content-Type', $export->getContentType());
+        $response->headers->set('Content-Type', $dumper->getContentType());
         $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"',$outFileName));
         
         return $response;

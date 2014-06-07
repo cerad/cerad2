@@ -8,12 +8,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ScheduleShowViewFile extends ActionView
 {
-    protected $export;
+    protected $dumper;
     protected $prefix;
     
-    public function __construct($export,$prefix = 'Schedule')
+    public function __construct($dumper,$prefix = 'Schedule')
     {
-        $this->export = $export;
+        $this->dumper = $dumper;
         $this->prefix = $prefix;
     }
     public function renderResponse(Request $request)
@@ -21,13 +21,13 @@ class ScheduleShowViewFile extends ActionView
         $model = $request->attributes->get('model');
         $games = $model->loadGames();
         
-        $export = $this->export;
+        $dumper = $this->dumper;
         
-        $response = new Response($export->generate($games));
+        $response = new Response($dumper->dump($games));
         
-        $outFileName = $this->prefix . date('Ymd-Hi') . '.' . $export->getFileExtension();
+        $outFileName = $this->prefix . date('Ymd-Hi') . '.' . $dumper->getFileExtension();
         
-        $response->headers->set('Content-Type', $export->getContentType());
+        $response->headers->set('Content-Type', $dumper->getContentType());
         $response->headers->set('Content-Disposition', sprintf('attachment; filename="%s"',$outFileName));
         
         return $response;
