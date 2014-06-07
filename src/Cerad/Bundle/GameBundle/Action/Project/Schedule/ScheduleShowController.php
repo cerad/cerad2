@@ -9,9 +9,12 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 
 class ScheduleShowController extends ActionController
 {
-    public function action(Request $request, $model, $form)
+    public function action(Request $request, $model, $form = null)
     {
+        if (!$form) return;
+        
         $form->handleRequest($request);
+        
         if ($form->isValid()) 
         {   
             $model->process($request,$form->getData());
@@ -20,6 +23,5 @@ class ScheduleShowController extends ActionController
             
             return new RedirectResponse($formAction);
         }
-        return;
     }
 }

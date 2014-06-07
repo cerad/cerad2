@@ -6,8 +6,9 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\Team:
     uniqueConstraints:
        team_project_level_num_index:
            columns: projectKey, levelKey, num
-      #team_project_level_name_index:
-      #    columns: projectKey, levelKey, name
+    indexes:
+       team_project_level_name_index:
+           columns: projectKey, levelKey, name
 
     id:
         id:

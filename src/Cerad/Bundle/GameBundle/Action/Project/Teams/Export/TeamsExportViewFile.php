@@ -6,7 +6,7 @@ use Cerad\Bundle\CoreBundle\Action\ActionView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class TeamsExportView extends ActionView
+class TeamsExportViewFile extends ActionView
 {
     protected $dumper;
     protected $prefix;

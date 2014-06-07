@@ -13,16 +13,16 @@ class ScheduleGameImportModel extends ActionModelFactory
     
     public $commit = 0;
     
-    protected $importer;
+    protected $saver;
+    protected $reader;
     
-    public function __construct($importer)
+    public function __construct($reader,$saver)
     {   
-        $this->importer = $importer;
+        $this->saver  = $saver;
+        $this->reader = $reader;
     }
-        
     /* =====================================================
      * Process a posted model
-     * Turn everything over to the workflow
      */
     public function process()
     {   
@@ -31,19 +31,13 @@ class ScheduleGameImportModel extends ActionModelFactory
       //echo sprintf("Max file size %d %d Valid: %d, Error: %d<br />\n",
       //    $file->getMaxFilesize(),$file->getClientSize(),$file->isValid(), $file->getError());
         
-        $importFilePath = $file->getPathname();
-        $clientFileName = $file->getClientOriginalName();
-        
-        $params['project']  = $this->project;
-        $params['filepath'] = $importFilePath;
-        $params['basename'] = $clientFileName;
-        
-        $params['commit'] = $this->commit;
-        
-        // TODO:  This should load the data as an array then save it
-        $results = $this->importer->process($params);
+        $games = $this->reader->read($file->getPathname(),$this->project);
 
-        return $results;
+        $saveResults = $this->saver->save($games,$this->commit);
+        $saveResults->basename = $file->getClientOriginalName();
+        
+        return $saveResults;
+        
     }
     public function create(Request $request)
     {   

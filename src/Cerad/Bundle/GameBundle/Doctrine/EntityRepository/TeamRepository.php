@@ -20,6 +20,15 @@ class TeamRepository extends EntityRepository
         
         return $this->findOneBy(array('projectKey' => $projectKey, 'levelKey' => $levelKey, 'num' => $num));    
     }
+    public function findOneByProjectLevelName($project,$level,$name)
+    {
+        if (!$name) return null;
+        
+        $levelKey   = is_object($level)   ? $level->getKey()   : $level;
+        $projectKey = is_object($project) ? $project->getKey() : $project;
+        
+        return $this->findOneBy(array('projectKey' => $projectKey, 'levelKey' => $levelKey, 'name' => $name));    
+    }
     public function findAllByProjectLevels($projectKey,$levelKeys)
     {
         $qb = $this->createQueryBuilder('team');

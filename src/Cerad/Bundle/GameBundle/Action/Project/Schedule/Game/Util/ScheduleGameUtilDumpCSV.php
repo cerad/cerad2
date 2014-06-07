@@ -9,7 +9,8 @@ class ScheduleGameUtilDumpCSV
 {
     public function getFileExtension() { return 'csv'; }
     public function getContentType()   { return 'text/csv'; }
-    public function dump($games)
+    
+    public function dump($games,$dumpOfficials = false)
     {
         $fp = fopen('php://temp','r+');
 
@@ -19,6 +20,10 @@ class ScheduleGameUtilDumpCSV
             "Group","HT Slot","AT Slot",
             "Home Team Name",'Away Team Name',
         );
+        if ($dumpOfficials)
+        {
+            $row = array_merge($row,array('Referee','AR1','AR2'));
+        }
         fputcsv($fp,$row);
 
         // Games is passed in
@@ -46,6 +51,14 @@ class ScheduleGameUtilDumpCSV
             $row[] = $game->getHomeTeam()->getName();
             $row[] = $game->getAwayTeam()->getName();
     
+            if ($dumpOfficials)
+            {
+                $officials = $game->getOfficials();
+                foreach($officials as $official)
+                {
+                    $row[] = $official->getPersonNameFull();
+                }
+            }
             fputcsv($fp,$row);
         }
         // Return the content

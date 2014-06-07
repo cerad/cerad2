@@ -10,11 +10,13 @@ class ScheduleShowViewFile extends ActionView
 {
     protected $dumper;
     protected $prefix;
+    protected $showOfficials;
     
-    public function __construct($dumper,$prefix = 'Schedule')
+    public function __construct($dumper,$prefix = 'Schedule',$showOfficials = true)
     {
         $this->dumper = $dumper;
         $this->prefix = $prefix;
+        $this->showOfficials = $showOfficials;
     }
     public function renderResponse(Request $request)
     {   
@@ -23,7 +25,7 @@ class ScheduleShowViewFile extends ActionView
         
         $dumper = $this->dumper;
         
-        $response = new Response($dumper->dump($games));
+        $response = new Response($dumper->dump($games,$this->showOfficials));
         
         $outFileName = $this->prefix . date('Ymd-Hi') . '.' . $dumper->getFileExtension();
         

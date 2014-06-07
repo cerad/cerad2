@@ -84,7 +84,11 @@ class GameTeam
     public function setTeam($team)
     {
         $this->team = $team;
-        $this->name = $team->getName();
+        if ($team)
+        {
+            // Do we need this?
+            $this->name = $team->getName();
+        }
     }
     public function getRoleForSlot($slot)
     {

@@ -41,14 +41,14 @@ class ScheduleGameUtilDumpXLS extends ExcelDump
     /* =======================================================================
      * Process each program
      */
-    protected function dumpGames($ws,$games)
+    protected function dumpGames($ws,$games,$dumpOfficials)
     {
         $map = array(
             array('hdr' => 'Game', 'key' => 'num',  'width' =>  6, 'center' => true),
             array('hdr' => 'Date', 'key' => 'date', 'width' => 10),
             array('hdr' => 'DOW',  'key' => 'dow',  'width' =>  5, 'center' => true),
             array('hdr' => 'Time', 'key' => 'time', 'width' => 10),
-            array('hdr' => 'Venue','key' => 'venue','width' => 16),
+            array('hdr' => 'Venue','key' => 'venue','width' => 18),
             array('hdr' => 'Field','key' => 'field','width' =>  8),
             
             array('hdr' => 'Group',  'key' => 'groupKey',          'width' => 22),
@@ -58,7 +58,14 @@ class ScheduleGameUtilDumpXLS extends ExcelDump
             array('hdr' => 'Home Team Name', 'key' => 'homeTeamName', 'width' => 26),
             array('hdr' => 'Away Team Name', 'key' => 'awayTeamName', 'width' => 26),
         );
+        $mapOfficials = array(
+            array('hdr' => 'Referee','key' => 'referee', 'width' => 26),
+            array('hdr' => 'AR1',    'key' => 'ar1',     'width' => 26),
+            array('hdr' => 'AR2',    'key' => 'ar2',     'width' => 26),
+        );
         $ws->setTitle('Games');
+        
+        if ($dumpOfficials) $map = array_merge($map,$mapOfficials);
         
         $row = $this->setHeaders($ws,$map);
         $timeCurrent = null;
@@ -99,18 +106,26 @@ class ScheduleGameUtilDumpXLS extends ExcelDump
             
             $ws->setCellValueByColumnAndRow($col++,$row,$homeTeam->getName());
             $ws->setCellValueByColumnAndRow($col++,$row,$awayTeam->getName());
+            
+            if (!$dumpOfficials) return;
+            
+            $officials = $game->getOfficials();
+            foreach($officials as $official)
+            {
+                $ws->setCellValueByColumnAndRow($col++,$row,$official->getPersonNameFull());
+            }
         }        
     }
     /* =======================================================================
      * Main entry point
      */
-    public function dump($games)
+    public function dump($games,$dumpOfficials = false)
     {
         // Spreadsheet
         $ss = $this->createSpreadsheet(); 
         $ws = $this->createWorkSheet($ss,0);
         
-        $this->dumpGames($ws,$games);
+        $this->dumpGames($ws,$games,$dumpOfficials);
         
         // Output
         $ss->setActiveSheetIndex(0);

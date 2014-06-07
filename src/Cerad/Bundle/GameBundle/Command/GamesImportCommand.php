@@ -28,29 +28,26 @@ class GamesImportCommand extends ContainerAwareCommand
         $project = $projectRepo->find($projectKey);
         
         $file = $input->getArgument('file');
-        die();
-        $this->processTeams($project,$file); 
+        
+        $this->importGames($project,$file); 
         
         return; if ($output);
     }
-    protected function processTeams($project,$file)
+    protected function importGames($project,$file)
     {
-        $readTeams = $this->getService('cerad_game__project__teams__util_read_xls');
+        $reader = $this->getService('cerad_game__games__util_read_zayso_xls');
         
-        $teams = $readTeams->read($project,$file);
+        $games = $reader->read($file,$project);
         
-        echo sprintf("Teams: %d\n",count($teams));
+        echo sprintf("Games: %d\n",count($games));
         
-        file_put_contents($file . '.yml',Yaml::dump($teams,10));
+        file_put_contents($file . '.yml',Yaml::dump($games,10));
         
-        $saveTeams = $this->getService('cerad_game__project__teams__util_save_orm');
-        $saveResults = $saveTeams->save($teams,true);
+        $saver = $this->getService('cerad_game__games__util_save_orm');
+        $saveResults = $saver->save($games,true);
+        $saveResults->basename = $file;
         print_r($saveResults);
-        
-        $linkTeams = $this->getService('cerad_game__project__teams__util_link_orm');
-        $linkResults = $linkTeams->link($teams,true);
-        print_r($linkResults);
-        
+                
         return;        
     }
 }
