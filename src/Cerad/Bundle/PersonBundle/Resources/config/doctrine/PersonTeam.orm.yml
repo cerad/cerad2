@@ -1,0 +1,57 @@
+Cerad\Bundle\PersonBundle\Entity\PersonTeam:
+    type:  entity
+    table: person_teams
+    uniqueConstraints:
+        person_team_project_level_num_person_index:
+            columns: person_id,projectKey,levelKey,num
+    indexes:
+        person_team_project_level_name_person_index:
+            columns: person_id,projectKey,levelKey,name
+   
+    id:
+        id:
+            type: integer
+            generator: { strategy: AUTO }
+            
+    manyToOne:
+      
+        person:
+            targetEntity: Person
+            inversedBy:   teams
+             
+    fields:
+      
+        role:
+            column:   role
+            type:     string
+            length:   20
+            nullable: false
+            
+        projectKey:
+            column:   projectKey
+            type:     string
+            length:   40
+            nullable: false
+            
+        levelKey:
+            column:   levelKey
+            type:     string
+            length:   80
+            nullable: false
+            
+        num:
+            column:   num
+            type:     integer
+            nullable: false
+            
+        name:
+            column:   name
+            type:     string
+            length:   80
+            nullable: false
+            
+        status:
+            type:     string
+            length:   20
+            nullable: false
+            

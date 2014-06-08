@@ -1,0 +1,25 @@
+parameters:
+  
+services:
+  # =======================================================================
+  # Action: Project Person Teams Show
+  #
+  cerad_person__project__person__teams__show_model_factory:
+    class: Cerad\Bundle\PersonBundle\Action\Project\Person\Teams\Show\TeamsShowModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_person__person_repository'
+  
+  cerad_person__project__person__teams__show_form_factory:
+    class: Cerad\Bundle\PersonBundle\Action\Project\Person\Teams\Show\TeamsShowFormFactory
+    calls:
+      - [setRouter,      ['@router']]
+      - [setFormFactory, ['@form.factory']]
+      - [setDispatcher,  ['@event_dispatcher']]
+             
+  cerad_person__project__person__teams__show_controller:
+    class: Cerad\Bundle\PersonBundle\Action\Project\Person\Teams\Show\TeamsShowController
+    calls:
+      - [setRouter,     ['@router']]
+      - [setTemplating, ['@templating']]

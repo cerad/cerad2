@@ -39,6 +39,7 @@ class Person extends BaseModel implements PersonInterface
     // Setting to array messes up qp left join
     protected $feds;    // = array();
     protected $plans;   // = array();
+    protected $teams;
     protected $persons; // = array();
     
     public function __construct()
@@ -50,6 +51,7 @@ class Person extends BaseModel implements PersonInterface
         
         $this->feds    = array();
         $this->plans   = array();
+        $this->teams   = array();
         $this->persons = array();
     }
     /* ======================================================================
@@ -268,6 +270,37 @@ class Person extends BaseModel implements PersonInterface
             
         return $personPerson;
     }
+    /* ========================================================
+     * 08 June 2014
+     * PersonTeam Relation
+     */
+    public function createPersonTeam($params = null) { return new PersonTeam($params); }
+    
+    public function getPersonTeams() 
+    { 
+        return $this->teams;
+    }
+    protected function isSameTeam($team1,$team2)
+    {
+       if ($team1->getNum()       != $team2->getNum())        return false;
+       if ($team1->getLevelKey()  != $team2->getLevelKey())   return false;
+       if ($team1->getPojectKey() != $team2->getProjectKey()) return false;
+             
+       return true;
+    }
+    public function addPersonTeam($personTeam)
+    {       
+        foreach($this->teams as $personTeamx)
+        {
+            if ($this->isSameTeam($personTeam,$personTeamx)) return;
+        }
+        // Add it
+        $this->teams[] = $personTeam;
+        $personTeam->setPerson($this);
+        $this->onPropertyChanged('persons');
+    }
+    // TODO: Need remove team
+    
     /* ===========================================
      * Age with optional asOf date
      */
