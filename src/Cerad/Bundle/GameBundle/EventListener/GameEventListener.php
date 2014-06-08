@@ -9,11 +9,12 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use Cerad\Bundle\CoreBundle\EventListener\CoreRequestListener;
-
 use Cerad\Bundle\GameBundle\GameEvents;
 use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
+
+use Cerad\Bundle\CoreBundle\Event\FindProjectTeamsEvent;
+use Cerad\Bundle\CoreBundle\Event\FindProjectLevelsEvent;
 
 class GameEventListener extends ContainerAware implements EventSubscriberInterface
 {
@@ -27,8 +28,11 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
                 array('onControllerGame', self::ControllerGameEventListenerPriority),
             ),
             
-            FindResultsEvent::EventName  => array('onFindResults' ),
-            GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot' ),
+            FindResultsEvent::EventName  => array('onFindResults'),
+            
+            FindProjectTeamsEvent::FindProjectTeams  => array('onFindProjectTeams'),
+            
+            GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot'),
         );
     }
     protected $gameRepositoryServiceId;
@@ -91,8 +95,29 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         
         $event->setResults($results);
         $event->stopPropagation();
-        return;
     }
+    /* ====================================================================
+     * Finds the teams for a given project filtering by assorted other queries
+     */
+    public function onFindProjectTeams(FindProjectTeamsEvent $event)
+    {
+        $project  = $event->getProjectKey();
+        $programs = $event->getPrograms();
+        $genders  = $event->getGenders();
+        $ages     = $event->getAges();
+        
+        $findLevelsEvent = new FindProjectLevelsEvent($project,$programs,$genders,$ages);
+        $dispatcher = $this->container->get('event_dispatcher');
+        $dispatcher->dispatch(FindProjectLevelsEvent::FindProjectLevels,$findLevelsEvent);
+        $levelKeys = $findLevelsEvent->getLevelKeys();
+        
+        $teamRepo = $this->container->get('cerad_game__team_repository');
+        $teams = $teamRepo->findAllByProjectLevels($project,$levelKeys);
+        
+        $event->setTeams($teams);
+        $event->stopPropagation();
+    }
+    
     /* ====================================================================
      * Game Official Assignment
      * Called before commit

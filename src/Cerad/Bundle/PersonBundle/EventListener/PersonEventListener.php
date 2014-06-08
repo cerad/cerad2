@@ -8,6 +8,7 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Cerad\Bundle\CoreBundle\Event\FindPersonEvent;
 use Cerad\Bundle\CoreBundle\Event\FindPersonPlanEvent;
@@ -45,8 +46,22 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
     }
     public function onControllerPerson(FilterControllerEvent $event)
     {
-        // TODO: Finish implementation
         if (!$event->getRequest()->attributes->has('_person')) return;
+        
+        $_person = $event->getRequest()->attributes->has('_person');
+        
+        $person = $this->getPersonRepository()->find($_person);
+        
+        if (!$person)
+        {
+            $person = $this->getPersonRepository()->findOneByGuid($_person);
+        }
+        if (!$person)
+        {
+            // Maybe search by fedKey?
+            throw new NotFoundHttpException(sprintf('Person %s not found',$_person));
+        }
+        $event->getRequest()->attributes->set('person',$person);
     }
     public function onFindPersonByGuid(FindPersonEvent $event)
     {

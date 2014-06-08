@@ -54,9 +54,9 @@ class TeamsShowModel extends ActionModelFactory
         $this->_project  = $requestAttrs->get('_project');
         $this->_template = $requestAttrs->get('_template');
         
-        $this->person  = $requestAttrs->get('project');
+        $this->person  = $requestAttrs->get('person');
         $this->project = $requestAttrs->get('project');
-                
+        
         return $this;
     }
 }

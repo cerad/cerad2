@@ -12,7 +12,8 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use Cerad\Bundle\ProjectBundle\ProjectEvents;
+use Cerad\Bundle\CoreBundle\Event\FindProjectEvent;
+use Cerad\Bundle\CoreBundle\Event\FindProjectLevelsEvent;
 
 class ProjectEventListener extends ContainerAware implements EventSubscriberInterface
 {
@@ -28,12 +29,14 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
             ),
           //KernelEvents::REQUEST => array(array('onKernelRequest', CoreRequestListener::ProjectEventListenerPriority)),
 
-            ProjectEvents::FindProjectByKey  => array('onFindProjectByKey'  ),
-            ProjectEvents::FindProjectBySlug => array('onFindProjectBySlug' ),
+            FindProjectEvent::FindProjectByKey  => array('onFindProjectByKey'  ),
+            FindProjectEvent::FindProjectBySlug => array('onFindProjectBySlug' ),
+            
+            FindProjectLevelsEvent::FindProjectLevels => array('onFindProjectLevels' ),
         );
     }
-    protected $projectRepositoryServiceId;
     protected $projectSlugDefault;
+    protected $projectRepositoryServiceId;
     
     public function __construct($projectRepositoryServiceId,$projectSlugDefault = null)
     {
@@ -70,41 +73,36 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
         $twig->addGlobal( 'project',$project);
         $twig->addGlobal('_project',$projectSlug);
     }
-    public function onKernelRequest(GetResponseEvent $event)
-    {
-        die('Project Request Listenerx');
-        // Will a sub request ever change projects?
-        if (HttpKernel::MASTER_REQUEST != $event->getRequestType()) return;
-        
-        // Only process routes asking for a project
-        if (!$event->getRequest()->attributes->has('_project')) return;
-
-        // Pull the slug
-        $request = $event->getRequest();
-        
-        $projectSlug = $request->attributes->get('_project');
-       
-        // Query the project
-        $project = $this->getProjectRepository()->findOneBySlug($projectSlug);
-        if (!$project)
-        {
-            throw new NotFoundHttpException(sprintf('Project %s not found',$projectSlug));
-        }
-        // Stash it
-        $request->attributes->set('project',$project);
-    }
-    public function onFindProjectBySlug(Event $event)
+    public function onFindProjectBySlug(FindProjectEvent $event)
     {
         // Lookup
         $event->stopPropagation();
-        $event->project = $this->getProjectRepository()->findOneBySlug($event->slug);
+        $project = $this->getProjectRepository()->findOneBySlug($event->getSearch());
+        $event->setProject($project);
         return;
     }
-    public function onFindProjectByKey(Event $event)
+    public function onFindProjectByKey(FindProjectEvent $event)
     {
         // Lookup
         $event->stopPropagation();
-        $event->project = $this->getProjectRepository()->findOneByKey($event->key);
+        $project = $this->getProjectRepository()->findOneByKey($event->getSearch());
+        $event->setProject($project);
         return;
+    }
+    /* ============================================================
+     * Really don't have project levels yet but do need them
+     */
+    public function onFindProjectLevels(FindProjectLevelsEvent $event)
+    {
+        $criteria = array(
+            'programs' => $event->getPrograms(),
+            'genders'  => $event->getGenders(),
+            'ages'     => $event->getAges(),
+        );
+        $levelRepo = $this->container->get('cerad_level__level_repository');
+        $levelKeys = $levelRepo->queryKeys($criteria);
+        
+        $event->setLevelKeys($levelKeys);
+        $event->stopPropagation();
     }
 }
