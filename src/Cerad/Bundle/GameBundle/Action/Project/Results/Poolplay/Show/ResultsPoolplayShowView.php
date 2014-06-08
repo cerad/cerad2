@@ -47,9 +47,18 @@ class ResultsPoolplayShowView extends ActionView
                 }
             }
         }
-       
+        // Allow control over what sections should be displayed
+        if ($model->show == 'standings')
+        {
+            $shows = array('select' => false, 'help' => false, 'games' => false, 'teams' => true);
+        }
+        else
+        {
+            $shows = array('select' => true, 'help' => true, 'games' => true, 'teams' => true);
+        }
         // And render
         $tplData = array();
+        $tplData['shows']  = $shows;
         $tplData['pools']  = $model->loadPools();
         $tplData['routes'] = $routes;
         return $this->regularResponse($request->get('_template'),$tplData);

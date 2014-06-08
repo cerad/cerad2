@@ -9,9 +9,14 @@ use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
 
 class ResultsPoolplayShowModel extends ActionModelFactory
 {
+    public $show;
     public $project;
+    
     public $games;
     public $pools;
+    
+    protected $poolKey;
+    protected $levelKey;
     
     protected $gameRepo;
     protected $levelRepo;
@@ -27,8 +32,8 @@ class ResultsPoolplayShowModel extends ActionModelFactory
         
         $this->levelKey = $request->query->get('level');
         $this->poolKey  = $request->query->get('pool');
+        $this->show     = $request->query->get('show');
         
-        // Need to do some stuff with request parameters and maybe session data        
         return $this;
     }
     public function loadPools()
