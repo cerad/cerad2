@@ -32,11 +32,9 @@ class GamesUtilSaveORM
         
         $levelKey   = $gamex['levelKey'];
         $projectKey = $gamex['projectKey'];
-        
         $game = $this->gameRepo->findOneByProjectNum($projectKey,$num);
         if (!$game)
         {
-            die('GamesSaveORM::Creation is not yet fully supported');
             $game = $this->gameRepo->createGame();
             $game->setNum($num);
             $game->setStatus('Active');
