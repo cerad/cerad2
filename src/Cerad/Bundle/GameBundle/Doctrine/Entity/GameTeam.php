@@ -106,9 +106,18 @@ class GameTeam
     {
         return new GameTeamReport($this->report);
     }
+    // Allow multiple calls
+    protected $reportx = null;
+    public function getReportx()
+    {
+        if ($this->reportx) return $this->reportx;
+        
+        return $this->reportx = new GameTeamReport($this->report);
+    }
     public function setReport($report)
     {
         $this->report = $report ? $report->getData() : null;
+        $this->reportx = null;
     }
 }
 ?>

@@ -133,8 +133,7 @@ cerad_game__project__results_playoffs__show:
         _controller: cerad_game__project__results_playoffs__show_controller:action
         _view:       cerad_game__project__results_playoffs__show_view
         _model:      cerad_game__project__results_playoffs__show_model_factory
-        _formx:      cerad_game__project__results_playoffs__show_form_factory
-        _template: '@CeradGame/Project/Results/Playoffs/Show/Twig/ResultsPlayoffsShowPage.html.twig'
+        _template: '@CeradGame/Project/Results/Playoffs/Show/ResultsPlayoffsShowTwigPage.html.twig'
         
 cerad_game__project__results_sportsmanship__show:
     path:  /project/{_project}/results-sportsmanship

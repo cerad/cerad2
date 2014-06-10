@@ -1,0 +1,34 @@
+{% extends '@CeradGame/Layout.html.twig' %}
+
+{% block content %}
+<div id="layout-block">
+    
+{% if shows['select'] %}
+{{ include('@CeradGame/Project/Results/Playoffs/Show/ResultsPlayoffsShowTwigSelect.html.twig') }}
+{% endif %}
+    
+{% if shows['help'] %}
+<br />
+<div class="results-legend">
+    <h1>TODO: Playoff Specific Help</h1>
+{#
+  <h2>
+  GS=Goals Scored, SP=Sportsmanship, YC=Caution, RC=Sendoff,
+  <br/>
+  TE=Total Ejections, PE=Points Earned, TPE=Points Earned, 
+  <br/>
+  GT=Games Total, GP=Games Played, GW=Games Won, GS=Goals Scored, GA=Goals Against, SF=SoccerFest
+  </h2>
+  </div>
+#}
+</div>
+{% endif %}
+
+{% if shows['games'] %}
+<hr style="border: 4px  ridge" />
+<div id="layout-block">
+  {{ include('@CeradGame/Project/Results/Playoffs/Show/ResultsPlayoffsShowTwigGames.html.twig') }}
+</div>
+{% endif %}
+    
+{% endblock %}
