@@ -4,14 +4,13 @@
 <div id="layout-block">
     
 {% if shows['select'] %}
-{{ include('@CeradGame/Project/Results/Playoffs/Show/ResultsPlayoffsShowTwigSelect.html.twig') }}
+{{ include('@CeradGame/Project/Results/Sportsmanship/Show/ResultsSportsmanshipShowTwigSelect.html.twig') }}
 {% endif %}
     
 {% if shows['help'] %}
 <br />
 <div class="results-legend">
-    <h1>TODO: Playoff Specific Help</h1>
-    <h3>TODO: Show final team standings?</h3>
+    <h1>TODO: Sportsmanship Specific Help</h1>
 {#
   <h2>
   GS=Goals Scored, SP=Sportsmanship, YC=Caution, RC=Sendoff,
@@ -28,7 +27,7 @@
 {% if shows['games'] %}
 <hr style="border: 4px  ridge" />
 <div id="layout-block">
-  {{ include('@CeradGame/Project/Results/Playoffs/Show/ResultsPlayoffsShowTwigGames.html.twig') }}
+  {{ include('@CeradGame/Project/Results/Sportsmanship/Show/ResultsSportsmanshipShowTwigGames.html.twig') }}
 </div>
 {% endif %}
     
