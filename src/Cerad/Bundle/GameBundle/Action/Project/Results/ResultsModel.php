@@ -40,7 +40,7 @@ class ResultsModel extends ActionModelFactory
         // TODO: Alternate means of getting levels
         $this->programs = $request->query->get('programs');
         $this->genders  = $request->query->get('genders');
-        $this->ages     = $request->query->get('agees');
+        $this->ages     = $request->query->get('ages');
         $this->divs     = $request->query->get('divs');
         
         // Currently implemented, maybe do the level key processing here
