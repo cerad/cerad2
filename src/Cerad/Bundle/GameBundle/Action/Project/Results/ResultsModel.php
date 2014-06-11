@@ -38,10 +38,10 @@ class ResultsModel extends ActionModelFactory
         $this->project  = $project = $request->attributes->get('project');
         
         // TODO: Alternate means of getting levels
-        $this->programs = $request->query->get('program');
-        $this->genders  = $request->query->get('gender');
-        $this->ages     = $request->query->get('age');
-        $this->divs     = $request->query->get('div');
+        $this->programs = $request->query->get('programs');
+        $this->genders  = $request->query->get('genders');
+        $this->ages     = $request->query->get('agees');
+        $this->divs     = $request->query->get('divs');
         
         // Currently implemented, maybe do the level key processing here
         $this->levelKey = $request->query->get('level');
@@ -99,7 +99,10 @@ class ResultsModel extends ActionModelFactory
     {   
         $criteria = array();
         $criteria['projects'] = $this->project->getKey();
-        
+        $criteria['programs'] = $this->programs;
+        $criteria['genders']  = $this->genders;
+        $criteria['ages']     = $this->ages;
+   
         $levelKeys = $this->levelRepo->queryKeys($criteria);
         
         if (count($levelKeys) < 1) return $this->levelRepo->findAll();

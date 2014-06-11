@@ -20,15 +20,15 @@
 
 {% for game in games %}
   <tr id="results-playoffs-game-{{game.num}}" class="game-status-{{game.status}}">
-  <td>{{ game.num }}
+  <td>
 {% if is_granted('ROLE_SCORE_ENTRY') or 1 %}
-    <br />
     <a href="{{ path('cerad_game__project__game_report__update', 
     { '_project': _project, 
          '_game':  game.num, 
           'back':  app.request.requestUri ~ '#results-playoffs-game-' ~ game.num
      }) }}"
-    >Scores</a>
+    >{{ game.num }}</a>
+{% else %}{{ game.num }}
 {%endif %}
 {% if is_granted('ROLE_SCORE_ENTRY') or 1 %}
     <br />
