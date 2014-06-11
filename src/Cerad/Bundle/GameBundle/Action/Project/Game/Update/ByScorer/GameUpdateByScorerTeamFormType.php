@@ -13,7 +13,7 @@ class GameUpdateByScorerTeamFormType extends AbstractType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'Cerad\Bundle\GameBundle\Entity\GameTeam',
+            'data_class' => 'Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam',
         ));
     }
     protected $teamNameChoices;

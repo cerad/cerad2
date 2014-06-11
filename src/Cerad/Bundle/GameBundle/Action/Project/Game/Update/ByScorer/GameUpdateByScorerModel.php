@@ -95,8 +95,8 @@ class GameUpdateByScorerModel extends ActionModelFactory
     {
         $criteria = array
         (
-            'levelIds'   => $this->game->getLevelKey(),
-            'projectIds' => $this->project->getKey()
+            'levelKeys'   => $this->game->getLevelKey(),
+            'projectKeys' => $this->project->getKey()
         );
         return $this->gameRepo->queryTeamChoices($criteria);
     }

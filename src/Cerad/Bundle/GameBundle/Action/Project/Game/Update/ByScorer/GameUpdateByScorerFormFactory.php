@@ -38,31 +38,12 @@ class GameUpdateByScorerFormFactory
             'label' => 'Date Time',
             'minutes' => array(0,5,10,15,20,25,30,35,40,45,50,55),
         ));
-        /* Needs more work
-        $builder->add('dateBegin','date',array(
-            'label' => 'Date',
-        ));
-        $builder->add('timeBegin','time',array(
-            'label' => 'Time Begin',
-            'minutes' => array(0,5,10,15,20,25,30,35,40,45,50,55),
-        ));
-         * */
-         
+        /*
         $builder->add('field', 'entity', array(
             'class'    => 'Cerad\Bundle\GameBundle\Entity\GameField',
             'property' => 'name',
             'choices'  => $model->getGameFields(),
-        ));
-        $builder->add('levelKey','text',array(
-            'label'     => 'Level',
-            'read_only' => true,
-            'attr'      => array('size' => 20),
-        ));
-        $builder->add('group','text',array(
-            'label'     => 'Group',
-            'read_only' => true,
-            'attr'      => array('size' => 20),
-        ));
+        ));*/
         $teamNameChoices = $model->getTeamNameChoices();
         $gameTeamFormType = new GameUpdateByScorerTeamFormType($teamNameChoices);
         

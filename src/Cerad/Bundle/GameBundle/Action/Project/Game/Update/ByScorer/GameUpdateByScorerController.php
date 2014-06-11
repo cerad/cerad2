@@ -11,13 +11,8 @@ use Cerad\Bundle\CoreBundle\Action\ActionController;
 
 class GameUpdateByScorerController extends ActionController
 {   
-    public function updateAction(Request $request, $model, FormInterface $form)
+    public function action(Request $request, $model, FormInterface $form)
     {   
-        // Standard redirect, can't decide if the model should generate these
-        $redirectRoute = $request->attributes->get('_redirect');
-        $redirectUrl   = $this->router->generate($redirectRoute);
-        $redirectUrl  .= sprintf('#sched-%d',$model->game->getNum()); // Class prefix needs to be injected
-
         // Handle the form
         $form->handleRequest($request);
 
@@ -36,8 +31,6 @@ class GameUpdateByScorerController extends ActionController
         $tplData = array();
         $tplData['form'] = $form->createView();
         $tplData['game'] = $model->game;
-        
-        $tplData['redirectUrl'] = $redirectUrl;
         
         $tplName = $request->attributes->get('_template');
         

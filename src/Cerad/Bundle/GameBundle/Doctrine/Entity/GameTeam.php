@@ -119,5 +119,9 @@ class GameTeam
         $this->report = $report ? $report->getData() : null;
         $this->reportx = null;
     }
+    /* ==========================================================
+     * Cheesy clone
+     */
+    public $namex;
 }
 ?>
