@@ -24,10 +24,16 @@
 </div>
 {% endif %}
 
-{% if shows['games'] %}
+{% if shows['teams'] %}
 <hr style="border: 4px  ridge" />
 <div id="layout-block">
-  {{ include('@CeradGame/Project/Results/Sportsmanship/Show/ResultsSportsmanshipShowTwigGames.html.twig') }}
+  {% set teams = teamsPoolplay %}
+  {% set title = 'Pool Play' %}
+  {{ include('@CeradGame/Project/Results/Sportsmanship/Show/ResultsSportsmanshipShowTwigTeams.html.twig') }}
+  <br />
+  {% set teams = teamsPlayoffs %}
+  {% set title = 'Medal Round' %}
+  {{ include('@CeradGame/Project/Results/Sportsmanship/Show/ResultsSportsmanshipShowTwigTeams.html.twig') }}
 </div>
 {% endif %}
     

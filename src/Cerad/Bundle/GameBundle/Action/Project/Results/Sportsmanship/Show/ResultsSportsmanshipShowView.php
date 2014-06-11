@@ -42,18 +42,20 @@ class ResultsSportsmanshipShowView extends ActionView
         // Allow control over what sections should be displayed
         if ($model->show == 'standings')
         {
-            $shows = array('select' => false, 'help' => false, 'games' => true);
+            $shows = array('select' => false, 'help' => false, 'teams' => true);
         }
         else
         {
-            $shows = array('select' => true,  'help' => true,  'games' => true);
+            $shows = array('select' => true,  'help' => true,  'teams' => true);
         }
-        $games = $model->loadGames(null,'QF,SF,FM');
+        $teamsPoolplay = $model->loadTeams('PP');
+        $teamsPlayoffs = $model->loadTeams('QF,SF,FM');
 
         // And render
         $tplData = array();
         $tplData['shows']  = $shows;
-        $tplData['games']  = $games;
+        $tplData['teamsPoolplay']  = $teamsPoolplay;
+        $tplData['teamsPlayoffs']  = $teamsPlayoffs;
         $tplData['routes'] = $routes;
         return $this->regularResponse($request->attributes->get('_template'),$tplData);
     }

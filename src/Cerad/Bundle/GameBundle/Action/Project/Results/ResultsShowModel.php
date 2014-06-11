@@ -35,6 +35,13 @@ class ResultsShowModel extends ActionModelFactory
     {   
         $this->project  = $project = $request->attributes->get('project');
         
+        // TODO: Alternate means of getting levels
+        $this->programs = $request->query->get('program');
+        $this->genders  = $request->query->get('gender');
+        $this->ages     = $request->query->get('age');
+        $this->divs     = $request->query->get('div');
+        
+        // Currently implemented, maybe do the level key processing here
         $this->levelKey = $request->query->get('level');
         $this->poolKey  = $request->query->get('pool');
         $this->show     = $request->query->get('show');
@@ -115,20 +122,35 @@ class ResultsShowModel extends ActionModelFactory
         return $games;
     }
     // For playoffs and sportsmanship
-    public function loadTeams($levelKeys = null, $groupTypes = null)
+    public function loadTeams($groupTypes,$levelKeys = null)
     {
         $games = $this->loadGames($levelKeys,$groupTypes);
-        
-        // Don't allow loading the entire project unless that is what we really want
-        $levelKeys = $levelKeys ? $levelKeys : $this->levelKey;
-        if (!$levelKeys) return array();
-        
-        $criteria['projectKeys'] = $this->project->getKey();
-        $criteria['levelKeys']   = $levelKeys;
-        $criteria['groupTypes']  = $groupTypes;
-        
-        $games = $this->gameRepo->queryGameSchedule($criteria);
-        return $games;
+        $teams = array();
+        foreach($games as $game)
+        {
+            foreach($game->getTeams() as $gameTeam)
+            {
+                $team = $gameTeam->getTeam();
+                if ($team)
+                {
+                    $teamId = $team->getId();
+                    if (!isset($teams[$teamId])) $teams[$teamId] = array(
+                        'game' => $game,
+                        'team' => $team, 
+                        'sp'   => 0
+                    );
+                    $teams[$teamId]['sp'] += $gameTeam->getReport()->getSportsmanship();
+                }
+            }
+        }
+        usort($teams,array($this,'compareTeamSportsmanship'));
+        return $teams;
+    }
+    public function compareTeamSportsmanship($team1,$team2)
+    {
+        if ($team1['sp'] < $team2['sp']) return  1;
+        if ($team1['sp'] > $team2['sp']) return -1;
+        return 0;
     }
     // TODO: The levelRepo should do this
     public function genLevelKey($program,$gender,$age)
