@@ -22,22 +22,15 @@ services:
   # ============================================================
   # ResultsPoolplayShow
   cerad_game__project__results_poolplay__show_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show\ResultsPoolplayShowModel
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsModel
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
       - '@cerad_game__game_repository'
       - '@cerad_level__level_repository'
-
-  cerad_game__project__results_poolplay__show_form_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show\ResultsPoolplayShowFormFactory
-    calls:
-      - [setRouter,      ['@router']]
-      - [setFormFactory, ['@form.factory']]
-      - [setDispatcher,  ['@event_dispatcher']]
              
   cerad_game__project__results_poolplay__show_controller:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show\ResultsPoolplayShowController
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsController
     calls:
       - [setRouter,     ['@router']]
       - [setTemplating, ['@templating']]
@@ -51,27 +44,9 @@ services:
       - '%cerad_project_pools%'
       
   # ============================================================
-  # ResultsPoolplayExport
-  cerad_game__project__results_poolplay__export_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Export\ResultsPoolplayExportModel
-    calls:
-      - [setDispatcher,['@event_dispatcher']]
-    arguments:
-      - '@cerad_game__game_repository'
-      - '@cerad_level__level_repository'
-             
-  cerad_game__project__results_poolplay__export_controller:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Export\ResultsPoolplayExportController
-      
-  cerad_game__project__results_poolplay__export_view:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Export\ResultsPoolplayExportView
-    arguments:
-      - '%cerad_project_pools%'
-      
-  # ============================================================
   # ResultsExport
   cerad_game__project__results__export_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsExportModel
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsModel
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
@@ -79,7 +54,7 @@ services:
       - '@cerad_level__level_repository'
              
   cerad_game__project__results__export_controller:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsExportController
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsController
       
   cerad_game__project__results__export_view:
     class: Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsExportView
@@ -92,7 +67,7 @@ services:
   # ============================================================
   # Results Playoffs Show
   cerad_game__project__results_playoffs__show_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsShowModel
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsModel
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
@@ -100,7 +75,7 @@ services:
       - '@cerad_level__level_repository'
            
   cerad_game__project__results_playoffs__show_controller:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsShowController
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsController
     calls:
      #- [setRouter,     ['@router']]
      #- [setTemplating, ['@templating']]
@@ -116,7 +91,7 @@ services:
   # ============================================================
   # Results Sportsmanship Show
   cerad_game__project__results_sportsmanship__show_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsShowModel
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsModel
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
@@ -124,7 +99,7 @@ services:
       - '@cerad_level__level_repository'
            
   cerad_game__project__results_sportsmanship__show_controller:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsShowController
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsController
     calls:
      #- [setRouter,     ['@router']]
      #- [setTemplating, ['@templating']]

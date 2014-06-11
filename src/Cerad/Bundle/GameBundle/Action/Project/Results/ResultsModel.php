@@ -11,8 +11,10 @@ use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
  * 10 June 2014
  * Started with working Poolplay model
  * Added in functionality from working export model
+ * 
+ * Currently used for both show and export
  */
-class ResultsShowModel extends ActionModelFactory
+class ResultsModel extends ActionModelFactory
 {
     public $show; // select,help,games,teams(aka standings)
     public $project;
@@ -91,9 +93,11 @@ class ResultsShowModel extends ActionModelFactory
         return $this->pools;
     }
     // TODO: Use ProjectLevels
+    // Only called by the export routine
+    // TODO: Might want to implement criteria a bit better
     public function getLevels()
     {   
-        $criteria = $this->criteria;
+        $criteria = array();
         $criteria['projects'] = $this->project->getKey();
         
         $levelKeys = $this->levelRepo->queryKeys($criteria);
@@ -108,7 +112,7 @@ class ResultsShowModel extends ActionModelFactory
         return $levels;
     }
     // For playoffs and sportsmanship
-    public function loadGames($levelKeys = null, $groupTypes = null)
+    public function loadGames($groupTypes, $levelKeys = null)
     {
         // Don't allow loading the entire project unless that is what we really want
         $levelKeys = $levelKeys ? $levelKeys : $this->levelKey;
@@ -121,10 +125,10 @@ class ResultsShowModel extends ActionModelFactory
         $games = $this->gameRepo->queryGameSchedule($criteria);
         return $games;
     }
-    // For playoffs and sportsmanship
-    public function loadTeams($groupTypes,$levelKeys = null)
+    // Sportsmanship
+    public function loadSportsmanshipTeams($groupTypes,$levelKeys = null)
     {
-        $games = $this->loadGames($levelKeys,$groupTypes);
+        $games = $this->loadGames($groupTypes,$levelKeys);
         $teams = array();
         foreach($games as $game)
         {

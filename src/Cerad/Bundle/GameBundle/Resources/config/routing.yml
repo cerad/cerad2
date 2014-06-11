@@ -124,8 +124,7 @@ cerad_game__project__results_poolplay__show:
         _controller: cerad_game__project__results_poolplay__show_controller:action
         _view:       cerad_game__project__results_poolplay__show_view
         _model:      cerad_game__project__results_poolplay__show_model_factory
-        _formx:      cerad_game__project__results_poolplay__show_form_factory
-        _template: '@CeradGame/Project/Results/Poolplay/Show/Twig/ResultsPoolplayShowPage.html.twig'
+        _template: '@CeradGame/Project/Results/Poolplay/Show/ResultsPoolplayShowTwigPage.html.twig'
         
 cerad_game__project__results_playoffs__show:
     path:  /project/{_project}/results-playoffs
@@ -141,16 +140,8 @@ cerad_game__project__results_sportsmanship__show:
         _controller: cerad_game__project__results_sportsmanship__show_controller:action
         _view:       cerad_game__project__results_sportsmanship__show_view
         _model:      cerad_game__project__results_sportsmanship__show_model_factory
-        _formx:      cerad_game__project__results_sportsmanship__show_form_factory
         _template: '@CeradGame/Project/Results/Sportsmanship/Show/ResultsSportsmanshipShowTwigPage.html.twig'
-        
-cerad_game__project__results_poolplay__export:
-    path:  /project/{_project}/results-poolplay-export
-    defaults: 
-        _controller: cerad_game__project__results_poolplay__export_controller:action
-        _view:       cerad_game__project__results_poolplay__export_view
-        _model:      cerad_game__project__results_poolplay__export_model_factory
-        
+                
 cerad_game__project__results__export:
     path:  /project/{_project}/results-export
     defaults: 

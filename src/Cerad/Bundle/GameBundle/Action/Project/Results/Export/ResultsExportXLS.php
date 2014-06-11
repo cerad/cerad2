@@ -92,9 +92,9 @@ class ResultsExportXLS extends ExcelExport
         }
         
         // Medal rounds
-        $gamesQF = $model->loadGames($levelKey,'QF');
-        $gamesSF = $model->loadGames($levelKey,'SF');
-        $gamesFM = $model->loadGames($levelKey,'FM');
+        $gamesQF = $model->loadGames('QF',$levelKey);
+        $gamesSF = $model->loadGames('SF',$levelKey);
+        $gamesFM = $model->loadGames('FM',$levelKey);
         
     }
     /* =======================================================================

@@ -48,7 +48,7 @@ class ResultsPlayoffsShowView extends ActionView
         {
             $shows = array('select' => true,  'help' => true,  'games' => true);
         }
-        $games = $model->loadGames(null,'QF,SF,FM');
+        $games = $model->loadGames('QF,SF,FM');
 
         // And render
         $tplData = array();

@@ -48,8 +48,8 @@ class ResultsSportsmanshipShowView extends ActionView
         {
             $shows = array('select' => true,  'help' => true,  'teams' => true);
         }
-        $teamsPoolplay = $model->loadTeams('PP');
-        $teamsPlayoffs = $model->loadTeams('QF,SF,FM');
+        $teamsPoolplay = $model->loadSportsmanshipTeams('PP');
+        $teamsPlayoffs = $model->loadSportsmanshipTeams('QF,SF,FM');
 
         // And render
         $tplData = array();

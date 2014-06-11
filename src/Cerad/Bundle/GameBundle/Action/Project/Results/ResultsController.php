@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 //  Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
-class ResultsShowController extends ActionController
+class ResultsController extends ActionController
 {
     public function action(Request $request, $model, $form = null)
     {
