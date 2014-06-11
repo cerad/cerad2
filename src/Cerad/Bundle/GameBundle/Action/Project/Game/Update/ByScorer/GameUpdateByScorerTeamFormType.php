@@ -24,19 +24,11 @@ class GameUpdateByScorerTeamFormType extends AbstractType
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $builder->add('role', 'text', array(
-            'attr'      => array('size' => 4),
-            'read_only' => true,
-        ));
         $builder->add('name', 'choice', array(
             'choices' => $this->teamNameChoices,
         ));
-        $builder->add('namex', 'text', array(
-            'attr' => array('size' => 30),
-        ));
         
-        return;
-        if ($options);
+        return; $options;
     }
 }
 

@@ -25,6 +25,11 @@ class ResultsModel extends ActionModelFactory
     protected $poolKey;
     protected $levelKey;
     
+    protected $divs;
+    protected $ages;
+    protected $genders;
+    protected $programs;
+    
     protected $gameRepo;
     protected $levelRepo;
     

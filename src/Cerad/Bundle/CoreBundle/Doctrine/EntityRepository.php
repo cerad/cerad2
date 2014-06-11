@@ -21,7 +21,8 @@ class EntityRepository extends BaseRepository
      * Persistence
      */
     public function persist($entity) { return $this->getEntityManager()->persist($entity); }
-    public function remove($entity)  { return $this->getEntityManager()->remove($entity);  }
+    public function refresh($entity) { return $this->getEntityManager()->refresh($entity); }
+    public function remove ($entity) { return $this->getEntityManager()->remove ($entity); }
     public function flush()          { return $this->getEntityManager()->flush();          }
     public function clear()          { return $this->getEntityManager()->clear();          }
     

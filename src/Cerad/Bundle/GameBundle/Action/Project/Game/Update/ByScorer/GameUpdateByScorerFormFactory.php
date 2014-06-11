@@ -24,16 +24,12 @@ class GameUpdateByScorerFormFactory
         $actionRoute = $request->attributes->get('_route');
         $actionUrl = $this->router->generate($actionRoute,array
         (
-            '_game'    => $model->game->getNum(),
             '_project' => $request->attributes->get('_project'),
+               '_game' => $request->attributes->get('_game'),
+                'back' => $request->query->get('back'),
         ));
         $builder->setAction($actionUrl);
         
-        $builder->add('num','text',array(
-            'label'     => 'Game Number',
-            'read_only' => true,
-            'attr'      => array('size' => 4),
-        ));
         $builder->add('dtBeg','datetime',array(
             'label' => 'Date Time',
             'minutes' => array(0,5,10,15,20,25,30,35,40,45,50,55),
@@ -47,8 +43,7 @@ class GameUpdateByScorerFormFactory
         $teamNameChoices = $model->getTeamNameChoices();
         $gameTeamFormType = new GameUpdateByScorerTeamFormType($teamNameChoices);
         
-        $builder->add('homeTeam',$gameTeamFormType);
-        $builder->add('awayTeam',$gameTeamFormType);
+        $builder->add('teams','collection',array('type' => $gameTeamFormType));
     
         $builder->add('update', 'submit', array(
             'label' => 'Update',
