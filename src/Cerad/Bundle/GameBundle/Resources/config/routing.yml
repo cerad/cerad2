@@ -118,28 +118,40 @@ cerad_game__project__schedule_user__show:
 # =====================================================================
 # Results
 cerad_game__project__results_poolplay__show:
-    path:  /project/{_project}/results-poolplay
+    path:  /project/{_project}/results-poolplay.{_format}
     defaults: 
         _controller: cerad_game__project__results_poolplay__show_controller:action
-        _view:       cerad_game__project__results_poolplay__show_view
+        _view_xls:   cerad_game__project__results_poolplay__show_view_xls
+        _view_html:  cerad_game__project__results_poolplay__show_view_html
         _model:      cerad_game__project__results_poolplay__show_model_factory
+        _format:     html
         _template: '@CeradGame/Project/Results/Poolplay/Show/ResultsPoolplayShowTwigPage.html.twig'
+    requirements:
+        _format:  html|xls
         
 cerad_game__project__results_playoffs__show:
-    path:  /project/{_project}/results-playoffs
+    path:  /project/{_project}/results-playoffs.{_format}
     defaults: 
         _controller: cerad_game__project__results_playoffs__show_controller:action
-        _view:       cerad_game__project__results_playoffs__show_view
+        _view_xls:   cerad_game__project__results_playoffs__show_view_xls
+        _view_html:  cerad_game__project__results_playoffs__show_view_html
         _model:      cerad_game__project__results_playoffs__show_model_factory
+        _format:     html
         _template: '@CeradGame/Project/Results/Playoffs/Show/ResultsPlayoffsShowTwigPage.html.twig'
+    requirements:
+        _format:  html|xls
         
 cerad_game__project__results_sportsmanship__show:
-    path:  /project/{_project}/results-sportsmanship
+    path:  /project/{_project}/results-sportsmanship.{_format}
     defaults: 
         _controller: cerad_game__project__results_sportsmanship__show_controller:action
-        _view:       cerad_game__project__results_sportsmanship__show_view
+        _view_xls:   cerad_game__project__results_sportsmanship__show_view_xls
+        _view_html:  cerad_game__project__results_sportsmanship__show_view_html
         _model:      cerad_game__project__results_sportsmanship__show_model_factory
+        _format:     html
         _template: '@CeradGame/Project/Results/Sportsmanship/Show/ResultsSportsmanshipShowTwigPage.html.twig'
+    requirements:
+        _format:  html|xls
                 
 cerad_game__project__results__export:
     path:  /project/{_project}/results-export

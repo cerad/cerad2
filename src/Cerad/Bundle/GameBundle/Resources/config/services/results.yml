@@ -1,11 +1,24 @@
+
+  # ==============================================================
+  # Class Name Overrides
 parameters:
   cerad_game__project__results__export_xls__class: 
     Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsExportXLS
+    
+  cerad_game__project__results_poolplay__export_xls__class: 
+    Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsPoolplayExportXLS
+    
+  cerad_game__project__results_playoffs__export_xls__class: 
+    Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsPlayoffsExportXLS
+    
+  cerad_game__project__results_sportsmanship__export_xls__class: 
+    Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsSportsmanshipExportXLS
     
   cerad_game__project__results__natgames__class: 
     Cerad\Bundle\GameBundle\Service\Results\NatGamesResults
     
 services:
+  # =======================================================
   # Poolplay Results calculator
   cerad_game__results_natgames:
     class: '%cerad_game__project__results__natgames__class%'
@@ -20,7 +33,7 @@ services:
     scope: prototype
     
   # ============================================================
-  # ResultsPoolplayShow
+  # Results Poolplay Show
   cerad_game__project__results_poolplay__show_model_factory:
     class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsModel
     calls:
@@ -35,7 +48,7 @@ services:
       - [setRouter,     ['@router']]
       - [setTemplating, ['@templating']]
       
-  cerad_game__project__results_poolplay__show_view:
+  cerad_game__project__results_poolplay__show_view_html:
     class: Cerad\Bundle\GameBundle\Action\Project\Results\Poolplay\Show\ResultsPoolplayShowView
     calls:
       - [setRouter,     ['@router']]
@@ -43,27 +56,12 @@ services:
     arguments:
       - '%cerad_project_pools%'
       
-  # ============================================================
-  # ResultsExport
-  cerad_game__project__results__export_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsModel
-    calls:
-      - [setDispatcher,['@event_dispatcher']]
+  cerad_game__project__results_poolplay__show_view_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsViewFile
     arguments:
-      - '@cerad_game__game_repository'
-      - '@cerad_level__level_repository'
-             
-  cerad_game__project__results__export_controller:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsController
-      
-  cerad_game__project__results__export_view:
-    class: Cerad\Bundle\GameBundle\Action\Project\Results\Export\ResultsExportView
-    arguments:
-      - '@cerad_game__project__results__export_xls'
-      
-  cerad_game__project__results__export_xls:
-    class: '%cerad_game__project__results__export_xls__class%'
-    
+      - '@cerad_game__project__results_poolplay__export_xls'
+      - 'ResultsPoolPlay'
+          
   # ============================================================
   # Results Playoffs Show
   cerad_game__project__results_playoffs__show_model_factory:
@@ -80,13 +78,19 @@ services:
      #- [setRouter,     ['@router']]
      #- [setTemplating, ['@templating']]
       
-  cerad_game__project__results_playoffs__show_view:
+  cerad_game__project__results_playoffs__show_view_html:
     class: Cerad\Bundle\GameBundle\Action\Project\Results\Playoffs\Show\ResultsPlayoffsShowView
     calls:
       - [setRouter,     ['@router']]
       - [setTemplating, ['@templating']]
     arguments:
       - '%cerad_project_pools%'
+      
+  cerad_game__project__results_playoffs__show_view_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsViewFile
+    arguments:
+      - '@cerad_game__project__results_playoffs__export_xls'
+      - 'ResultsPlayoffs'
       
   # ============================================================
   # Results Sportsmanship Show
@@ -104,7 +108,7 @@ services:
      #- [setRouter,     ['@router']]
      #- [setTemplating, ['@templating']]
       
-  cerad_game__project__results_sportsmanship__show_view:
+  cerad_game__project__results_sportsmanship__show_view_html:
     class: Cerad\Bundle\GameBundle\Action\Project\Results\Sportsmanship\Show\ResultsSportsmanshipShowView
     calls:
       - [setRouter,     ['@router']]
@@ -112,3 +116,40 @@ services:
     arguments:
       - '%cerad_project_pools%'
       
+  cerad_game__project__results_sportsmanship__show_view_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsViewFile
+    arguments:
+      - '@cerad_game__project__results_sportsmanship__export_xls'
+      - 'ResultsSportsmanship'
+      
+  # ============================================================
+  # Results Export
+  # TODO: Replace with individual exports
+  cerad_game__project__results__export_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__game_repository'
+      - '@cerad_level__level_repository'
+             
+  cerad_game__project__results__export_controller:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsController
+      
+  cerad_game__project__results__export_view:
+    class: Cerad\Bundle\GameBundle\Action\Project\Results\ResultsViewFile
+    arguments:
+      - '@cerad_game__project__results__export_xls'
+      - 'Results'
+      
+  cerad_game__project__results__export_xls:
+    class: '%cerad_game__project__results__export_xls__class%'
+    
+  cerad_game__project__results_poolplay__export_xls:
+    class: '%cerad_game__project__results_poolplay__export_xls__class%'
+      
+  cerad_game__project__results_playoffs__export_xls:
+    class: '%cerad_game__project__results_playoffs__export_xls__class%'
+    
+  cerad_game__project__results_sportsmanship__export_xls:
+    class: '%cerad_game__project__results_sportsmanship__export_xls__class%'
