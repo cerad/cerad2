@@ -31,8 +31,9 @@ class GameUpdateByScorerController extends ActionController
         $tplData = array();
         $tplData['form'] = $form->createView();
         $tplData['game'] = $model->game;
+        $tplData['back'] = $model->back;
         
-        $tplName = $request->attributes->get('_template');
+        $tplName = $model->_template;
         
         return $this->templating->renderResponse($tplName,$tplData);
     }

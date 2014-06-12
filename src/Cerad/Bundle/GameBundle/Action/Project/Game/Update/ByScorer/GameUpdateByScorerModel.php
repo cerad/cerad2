@@ -6,61 +6,34 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class GameUpdateByScorerModel extends ActionModelFactory
 {
     // Request
+    public $back;
     public $game;
     public $project;
-    public $_project;
     
-    // Generated
-    public $gameClone;
-    public $gameTeamHomeClone;
-    public $gameTeamAwayClone;
+    public $_game;
+    public $_route;
+    public $_project;
+    public $_template;
     
     // Injected
     protected $gameRepo;
+    protected $teamRepo;
     
-    public function __construct($gameRepo)
+    public function __construct($gameRepo,$teamRepo)
     {   
         $this->gameRepo = $gameRepo;
+        $this->teamRepo = $teamRepo;
     }
-    
-    /* =====================================================
-     * Process a posted model
-     * Turn everything over to the workflow
-     */
     public function process()
-    {   
-        // In time
-      //$this->workflow->process($this->project,$this->game,$this->gameClone);
-        
-        // Two ways to update team names
-        $this->processTeamName($this->game->getHomeTeam(),$this->gameTeamHomeClone);
-        $this->processTeamName($this->game->getAwayTeam(),$this->gameTeamAwayClone);
-        
+    {       
         // Save
         $this->gameRepo->commit();
         return;
     }
-    protected function processTeamName($team,$teamClone)
-    {
-        // Used select list
-        if ($team->getName() != $teamClone->getName()) return;
-        
-        // Used text box
-        if ($team->getName() == $team->namex) return;
-        
-        $name = trim($team->namex);
-        if (!$name) return $name;
-        
-        $team->setName($name);
-    }
-    /* =========================================================================
-     * TODO: Do the variable name matching and inject project/game directly
-     */
     public function create(Request $request)
     { 
        // Extract
@@ -69,35 +42,35 @@ class GameUpdateByScorerModel extends ActionModelFactory
         // These will be set or never get here
         $this->game     = $game    = $requestAttrs->get('game');
         $this->project  = $project = $requestAttrs->get('project');
-        $this->_project = $request->attributes->get('_project');
+        
+        $this->_game     = $requestAttrs->get('_game');
+        $this->_route    = $requestAttrs->get('_route');
+        $this->_project  = $requestAttrs->get('_project');
+        $this->_template = $requestAttrs->get('_template');
         
         $this->back = $request->query->get('back');
-       
-        // Want to allow updating name by either select or text
-        $homeTeam = $game->getHomeTeam();
-        $awayTeam = $game->getAwayTeam();
         
-        // Need to override game clonner to get teams and officials
-        // Might be better to store the clone in the game itself $game->createClone();
-        $this->gameClone = clone $game;
-        $this->gameTeamHomeClone = clone $homeTeam;
-        $this->gameTeamAwayClone = clone $awayTeam;
+        // TODO: Make a form data object
         
         // Factory
         return $this;
     }
-    public function getGameFields()
+    public function findVenueFields()
     {
-        return array();
-        return $this->gameFieldRepo->findByProject($this->project);
+      //$levelKey   = $this->game->getLevelKey(); // Might be too restrictive
+        $projectKey = $this->game->getProjectKey();
+        return $this->gameRepo->queryVenues($projectKey);
     }
-    public function getTeamNameChoices()
+    public function findFieldNames()
     {
-        $criteria = array
-        (
-            'levelKeys'   => $this->game->getLevelKey(),
-            'projectKeys' => $this->project->getKey()
+        $criteria = array(
+          'projectKeys' => $this->game->getProjectKey(),  
         );
-        return $this->gameRepo->queryTeamChoices($criteria);
+        return $this->gameRepo->queryFieldChoices($criteria);
+    }
+    public function findPhysicalTeams()
+    { 
+        $game = $this->game;
+        return $this->teamRepo->findAllByProjectLevels($game->getProjectKey(),$game->getLevelKey());        
     }
 }

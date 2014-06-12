@@ -171,6 +171,41 @@ class GameRepository extends EntityRepository
         return $qbx->getQuery()->getResult();
     }
     /* ========================================================
+     * Distinct list of venue,fields
+     */
+    public function queryVenues($projectKeys,$levelKeys = null)
+    {
+        // Build query
+        $qb = $this->createQueryBuilder('game');
+        
+        $qb->select('distinct game.venueName,game.fieldName');
+        
+        if ($projectKeys)
+        {
+            $qb->andWhere('game.projectKey IN (:projectKeys)');
+            $qb->setParameter('projectKeys',$projectKeys);
+        }
+        if ($levelKeys)
+        {
+            $qb->andWhere('game.levelKey IN (:levelKeys)');
+            $qb->setParameter('levelKeys',$levelKeys);
+        }
+        $qb->addOrderBy('game.venueName,game.fieldName');
+       
+        $rows = $qb->getQuery()->getScalarResult();
+        
+        return $rows;
+        
+        print_r($rows); die();
+        $choices = array();
+        
+        array_walk($rows, function($row) use (&$choices) 
+        { 
+            $choices[$row['fieldName']] = $row['fieldName']; 
+        });
+        return $choices;
+    }
+    /* ========================================================
      * Distinct list of field names for a set of projects
      */
     public function queryFieldChoices($criteria = array())

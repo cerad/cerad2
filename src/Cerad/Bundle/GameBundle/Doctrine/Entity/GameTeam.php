@@ -69,6 +69,7 @@ class GameTeam
     
     public function getName()      
     { 
+        return $this->name;
         return $this->name ? $this->name : $this->groupSlot;      
     }
     
@@ -119,9 +120,5 @@ class GameTeam
         $this->report = $report ? $report->getData() : null;
         $this->reportx = null;
     }
-    /* ==========================================================
-     * Cheesy clone
-     */
-    public $namex;
 }
 ?>

@@ -65,5 +65,14 @@ class Team
         
         $game->setTeam($this);
     }
+    /* ==============================================
+     * Readable view of the team?
+     * Currently used to select teams
+     * Really would like to move this out of here
+     */
+    public function getDesc()
+    {
+        return sprintf('#%02d  %s',$this->num,$this->name);
+    }
 }
 ?>
