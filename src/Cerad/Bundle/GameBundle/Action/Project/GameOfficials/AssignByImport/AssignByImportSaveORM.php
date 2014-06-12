@@ -51,6 +51,12 @@ class AssignByImportSaveORM
         );
         
         $slot = $game->getOfficialForSlot($official['slot']);
+        if (!$slot)
+        {
+            return; // VIP issues
+            //
+            die('No slot ' . $game->getLevelKey());
+        }
         $slotPersonNameFull = $official['personNameFull'];
         
         // No name, clear slot
@@ -82,7 +88,6 @@ class AssignByImportSaveORM
             
             if ($verify) 
             {
-                $results->unverifiedPersons[] = $log;
                 $results->commit = false;
                 return;
             }
