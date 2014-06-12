@@ -118,7 +118,7 @@ class ExcelDump
         return ob_get_clean();
     }
     public function getFileExtension() { return 'xlsx'; }
-    public function getContentType()   { return 'application/vnd.ms-excel'; }
+    public function getContentType()   { return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; }
     
     /* ========================================================
      * Returns the excel numeric value for a given time
