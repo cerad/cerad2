@@ -22,15 +22,17 @@ class AssignByImportModel extends ActionModelFactory
     
     protected $workflow;
     
-    protected $importer;
+    protected $reader;
+    protected $saver;
     
     protected $gameRepo;
     
-    public function __construct(AssignWorkflow $workflow, $gameRepo, $importer)
+    public function __construct(AssignWorkflow $workflow, $gameRepo, $reader, $saver)
     {   
         $this->workflow = $workflow;
         $this->gameRepo = $gameRepo;
-        $this->importer = $importer;
+        $this->reader   = $reader;
+        $this->saver    = $saver;
     }
         
     /* =====================================================
@@ -44,24 +46,15 @@ class AssignByImportModel extends ActionModelFactory
       //echo sprintf("Max file size %d %d Valid: %d, Error: %d<br />\n",
       //    $file->getMaxFilesize(),$file->getClientSize(),$file->isValid(), $file->getError());
         
-        $importFilePath = $file->getPathname();
-        $clientFileName = $file->getClientOriginalName();
-        
-        $params['project']  = $this->project;
-        $params['filepath'] = $importFilePath;
-        $params['basename'] = $clientFileName;
-        
-        $params['state' ] = $this->state;
-        $params['verify'] = $this->verify;
-        $params['commit'] = $this->commit;
-        
-        $results = $this->importer->process($params);
+        $games = $this->reader->read($file->getPathname(),$this->project);
 
-        return $results;
+        $saveResults = $this->saver->save($games,$this->commit,$this->state,$this->verify);
+        
+        $saveResults->basename = $file->getClientOriginalName();
+        
+        return $saveResults;
+
     }
-    /* =========================================================================
-     * Also holds logic to allow signing up for this particular game slot?
-     */
     public function create(Request $request)
     {   
         $requestAttrs = $request->attributes;

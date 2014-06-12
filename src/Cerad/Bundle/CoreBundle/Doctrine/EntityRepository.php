@@ -22,6 +22,7 @@ class EntityRepository extends BaseRepository
      */
     public function persist($entity) { return $this->getEntityManager()->persist($entity); }
     public function refresh($entity) { return $this->getEntityManager()->refresh($entity); }
+    public function detach ($entity) { return $this->getEntityManager()->detach ($entity); }
     public function remove ($entity) { return $this->getEntityManager()->remove ($entity); }
     public function flush()          { return $this->getEntityManager()->flush();          }
     public function clear()          { return $this->getEntityManager()->clear();          }
@@ -30,6 +31,7 @@ class EntityRepository extends BaseRepository
     public function save($entity) { return $this->getEntityManager()->persist($entity); }
     public function commit()      { return $this->getEntityManager()->flush();          }
  
+    public function getReference($id) { return $this->getEntityManager()->getReference($this->getEntityName(),$id); }
     
     /* ==========================================================
      * Maybe an abstract class would be nice after all

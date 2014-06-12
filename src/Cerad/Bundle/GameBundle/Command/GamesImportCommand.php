@@ -42,7 +42,7 @@ class GamesImportCommand extends ContainerAwareCommand
         echo sprintf("Games: %d\n",count($games));
         
         file_put_contents($file . '.yml',Yaml::dump($games,10));
-        
+return;        
         $saver = $this->getService('cerad_game__games__util_save_orm');
         $saveResults = $saver->save($games,true);
         $saveResults->basename = $file;

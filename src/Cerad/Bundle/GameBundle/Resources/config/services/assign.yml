@@ -75,8 +75,9 @@ services:
         arguments:
             - '@cerad_game__project__game_official__assign_by_assignor__workflow'
             - '@cerad_game__game_repository'
-            - '@cerad_game__project__game_officials__assign_by_import__from_xls'
-                        
+            - '@cerad_game__games__util_read_zayso_xls'
+            - '@cerad_game__project__game_officials__assign_by_import__save_orm'
+            
     cerad_game__project__game_officials__assign_by_import__form_factory:
         class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByImport\AssignByImportFormFactory
         calls:
@@ -89,8 +90,8 @@ services:
              - [setRouter,     ['@router']]
              - [setTemplating, ['@templating']]
              
-    cerad_game__project__game_officials__assign_by_import__from_xls:
-        class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByImport\AssignByImportFromXLS
+    cerad_game__project__game_officials__assign_by_import__save_orm:
+        class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByImport\AssignByImportSaveORM
         arguments:
           - '@event_dispatcher'
           - '@cerad_game__game_repository'

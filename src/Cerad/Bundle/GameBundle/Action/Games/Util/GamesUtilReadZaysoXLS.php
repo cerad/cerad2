@@ -2,9 +2,10 @@
 
 namespace Cerad\Bundle\GameBundle\Action\Games\Util;
 
-use Cerad\Component\Excel\Loader as BaseLoader;
+// 12 June 2014 - This was pointing to ols Component stuff
+use Cerad\Bundle\CoreBundle\Excel\ExcelLoader;
 
-class GamesUtilReadZaysoXLS extends BaseLoader
+class GamesUtilReadZaysoXLS extends ExcelLoader
 {
     protected $levelRepo;
     protected $projectKey;
@@ -27,6 +28,11 @@ class GamesUtilReadZaysoXLS extends BaseLoader
         
         'homeTeamGroupSlot' => array('cols' => array('HT Slot','Home Team Group'), 'req' => true),
         'awayTeamGroupSlot' => array('cols' => array('AT Slot','Away Team Group'), 'req' => true),
+        
+        'referee' => array('cols' => 'Referee', 'req' => false),
+        'ar1'     => array('cols' => 'Referee', 'req' => false, 'plus' => 1),
+        'ar2'     => array('cols' => 'Referee', 'req' => false, 'plus' => 2),
+        
     );
     public function __construct($levelRepo,$gameSlotDurations)
     {
@@ -78,6 +84,9 @@ class GamesUtilReadZaysoXLS extends BaseLoader
         $game['groupType'] = $groupType;
         $game['groupName'] = $groupName;
         
+        /* ==========================================
+         * Teams
+         */
         $teams = array();
         $teamSlot = 1;
         foreach(array('home','away') as $role)
@@ -93,8 +102,19 @@ class GamesUtilReadZaysoXLS extends BaseLoader
         }
         $game['gameTeams'] = $teams;
         
+        // Officials if have them
+        if (isset($item['referee']))
+        {
+            $officials = array();
+            $slot = 1;
+            foreach(array('referee','ar1','ar2') as $key)
+            {
+                $officials[] = array('slot' => $slot++, 'personNameFull' => $item[$key]);
+            }
+            $game['officials'] = $officials;
+        }
+        // Stash
         $this->items[] = $game;
-        
         return;
         
     }
