@@ -92,6 +92,8 @@ class PersonPlan extends BaseModel
     
     const SHIRT_SIZE  = 'tshirt';
 
+    const PROGRAM = 'venue';
+    
     // Hack this in for now
     const WILL_ATTEND_LEAGUE  = 'attendingLeague';
     const WILL_ATTEND_ASExtra = 'attendingASExtra';
@@ -110,6 +112,7 @@ class PersonPlan extends BaseModel
     public function getWillMentor () { return $this->getBasicValue(self::WILL_MENTOR);  }
     public function getWantMentor () { return $this->getBasicValue(self::WANT_MENTOR);  }
     public function getShirtSize  () { return $this->getBasicValue(self::SHIRT_SIZE);   }
+    public function getProgram    () { return $this->getBasicValue(self::PROGRAM);      }
     
     public function setWillAttendLeague ($value) { return $this->setBasicParam(self::WILL_ATTEND_LEAGUE, $value); }
     public function setWillAttendASExtra($value) { return $this->setBasicParam(self::WILL_ATTEND_ASExtra,$value); }
@@ -121,6 +124,7 @@ class PersonPlan extends BaseModel
     public function setWillMentor ($value) { return $this->setBasicParam(self::WILL_MENTOR, $value); }
     public function setWantMentor ($value) { return $this->setBasicParam(self::WANT_MENTOR, $value); }
     public function setShirtSize  ($value) { return $this->setBasicParam(self::SHIRT_SIZE,  $value); }
+    public function setProgram    ($value) { return $this->setBasicParam(self::PROGRAM,     $value); }
     
     protected function setBasicParam($name,$value)
     {
@@ -158,14 +162,6 @@ class PersonPlan extends BaseModel
         if (strtolower($willReferee) != 'yes') return false;
         
         return true;
-    }
-    public function getProgram()
-    {
-        $basic = $this->getBasic();
-        
-        $program  = isset($basic['venue' ]) ? $basic['venue']  : null;
-        
-        return $program;
     }
 }
 ?>

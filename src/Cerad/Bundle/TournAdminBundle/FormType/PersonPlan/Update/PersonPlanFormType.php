@@ -24,8 +24,11 @@ class PersonPlanFormType extends AbstractType
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $options;
+        
         $builder->add('willAttend', 'cerad_person_plan_will_attend');
         $builder->add('willReferee','cerad_person_plan_will_referee');
+        $builder->add('program',    'cerad_person_plan_program');
         
         $builder->add('wantMentor', 'cerad_person_plan_want_mentor');
         $builder->add('willMentor', 'cerad_person_plan_will_mentor');

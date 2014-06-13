@@ -128,6 +128,11 @@ services:
         class: Cerad\Bundle\PersonBundle\FormType\Plan\WillMentorFormType
         tags:
             - { name: form.type, alias: cerad_person_plan_will_mentor }
+            
+    cerad_person.plan_program.form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\Plan\ProgramFormType
+        tags:
+            - { name: form.type, alias: cerad_person_plan_program }
        
 # ==========================================================
 # AYSO Form Types
