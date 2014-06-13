@@ -40,7 +40,7 @@ class AssignByAssignorSlotFormType extends AbstractType
         ));
         $builder->add('personNameFull', 'text', array(
             'attr'      => array('size' => 30),
-            'read_only' => false,
+            'read_only' => true,
             'required'  => false,
         ));
         
@@ -51,6 +51,8 @@ class AssignByAssignorSlotFormType extends AbstractType
         );
 
         $builder->addEventSubscriber($subscriber);
+        
+        if ($options);
     }
 }
 

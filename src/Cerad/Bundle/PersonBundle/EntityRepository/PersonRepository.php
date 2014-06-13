@@ -308,5 +308,65 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
       //$em->persist($newFed);
         if ($commit) $em->flush();
     }
+    /* ========================================================
+     * 13 June 2016
+     */
+    public function findProjectPersonByGuid($project,$personGuid)
+    {
+        if (!$personGuid) return null;
+        
+        $qb = $this->createQueryBuilder('person');
+        
+        $qb->andWhere('person.guid = :personGuid');
+        $qb->setParameter('personGuid',$personGuid);
+        
+        // TODO: Use a join condition
+        $qb->addSelect   ('personPlan');
+        $qb->leftJoin    ('person.plans','personPlan');
+        $qb->andWhere    ('personPlan.projectId  = :projectKey' );
+        $qb->setParameter('projectKey', $project->getKey());
+        
+        // TODO: Should use a join condition here?
+        $qb->addSelect   ('personFed,personFedCert');
+        $qb->leftJoin    ('person.feds','personFed');
+        $qb->leftJoin    ('personFed.certs','personFedCert');
+        
+        $qb->andWhere    ('personFed.fedRole = :fedRole' );
+        $qb->setParameter('fedRole', $project->getFedRole());
+        
+        $items = $qb->getQuery()->getResult();
+        if (count($items) == 1) return $items[0];
+        
+        return null;
+    }
+    public function findProjectPersonByName($project,$personName)
+    {
+        if (!$personName) return null;
+        
+        $qb = $this->createQueryBuilder('person');
+        
+        // TODO: Use a join condition
+        $qb->addSelect   ('personPlan');
+        $qb->leftJoin    ('person.plans','personPlan');
+        
+        $qb->andWhere    ('personPlan.projectId  = :projectKey' );
+        $qb->setParameter('projectKey', $project->getKey());
+        
+        $qb->andWhere    ('personPlan.personName = :personName' );
+        $qb->setParameter('personName', $personName);
+        
+        // TODO: Should use a join condition here?
+        $qb->addSelect   ('personFed,personFedCert');
+        $qb->leftJoin    ('person.feds','personFed');
+        $qb->leftJoin    ('personFed.certs','personFedCert');
+        
+        $qb->andWhere    ('personFed.fedRole = :fedRole' );
+        $qb->setParameter('fedRole', $project->getFedRole());
+        
+        $items = $qb->getQuery()->getResult();
+        if (count($items) == 1) return $items[0];
+        
+        return null;
+    }
 }
 ?>

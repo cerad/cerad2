@@ -14,6 +14,8 @@ use Cerad\Bundle\CoreBundle\Event\FindPersonEvent;
 use Cerad\Bundle\CoreBundle\Event\FindPersonPlanEvent;
 use Cerad\Bundle\CoreBundle\Event\FindOfficialsEvent;
 
+use Cerad\Bundle\CoreBundle\Event\Person\FindProjectPersonEvent;
+
 class PersonEventListener extends ContainerAware implements EventSubscriberInterface
 {
     const ControllerPersonEventListenerPriority = -1400;
@@ -27,6 +29,9 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             ),       
             FindPersonEvent    ::FindByGuidEventName   => array('onFindPersonByGuid' ),
             FindPersonEvent    ::FindByFedKeyEventName => array('onFindPersonByFedKey' ),
+            
+            FindProjectPersonEvent::ByGuid  => array('onFindProjectPersonByGuid' ),
+            FindProjectPersonEvent::ByName  => array('onFindProjectPersonByName' ),
             
             FindPersonPlanEvent::FindByProjectGuidEventName  => array('onFindPersonPlanByProjectGuid' ),
             FindPersonPlanEvent::FindByProjectNameEventName  => array('onFindPersonPlanByProjectName' ),
@@ -180,6 +185,59 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         $event->person = $this->getPersonRepository()->findOneByByProjectName($event->projectKey,$event->personName);
         
         return;
+    }
+    /* ===============================================================================
+     * Finds an aggrate person with attached project plan as well as project fed info
+     */
+    public function onFindProjectPersonByGuid(FindProjectPersonEvent $event)
+    {
+        // Probably not needed
+        $personGuid = $event->getSearch();
+        if (!$personGuid) return;
+        
+        // Project
+        $project = $event->getProject();
+        if (!$project)
+        {
+            throw new \InvalidArgumentException('FindProjectPersonByGuid:: Missing Project');
+        }
+        if (!is_object($project))
+        {
+            throw new \InvalidArgumentException('FindProjectPersonByGuid:: Project Key Not yet Supported');
+        }
+        
+        // Lookup
+        $person = $this->getPersonRepository()->findProjectPersonByGuid($project,$personGuid);
+        if (!$person)
+        {
+            return;
+        }
+        $event->setPerson($person);
+    }
+    public function onFindProjectPersonByName(FindProjectPersonEvent $event)
+    {
+        // Probably not needed
+        $personName = $event->getSearch();
+        if (!$personName) return;
+        
+        // Project
+        $project = $event->getProject();
+        if (!$project)
+        {
+            throw new \InvalidArgumentException('FindProjectPersonByGuid:: Missing Project');
+        }
+        if (!is_object($project))
+        {
+            throw new \InvalidArgumentException('FindProjectPersonByGuid:: Project Key Not yet Supported');
+        }
+        
+        // Lookup
+        $person = $this->getPersonRepository()->findProjectPersonByName($project,$personName);
+        if (!$person)
+        {
+            return;
+        }
+        $event->setPerson($person);
     }
 }
 ?>

@@ -18,7 +18,8 @@ table.assign
 {% for slot in form.gameOfficials %}
 <tr><td>
   {{ form_widget(slot.role) }}
-  {{ form_widget(slot.personNameFull) }}{{ form_widget(slot.personGuid) }}{{ form_widget(slot.assignState) }}
+  <span style="display:none">{{ form_widget(slot.personNameFull) }}</span>
+  {{ form_widget(slot.personGuid) }}{{ form_widget(slot.assignState) }}
 </td></tr>
 {% endfor %}
 <tr><td style="height:2em; float:right; padding:10px">{{ form_widget(form.reset) }}{{ form_widget(form.assign) }}</td></tr>

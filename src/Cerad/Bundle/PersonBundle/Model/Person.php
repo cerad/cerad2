@@ -148,6 +148,18 @@ class Person extends BaseModel implements PersonInterface
         
         return $fed;
     }
+    public function getProjectFed()
+    {
+        if (count($this->feds) != 1)
+        {
+            throw new \Exception('Missing project fed');
+        }
+        // Need a better way to get the first item
+        foreach($this->feds as $fed)
+        {
+            return $fed;
+        }
+    }
     
     /* =============================================================
      * The plans
@@ -167,6 +179,18 @@ class Person extends BaseModel implements PersonInterface
         $plan->setPerson($this);
         
         $this->onPropertyChanged('plans');
+    }
+    public function getProjectPlan()
+    {
+        if (count($this->plans) != 1)
+        {
+            throw new \Exception('Missing project plan');
+        }
+        // Need a better way to get the first item
+        foreach($this->plans as $plan)
+        {
+            return $plan;
+        }
     }
     public function getPlan($projectKey = null, $autoCreate = true, $autoAdd = true)
     {

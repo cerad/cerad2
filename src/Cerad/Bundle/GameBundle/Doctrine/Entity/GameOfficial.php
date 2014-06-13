@@ -87,13 +87,59 @@ class GameOfficial
         {
             $this->setPersonGuid    (null);
             $this->setPersonEmail   (null);
+            $this->setPersonBadge   (null);
+            $this->setPersonPhone   (null);
             $this->setPersonNameFull(null);
             return;
         }
         $person = $personPlan->getPerson();
         $this->setPersonGuid    ($person->getGuid());
         $this->setPersonEmail   ($person->getEmail());
+        $this->setPersonPhone   ($person->getPhone());
         $this->setPersonNameFull($personPlan->getPersonName());
+    }
+    // Some actual business logic
+    // Person is an ar with one plan and one fed
+    public function changePerson($person)
+    {
+        if (!$person)
+        {
+            $this->personGuid     = null;
+            $this->personEmail    = null;
+            $this->personPhone    = null;
+            $this->personNameFull = null;
+            $this->personNameLast = null;
+            $this->personNameFirst = null;
+            
+            $this->personBadge  = null;
+            $this->personFedKey = null;
+            $this->personOrgKey = null;
+           
+            return;
+        }
+        // Xfer person info
+        $this->personGuid     = $person->getGuid();
+        $this->personEmail    = $person->getEmail();
+        $this->personPhone    = $person->getPhone();
+        
+        $personName = $person->getName();
+        $this->personNameLast  = $personName->last;
+        $this->personNameFirst = $personName->first;
+        
+        // Xfer plan info
+        $personPlan = $person->getProjectPlan();
+        $this->personNameFull = $personPlan->getPersonName();
+        
+        $personFed = $person->getProjectFed();
+        
+        $this->personFedKey = $personFed->getFedKey();
+        $this->personOrgKey = $personFed->getOrgKey();
+            
+        $refereeCert = $personFed->getCertReferee(false);
+        if ($refereeCert)
+        {
+            $this->personBadge = $refereeCert->getBadge();
+        }
     }
     /* =========================================
      * Used to highlite objects

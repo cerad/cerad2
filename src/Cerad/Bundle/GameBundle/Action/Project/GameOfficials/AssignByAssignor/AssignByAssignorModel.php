@@ -51,7 +51,10 @@ class AssignByAssignorModel extends ActionModelFactory
             
             // All the real majic happens here
             $gameOfficialClone = $this->gameOfficialClones[$gameOfficial->getSlot()];
-            $this->workflow->process($this->project,$gameOfficialClone,$gameOfficial,$projectOfficial);
+            
+          //$this->workflow->process($this->project,$gameOfficialClone,$gameOfficial,$projectOfficial);
+            
+            $this->workflow->assign($this->project,$gameOfficialClone,$gameOfficial);
             
             // Possibly restore to original values?
             
