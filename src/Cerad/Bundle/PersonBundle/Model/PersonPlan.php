@@ -93,6 +93,10 @@ class PersonPlan extends BaseModel
     const SHIRT_SIZE  = 'tshirt';
 
     const PROGRAM = 'venue';
+
+    const AVAIL_SAT_AFTERNOON = 'availSatAfter';
+    const AVAIL_SUN_AFTERNOON = 'availSunAfter';
+    const AVAIL_SUN_MORNING   = 'availSunMorn';
     
     // Hack this in for now
     const WILL_ATTEND_LEAGUE  = 'attendingLeague';
@@ -114,6 +118,10 @@ class PersonPlan extends BaseModel
     public function getShirtSize  () { return $this->getBasicValue(self::SHIRT_SIZE);   }
     public function getProgram    () { return $this->getBasicValue(self::PROGRAM);      }
     
+    public function getAvailSatAfternoon() { return $this->getBasicValue(self::AVAIL_SAT_AFTERNOON); }
+    public function getAvailSunAfternoon() { return $this->getBasicValue(self::AVAIL_SUN_AFTERNOON); }
+    public function getAvailSunMorning  () { return $this->getBasicValue(self::AVAIL_SUN_MORNING);   }
+    
     public function setWillAttendLeague ($value) { return $this->setBasicParam(self::WILL_ATTEND_LEAGUE, $value); }
     public function setWillAttendASExtra($value) { return $this->setBasicParam(self::WILL_ATTEND_ASExtra,$value); }
     
@@ -125,6 +133,10 @@ class PersonPlan extends BaseModel
     public function setWantMentor ($value) { return $this->setBasicParam(self::WANT_MENTOR, $value); }
     public function setShirtSize  ($value) { return $this->setBasicParam(self::SHIRT_SIZE,  $value); }
     public function setProgram    ($value) { return $this->setBasicParam(self::PROGRAM,     $value); }
+    
+    public function setAvailSatAfternoon($value) { return $this->setBasicParam(self::AVAIL_SAT_AFTERNOON,$value); }
+    public function setAvailSunAfternoon($value) { return $this->setBasicParam(self::AVAIL_SUN_AFTERNOON,$value); }
+    public function setAvailSunMorning  ($value) { return $this->setBasicParam(self::AVAIL_SUN_MORNING,  $value); }
     
     protected function setBasicParam($name,$value)
     {

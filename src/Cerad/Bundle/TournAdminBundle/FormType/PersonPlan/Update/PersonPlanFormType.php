@@ -35,6 +35,10 @@ class PersonPlanFormType extends AbstractType
         
         $builder->add('shirtSize',  'cerad_person_shirt_size');
         
+        $builder->add('availSatAfternoon','cerad_person_plan_avail');
+        $builder->add('availSunAfternoon','cerad_person_plan_avail');
+        $builder->add('availSunMorning',  'cerad_person_plan_avail');
+        
         $builder->add('notes', 'textarea' ,array(
             'required' => false,
             'attr' => array('rows' => 3, 'cols' => 40)
