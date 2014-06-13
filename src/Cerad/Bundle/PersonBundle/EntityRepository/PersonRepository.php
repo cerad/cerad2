@@ -49,7 +49,7 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
     /* ====================================================
      * Grabs everyone for a project then filters for officials
      */
-    public function findOfficialsByProject($projectKey, $program = null)
+    public function findOfficialsByProject($projectKey, $program = null, $fedRole = null)
     {
         $qb = $this->createQueryBuilder('person');
         
@@ -58,6 +58,18 @@ class PersonRepository extends EntityRepository implements PersonRepositoryInter
         
         $qb->andWhere('personPlan.projectId IN (:projectKey)');
         $qb->setParameter('projectKey',$projectKey);
+        
+        if ($fedRole)
+        {
+            $qb->addSelect('personFed');
+            $qb->leftJoin ('person.feds','personFed');
+            
+            $qb->addSelect('personFedCert');
+            $qb->leftJoin ('personFed.certs','personFedCert');
+            
+            $qb->andWhere('personFed.fedRole IN (:fedRole)');
+            $qb->setParameter('fedRole',$fedRole);
+        }
  
         $qb->orderBy('personPlan.personName');
         

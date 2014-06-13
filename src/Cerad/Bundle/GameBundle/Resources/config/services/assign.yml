@@ -1,5 +1,8 @@
 parameters:
   
+    cerad_game__game_official__person_name__choice_tpl__class:
+      'Cerad\Bundle\GameBundle\Action\GameOfficial\Tpl\GameOfficialPersonNameChoiceTpl'
+
 services:
     # ====================================================
     # Assign game official by user
@@ -45,6 +48,8 @@ services:
         calls:
              - [setRouter,      ['@router']]
              - [setFormFactory, ['@form.factory']]
+        arguments:
+             - '@cerad_game__game_official__person_name__choice_tpl'
             
     cerad_game__project__game_officials__assign_by_assignor__controller:
         class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor\AssignByAssignorController
@@ -65,7 +70,10 @@ services:
             - '%cerad_game__game_official__assign__workflow__file%'
         calls:
              - [setDispatcher,['@event_dispatcher']]
- 
+             
+    cerad_game__game_official__person_name__choice_tpl:
+        class: '%cerad_game__game_official__person_name__choice_tpl__class%'
+
     # ====================================================
     # Assign game officials by import
     cerad_game__project__game_officials__assign_by_import__model_factory:

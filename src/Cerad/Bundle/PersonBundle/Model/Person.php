@@ -106,7 +106,10 @@ class Person extends BaseModel implements PersonInterface
      */
     public function createFed($params = null) { return new PersonFed($params); }
     
-    public function getFeds() { return $this->feds; }
+    public function getFeds($asArray = false) 
+    { 
+        return $asArray ? $this->feds->toArray() : $this->feds; 
+    }
     
     public function removeFed(PersonFed $fed)
     {

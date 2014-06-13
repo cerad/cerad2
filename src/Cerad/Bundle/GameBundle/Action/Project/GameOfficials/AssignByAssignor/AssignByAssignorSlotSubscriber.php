@@ -12,14 +12,14 @@ class AssignByAssignorSlotSubscriber implements EventSubscriberInterface
     private $factory;
     private $workflow;
     
-    private $personGuidOptions;
+    private $personGuidChoices;
     
-    public function __construct(FormFactoryInterface $factory, $workflow, $personGuidOptions)
+    public function __construct(FormFactoryInterface $factory, $workflow, $personGuidChoices)
     {
         $this->factory  = $factory;
         $this->workflow = $workflow;
         
-        $this->personGuidOptions = $personGuidOptions;
+        $this->personGuidChoices = $personGuidChoices;
     }
     public static function getSubscribedEvents()
     {
@@ -44,7 +44,7 @@ class AssignByAssignorSlotSubscriber implements EventSubscriberInterface
             'auto_initialize' => false,
             'empty_value'     => 'Select Official',
             'empty_data'      => null,
-            'choices'         => $this->personGuidOptions,
+            'choices'         => $this->personGuidChoices,
         )));
          
         return;

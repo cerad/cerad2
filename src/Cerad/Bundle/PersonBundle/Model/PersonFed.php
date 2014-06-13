@@ -98,7 +98,8 @@ class PersonFed extends BaseModel
      */
     public function createCert($params) { return new PersonFedCert($params); }
     
-    public function getCerts() { return $this->certs; }
+    public function getCerts()      { return $this->certs; }
+    public function getCertsArray() { return $this->certs->toArray(); }
     
     public function removeCert(PersonFedCert $cert)
     {

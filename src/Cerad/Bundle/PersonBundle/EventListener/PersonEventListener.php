@@ -104,12 +104,21 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             }
         }
     }
+    /* =======================================================
+     * This would be a good one to move to it's own service
+     * Link person to their project plan as well as their fedkey info
+     * 
+     * Game is currently optional, make it required later
+     * That would require accessing FedRole from somewhere
+     */
     public function onFindOfficials(FindOfficialsEvent $event)
     {
         // Just means a listener was available
         $event->stopPropagation();
         
-        $projectKey = $event->getProject()->getKey();
+        $project = $event->getProject();
+        
+        $projectKey = $project->getKey();
         
         $game = $event->getGame();
         if ($game)
@@ -122,7 +131,7 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
         }
         else $program = null;
         
-        $officials = $this->getPersonRepository()->findOfficialsByProject($projectKey,$program);
+        $officials = $this->getPersonRepository()->findOfficialsByProject($projectKey,$program,$project->getFedRole());
  
         $event->setOfficials($officials);
     }

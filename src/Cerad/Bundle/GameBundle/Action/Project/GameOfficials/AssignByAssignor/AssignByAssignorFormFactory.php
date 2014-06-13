@@ -8,6 +8,12 @@ use Cerad\Bundle\CoreBundle\Action\ActionFormFactory;
 
 class AssignByAssignorFormFactory extends ActionFormFactory
 {   
+    protected $personNameChoiceTpl;
+    
+    public function __construct($personNameChoiceTpl)
+    {
+        $this->personNameChoiceTpl = $personNameChoiceTpl;
+    }
     public function create(Request $request, AssignByAssignorModel $model)
     {   
         // The 'form' is actually the type
@@ -24,7 +30,8 @@ class AssignByAssignorFormFactory extends ActionFormFactory
         
         $slotFormType = new AssignByAssignorSlotFormType(
                 $model->workflow,
-                $model->projectOfficials
+                $model->projectOfficials,
+                $this->personNameChoiceTpl
         );
         $builder->add('gameOfficials','collection',array('type' => $slotFormType));
         

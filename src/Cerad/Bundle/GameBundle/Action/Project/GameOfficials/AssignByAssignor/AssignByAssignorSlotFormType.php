@@ -17,24 +17,20 @@ class AssignByAssignorSlotFormType extends AbstractType
         ));
     }
     protected $workflow;
-    protected $officialGuidOptions;
+    protected $officialGuidChoices;
     
-    public function __construct($workflow,$officials)
+    public function __construct($workflow,$officials,$personNameChoiceTpl)
     {
         $this->workflow = $workflow;
         
         $guids = array();
         foreach($officials as $official)
         {
-            $plan = $official->getPlan();
-            $name = $plan->getPersonName();
-            $program = substr(strtoupper($plan->getProgram()),0,1);
-
-            $desc = $program ? sprintf('%s {%s)',$name,$program) : $name;
+            $desc = $personNameChoiceTpl->render($official);
             
             $guids[$official->getGuid()] = $desc;
         }
-        $this->officialGuidOptions = $guids;
+        $this->officialGuidChoices = $guids;
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -48,7 +44,12 @@ class AssignByAssignorSlotFormType extends AbstractType
             'required'  => false,
         ));
         
-        $subscriber = new AssignByAssignorSlotSubscriber($builder->getFormFactory(),$this->workflow,$this->officialGuidOptions);
+        $subscriber = new AssignByAssignorSlotSubscriber(
+            $builder->getFormFactory(),
+            $this->workflow,
+            $this->officialGuidChoices
+        );
+
         $builder->addEventSubscriber($subscriber);
     }
 }
