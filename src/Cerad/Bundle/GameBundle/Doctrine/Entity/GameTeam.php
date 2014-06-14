@@ -103,8 +103,10 @@ class GameTeam
     /* ======================================================
      * Report is a value object
      */
-    public function getReport()
+    public function getReport($cache = false)
     {
+        if ($cache) return $this->getReportx();
+        
         return new GameTeamReport($this->report);
     }
     // Allow multiple calls

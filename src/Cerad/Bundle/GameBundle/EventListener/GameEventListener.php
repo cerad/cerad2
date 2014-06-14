@@ -13,6 +13,8 @@ use Cerad\Bundle\GameBundle\GameEvents;
 use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
 
+use Cerad\Bundle\CoreBundle\Event\Game\UpdatedGameReportEvent;
+
 use Cerad\Bundle\CoreBundle\Event\FindProjectTeamsEvent;
 use Cerad\Bundle\CoreBundle\Event\FindProjectLevelsEvent;
 
@@ -31,6 +33,8 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
             FindResultsEvent::EventName  => array('onFindResults'),
             
             FindProjectTeamsEvent::FindProjectTeams  => array('onFindProjectTeams'),
+            
+            UpdatedGameReportEvent::Updated  => array('onUpdatedGameReport'),
             
             GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot'),
         );
@@ -193,6 +197,51 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         $this->container->get('mailer')->send($assignorMessage);
 
         return;
+    }
+    /* ========================================================
+     * 14 June 2014
+     * First shot at advancing medal round teams
+     * This is the sort of thing that should be passed to a service
+     */
+    public function onUpdatedGameReport(UpdatedGameReportEvent $event)
+    {
+        $game = $event->getGame();
+        
+        $gameGroupType = $game->getGroupType();
+        $gameGroupName = $game->getGroupName();
+        
+        $gameReportStatus = $game->getReportStatus();
+        
+        if ($gameReportStatus != 'Verified') return;
+        
+      //$nextGroupType = null;
+        
+        switch($gameGroupType)
+        {
+            case 'QF': 
+            case 'SF':
+                break;
+            default: 
+                return;
+        }
+        $teamResults = $game->getTeamResults();
+        
+        // Should not happen
+        if (!$teamResults) return;
+        
+        $gameTeamWin = $teamResults['winner'];
+        $gameTeamRun = $teamResults['loser'];
+            
+        $slotWin = sprintf('%s%s Win',$gameGroupType,$gameGroupName);
+        $slotRun = sprintf('%s%s Run',$gameGroupType,$gameGroupName);
+        
+        return;
+        echo sprintf('Updated %d %s %s #%s => %s# #%s => %s#',
+                $game->getNum(),
+                $gameReportStatus,$gameGroupType,
+                $gameTeamWin->getSlot(),$slotWin,
+                $gameTeamRun->getSlot(),$slotRun
+        ); die();
     }
 }
 ?>

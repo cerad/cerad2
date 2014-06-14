@@ -155,14 +155,51 @@ class Game
     }
     /* ======================================================
      * Report is a value object
+     * 14 Jun 2014
+     * Added capability to reuse report
+     * Used cache because dod not want to break stuff at this late date
      */
-    public function getReport()
+    protected $reportx;
+    
+    public function getReport($cache = false)
     {
-        return new GameReport($this->report);
+        if (!$cache) return new GameReport($this->report);
+        
+        if ($this->reportx) return $this->reportx;
+        
+        return $this->reportx = new GameReport($this->report);        
     }
     public function setReport($report)
     {
         $this->report = $report ? $report->getData() : null;
+        $this->reportx = null;
+    }
+    public function getReportStatus()
+    {
+        return $this->getReport(true)->getStatus();
+    }
+    /* ===================================================
+     * Is this business logic?
+     */
+    public function getTeamResults()
+    {
+        $homeTeam = $this->getHomeTeam();
+        $awayTeam = $this->getAwayTeam();
+        
+        $homeTeamScore = $homeTeam->getReport()->getGoalsScored();
+        $awayTeamScore = $awayTeam->getReport()->getGoalsScored();
+        
+        if ($homeTeamScore == null || $awayTeamScore == null) return null;
+        
+        if ($homeTeamScore > $awayTeamScore)
+        {
+            return array('winner' => $homeTeam, 'loser' => $awayTeam);
+        }
+        if ($homeTeamScore < $awayTeamScore)
+        {
+            return array('winner' => $awayTeam, 'loser' => $homeTeam);
+        }
+        return null;
     }
 }
 ?>

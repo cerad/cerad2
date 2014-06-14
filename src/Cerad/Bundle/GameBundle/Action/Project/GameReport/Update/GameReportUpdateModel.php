@@ -5,6 +5,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
+use Cerad\Bundle\CoreBundle\Event\Game\UpdatedGameReportEvent;
+
 use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
 
 class GameReportUpdateModel extends ActionModelFactory
@@ -39,6 +41,14 @@ class GameReportUpdateModel extends ActionModelFactory
         
         return $this;
     }
+    protected function flush($game)
+    {
+        $event = new UpdatedGameReportEvent($game);
+        
+        $this->dispatcher->dispatch(UpdatedGameReportEvent::Updated,$event);  
+        
+        $this->gameRepo->flush();
+    }
     public function process()
     {
         // Extract
@@ -58,7 +68,7 @@ class GameReportUpdateModel extends ActionModelFactory
             $homeTeam->setReport(null);
             $awayTeam->setReport(null);
             
-            $this->gameRepo->flush();
+            $this->flush($game);
             return $this;
         }
         // Need the results service
@@ -89,7 +99,7 @@ class GameReportUpdateModel extends ActionModelFactory
         $awayTeam->setReport($awayTeamReport);
         
         // And persist
-        $this->gameRepo->commit();
+        $this->flush($game);
         
         // Done
         return $this;
