@@ -235,12 +235,38 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         $slotWin = sprintf('%s%s Win',$gameGroupType,$gameGroupName);
         $slotRun = sprintf('%s%s Run',$gameGroupType,$gameGroupName);
         
+        $gameTeamRepo = $this->container->get('cerad_game__game_team_repository');
+        
+        $gameTeamWinNext = $gameTeamRepo->findOneByProjectLevelGroupSlot(
+            $game->getProjectKey(),
+            $game->getLevelKey(),
+            $slotWin);
+        
+        if ($gameTeamWinNext)
+        {
+            if (!$gameTeamWinNext->getTeam(false))
+            {
+                $gameTeamWinNext->setTeam($gameTeamWin->getTeam());
+            }
+        }
+        $gameTeamRunNext = $gameTeamRepo->findOneByProjectLevelGroupSlot(
+            $game->getProjectKey(),
+            $game->getLevelKey(),
+            $slotRun);
+        
+        if ($gameTeamRunNext)
+        {
+            if (!$gameTeamRunNext->getTeam(false))
+            {
+                $gameTeamRunNext->setTeam($gameTeamRun->getTeam());
+            }            
+        }
         return;
-        echo sprintf('Updated %d %s %s #%s => %s# #%s => %s#',
+        echo sprintf('Updated %d %s %s #%s => %s => %d# #%s => %s => %s#',
                 $game->getNum(),
                 $gameReportStatus,$gameGroupType,
-                $gameTeamWin->getSlot(),$slotWin,
-                $gameTeamRun->getSlot(),$slotRun
+                $gameTeamWin->getSlot(),$slotWin,$gameTeamWinNext->getGame()->getNum(),
+                $gameTeamRun->getSlot(),$slotRun,$gameTeamRunNext->getGame()->getNum()
         ); die();
     }
 }

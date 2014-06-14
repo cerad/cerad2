@@ -75,8 +75,10 @@ class GameTeam
     
     // Create a physical team if none is linked
     protected $teamx;
-    public function getTeam()
+    public function getTeam($cache=true)
     { 
+        if (!$cache) return $this->team;
+        
         if ($this->team)  return $this->team;
         if ($this->teamx) return $this->teamx;
         
@@ -90,6 +92,7 @@ class GameTeam
             // Do we need this?
             $this->name = $team->getName();
         }
+        else $this->name = null;
     }
     public function getRoleForSlot($slot)
     {

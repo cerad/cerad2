@@ -20,6 +20,13 @@ services:
         arguments:  
             - 'Cerad\Bundle\GameBundle\Doctrine\Entity\Game'
             
+    cerad_game__game_team_repository__doctrine:
+        class:  Cerad\Bundle\GameBundle\Doctrine\EntityRepository\GameTeamRepository
+        factory_service: 'cerad_game__entity_manager__doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam'
+            
     cerad_game__team_repository__doctrine:
         class:  Cerad\Bundle\GameBundle\Doctrine\EntityRepository\TeamRepository
         factory_service: 'cerad_game__entity_manager__doctrine'
@@ -29,6 +36,9 @@ services:
         
     cerad_game__game_repository:
         alias: cerad_game__game_repository__doctrine
+        
+    cerad_game__game_team_repository:
+        alias: cerad_game__game_team_repository__doctrine
         
     cerad_game__team_repository:
         alias: cerad_game__team_repository__doctrine
