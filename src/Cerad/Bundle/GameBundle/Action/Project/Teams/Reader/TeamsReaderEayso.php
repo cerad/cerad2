@@ -19,34 +19,34 @@ class TeamsReaderEayso extends ExcelReader
     );
     protected function processItem($item)
     {
-        print_r($item); die();
         $teamKey = $item['teamKey'];
         if (!$teamKey) return;
 
-        $team = array();
-        $team['projectKey'] = $this->projectKey;
-        $team['num']      = $num;
-        $team['role']     = 'Physical';
-        $team['status']   = 'Active';
-        $team['sportKey'] = 'Soccer';
+        $regionNum = (int)$item['regionNum'];
         
-        $team['levelKey'] = $item['levelKey'];
-        $team['region']   = $item['region'];
-        $team['name']     = $item['name'];
-        $team['points']   = $item['points'];
+        $coachName = isset($item['headCoachNameLast']) ? $item['headCoachNameLast'] : $item['asstCoachNameLast'];
         
-        $slots = array();
-        for($i = 1; $i < 6; $i++)
-        {
-            $itemSlotKey = 'slot' . $i;
-            if ($item[$itemSlotKey]) $slots[] = $item[$itemSlotKey];
-        }
-        $team['slots'] = $slots;
-                
+        $teamKeyParts = explode('-',$teamKey);
+        $div = $teamKeyParts[0];
+        $num = $teamKeyParts[1];
+        
+        $age    = substr($div,1);
+        $gender = substr($div,0,1);
+        
+        $teamNum = (int)$num;
+        $program = strpos($num,'x') ? 'Extra' : 'Core';
+        
+        $levelKey = sprintf('AYSO_%s%s_%s',$age,$gender,$program);
+        
+        $team = array(
+            'teamKey'    => $teamKey,
+            'teamNum'    => $teamNum,
+            'levelKey'   => $levelKey,
+            'regionNum'  => $regionNum,
+            'coachName'  => $coachName,
+            'projectKey' => $this->projectKey,
+        );
         $this->items[] = $team;
-        
-        return;
-        
     }
     /* ==============================================================
      * Almost like the load but with a few tewaks

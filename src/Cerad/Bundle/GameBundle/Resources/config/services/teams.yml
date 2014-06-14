@@ -91,6 +91,9 @@ services:
   cerad_game__project__teams__util_read_xls:
     class: Cerad\Bundle\GameBundle\Action\Project\Teams\Util\TeamsUtilReadXLS
     
+  cerad_game__project__teams__reader_all:
+    class: Cerad\Bundle\GameBundle\Action\Project\Teams\Reader\TeamsReaderAll
+    
   cerad_game__project__teams__reader_eayso:
     class: Cerad\Bundle\GameBundle\Action\Project\Teams\Reader\TeamsReaderEayso
     

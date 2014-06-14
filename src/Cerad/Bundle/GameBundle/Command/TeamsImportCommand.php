@@ -37,13 +37,24 @@ class TeamsImportCommand extends ContainerAwareCommand
     }
     protected function processTeamsEayso($project,$file)
     {
-        $reader = $this->getService('cerad_game__project__teams__reader_eayso');
+        $eaysoReader = $this->getService('cerad_game__project__teams__reader_eayso');
         
-        $teams = $reader->read($project,$file);
+        $eaysoTeams = $eaysoReader->read($project,$file);
         
-        echo sprintf("Teams: %d\n",count($teams));
+        echo sprintf("Eayso Teams: %d\n",count($eaysoTeams));
         
-        file_put_contents($file . '.yml',Yaml::dump($teams,10));
+        file_put_contents($file . '.eayso.yml',Yaml::dump($eaysoTeams,10));
+        
+        /* ======================================================
+         * All teams in a matrix
+         */
+        $allReader = $this->getService('cerad_game__project__teams__reader_all');
+         
+        $allTeams = $allReader->read($project,$file,'NG All');
+        
+        echo sprintf("All   Teams: %d\n",count($allTeams));
+        
+        file_put_contents($file . '.all.yml',Yaml::dump($allTeams,10));
         
     }
     protected function processTeams($project,$file)
