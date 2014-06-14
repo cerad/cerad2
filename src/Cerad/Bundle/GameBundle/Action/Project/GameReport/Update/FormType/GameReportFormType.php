@@ -30,7 +30,7 @@ class GameReportFormType extends AbstractType
            ),
         ));
         $builder->add('text','textarea',array('label' => 'Text', 'required' => false, 
-            'attr' => array('rows' => 4, 'cols' => 78, 'wrap' => 'hard', 'class' =>'textarea')));
+            'attr' => array('rows' => 4, 'cols' => 42, 'wrap' => 'hard', 'class' =>'textarea')));
 
     }
 }

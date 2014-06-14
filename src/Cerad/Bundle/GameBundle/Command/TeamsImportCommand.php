@@ -29,9 +29,22 @@ class TeamsImportCommand extends ContainerAwareCommand
         
         $file = $input->getArgument('file');
         
-        $this->processTeams($project,$file); 
+      //$this->processTeams($project,$file); 
+        
+        $this->processTeamsEayso($project,$file); 
         
         return; if ($output);
+    }
+    protected function processTeamsEayso($project,$file)
+    {
+        $reader = $this->getService('cerad_game__project__teams__reader_eayso');
+        
+        $teams = $reader->read($project,$file);
+        
+        echo sprintf("Teams: %d\n",count($teams));
+        
+        file_put_contents($file . '.yml',Yaml::dump($teams,10));
+        
     }
     protected function processTeams($project,$file)
     {
