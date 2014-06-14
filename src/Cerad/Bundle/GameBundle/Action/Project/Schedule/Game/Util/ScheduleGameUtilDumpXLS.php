@@ -6,6 +6,8 @@ use Cerad\Bundle\CoreBundle\Excel\ExcelDump;
 
 class ScheduleGameUtilDumpXLS extends ExcelDump
 {
+    protected $skipOnTimeChange = false;
+    
     /* =======================================================================
      * Process each program
      */
@@ -57,7 +59,7 @@ class ScheduleGameUtilDumpXLS extends ExcelDump
             // Skip on time changes
             if ($timeCurrent != $time)
             {
-                if ($timeCurrent) $row++;
+                if ($timeCurrent && $this->skipOnTimeChange) $row++;
                 $timeCurrent = $time;
             }
             $ws->setCellValueByColumnAndRow($col++,$row,$game->getNum());
@@ -98,6 +100,10 @@ class ScheduleGameUtilDumpXLS extends ExcelDump
         // Output
         $ss->setActiveSheetIndex(0);
         return $this->getBuffer($ss);
+    }
+    public function setSkipOnTimeChange($value)
+    {
+        $this->skipOnTimeChane = $value;
     }
 }
 ?>
