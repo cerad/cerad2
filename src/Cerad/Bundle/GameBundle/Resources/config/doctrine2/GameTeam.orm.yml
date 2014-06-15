@@ -22,13 +22,13 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
                 referencedColumnName: id
                 nullable:             false
                 
-        team:
-            targetEntity: Team
-            inversedBy:   games
-            joinColumn:
-                name:                 teamId
-                referencedColumnName: id
-                nullable:             true
+#       team:
+#           targetEntity: Team
+#           inversedBy:   games
+#           joinColumn:
+#               name:                 teamId
+#               referencedColumnName: id
+#               nullable:             true
       
     fields:
             
@@ -61,6 +61,16 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
             length:   80
             nullable: true
                         
+        teamNum:
+            column:   teamNum
+            type:     integer
+            nullable: true
+            
+        teamPoints:
+            column:   teamPoints
+            type:     integer
+            nullable: false
+            
         score:
             column:   score
             type:     integer

@@ -31,9 +31,9 @@ class GameTeam
     protected $name;
     
     // Maybe
-    protected $team;
-    protected $coach;
+    protected $team; // This is going away
     protected $teamNum;
+    protected $teamPoints = 0; // This if for soccerfest participation
     
     protected $orgKey;
     protected $levelKey;   // Could be different than the game
@@ -48,35 +48,34 @@ class GameTeam
     public function getSlot()      { return $this->slot;      }
     public function getRole()      { return $this->role;      }
     public function getGame()      { return $this->game;      }
-  //public function getTeam()      { return $this->team;      }
-  //public function getName()      { return $this->name;      }
+    public function getName()      { return $this->name;      }
+    public function getTeamNum()   { return $this->teamNum;   }
+    public function getTeamPoints(){ return $this->teamPoints;}
+  
     public function getLevelKey()  { return $this->levelKey;  }
     public function getGroupSlot() { return $this->groupSlot; }
     public function getScore()     { return $this->score;     }
     public function getStatus()    { return $this->status;    }
     
-    public function setSlot     ($value) { $this->slot      = $value; }
-    public function setRole     ($value) { $this->role      = $value; }
-    public function setGame     ($value) { $this->game      = $value; }
-  //public function setTeam     ($value) { $this->team      = $value; }
-    public function setName     ($value) { $this->name      = $value; }
-    public function setLevelKey ($value) { $this->levelKey  = $value; }
-    public function setGroupSlot($value) { $this->groupSlot = $value; }
-    public function setScore    ($value) { $this->score     = $value; }
-    public function setStatus   ($value) { $this->status    = $value; }
+    public function setSlot      ($value) { $this->slot       = $value; }
+    public function setRole      ($value) { $this->role       = $value; }
+    public function setGame      ($value) { $this->game       = $value; }
+    public function setName      ($value) { $this->name       = $value; }
+    public function setTeamNum   ($value) { $this->teamNum    = $value; }
+    public function setTeamPoints($value) { $this->teamPoints = $value; }
+    public function setLevelKey  ($value) { $this->levelKey   = $value; }
+    public function setGroupSlot ($value) { $this->groupSlot  = $value; }
+    public function setScore     ($value) { $this->score      = $value; }
+    public function setStatus    ($value) { $this->status     = $value; }
     
     public function getProjectKey() { return $this->game->getProjectKey(); }
     
-    public function getName()      
-    { 
-        return $this->name;
-        return $this->name ? $this->name : $this->groupSlot;      
-    }
+    public function hasTeam() { return $this->teamNum ? true : false; }
     
     // Create a physical team if none is linked
-    protected $teamx;
     public function getTeam($cache=true)
     { 
+        die('getTeam');
         if (!$cache) return $this->team;
         
         if ($this->team)  return $this->team;
@@ -86,6 +85,19 @@ class GameTeam
     }
     public function setTeam($team)
     {
+        if ($team)
+        {
+            $this->name       = $team->getName();
+            $this->teamNum    = $team->getNum();
+            $this->teamPoints = $team->getPoints();
+            return;
+        }
+        $this->name       = null;
+        $this->teamNum    = null;
+        $this->teamPoints = 0;
+        return;
+        
+        die('setTeam');
         $this->team = $team;
         if ($team)
         {

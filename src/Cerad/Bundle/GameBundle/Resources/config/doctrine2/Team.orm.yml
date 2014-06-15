@@ -16,9 +16,9 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\Team:
             generator: { strategy: AUTO }
             
     oneToMany:
-      games:
-        targetEntity: GameTeam
-        mappedBy:     team
+#     games:
+#       targetEntity: GameTeam
+#       mappedBy:     team
       
     fields:
             

@@ -179,11 +179,8 @@ class AbstractResults
          * Note: This is different than 2012?
          */
         if ($poolTeamReport->getGamesPlayed())
-        {
-            // The physical team (if any) holds the soccer fest points
-            $physicalTeam = $poolTeamReport->getTeam()->getTeam();
-            
-            $sfPoints = $physicalTeam ? $physicalTeam->getPoints() : 0;  // 6 or 0
+        {   
+            $sfPoints = $poolTeamReport->getTeam()->getTeamPoints();
             
             $wpf = ($poolTeamReport->getPointsEarned()) + $sfPoints / (($poolTeamReport->getGamesPlayed() * 10) + 6);
             

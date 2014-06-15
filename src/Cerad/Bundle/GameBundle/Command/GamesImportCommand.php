@@ -29,9 +29,28 @@ class GamesImportCommand extends ContainerAwareCommand
         
         $file = $input->getArgument('file');
         
-        $this->importGames($project,$file); 
+        $this->importGamesNG2014($project,$file); 
         
         return; if ($output);
+    }
+    protected function importGamesNG2014($project,$file)
+    {   
+        /* ======================================================
+         * All teams in a matrix
+         */
+        $reader = $this->getService('cerad_game__games__reader_ng2014');
+         
+        $games = $reader->read($project,$file);
+        
+        echo sprintf("Games: %d\n",count($games));
+        
+        file_put_contents($file . '.yml',Yaml::dump($games,10));
+
+        $saver = $this->getService('cerad_game__games__saver_zayso');
+        
+        $results = $saver->save($games,true);
+        
+        print_r($results);
     }
     protected function importGames($project,$file)
     {
