@@ -63,8 +63,12 @@ services:
     arguments:
       - '@cerad_game__game_repository'
       - '@cerad_game__team_repository'
-
       
+  cerad_game__project__game_team__syncer:
+    class: Cerad\Bundle\GameBundle\Action\Games\Util\GameTeamSyncer
+    arguments:
+      - '@cerad_game__game_team_repository'
+
 # =======================================================================
 # Action: ScheduleGameImport
 #

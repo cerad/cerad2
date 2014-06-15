@@ -29,22 +29,24 @@ class TeamsImportCommand extends ContainerAwareCommand
         
         $file = $input->getArgument('file');
         
-      //$this->processTeams($project,$file); 
+      //$this->processTeamsAll($project,$file); 
         
-        $this->processTeamsEayso($project,$file); 
+      //$this->processTeamsEayso($project,$file); 
+        
+        $this->syncTeams($project); 
         
         return; if ($output);
     }
-    protected function processTeamsEayso($project,$file)
-    {
-        $eaysoReader = $this->getService('cerad_game__project__teams__reader_eayso');
+    protected function syncTeams($project)
+    {   
+        $syncer = $this->getService('cerad_game__project__game_team__syncer');
         
-        $eaysoTeams = $eaysoReader->read($project,$file);
+        $results = $syncer->sync($project,true);
         
-        echo sprintf("Eayso Teams: %d\n",count($eaysoTeams));
-        
-        file_put_contents($file . '.eayso.yml',Yaml::dump($eaysoTeams,10));
-        
+        print_r($results);
+    }
+    protected function processTeamsAll($project,$file)
+    {   
         /* ======================================================
          * All teams in a matrix
          */
@@ -55,7 +57,31 @@ class TeamsImportCommand extends ContainerAwareCommand
         echo sprintf("All   Teams: %d\n",count($allTeams));
         
         file_put_contents($file . '.all.yml',Yaml::dump($allTeams,10));
+
+        $allSaver = $this->getService('cerad_game__project__teams__saver_all');
         
+        $allSaverResults = $allSaver->save($allTeams,true);
+        
+        print_r($allSaverResults);
+    }
+    protected function processTeamsEayso($project,$file)
+    {   
+        /* ======================================================
+         * All teams in a matrix
+         */
+        $reader = $this->getService('cerad_game__project__teams__reader_eayso');
+         
+        $teams = $reader->read($project,$file);
+        
+        echo sprintf("Eayso Teams: %d\n",count($teams));
+        
+        file_put_contents($file . '.eayso.yml',Yaml::dump($teams,10));
+
+        $saver = $this->getService('cerad_game__project__teams__saver_eayso');
+
+        $results = $saver->save($teams,true);
+        
+        print_r($results);   
     }
     protected function processTeams($project,$file)
     {

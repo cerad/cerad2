@@ -30,7 +30,7 @@ class TeamsReaderAll extends ExcelReader
     {
         if (!$teamKey) return;
         
-        $teamKeyParts = explode('-',$teamKey); // 12B-24
+        $teamKeyParts = explode('-',$teamKey); // 12B-24x
         $div = $teamKeyParts[0];
         $num = $teamKeyParts[1];
         
@@ -38,7 +38,7 @@ class TeamsReaderAll extends ExcelReader
         $gender =       substr($div,2,1);
         
         $teamNum = (int)$num;
-        $program = strpos($num,'x') ? 'Extra' : 'Core';
+        $program = stripos($num,'x') ? 'Extra' : 'Core';
         
         $levelKey = sprintf('AYSO_%s%s_%s',$age,$gender,$program);
         

@@ -34,5 +34,27 @@ class GameTeamRepository extends EntityRepository
         
         return $items[0];
     }
+    public function findAllByProjectLevel($projectKey,$levelKey = null)
+    {
+        $qb = $this->createQueryBuilder('gameTeam');
+        
+        $qb->select('game,gameTeam,team');
+        
+        $qb->leftJoin('gameTeam.game','game');
+        $qb->leftJoin('gameTeam.team','team');
+        
+        $qb->andWhere('game.projectKey = :projectKey');
+        $qb->setParameter('projectKey',$projectKey);
+        
+        if ($levelKey)
+        {
+            $qb->andWhere('game.levelKey = :levelKey');
+            $qb->setParameter('levelKey',$levelKey);
+        }
+        $qb->addOrderBy('game.levelKey');
+        $qb->addOrderBy('game.dtBeg');
+        
+        return $qb->getQuery()->getResult();
+    }
 }
 ?>
