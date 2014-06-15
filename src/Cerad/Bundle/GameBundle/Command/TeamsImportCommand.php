@@ -29,9 +29,9 @@ class TeamsImportCommand extends ContainerAwareCommand
         
         $file = $input->getArgument('file');
         
-      //$this->processTeamsAll($project,$file); 
+        $this->processTeamsAll($project,$file); 
         
-      //$this->processTeamsEayso($project,$file); 
+        $this->processTeamsEayso($project,$file); 
         
         $this->syncTeams($project); 
         
