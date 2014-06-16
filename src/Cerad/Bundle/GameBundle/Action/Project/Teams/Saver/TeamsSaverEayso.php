@@ -2,6 +2,8 @@
 
 namespace Cerad\Bundle\GameBundle\Action\Project\Teams\Saver;
 
+use Cerad\Bundle\CoreBundle\Event\Team\ChangedTeamEvent;
+
 class TeamsSaverEaysoResults
 {
     public $commit = false;
@@ -11,6 +13,7 @@ class TeamsSaverEaysoResults
     public $total    = 0;
     public $updated  = 0;
     public $missingTeam = 0;
+    public $missingRegion = 0;
     public $missingCoachName  = 0;
     public $regionMismatch = 0;
 }
@@ -24,6 +27,13 @@ class TeamsSaverEayso
     {
         $this->teamRepo = $teamRepo;
     }
+    public function setDispatcher($dispatcher) { $this->dispatcher = $dispatcher; }
+    
+    protected function dispatch($team,$groupSlot = null)
+    {
+        $event = new ChangedTeamEvent($team,$groupSlot);
+        $this->dispatcher->dispatch(ChangedTeamEvent::Changed,$event);
+    }
     /* ===============================================
      * teamKey:    BU10-01
      * teamNum:    1
@@ -35,6 +45,7 @@ class TeamsSaverEayso
     protected function saveTeam($item)
     {   
         $results = $this->results;
+        $missing = false;
         
         $teamNum    = (int)$item['teamNum'];
         $regionNum  = (int)$item['regionNum'];
@@ -46,18 +57,27 @@ class TeamsSaverEayso
         // No coach, not much point
         if (!$coachName)
         {
-            $this->missingCoachName++;
-            return;
+            $results->missingCoachName++;
+            $missing = true;
         }
         $coachNamex = ucfirst($coachName);
+        
+        // No region, not much point
+        if (!$regionNum)
+        {
+            $results->missingRegion++;
+            $missing = true;
+        }
         
         // Need a team
         $team = $this->teamRepo->findOneByProjectLevelNum($projectKey,$levelKey,$teamNum);
         if (!$team) 
         {
             $results->missingTeam++;
-            return;
+            $missing = true;
         }
+        if ($missing) return;
+        
         // Make sure regions match 
         $orgKeyParts = explode('-',$team->getOrgKey());
         if (count($orgKeyParts) != 3)
@@ -87,6 +107,8 @@ class TeamsSaverEayso
         if ($teamNameOriginal == $teamNameNew) return;
   
         $team->setName($teamNameNew);
+        $this->dispatch($team);
+        
         $results->updated++;
       //print_r($item);
     }

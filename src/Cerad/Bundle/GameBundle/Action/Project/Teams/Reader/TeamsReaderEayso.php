@@ -11,8 +11,8 @@ class TeamsReaderEayso extends ExcelReader
     // Team | Region # | Team Coach Last Name | Asst. Team Coach Last Name
     protected $record = array
     (
-        'teamKey'   => array('cols' => 'Team',     'req' => true),
-        'regionNum' => array('cols' => 'Region #', 'req' => true),
+        'teamKey'   => array('cols' => array('NG Team #','Team'), 'req' => true),
+        'regionNum' => array('cols' => 'Region #',  'req' => true),
         
         'headCoachNameLast' => array('cols' => 'Team Coach Last Name',       'req' => true),
         'asstCoachNameLast' => array('cols' => 'Asst. Team Coach Last Name', 'req' => true),

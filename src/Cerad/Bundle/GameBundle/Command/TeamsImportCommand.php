@@ -31,14 +31,15 @@ class TeamsImportCommand extends ContainerAwareCommand
         
       //$this->processTeamsAll($project,$file); 
         
-      //$this->processTeamsEayso($project,$file); 
+        $this->processTeamsEayso($project,$file); 
         
-        $this->processTeamsZayso($project,$file); 
+      //$this->processTeamsZayso($project,$file); 
         
       //$this->syncTeams($project); 
         
         return; if ($output);
     }
+    // Don' think need this anymore
     protected function syncTeams($project)
     {   
         $syncer = $this->getService('cerad_game__project__game_team__syncer');
@@ -68,9 +69,6 @@ class TeamsImportCommand extends ContainerAwareCommand
     }
     protected function processTeamsEayso($project,$file)
     {   
-        /* ======================================================
-         * All teams in a matrix
-         */
         $reader = $this->getService('cerad_game__project__teams__reader_eayso');
          
         $teams = $reader->read($project,$file);
@@ -87,9 +85,6 @@ class TeamsImportCommand extends ContainerAwareCommand
     }
     protected function processTeamsZayso($project,$file)
     {   
-        /* ======================================================
-         * All teams in a matrix
-         */
         $reader = $this->getService('cerad_game__project__teams__reader_zayso');
          
         $teams = $reader->read($project,$file);

@@ -109,6 +109,8 @@ services:
 
   cerad_game__project__teams__saver_eayso:
     class: Cerad\Bundle\GameBundle\Action\Project\Teams\Saver\TeamsSaverEayso
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
     arguments:
       - '@cerad_game__team_repository'
       
