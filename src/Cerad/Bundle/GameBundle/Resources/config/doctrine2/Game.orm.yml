@@ -4,11 +4,11 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\Game:
     repositoryClass: Cerad\Bundle\GameBundle\Doctrine\EntityRepository\GameRepository
 
     uniqueConstraints:
-       game_project_num_index:
-           columns: projectKey, num
+      game_project_num_index:
+        columns: projectKey, num
     indexes:
       game_project_level_key_index:
-        columns: projectKey, levelKey
+        columns: projectKey, levelKey, groupType, groupName
 
     id:
         id:

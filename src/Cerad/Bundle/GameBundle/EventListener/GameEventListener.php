@@ -13,6 +13,7 @@ use Cerad\Bundle\GameBundle\GameEvents;
 use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
 
+use Cerad\Bundle\CoreBundle\Event\Team\ChangedTeamEvent;
 use Cerad\Bundle\CoreBundle\Event\Game\UpdatedGameReportEvent;
 
 use Cerad\Bundle\CoreBundle\Event\FindProjectTeamsEvent;
@@ -34,6 +35,8 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
             
             FindProjectTeamsEvent::FindProjectTeams  => array('onFindProjectTeams'),
             
+            ChangedTeamEvent::Changed  => array('onChangedTeam'),
+            
             UpdatedGameReportEvent::Updated  => array('onUpdatedGameReport'),
             
             GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot'),
@@ -48,6 +51,10 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
     protected function getGameRepository()
     {
         return $this->container->get($this->gameRepositoryServiceId);
+    }
+    protected function getGameTeamRepository()
+    {
+        return $this->container->get('cerad_game__game_team_repository');
     }
     public function onControllerGame(FilterControllerEvent $event)
     {
@@ -268,6 +275,41 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
                 $gameTeamWin->getSlot(),$slotWin,$gameTeamWinNext->getGame()->getNum(),
                 $gameTeamRun->getSlot(),$slotRun,$gameTeamRunNext->getGame()->getNum()
         ); die();
+    }
+    public function onChangedTeam(ChangedTeamEvent $event)
+    {
+        $team      = $event->getTeam();
+        $groupSlot = $event->getGroupSlot();
+        
+        $gameTeamRepo = $this->getGameTeamRepository();
+        
+        // Deal with team name cnd points changes
+       $gameTeams = $gameTeamRepo->findAllByProjectLevelTeamNum(
+            $team->getProjectKey(),
+            $team->getLevelKey(),
+            $team->getNum()
+        );
+        foreach($gameTeams as $gameTeam)
+        {
+            $gameTeam->setTeam($team);
+        }
+        
+        // Different processing for setting the slot
+        if (!$groupSlot) return;
+        
+        $gameTeamsGS = $gameTeamRepo->findAllByProjectLevelGroupSlot(
+            $team->getProjectKey(),
+            $team->getLevelKey(),
+            $groupSlot
+        );
+        foreach($gameTeamsGS as $gameTeam)
+        {
+            $gameTeam->setTeam($team);
+        }
+        return;
+        
+        echo sprintf("%s %s %d\n",$team->getName(),$groupSlot,count($gameTeams));
+        die();
     }
 }
 ?>

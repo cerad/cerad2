@@ -32,6 +32,7 @@ class TeamsExportModel extends ActionModelFactory
     }
     public function findAllGameTeamsByTeam($team)
     {
+        return array();
         return $this->gameRepo->findAllGameTeamsByTeam($team);
     }
     // Should be injected or come from project

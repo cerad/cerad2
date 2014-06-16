@@ -29,11 +29,13 @@ class TeamsImportCommand extends ContainerAwareCommand
         
         $file = $input->getArgument('file');
         
-        $this->processTeamsAll($project,$file); 
+      //$this->processTeamsAll($project,$file); 
         
-        $this->processTeamsEayso($project,$file); 
+      //$this->processTeamsEayso($project,$file); 
         
-        $this->syncTeams($project); 
+        $this->processTeamsZayso($project,$file); 
+        
+      //$this->syncTeams($project); 
         
         return; if ($output);
     }
@@ -83,25 +85,24 @@ class TeamsImportCommand extends ContainerAwareCommand
         
         print_r($results);   
     }
-    protected function processTeams($project,$file)
-    {
-        $readTeams = $this->getService('cerad_game__project__teams__util_read_xls');
+    protected function processTeamsZayso($project,$file)
+    {   
+        /* ======================================================
+         * All teams in a matrix
+         */
+        $reader = $this->getService('cerad_game__project__teams__reader_zayso');
+         
+        $teams = $reader->read($project,$file);
         
-        $teams = $readTeams->read($project,$file);
-        
-        echo sprintf("Teams: %d\n",count($teams));
+        echo sprintf("Zayso Teams: %d\n",count($teams));
         
         file_put_contents($file . '.yml',Yaml::dump($teams,10));
+
+        $saver = $this->getService('cerad_game__project__teams__saver_zayso');
+
+        $results = $saver->save($teams,true);
         
-        $saveTeams = $this->getService('cerad_game__project__teams__util_save_orm');
-        $saveResults = $saveTeams->save($teams,true);
-        print_r($saveResults);
-        
-        $linkTeams = $this->getService('cerad_game__project__teams__util_link_orm');
-        $linkResults = $linkTeams->link($teams,true);
-        print_r($linkResults);
-        
-        return;        
+        print_r($results);   
     }
 }
 ?>
