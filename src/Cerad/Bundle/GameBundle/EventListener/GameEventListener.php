@@ -214,67 +214,43 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
     {
         $game = $event->getGame();
         
-        $gameGroupType = $game->getGroupType();
-        $gameGroupName = $game->getGroupName();
-        
-        $gameReportStatus = $game->getReportStatus();
-        
-        if ($gameReportStatus != 'Verified') return;
-        
-      //$nextGroupType = null;
-        
-        switch($gameGroupType)
+        switch($game->getReportStatus())
         {
-            case 'QF': 
-            case 'SF':
-                break;
-            default: 
-                return;
+            case 'Verified': break;
+            default: return;
+        }
+        switch($game->getGroupType())
+        {
+            case 'QF': case 'SF': break;
+            default: return;
         }
         $teamResults = $game->getTeamResults();
         
         // Should not happen
         if (!$teamResults) return;
         
-        $gameTeamWin = $teamResults['winner'];
-        $gameTeamRun = $teamResults['loser'];
-            
-        $slotWin = sprintf('%s%s Win',$gameGroupType,$gameGroupName);
-        $slotRun = sprintf('%s%s Run',$gameGroupType,$gameGroupName);
+        // Advance
+        $this->advanceTeam($game,$teamResults['winner'],'Win');
+        $this->advanceTeam($game,$teamResults['loser' ],'Run');
+    }
+    protected function advanceTeam($game,$gameTeam,$groupSlotType)
+    {       
+        $groupSlot = sprintf('%s%s %s',$game->getGroupType(),$game->getGroupName(),$groupSlotType);
         
         $gameTeamRepo = $this->container->get('cerad_game__game_team_repository');
         
-        $gameTeamWinNext = $gameTeamRepo->findOneByProjectLevelGroupSlot(
+        $gameTeamNext = $gameTeamRepo->findOneByProjectLevelGroupSlot(
             $game->getProjectKey(),
             $game->getLevelKey(),
-            $slotWin);
+            $groupSlot);
         
-        if ($gameTeamWinNext)
-        {
-            if (!$gameTeamWinNext->hasTeam())
-            {
-                $gameTeamWinNext->setTeam($gameTeamWin->getTeam());
-            }
-        }
-        $gameTeamRunNext = $gameTeamRepo->findOneByProjectLevelGroupSlot(
-            $game->getProjectKey(),
-            $game->getLevelKey(),
-            $slotRun);
+        if (!$gameTeamNext) return;
         
-        if ($gameTeamRunNext)
-        {
-            if (!$gameTeamRunNext->getTeam(false))
-            {
-                $gameTeamRunNext->setTeam($gameTeamRun->getTeam());
-            }            
-        }
-        return;
-        echo sprintf('Updated %d %s %s #%s => %s => %d# #%s => %s => %s#',
-                $game->getNum(),
-                $gameReportStatus,$gameGroupType,
-                $gameTeamWin->getSlot(),$slotWin,$gameTeamWinNext->getGame()->getNum(),
-                $gameTeamRun->getSlot(),$slotRun,$gameTeamRunNext->getGame()->getNum()
-        ); die();
+        if ($gameTeamNext->hasTeam()) return;
+        
+        $teamRepo = $this->container->get('cerad_game__team_repository');
+        $team = $teamRepo->findOneByKey($gameTeam->getTeamKey());
+        $gameTeamNext->setTeam($team);
     }
     public function onChangedTeam(ChangedTeamEvent $event)
     {

@@ -12,22 +12,20 @@ class GameTeamRepository extends EntityRepository
      */
     public function findOneByProjectLevelGroupSlot($projectKey,$levelKey,$groupSlot)
     {
-        die('findOneByProjectLevelGroupSlot');
         $qb = $this->createQueryBuilder('gameTeam');
         
-        $qb->select('game,gameTeam,team');
+        $qb->select('game,gameTeam');
         
         $qb->leftJoin('gameTeam.game','game');
-        $qb->leftJoin('gameTeam.team','team');
         
         $qb->andWhere('game.projectKey = :projectKey');
-        $qb->setParameter('projectKey',$projectKey);
+        $qb->setParameter( 'projectKey', $projectKey);
         
         $qb->andWhere('game.levelKey = :levelKey');
-        $qb->setParameter('levelKey',$levelKey);
+        $qb->setParameter( 'levelKey', $levelKey);
         
         $qb->andWhere('gameTeam.groupSlot = :groupSlot');
-        $qb->setParameter('groupSlot',$groupSlot);
+        $qb->setParameter(     'groupSlot', $groupSlot);
         
         $items = $qb->getQuery()->getResult();
         
