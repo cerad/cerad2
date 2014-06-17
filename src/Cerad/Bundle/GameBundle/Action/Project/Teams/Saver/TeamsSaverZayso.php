@@ -35,8 +35,8 @@ class TeamsSaverZayso
     /* =============================================
      * TODO: Implement delete with negative number
      */
-    protected function saveTeam($teamx)
-    {   $item = $teamx;
+    protected function saveTeam($item)
+    {   
         $results = $this->results;
         
         $key        = $item['key'];
@@ -44,7 +44,7 @@ class TeamsSaverZayso
         $levelKey   = $item['levelKey'];
         $projectKey = $item['projectKey'];
         
-        $team = $this->teamRepo->findOneByProjectLevelNum($projectKey,$levelKey,$num);
+        $team = $this->teamRepo->findOneByKey($key);
         
         if (!$team)
         {
@@ -54,9 +54,9 @@ class TeamsSaverZayso
             $team->setLevelKey  ($levelKey);
             $team->setProjectKey($projectKey);
             
-            $team->setName  ($teamx['name']);
-            $team->setOrgKey($teamx['region']);
-            $team->setPoints($teamx['points']);
+            $team->setName  ($item['name']);
+            $team->setOrgKey($item['region']);
+            $team->setPoints($item['points']);
             
             $results->created++;
             $this->teamRepo->persist($team);
@@ -65,23 +65,23 @@ class TeamsSaverZayso
         }
         $changed = false;
 
-        if ($teamx['name'] != $team->getName())
+        if ($item['name'] != $team->getName())
         {
             // TODO: Need to propogate name changes to the game_team
             // Or maybe send an event?
-            $team->setName($teamx['name']);
+            $team->setName($item['name']);
             if (!$changed) $results->updated++;
             $changed = true;
         }
-        if ($teamx['region'] != $team->getOrgKey())
+        if ($item['region'] != $team->getOrgKey())
         {
-            $team->setOrgKey($teamx['region']);
+            $team->setOrgKey($item['region']);
             if (!$changed) $results->updated++;
             $changed = true;
         }
-        if ($teamx['points'] != $team->getPoints())
+        if ($item['points'] != $team->getPoints())
         {
-            $team->setPoints($teamx['points']);
+            $team->setPoints($item['points']);
             if (!$changed) $results->updated++;
             $changed = true;
         }
@@ -108,11 +108,11 @@ class TeamsSaverZayso
         $results->commit = $commit;
         $results->total = count($teams);
         
-        foreach($teams as $teamx)
+        foreach($teams as $item)
         {
-            $team = $this->saveTeam($teamx);
+            $team = $this->saveTeam($item);
             
-            $this->syncTeam($teamx,$team);
+            $this->syncTeam($item,$team);
         }
          
         if ($results->commit) $this->teamRepo->commit();

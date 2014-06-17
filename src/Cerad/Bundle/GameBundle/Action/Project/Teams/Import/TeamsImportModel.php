@@ -16,11 +16,10 @@ class TeamsImportModel extends ActionModelFactory
     protected $reader;
     protected $saver;
     
-    public function __construct($reader,$saver,$linker)
+    public function __construct($reader,$saver)
     {   
         $this->reader = $reader;
         $this->saver  = $saver;
-        $this->linker = $linker;
     }
     /* =====================================================
      * Process a posted model
@@ -37,13 +36,8 @@ class TeamsImportModel extends ActionModelFactory
 
         $saveResults = $this->saver->save($teams,$this->commit);
         $saveResults->basename = $file->getClientOriginalName();
-        
-        $linkResults = $this->linker->link($teams,$this->commit);
-        $linkResults->basename = $file->getClientOriginalName();
-        
-        // TODO: Some sort of merge or maybe return an array?
-        
-        return $linkResults;
+                
+        return $saveResults;
     }
     public function create(Request $request)
     {   
