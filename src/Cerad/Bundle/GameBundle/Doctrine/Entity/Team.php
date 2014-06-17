@@ -8,6 +8,7 @@ class Team
     const RolePhysical = 'Physical';
     
     protected $id;
+    protected $key;
     
     protected $orgKey;
     protected $levelKey;
@@ -18,13 +19,14 @@ class Team
     protected $name;
     protected $coach;
     
-    protected $points = 0; // Soccerfest points
+    protected $points; // Soccerfest points
     
     protected $status = 'Active';
     
     protected $games;
    
     public function getId()      { return $this->id;      }
+    public function getKey()     { return $this->key;     }
     public function getNum()     { return $this->num;     }
     public function getRole()    { return $this->role;    }
     public function getName()    { return $this->name;    }
@@ -43,6 +45,7 @@ class Team
     public function setPoints   ($value) { $this->points = $value; }
     public function setStatus   ($value) { $this->status = $value; }
     
+    public function setKey       ($value) { $this->key        = $value; }
     public function setOrgKey    ($value) { $this->orgKey     = $value; }
     public function setLevelKey  ($value) { $this->levelKey   = $value; }
     public function setProjectKey($value) { $this->projectKey = $value; }
@@ -56,10 +59,12 @@ class Team
      */
    public function getGames() 
     { 
+        die('Team::getGames');
         return $this->games->toArray();
     }
     public function addGame($game)
     {
+        die('Team::addGame');
         // Not indexed
         $this->games[] = $game;
         
@@ -72,6 +77,7 @@ class Team
      */
     public function getDesc()
     {
+        die('Team::getDesc');
         return sprintf('#%02d  %s',$this->num,$this->name);
     }
 }

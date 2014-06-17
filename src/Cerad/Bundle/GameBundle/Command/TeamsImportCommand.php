@@ -16,7 +16,8 @@ class TeamsImportCommand extends ContainerAwareCommand
     {
         $this->setName       ('cerad_game__teams__import');
         $this->setDescription('Import Teams');
-        $this->addArgument   ('file', InputArgument::REQUIRED, 'Team');
+        $this->addArgument   ('type', InputArgument::REQUIRED, 'zayso or eayso');
+        $this->addArgument   ('file', InputArgument::REQUIRED, 'file');
     }
     protected function getService($id)     { return $this->getContainer()->get($id); }
     protected function getParameter($name) { return $this->getContainer()->getParameter($name); }
@@ -28,15 +29,13 @@ class TeamsImportCommand extends ContainerAwareCommand
         $project = $projectRepo->find($projectKey);
         
         $file = $input->getArgument('file');
+        $type = $input->getArgument('type');
         
-      //$this->processTeamsAll($project,$file); 
-        
-        $this->processTeamsEayso($project,$file); 
-        
-      //$this->processTeamsZayso($project,$file); 
-        
-      //$this->syncTeams($project); 
-        
+        switch($type)
+        {
+            case 'zayso': $this->importTeamsZayso($project,$file); break;
+            case 'eayso': $this->importTeamsEayso($project,$file); break;
+        }        
         return; if ($output);
     }
     // Don' think need this anymore
@@ -67,7 +66,7 @@ class TeamsImportCommand extends ContainerAwareCommand
         
         print_r($allSaverResults);
     }
-    protected function processTeamsEayso($project,$file)
+    protected function importTeamsEayso($project,$file)
     {   
         $reader = $this->getService('cerad_game__project__teams__reader_eayso');
          
@@ -75,7 +74,7 @@ class TeamsImportCommand extends ContainerAwareCommand
         
         echo sprintf("Eayso Teams: %d\n",count($teams));
         
-        file_put_contents($file . '.eayso.yml',Yaml::dump($teams,10));
+        file_put_contents($file . '.yml',Yaml::dump($teams,10));
 
         $saver = $this->getService('cerad_game__project__teams__saver_eayso');
 
@@ -83,7 +82,7 @@ class TeamsImportCommand extends ContainerAwareCommand
         
         print_r($results);   
     }
-    protected function processTeamsZayso($project,$file)
+    protected function importTeamsZayso($project,$file)
     {   
         $reader = $this->getService('cerad_game__project__teams__reader_zayso');
          

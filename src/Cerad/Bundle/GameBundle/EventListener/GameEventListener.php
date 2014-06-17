@@ -251,7 +251,7 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         
         if ($gameTeamWinNext)
         {
-            if (!$gameTeamWinNext->getTeam(false))
+            if (!$gameTeamWinNext->hasTeam())
             {
                 $gameTeamWinNext->setTeam($gameTeamWin->getTeam());
             }
@@ -284,11 +284,8 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         $gameTeamRepo = $this->getGameTeamRepository();
         
         // Deal with team name cnd points changes
-       $gameTeams = $gameTeamRepo->findAllByProjectLevelTeamNum(
-            $team->getProjectKey(),
-            $team->getLevelKey(),
-            $team->getNum()
-        );
+        $gameTeams = $gameTeamRepo->findAllByTeamKey($team->getKey());
+       
         foreach($gameTeams as $gameTeam)
         {
             $gameTeam->setTeam($team);

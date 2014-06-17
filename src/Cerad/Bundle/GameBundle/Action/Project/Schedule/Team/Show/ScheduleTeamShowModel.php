@@ -42,7 +42,8 @@ class ScheduleTeamShowModel extends ActionModelFactory
         $criteria = array();
 
         $this->project = $project = $request->attributes->get('project');
-        $criteria['projects'] = array($project->getKey());
+        
+      //$criteria['projects'] = array($project->getKey());
 
         $programs = $project->getPrograms();
         foreach($programs as $program)
@@ -61,28 +62,27 @@ class ScheduleTeamShowModel extends ActionModelFactory
         
         return $this;
     }
-    public function process(Request $request,$criteria)
+    public function process(Request $request, $criteria)
     {
         $request->getSession()->set(self::SessionCriteria,$criteria);
     }
     public function loadGames()
     {        
         $criteria = $this->criteria;
-        
-        // Could be an event
-        $physicalTeamIds = array();
+      
+        // Different select for each program
+        $teamKeys = array();
         $programs = $this->project->getPrograms();
         foreach($programs as $program)
         {
-            $physicalTeamIds = array_merge($physicalTeamIds,$criteria[$program . 'Teams']);
+            $teamKeys = array_merge($teamKeys,$criteria[$program . 'Teams']);
         }
-        // print_r($physicalTeamIds); die();
-        // TODO: Handle Array ( [0] => 4 [1] => 0 )
-        if (count($physicalTeamIds) < 1) return array();
+
+        // Need gameIds for each physical team
+        $gameIds = $this->gameRepo->findAllIdsForTeamKeys($teamKeys);
         
-        $criteria['physicalTeamIds'] = $physicalTeamIds;
-        
-        $this->games = $this->gameRepo->queryGameSchedule($criteria);
+        // Then the games
+        $this->games = $this->gameRepo->findAllByGameIds($gameIds);
         
         return $this->games;
     }
@@ -99,8 +99,7 @@ class ScheduleTeamShowModel extends ActionModelFactory
 
         foreach($teams as $team)
         {
-            $teamChoices[$team->getId()] = sprintf('%s Team %02d %s',
-                $team->getLevelKey(),$team->getNum(),$team->getName());
+            $teamChoices[$team->getKey()] = $team->getName();
         }
         return $teamChoices;
         

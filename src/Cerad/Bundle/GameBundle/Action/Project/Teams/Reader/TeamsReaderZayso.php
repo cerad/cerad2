@@ -24,22 +24,42 @@ class TeamsReaderZayso extends ExcelReader
         'slot4' => array('cols' => 'Slots', 'req' => true, 'plus' => 3),
         'slot5' => array('cols' => 'Slots', 'req' => true, 'plus' => 4),
     );
+    protected function transformName($name,$levelKey)
+    {
+        $nameParts = explode(' ',$name);
+        $num = $nameParts[0];
+        if (strlen($num) != 3) return $name;
+        
+        $level = strpos($levelKey,'Core') ? 'c' : 'e';
+        $num = $num . $level;
+        
+        if (count($nameParts) == 1) return $num;
+        
+        return $num . substr($name,3);
+    }
     protected function processItem($item)
     {
         $num = (int)$item['num'];
         if (!$num) return;
 
+        $levelKey   = $item['levelKey'];
+        $projectKey = $this->projectKey;
+        
+        // Little hack to add level to team name prefix
+        $name = $this->transformName($item['name'],$levelKey);
+        
         $team = array();
-        $team['projectKey'] = $this->projectKey;
+        $team['key']      = sprintf('%s:%s:%02d',$projectKey,$item['levelKey'],$num);
         $team['num']      = $num;
         $team['role']     = 'Physical';
         $team['status']   = 'Active';
         $team['sportKey'] = 'Soccer';
         
-        $team['levelKey'] =      $item['levelKey'];
-        $team['region']   =      $item['region'];
-        $team['name']     =      $item['name'];
-        $team['points']   = (int)$item['points'];
+        $team['region']     = $item['region'];
+        $team['name']       = $name;
+        $team['points']     = $item['points'];
+        $team['levelKey']   = $levelKey;
+        $team['projectKey'] = $projectKey;
         
         $slots = array();
         for($i = 1; $i < 6; $i++)

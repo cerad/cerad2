@@ -11,7 +11,7 @@ class TeamsReaderEayso extends ExcelReader
     // Team | Region # | Team Coach Last Name | Asst. Team Coach Last Name
     protected $record = array
     (
-        'teamKey'   => array('cols' => array('NG Team #','Team'), 'req' => true),
+        'teamID'   => array('cols' => array('NG Team #','Team'), 'req' => true),
         'regionNum' => array('cols' => 'Region #',  'req' => true),
         
         'headCoachNameLast' => array('cols' => 'Team Coach Last Name',       'req' => true),
@@ -19,27 +19,28 @@ class TeamsReaderEayso extends ExcelReader
     );
     protected function processItem($item)
     {
-        $teamKey = $item['teamKey'];
-        if (!$teamKey) return;
+        $teamID = $item['teamID'];
+        if (!$teamID) return;
 
         $regionNum = (int)$item['regionNum'];
         
         $coachName = isset($item['headCoachNameLast']) ? $item['headCoachNameLast'] : $item['asstCoachNameLast'];
         
-        $teamKeyParts = explode('-',$teamKey);
-        $div = $teamKeyParts[0];
-        $num = $teamKeyParts[1];
+        $teamIDParts = explode('-',$teamID);
+        $div = $teamIDParts[0];
+        $num = $teamIDParts[1];
         
         $age    = substr($div,1);
         $gender = substr($div,0,1);
         
         $teamNum = (int)$num;
-        $program = strpos($num,'x') ? 'Extra' : 'Core';
+        $program = stripos($num,'x') ? 'Extra' : 'Core';
         
         $levelKey = sprintf('AYSO_%s%s_%s',$age,$gender,$program);
         
         $team = array(
-            'teamKey'    => $teamKey,
+            'teamID'     => $teamID,
+            'teamKey'    => sprintf('%s:%s:%02d',$this->projectKey,$levelKey,$teamNum),
             'teamNum'    => $teamNum,
             'levelKey'   => $levelKey,
             'regionNum'  => $regionNum,

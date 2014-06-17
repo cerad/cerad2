@@ -36,18 +36,20 @@ class TeamsSaverZayso
      * TODO: Implement delete with negative number
      */
     protected function saveTeam($teamx)
-    {   
+    {   $item = $teamx;
         $results = $this->results;
         
-        $num        = $teamx['num'];
-        $levelKey   = $teamx['levelKey'];
-        $projectKey = $teamx['projectKey'];
+        $key        = $item['key'];
+        $num        = $item['num'];
+        $levelKey   = $item['levelKey'];
+        $projectKey = $item['projectKey'];
         
         $team = $this->teamRepo->findOneByProjectLevelNum($projectKey,$levelKey,$num);
         
         if (!$team)
         {
             $team = $this->teamRepo->createTeam();
+            $team->setKey       ($key);
             $team->setNum       ($num);
             $team->setLevelKey  ($levelKey);
             $team->setProjectKey($projectKey);

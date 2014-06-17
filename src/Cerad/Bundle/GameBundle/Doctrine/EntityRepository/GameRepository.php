@@ -340,5 +340,49 @@ class GameRepository extends EntityRepository
         
         return $qb->getQuery()->getResult();
     }
+    /* ==============================================================
+     * Used to grab gameIds for physical teams
+     */
+    public function findAllIdsForTeamKeys($teamKeys)
+    {
+        if (count($teamKeys) < 1) return array();
+        
+        $qb = $this->createQueryBuilder('game');
+     
+        $qb->select('distinct game.id');
+        $qb->leftJoin('game.teams','gameTeam');
+        
+        $qb->andWhere('gameTeam.teamKey IN(:teamKeys)');
+        $qb->setParameter(     'teamKeys', $teamKeys);
+            
+        $gameIds = $qb->getQuery()->getScalarResult();
+        
+        $ids = array();
+        
+        array_walk($gameIds, function($row) use (&$ids) { $ids[] = $row['id']; });
+        
+        return $ids;
+        
+    }
+    public function findAllByGameIds($gameIds,$wantOfficials = false)
+    {
+        // Game query
+        $qb = $this->createQueryBuilder('game');
+        
+        $qb->addSelect('gameTeam');
+        $qb->leftJoin ('game.teams','gameTeam');
+        
+        if ($wantOfficials) 
+        {
+            $qb->addSelect('gameOfficial');
+            $qb->leftJoin ('game.officials','gameOfficial');
+        }
+        $qb->andWhere ('game.id IN (:gameIds)');
+        $qb->setParameter('gameIds',$gameIds);
+
+        $qb->addOrderBy('game.dtBeg');
+
+        return $qb->getQuery()->getResult();
+    }
 }
 ?>

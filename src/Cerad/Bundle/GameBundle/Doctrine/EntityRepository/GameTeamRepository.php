@@ -91,9 +91,9 @@ class GameTeamRepository extends EntityRepository
         
         return $qb->getQuery()->getResult();
     }
-    public function findAllByProjectLevelTeamNum($projectKey,$levelKey,$teamNum)
+    public function findAllByTeamKey($teamKey)
     {
-        if (!$teamNum) return array();
+        if (!$teamKey) return array();
         
         $qb = $this->createQueryBuilder('gameTeam');
         
@@ -101,15 +101,8 @@ class GameTeamRepository extends EntityRepository
         
         $qb->leftJoin('gameTeam.game','game');
         
-        $qb->andWhere('game.projectKey = :projectKey');
-        $qb->setParameter('projectKey',$projectKey);
-        
-        $qb->andWhere('game.levelKey = :levelKey');
-        $qb->setParameter('levelKey',$levelKey);
-        
-        // TODO: Maybe handle multiple team numbers?
-        $qb->andWhere('gameTeam.teamNum = :teamNum');
-        $qb->setParameter('teamNum',$teamNum);
+        $qb->andWhere('gameTeam.teamKey = :teamKey');
+        $qb->setParameter('teamKey',$teamKey);
         
         $qb->addOrderBy('game.levelKey');
         $qb->addOrderBy('game.dtBeg');

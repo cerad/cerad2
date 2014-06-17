@@ -4,6 +4,8 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\Team:
     repositoryClass: Cerad\Bundle\GameBundle\Doctrine\EntityRepository\TeamRepository
     
     uniqueConstraints:
+       team_key_index:
+           columns: keyx
        team_project_level_num_index:
            columns: projectKey, levelKey, num
     indexes:
@@ -21,6 +23,12 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\Team:
 #       mappedBy:     team
       
     fields:
+            
+        key:
+            column:   keyx
+            type:     string
+            length:   80
+            nullable: false
             
         role:
             column:   role
@@ -45,29 +53,29 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\Team:
             length:   80
             nullable: true
             
-        projectKey:
-            column:   projectKey
-            type:     string
-            length:   80
-            nullable: false
-                
-        levelKey:
-            column:   levelKey
-            type:     string
-            length:   80
-            nullable: false
-                
+        points:
+            column:   points
+            type:     integer
+            nullable: true
+            
         orgKey:
             column:   orgKey
             type:     string
             length:   80
             nullable: true
             
-        points:
-            column:   points
-            type:     integer
+        levelKey:
+            column:   levelKey
+            type:     string
+            length:   80
             nullable: false
             
+        projectKey:
+            column:   projectKey
+            type:     string
+            length:   80
+            nullable: false
+                       
         status:
             column:   status
             type:     string

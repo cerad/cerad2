@@ -16,7 +16,8 @@ class GamesImportCommand extends ContainerAwareCommand
     {
         $this->setName       ('cerad_game__games__import');
         $this->setDescription('Import Games');
-        $this->addArgument   ('file', InputArgument::REQUIRED, 'File');
+        $this->addArgument   ('type', InputArgument::REQUIRED, 'zayso or ng2014');
+        $this->addArgument   ('file', InputArgument::REQUIRED, 'file');
     }
     protected function getService($id)     { return $this->getContainer()->get($id); }
     protected function getParameter($name) { return $this->getContainer()->getParameter($name); }
@@ -27,10 +28,14 @@ class GamesImportCommand extends ContainerAwareCommand
         $projectKey  = $this->getParameter('cerad_project_project_default');
         $project = $projectRepo->find($projectKey);
         
+        $type = $input->getArgument('type');
         $file = $input->getArgument('file');
         
-        $this->importGamesNG2014($project,$file); 
-        
+        switch($type)
+        {
+            case 'zayso'  : $this->importGamesZayso ($project,$file); break;
+            case 'ng2014' : $this->importGamesNG2014($project,$file); break;
+        }
         return; if ($output);
     }
     protected function importGamesNG2014($project,$file)
@@ -52,9 +57,9 @@ class GamesImportCommand extends ContainerAwareCommand
         
         print_r($results);
     }
-    protected function importGames($project,$file)
+    protected function importGamesZayso($project,$file)
     {
-        $reader = $this->getService('cerad_game__games__util_read_zayso_xls');
+        $reader = $this->getService('cerad_game__games__reader_zayso');
         
         $games = $reader->read($file,$project);
         

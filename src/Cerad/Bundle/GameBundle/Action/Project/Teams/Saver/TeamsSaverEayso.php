@@ -47,12 +47,11 @@ class TeamsSaverEayso
         $results = $this->results;
         $missing = false;
         
-        $teamNum    = (int)$item['teamNum'];
+        $teamKey    =      $item['teamKey'];
         $regionNum  = (int)$item['regionNum'];
         $coachName  =      $item['coachName'];
         
         $levelKey   =      $item['levelKey'];
-        $projectKey =      $item['projectKey'];
         
         // No coach, not much point
         if (!$coachName)
@@ -70,7 +69,7 @@ class TeamsSaverEayso
         }
         
         // Need a team
-        $team = $this->teamRepo->findOneByProjectLevelNum($projectKey,$levelKey,$teamNum);
+        $team = $this->teamRepo->findOneByKey($teamKey);
         if (!$team) 
         {
             $results->missingTeam++;
@@ -103,9 +102,12 @@ class TeamsSaverEayso
         $teamNameParts[2] = $coachNamex;
         
         $teamNameNew = sprintf('%s %s %s',$teamNameParts[0],$teamNameParts[1],$teamNameParts[2]);
+        $team->setName($teamNameNew);
         
         if ($teamNameOriginal == $teamNameNew) return;
   
+      //echo sprintf("%s %s\n",$levelKey,$teamNameNew);
+        
         $team->setName($teamNameNew);
         $this->dispatch($team);
         

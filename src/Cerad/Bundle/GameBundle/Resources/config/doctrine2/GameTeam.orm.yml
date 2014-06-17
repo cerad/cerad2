@@ -4,8 +4,11 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
     repositoryClass: Cerad\Bundle\GameBundle\Doctrine\EntityRepository\GameTeamRepository
     
     uniqueConstraints:
-       game_team_game_slot_index:
+       game_team__game_slot__index:
            columns: gameId, slot
+    indexes:
+       game_team__team_key__index:
+           columns: teamKey
 
     id:
         id:
@@ -55,21 +58,33 @@ Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
             length:   40
             nullable: true
             
-        name:
-            column:   name
+#       name:
+#           column:   name
+#           type:     string
+#           length:   80
+#           nullable: true
+                        
+        teamKey:
+            column:   teamKey
             type:     string
             length:   80
             nullable: true
-                        
-        teamNum:
-            column:   teamNum
-            type:     integer
+            
+#       teamNum:
+#           column:   teamNum
+#           type:     integer
+#           nullable: true
+            
+        teamName:
+            column:   teamName
+            type:     string
+            length:   80
             nullable: true
             
         teamPoints:
             column:   teamPoints
             type:     integer
-            nullable: false
+            nullable: true
             
         score:
             column:   score
