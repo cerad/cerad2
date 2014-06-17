@@ -109,5 +109,11 @@ class GameTeamRepository extends EntityRepository
         
         return $qb->getQuery()->getResult();
     }
+    public function findAllByTeam($team)
+    {
+        if (!$team) return array();
+        return $this->findAllByTeamKey($team->getKey());
+    }
+
 }
 ?>

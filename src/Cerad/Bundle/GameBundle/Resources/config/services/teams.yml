@@ -74,7 +74,7 @@ services:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
       - '@cerad_game__team_repository'
-      - '@cerad_game__game_repository'
+      - '@cerad_game__game_team_repository'
       - '@cerad_level__level_repository'
              
   cerad_game__project__teams__export_controller:

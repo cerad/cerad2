@@ -271,6 +271,7 @@ class GameRepository extends EntityRepository
     }
     public function findAllGameTeamsByProjectLevelGroupSlot($project,$level,$groupSlot)
     {
+        die('GameRepo::findAllGameTeamsByProjectLevelGroupSlot');
         $levelKey   = is_object($level)   ? $level->getKey()   : $level;
         $projectKey = is_object($project) ? $project->getKey() : $project;
 
@@ -295,6 +296,7 @@ class GameRepository extends EntityRepository
     }
     public function findAllGameTeamsByGroupSlot($project,$level,$groupType,$groupName,$groupSlot)
     {
+        die('GameRepo::findAllGameTeamsByProjectLevelGroupSlot');
         $levelKey   = is_object($level)   ? $level->getKey()   : $level;
         $projectKey = is_object($project) ? $project->getKey() : $project;
 
@@ -325,6 +327,7 @@ class GameRepository extends EntityRepository
     }
     public function findAllGameTeamsByTeam($team)
     {
+        die('GameRepo::findAllGameTeamsByTeam');
         $gameTeamRepo = $this->_em->getRepository('CeradGameBundle:GameTeam');
         
         $qb = $gameTeamRepo->createQueryBuilder('gameTeam');
