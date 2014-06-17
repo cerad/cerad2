@@ -98,10 +98,8 @@ class ScheduleTeamShowModel extends ActionModelFactory
         $teamChoices = array(0 => 'None');
 
         foreach($teams as $team)
-        {
-            $levelKeyParts = explode('_',$team->getLevelKey());
-            
-            $teamChoices[$team->getKey()] = $levelKeyParts[1] . ' ' . $team->getName();
+        {   
+            $teamChoices[$team->getKey()] = $team->getDesc();
         }
         return $teamChoices;
     }
