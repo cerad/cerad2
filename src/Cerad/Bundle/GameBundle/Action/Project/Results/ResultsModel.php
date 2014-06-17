@@ -142,16 +142,32 @@ class ResultsModel extends ActionModelFactory
         {
             foreach($game->getTeams() as $gameTeam)
             {
-                $team = $gameTeam->getTeam();
-                if ($team)
+                if ($gameTeam->hasTeam())
                 {
-                    $teamId = $team->getId();
-                    if (!isset($teams[$teamId])) $teams[$teamId] = array(
-                        'game' => $game,
-                        'team' => $team, 
-                        'sp'   => 0
+                    $teamKey = $gameTeam->getTeamKey();
+                    if (!isset($teams[$teamKey])) $teams[$teamKey] = array(
+                        'game' => $game,     // Not of much use
+                        'team' => $gameTeam, // Really should query and get the physical team
+                        'gameCntTotal'  => 0,
+                        'gameCntPlayed' => 0,
+                        'spTotal'   => 0,
+                        'spAverage' => 0,
                     );
-                    $teams[$teamId]['sp'] += $gameTeam->getReport()->getSportsmanship();
+                    $teams[$teamKey]['gameCntTotal']++;
+                    
+                    $gameTeamReport = $gameTeam->getReport();
+                    if ($gameTeamReport->getGoalsAllowed() != null)
+                    {
+                        $teams[$teamKey]['gameCntPlayed']++;
+                        $teams[$teamKey]['spTotal'] += $gameTeamReport->getSportsmanship();
+                        
+                        $spTotal       =  $teams[$teamKey]['spTotal'] * 1.0;
+                        $gameCntPlayed =  $teams[$teamKey]['gameCntPlayed'];
+                        
+                        $spAverage = $spTotal / $gameCntPlayed;
+                        
+                        $teams[$teamKey]['spAverage'] = sprintf('%02.03f',$spAverage);
+                    }
                 }
             }
         }
@@ -160,8 +176,11 @@ class ResultsModel extends ActionModelFactory
     }
     public function compareTeamSportsmanship($team1,$team2)
     {
-        if ($team1['sp'] < $team2['sp']) return  1;
-        if ($team1['sp'] > $team2['sp']) return -1;
+        if ($team1['spAverage'] < $team2['spAverage']) return  1;
+        if ($team1['spAverage'] > $team2['spAverage']) return -1;
+        
+        if ($team1['spTotal'] < $team2['spTotal']) return  1;
+        if ($team1['spTotal'] > $team2['spTotal']) return -1;
         return 0;
     }
     // TODO: The levelRepo should do this

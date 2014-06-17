@@ -1,6 +1,6 @@
 Cerad\Bundle\GameBundle\Doctrine\Entity\GameTeam:
     type:  entity
-    table: game_team
+    table: game_teams
     repositoryClass: Cerad\Bundle\GameBundle\Doctrine\EntityRepository\GameTeamRepository
     
     uniqueConstraints:

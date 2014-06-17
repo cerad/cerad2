@@ -107,5 +107,7 @@ class Export
 
         return ob_get_clean();
     }
+    public function getFileExtension() { return 'xlsx'; }
+    public function getContentType()   { return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'; }
 }
 ?>
