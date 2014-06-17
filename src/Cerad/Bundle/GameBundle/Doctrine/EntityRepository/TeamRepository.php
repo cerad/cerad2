@@ -31,9 +31,9 @@ class TeamRepository extends EntityRepository
     }
     public function findAllByProjectLevels($projectKey,$levelKeys)
     {
-        $qb = $this->createQueryBuilder('team');
+        if (count($levelKeys) < 1) return array();
         
-        $qb->select('team');
+        $qb = $this->createQueryBuilder('team');
         
         $qb->andWhere('team.projectKey = :projectKey');
         $qb->setParameter('projectKey',$projectKey);

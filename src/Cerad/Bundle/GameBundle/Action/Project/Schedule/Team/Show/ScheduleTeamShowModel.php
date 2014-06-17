@@ -67,7 +67,7 @@ class ScheduleTeamShowModel extends ActionModelFactory
         $request->getSession()->set(self::SessionCriteria,$criteria);
     }
     public function loadGames()
-    {        
+    {
         $criteria = $this->criteria;
       
         // Different select for each program
@@ -99,10 +99,10 @@ class ScheduleTeamShowModel extends ActionModelFactory
 
         foreach($teams as $team)
         {
-            $teamChoices[$team->getKey()] = $team->getName();
+            $levelKeyParts = explode('_',$team->getLevelKey());
+            
+            $teamChoices[$team->getKey()] = $levelKeyParts[1] . ' ' . $team->getName();
         }
         return $teamChoices;
-        
-        //echo sprintf("Team Count : %d",count($teams)); die();
     }
 }

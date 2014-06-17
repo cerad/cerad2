@@ -366,6 +366,8 @@ class GameRepository extends EntityRepository
     }
     public function findAllByGameIds($gameIds,$wantOfficials = false)
     {
+        if (count($gameIds) < 1) return array();
+        
         // Game query
         $qb = $this->createQueryBuilder('game');
         

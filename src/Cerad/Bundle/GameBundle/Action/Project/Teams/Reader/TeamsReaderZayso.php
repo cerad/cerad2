@@ -26,6 +26,8 @@ class TeamsReaderZayso extends ExcelReader
     );
     protected function transformName($name,$levelKey)
     {
+        return $name;
+        
         $nameParts = explode(' ',$name);
         $num = $nameParts[0];
         if (strlen($num) != 3) return $name;
@@ -45,7 +47,6 @@ class TeamsReaderZayso extends ExcelReader
         $levelKey   = $item['levelKey'];
         $projectKey = $this->projectKey;
         
-        // Little hack to add level to team name prefix
         $name = $this->transformName($item['name'],$levelKey);
         
         $team = array();
