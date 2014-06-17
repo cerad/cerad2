@@ -30,6 +30,14 @@ class GameUpdateByScorerModel extends ActionModelFactory
     }
     public function process()
     {       
+        // Relink teams, probably shoud be a Team message of some sort?
+        $gameTeams = $this->game->getTeams();
+        
+        foreach($gameTeams as $gameTeam)
+        {
+            $team = $this->teamRepo->findOneByKey($gameTeam->getTeamKey());
+            $gameTeam->setTeam($team);
+        }
         // Save
         $this->gameRepo->commit();
         return;

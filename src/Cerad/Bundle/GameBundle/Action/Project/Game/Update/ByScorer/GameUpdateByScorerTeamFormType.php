@@ -25,12 +25,30 @@ class GameUpdateByScorerTeamFormType extends AbstractType
      * 
      * Or maybe convert game object to array
      */
-    public function __construct($physicalTeams)
+    public function __construct($teams)
     {
-        $this->physicalTeams = $physicalTeams;
+        $this->teams = $teams;
+    }
+    protected function genTeamChoices()
+    {
+        $teamChoices = array();
+        $teamChoices[0] = 'Select Team';
+        foreach($this->teams as $team)
+        {
+            $teamChoices[$team->getKey()] = $team->getDesc();
+        }
+        return $teamChoices;
     }
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $builder->add('teamKey', 'choice', array(
+            'choices'  => $this->genTeamChoices(),
+            'expanded' => false,
+            'multiple' => false,
+            'required' => true,
+        ));
+        return;
+        
         $builder->add('team', 'entity', array(
             'class'    => 'Cerad\Bundle\GameBundle\Doctrine\Entity\Team',
             'choices'  => $this->physicalTeams,

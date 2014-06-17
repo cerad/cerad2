@@ -1,7 +1,7 @@
 <?php
 namespace Cerad\Bundle\GameBundle\Doctrine\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
+//  Doctrine\Common\Collections\ArrayCollection;
 
 class Team
 {
@@ -22,8 +22,6 @@ class Team
     protected $points; // Soccerfest points
     
     protected $status = 'Active';
-    
-    protected $games;
    
     public function getId()      { return $this->id;      }
     public function getKey()     { return $this->key;     }
@@ -52,23 +50,6 @@ class Team
     
     public function __construct()
     {
-        $this->games = new ArrayCollection();
-    }
-    /* ============
-     * Game Team stuff
-     */
-   public function getGames() 
-    { 
-        die('Team::getGames');
-        return $this->games->toArray();
-    }
-    public function addGame($game)
-    {
-        die('Team::addGame');
-        // Not indexed
-        $this->games[] = $game;
-        
-        $game->setTeam($this);
     }
     /* ==============================================
      * Readable view of the team?
@@ -77,8 +58,9 @@ class Team
      */
     public function getDesc()
     {
-        die('Team::getDesc');
-        return sprintf('#%02d  %s',$this->num,$this->name);
+        $levelKeyParts = explode('_',$this->levelKey);
+        
+        return sprintf('%s %s',$levelKeyParts[1],$this->name);
     }
 }
 ?>
