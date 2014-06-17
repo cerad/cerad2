@@ -56,6 +56,14 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
     {
         return $this->container->get('cerad_game__game_team_repository');
     }
+    /* ==============================================
+     * 27 June 2014
+     * Getting quite a few spurious game numbers
+     * They often have 4 or 6 digits instead of the final standard of 5
+     * From old saved links?  Strange because the numbers themselves change
+     * 
+     * So exception either needs to be handled or not thrown at all
+     */
     public function onControllerGame(FilterControllerEvent $event)
     {
         // Only process routes asking for a game
@@ -77,7 +85,11 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         $game = $this->getGameRepository()->findOneByProjectNum($projectKey,$gameNum);
         if (!$game)
         {
-            throw new NotFoundHttpException(sprintf('Game %s %d not found',$projectKey,$gameNum));
+            $_route = $request->attributes->get('_route');
+            if ($_route != 'cerad_game__project__game_report__update')
+            {
+                throw new NotFoundHttpException(sprintf('Game %s %d not found',$projectKey,$gameNum));
+            }
         }
         // Stash It
         $request->attributes->set('game',$game);

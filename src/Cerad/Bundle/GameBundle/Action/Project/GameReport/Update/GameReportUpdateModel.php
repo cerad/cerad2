@@ -12,6 +12,8 @@ use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
 class GameReportUpdateModel extends ActionModelFactory
 {  
     public $project;
+    
+    public $_game;
     public $_project;
     
     public $back;
@@ -28,16 +30,20 @@ class GameReportUpdateModel extends ActionModelFactory
     }
     public function create(Request $request)
     {   
+        $this->_game    = $request->attributes->get('_game');
         $this->_project = $request->attributes->get('_project');
         
-        $this->project = $project = $request->attributes->get('project');
         $this->game    = $game    = $request->attributes->get('game');
+        $this->project = $project = $request->attributes->get('project');
+        
+        $this->back = $request->query->get('back');
+       
+        // Getting mystery requests
+        if (!$game) return $this;
         
         $this->gameReport     = $game->getReport();
         $this->homeTeamReport = $game->getHomeTeam()->getReport();
         $this->awayTeamReport = $game->getAwayTeam()->getReport();
-        
-        $this->back = $request->query->get('back');
         
         return $this;
     }
@@ -51,6 +57,8 @@ class GameReportUpdateModel extends ActionModelFactory
     }
     public function process()
     {
+        if (!$this->game) return;
+        
         // Extract
         $game           = $this->game;
         $gameReport     = $this->gameReport;

@@ -26,12 +26,14 @@ class GameReportUpdateFormFactory extends ActionFormFactory
             ),
             'required' => false,
         );
+        $nextGameNum = $model->game ? $model->_game + 1 : $model->_game;
+        
         $formData = array(
             'game'           => $model->game,
             'gameReport'     => $model->gameReport,
             'homeTeamReport' => $model->homeTeamReport,
             'awayTeamReport' => $model->awayTeamReport,
-            'nextGameNum'    => $model->game->getNum() + 1,
+            'nextGameNum'    => $nextGameNum,
         );
         $builder = $this->formFactory->create('form',$formData,$formOptions);
         
