@@ -9,11 +9,16 @@ use Cerad\Bundle\CoreBundle\Action\ActionFormFactory;
 //  Cerad\Bundle\CoreBundle\Event\FindProjectLevelsEvent;
 use Cerad\Bundle\CoreBundle\Event\FindProjectTeamsEvent;
 
+use Cerad\Bundle\PersonBundle\Action\Project\PersonTeams\Show\PersonTeamsShowPersonTeamFormType as PersonTeamFormType;
+
 class PersonTeamsShowFormFactory extends ActionFormFactory
 {   
     protected function genFormData($model)
     {
-        $formData = array();
+        $formData = array(
+            'role'        => 'Parent',
+            'personTeams' => array(),
+        );
         
         // Divide teams by programs
         $programs = $model->project->getPrograms();
@@ -21,6 +26,12 @@ class PersonTeamsShowFormFactory extends ActionFormFactory
         {
             $formData[$program . 'Teams' ] = array();
         }
+        // Wrap teams with delete options
+        foreach($model->personTeams as $personTeam)
+        {
+            $formData['personTeams'][] = array('personTeam' => $personTeam, 'remove' => false);
+        }
+        // Done
         return $formData;
     }
     public function create(Request $request, $model)
@@ -44,6 +55,8 @@ class PersonTeamsShowFormFactory extends ActionFormFactory
         // Try using a name just for grins
         $builder = $this->formFactory->create('form',$formData,$formOptions);
         
+        $builder->add('personTeams','collection',array('type' => new PersonTeamFormType()));
+        
         foreach($model->project->getPrograms() as $program)
         {
             $event = new FindProjectTeamsEvent($model->project,$program);
@@ -66,9 +79,14 @@ class PersonTeamsShowFormFactory extends ActionFormFactory
               //'empty_value' => 'Choose Team(s)',
             )));
         }
-                        
+        $builder->add('role','cerad_person__person_team__role');
+        
         $builder->add('add', 'submit', array(
             'label' => 'Add Team(s)',
+            'attr'  => array('class' => 'submit'),
+        ));  
+        $builder->add('remove', 'submit', array(
+            'label' => 'Remove Selected Team(s)',
             'attr'  => array('class' => 'submit'),
         ));  
         return $builder; //->getForm();

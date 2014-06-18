@@ -32,12 +32,15 @@ class PersonTeamsShowModel extends ActionModelFactory
      */
     public function process($formData)
     {   
+        $role = $formData['role'];
+        $person = $this->person;
+        
+        // Add teams
         $teamKeys = array();
         foreach($this->project->getPrograms() as $program)
         {
             $teamKeys = array_merge($teamKeys,$formData[$program . 'Teams']);
         }
-        $person = $this->person;
         foreach($teamKeys as $teamKey)
         {
             // Skip if already have one
@@ -50,12 +53,20 @@ class PersonTeamsShowModel extends ActionModelFactory
             if ($team)
             {
                 $personTeam = $person->createPersonTeam();
-                $personTeam->setRole('Parent');
+                $personTeam->setRole($role);
                 $personTeam->setTeam($team);
                 $person->addPersonTeam($personTeam);
             }
         }
-        $this->personTeamRepo->commit();
+        // Remove teams
+        foreach($formData['personTeams'] as $personTeamx)
+        {
+            if ($personTeamx['remove'])
+            {
+                $person->removePersonTeam($personTeamx['personTeam']);
+            }
+        }
+        $this->personTeamRepo->flush();
     }
     public function create(Request $request)
     {   

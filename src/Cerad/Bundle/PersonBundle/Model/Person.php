@@ -320,7 +320,7 @@ class Person extends BaseModel implements PersonInterface
             if ($this->isSameTeam($personTeam,$personTeamx)) return;
         }
         // Add it
-        $this->teams[] = $personTeam;
+        $this->teams[$personTeam->getTeamKey()] = $personTeam;
         $personTeam->setPerson($this);
         $this->onPropertyChanged('teams');
     }
@@ -328,7 +328,23 @@ class Person extends BaseModel implements PersonInterface
     {
         return isset($this->teams[$teamKey]) ? true : false;
     }
-    // TODO: Need remove team
+    public function removePersonTeam($personTeam)
+    {
+        
+        $teamKey = $personTeam->getTeamKey();
+        
+        if (!isset($this->teams[$teamKey])) return;
+        
+        unset($this->teams[$teamKey]);
+        
+      //$this->teams->remove($teamKey);
+        
+        // This is critucal for bidirectional
+        $personTeam->setPerson(null);
+        
+        $this->onPropertyChanged('teams');
+    }
+    
     
     /* ===========================================
      * Age with optional asOf date

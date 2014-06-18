@@ -118,6 +118,13 @@ services:
             - { name: form.type, alias: cerad_person_shirt_size }
 
 # =======================================================
+# Person Teams
+    cerad_person__person_team__role_form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\Team\PersonTeamRoleFormType
+        tags:
+            - { name: form.type, alias: cerad_person__person_team__role }
+            
+# =======================================================
 # Person Plans
     cerad_person.plan_will_attend.form_type:
         class: Cerad\Bundle\PersonBundle\FormType\Plan\WillAttendFormType
