@@ -4,22 +4,22 @@ services:
   # =======================================================================
   # Action: Project Person Teams Show
   #
-  cerad_person__project__person__teams__show_model_factory:
-    class: Cerad\Bundle\PersonBundle\Action\Project\Person\Teams\Show\TeamsShowModel
+  cerad_person__project__person_teams__show_model_factory:
+    class: Cerad\Bundle\PersonBundle\Action\Project\PersonTeams\Show\PersonTeamsShowModel
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
       - '@cerad_person__person_repository'
   
-  cerad_person__project__person__teams__show_form_factory:
-    class: Cerad\Bundle\PersonBundle\Action\Project\Person\Teams\Show\TeamsShowFormFactory
+  cerad_person__project__person_teams__show_form_factory:
+    class: Cerad\Bundle\PersonBundle\Action\Project\PersonTeams\Show\PersonTeamsShowFormFactory
     calls:
       - [setRouter,      ['@router']]
       - [setFormFactory, ['@form.factory']]
       - [setDispatcher,  ['@event_dispatcher']]
              
-  cerad_person__project__person__teams__show_controller:
-    class: Cerad\Bundle\PersonBundle\Action\Project\Person\Teams\Show\TeamsShowController
+  cerad_person__project__person_teams__show_controller:
+    class: Cerad\Bundle\PersonBundle\Action\Project\PersonTeams\Show\PersonTeamsShowController
     calls:
       - [setRouter,     ['@router']]
       - [setTemplating, ['@templating']]

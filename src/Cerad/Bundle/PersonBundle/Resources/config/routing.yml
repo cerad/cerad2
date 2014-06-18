@@ -1,8 +1,8 @@
     
-cerad_person__project__person__teams__show:
+cerad_person__project__person_teams__show:
     path:  /project/{_project}/person/{_person}/teams
     defaults: 
-        _controller: cerad_person__project__person__teams__show_controller:action
-        _model:      cerad_person__project__person__teams__show_model_factory
-        _form:       cerad_person__project__person__teams__show_form_factory
-        _template: '@CeradPerson\Project\Person\Teams\Show\TeamsShowTwigPage.html.twig'
+        _controller: cerad_person__project__person_teams__show_controller:action
+        _model:      cerad_person__project__person_teams__show_model_factory
+        _form:       cerad_person__project__person_teams__show_form_factory
+        _template: '@CeradPerson\Project\PersonTeams\Show\PersonTeamsShowTwigPage.html.twig'

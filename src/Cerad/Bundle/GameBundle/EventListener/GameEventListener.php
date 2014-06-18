@@ -33,7 +33,7 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
             
             FindResultsEvent::EventName  => array('onFindResults'),
             
-            FindProjectTeamsEvent::FindProjectTeams  => array('onFindProjectTeams'),
+            FindProjectTeamsEvent::Find  => array('onFindProjectTeams'),
             
             ChangedTeamEvent::Changed  => array('onChangedTeam'),
             
