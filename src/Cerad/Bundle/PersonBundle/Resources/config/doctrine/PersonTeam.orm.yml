@@ -3,10 +3,7 @@ Cerad\Bundle\PersonBundle\Entity\PersonTeam:
     table: person_teams
     uniqueConstraints:
         person_team_project_level_num_person_index:
-            columns: person_id,projectKey,levelKey,num
-    indexes:
-        person_team_project_level_name_person_index:
-            columns: person_id,projectKey,levelKey,name
+            columns: person_id,projectKey,levelKey,teamKey
    
     id:
         id:
@@ -27,11 +24,23 @@ Cerad\Bundle\PersonBundle\Entity\PersonTeam:
             length:   20
             nullable: false
             
-        projectKey:
-            column:   projectKey
+        teamKey:
+            column:   teamKey
             type:     string
-            length:   40
+            length:   80
             nullable: false
+            
+        teamName:
+            column:   teamName
+            type:     string
+            length:   80
+            nullable: true
+            
+        teamDesc:
+            column:   teamDesc
+            type:     string
+            length:   80
+            nullable: true
             
         levelKey:
             column:   levelKey
@@ -39,15 +48,10 @@ Cerad\Bundle\PersonBundle\Entity\PersonTeam:
             length:   80
             nullable: false
             
-        num:
-            column:   num
-            type:     integer
-            nullable: false
-            
-        name:
-            column:   name
+        projectKey:
+            column:   projectKey
             type:     string
-            length:   80
+            length:   40
             nullable: false
             
         status:
