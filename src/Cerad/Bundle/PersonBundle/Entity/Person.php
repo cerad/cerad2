@@ -36,11 +36,14 @@ class Person extends PersonModel
 
         $this->feds    = new ArrayCollection(); 
         $this->plans   = new ArrayCollection();
+        $this->teams   = new ArrayCollection();
         $this->persons = new ArrayCollection(); 
     }
     public function createFed ($params = null) { return new PersonFed ($params); }
     public function createPlan($params = null) { return new PersonPlan($params); }
+    public function createTeam($params = null) { return new PersonTeam($params); }
     
+    public function createPersonTeam  ($params = null) { return new PersonTeam  ($params); }
     public function createPersonPerson($params = null) { return new PersonPerson($params); }
     
     /* ===============================================

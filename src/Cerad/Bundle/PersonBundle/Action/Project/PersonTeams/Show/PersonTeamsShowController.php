@@ -3,6 +3,7 @@
 namespace Cerad\Bundle\PersonBundle\Action\Project\PersonTeams\Show;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Cerad\Bundle\CoreBundle\Action\ActionController;
 

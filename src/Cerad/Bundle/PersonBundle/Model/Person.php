@@ -309,9 +309,7 @@ class Person extends BaseModel implements PersonInterface
     }
     protected function isSameTeam($team1,$team2)
     {
-       if ($team1->getNum()       != $team2->getNum())        return false;
-       if ($team1->getLevelKey()  != $team2->getLevelKey())   return false;
-       if ($team1->getPojectKey() != $team2->getProjectKey()) return false;
+       if ($team1->getTeamKey() != $team2->getTeamKey()) return false;
              
        return true;
     }
@@ -324,7 +322,11 @@ class Person extends BaseModel implements PersonInterface
         // Add it
         $this->teams[] = $personTeam;
         $personTeam->setPerson($this);
-        $this->onPropertyChanged('persons');
+        $this->onPropertyChanged('teams');
+    }
+    public function hasPersonTeam($teamKey)
+    {
+        return isset($this->teams[$teamKey]) ? true : false;
     }
     // TODO: Need remove team
     

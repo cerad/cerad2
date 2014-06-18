@@ -11,6 +11,18 @@ use Cerad\Bundle\CoreBundle\Event\FindProjectTeamsEvent;
 
 class PersonTeamsShowFormFactory extends ActionFormFactory
 {   
+    protected function genFormData($model)
+    {
+        $formData = array();
+        
+        // Divide teams by programs
+        $programs = $model->project->getPrograms();
+        foreach($programs as $program)
+        {
+            $formData[$program . 'Teams' ] = array();
+        }
+        return $formData;
+    }
     public function create(Request $request, $model)
     {  
         $actionUrl = $this->router->generate($model->_route,array
@@ -27,8 +39,10 @@ class PersonTeamsShowFormFactory extends ActionFormFactory
             ),
             'required' => false,
         );
+        $formData = $this->genFormData($model);
+        
         // Try using a name just for grins
-        $builder = $this->formFactory->create('form',$model->formData,$formOptions);
+        $builder = $this->formFactory->create('form',$formData,$formOptions);
         
         foreach($model->project->getPrograms() as $program)
         {

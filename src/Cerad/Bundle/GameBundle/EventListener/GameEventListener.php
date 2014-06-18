@@ -9,6 +9,8 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use Cerad\Bundle\CoreBundle\Event\ControllerEventListenerPriority;
+
 use Cerad\Bundle\GameBundle\GameEvents;
 use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
@@ -16,24 +18,19 @@ use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
 use Cerad\Bundle\CoreBundle\Event\Team\ChangedTeamEvent;
 use Cerad\Bundle\CoreBundle\Event\Game\UpdatedGameReportEvent;
 
-use Cerad\Bundle\CoreBundle\Event\FindProjectTeamsEvent;
-use Cerad\Bundle\CoreBundle\Event\FindProjectLevelsEvent;
+//  Cerad\Bundle\CoreBundle\Event\FindProjectLevelsEvent;
 
 class GameEventListener extends ContainerAware implements EventSubscriberInterface
-{
-    const ControllerGameEventListenerPriority = -1600;
-    
+{   
     public static function getSubscribedEvents()
     {
         return array
         (
             KernelEvents::CONTROLLER => array(
-                array('onControllerGame', self::ControllerGameEventListenerPriority),
+                array('onControllerGame', ControllerEventListenerPriority::CeradGame),
             ),
             
             FindResultsEvent::EventName  => array('onFindResults'),
-            
-            FindProjectTeamsEvent::Find  => array('onFindProjectTeams'),
             
             ChangedTeamEvent::Changed  => array('onChangedTeam'),
             
@@ -42,15 +39,9 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
             GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot'),
         );
     }
-    protected $gameRepositoryServiceId;
-    
-    public function __construct($gameRepositoryServiceId)
-    {
-        $this->gameRepositoryServiceId = $gameRepositoryServiceId;
-    }
     protected function getGameRepository()
     {
-        return $this->container->get($this->gameRepositoryServiceId);
+        return $this->container->get('cerad_game__game_repository');
     }
     protected function getGameTeamRepository()
     {
@@ -119,28 +110,6 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         $event->setResults($results);
         $event->stopPropagation();
     }
-    /* ====================================================================
-     * Finds the teams for a given project filtering by assorted other queries
-     */
-    public function onFindProjectTeams(FindProjectTeamsEvent $event)
-    {
-        $project  = $event->getProjectKey();
-        $programs = $event->getPrograms();
-        $genders  = $event->getGenders();
-        $ages     = $event->getAges();
-        
-        $findLevelsEvent = new FindProjectLevelsEvent($project,$programs,$genders,$ages);
-        $dispatcher = $this->container->get('event_dispatcher');
-        $dispatcher->dispatch(FindProjectLevelsEvent::FindProjectLevels,$findLevelsEvent);
-        $levelKeys = $findLevelsEvent->getLevelKeys();
-        
-        $teamRepo = $this->container->get('cerad_game__team_repository');
-        $teams = $teamRepo->findAllByProjectLevels($project,$levelKeys);
-        
-        $event->setTeams($teams);
-        $event->stopPropagation();
-    }
-    
     /* ====================================================================
      * Game Official Assignment
      * Called before commit

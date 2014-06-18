@@ -4,6 +4,9 @@ parameters:
         
     cerad_game__game_event_listener__class:
         Cerad\Bundle\GameBundle\EventListener\GameEventListener
+        
+    cerad_team__team_event_listener__class:
+        Cerad\Bundle\GameBundle\EventListener\TeamEventListener
 
 services:
 
@@ -51,6 +54,13 @@ services:
             - { name: kernel.event_subscriber }
         arguments:
             - 'cerad_game__game_repository'
+            
+    cerad_team__team_event_listener:
+        class: '%cerad_team__team_event_listener__class%'
+        calls:
+             - [setContainer, ['@service_container']]
+        tags:
+            - { name: kernel.event_subscriber }
         
 # ====================================================================
 # Some data transformers

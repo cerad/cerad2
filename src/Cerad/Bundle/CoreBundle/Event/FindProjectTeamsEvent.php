@@ -6,7 +6,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 class FindProjectTeamsEvent extends Event
 {
-    const Find = 'Find';
+    const Find = 'CeradTeamFindProjectTeams';
     
     protected $projectKey;
     protected $programs;

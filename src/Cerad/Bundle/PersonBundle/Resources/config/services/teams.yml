@@ -9,7 +9,7 @@ services:
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
-      - '@cerad_person__person_repository'
+      - '@cerad_person__person_team_repository'
   
   cerad_person__project__person_teams__show_form_factory:
     class: Cerad\Bundle\PersonBundle\Action\Project\PersonTeams\Show\PersonTeamsShowFormFactory

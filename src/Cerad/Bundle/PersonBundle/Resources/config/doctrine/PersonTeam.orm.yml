@@ -1,6 +1,8 @@
 Cerad\Bundle\PersonBundle\Entity\PersonTeam:
     type:  entity
     table: person_teams
+    repositoryClass: Cerad\Bundle\PersonBundle\EntityRepository\PersonTeamRepository
+    
     uniqueConstraints:
         person_team_project_level_num_person_index:
             columns: person_id,projectKey,levelKey,teamKey

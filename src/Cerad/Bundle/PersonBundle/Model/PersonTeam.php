@@ -72,5 +72,6 @@ class PersonTeam
         $this->levelKey   = $team->getLevelKey();
         $this->projectKey = $team->getProjectKey();
     }
+    public function __construct() {}
 }
 ?>

@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
+use Cerad\Bundle\CoreBundle\Event\Team\FindTeamEvent;
+
 class PersonTeamsShowModel extends ActionModelFactory
 {   
     public $_back;
@@ -15,38 +17,45 @@ class PersonTeamsShowModel extends ActionModelFactory
     public $_template;
     
     public $person;
+    public $personTeams;
     public $project;
     
-    public $formData;
+    protected $personTeamRepo;
     
-    protected $personRepo;
-    
-    public function __construct($personRepo)
+    public function __construct($personTeamRepo)
     {   
-        $this->personRepo = $personRepo;
+        $this->personTeamRepo = $personTeamRepo;
     }
     /* =====================================================
      * Process a posted model
      * Turn everything over to the workflow
      */
-    public function process()
+    public function process($formData)
     {   
-        $file = $this->attachment;
-        
-      //echo sprintf("Max file size %d %d Valid: %d, Error: %d<br />\n",
-      //    $file->getMaxFilesize(),$file->getClientSize(),$file->isValid(), $file->getError());
-        
-        $teams = $this->reader->read($this->project,$file->getPathname());
-
-        $saveResults = $this->saver->save($teams,$this->commit);
-        $saveResults->basename = $file->getClientOriginalName();
-        
-        $linkResults = $this->linker->link($teams,$this->commit);
-        $linkResults->basename = $file->getClientOriginalName();
-        
-        // TODO: Some sort of merge or maybe return an array?
-        
-        return $linkResults;
+        $teamKeys = array();
+        foreach($this->project->getPrograms() as $program)
+        {
+            $teamKeys = array_merge($teamKeys,$formData[$program . 'Teams']);
+        }
+        $person = $this->person;
+        foreach($teamKeys as $teamKey)
+        {
+            // Skip if already have one
+            if ($person->hasPersonTeam($teamKey)) continue;
+            
+            // Find it
+            $event = new FindTeamEvent($teamKey);
+            $this->dispatcher->dispatch(FindTeamEvent::ByKey,$event);
+            $team = $event->getTeam();
+            if ($team)
+            {
+                $personTeam = $person->createPersonTeam();
+                $personTeam->setRole('Parent');
+                $personTeam->setTeam($team);
+                $person->addPersonTeam($personTeam);
+            }
+        }
+        $this->personTeamRepo->commit();
     }
     public function create(Request $request)
     {   
@@ -62,19 +71,8 @@ class PersonTeamsShowModel extends ActionModelFactory
         $this->person  = $requestAttrs->get('person');
         $this->project = $requestAttrs->get('project');
         
-        $formData = array();
-        
-        // Divide teams by programs
-        $programs = $this->project->getPrograms();
-        foreach($programs as $program)
-        {
-            $formData[$program . 'Teams' ] = array();
-        }
-        // Add existing teams
-        
-        // Store
-        $this->formData = $formData;
-        
+        $this->personTeams = $this->personTeamRepo->findAllByProjectPerson($this->project,$this->person);
+      //die('Count ' . count($this->personTeams));
         return $this;
     }
 }
