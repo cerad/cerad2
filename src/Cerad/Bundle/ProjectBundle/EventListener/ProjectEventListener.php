@@ -12,22 +12,20 @@ use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use Cerad\Bundle\CoreBundle\Event\ControllerEventListenerPriority;
+
 use Cerad\Bundle\CoreBundle\Event\FindProjectEvent;
 use Cerad\Bundle\CoreBundle\Event\FindProjectLevelsEvent;
 
 class ProjectEventListener extends ContainerAware implements EventSubscriberInterface
 {
-    // Can I make a static setPriority and call from di extension?
-    const ProjectControllerEventListenerPriority = -1300;
-    
     public static function getSubscribedEvents()
     {
         return array
         (
             KernelEvents::CONTROLLER => array(
-                array('onControllerProject', self::ProjectControllerEventListenerPriority),
+                array('onControllerProject', ControllerEventListenerPriority::CeradProject),
             ),
-          //KernelEvents::REQUEST => array(array('onKernelRequest', CoreRequestListener::ProjectEventListenerPriority)),
 
             FindProjectEvent::FindProjectByKey  => array('onFindProjectByKey'  ),
             FindProjectEvent::FindProjectBySlug => array('onFindProjectBySlug' ),
@@ -72,6 +70,10 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
         $twig = $this->container->get('twig');
         $twig->addGlobal( 'project',$project);
         $twig->addGlobal('_project',$projectSlug);
+        
+        // Set acl as well
+        $projectACL = $this->container->get('cerad_project__project_acl');
+        $twig->addGlobal('projectACL',$projectACL);
     }
     public function onFindProjectBySlug(FindProjectEvent $event)
     {
