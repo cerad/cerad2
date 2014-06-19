@@ -73,11 +73,15 @@ class ProjectVoter implements VoterInterface
         // Need to have the role to go any further
         if (!$this->hasRole($token,$roleName)) return $this->accessDenied;
         
+        // No property means have access
+        if (count($attrParts) < 2) return $this->accessGranted;
+        
         // Prop must exist
-        $prop = isset($attrParts[1]) ? $attrParts[1] : null;
+        $prop = $attrParts[1];
 
         if (!isset($this->acl[$roleName][$prop])) return $this->accessDenied;
         
+        // And check value
         return $this->acl[$roleName][$prop] ? $this->accessGranted : $this->accessDenied;
     }
 }
