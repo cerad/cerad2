@@ -29,7 +29,11 @@
     <td>{{ form_widget(form.ExtraTeams) }}</td>
 </tr>
 <tr>
-    <td colspan="2">{{ form_widget(form.role) }}{{ form_widget(form.add) }}</td>
+    <td colspan="2">
+        {{ form_widget(form.role) }}
+        {{ form_widget(form.add)  }}
+        <a href="{{ _back }}">Done - Return to Home</a>
+    </td>
 </tr>
 </table>
 <div style="display:none">{{ form_rest(form) }}</div>

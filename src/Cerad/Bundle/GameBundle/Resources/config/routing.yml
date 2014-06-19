@@ -108,7 +108,7 @@ cerad_game__project__schedule_user__show:
     defaults: 
         _controller: cerad_game__project__schedule_user__show_controller:action
         _model:      cerad_game__project__schedule_user__show_model_factory
-        _template: '@CeradGame/Project/Schedule/User/Show/Twig/ScheduleUserShowPage.html.twig'
+        _template: '@CeradGame/Project/Schedule/User/Show/ScheduleUserShowTwigPage.html.twig'
         _format:     html
         _view_csv:   cerad_game__project__schedule_user__show_view_csv
         _view_xls:   cerad_game__project__schedule_user__show_view_xls

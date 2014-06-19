@@ -10,6 +10,9 @@ class ScheduleShowModel extends ActionModelFactory
     public $project;
     public $criteria;
     
+    public $teamKeys   = array();
+    public $personKeys = array();
+    
     protected $sessionName;
     protected $wantOfficials;
     

@@ -345,8 +345,13 @@ class GameRepository extends EntityRepository
     }
     /* ==============================================================
      * Used to grab gameIds for physical teams
+     * TODO: Fix method name
      */
     public function findAllIdsForTeamKeys($teamKeys)
+    {
+        return $this->findAllIdsByTeamKeys($teamKeys);
+    }
+    public function findAllIdsByTeamKeys($teamKeys)
     {
         if (count($teamKeys) < 1) return array();
         
@@ -357,6 +362,33 @@ class GameRepository extends EntityRepository
         
         $qb->andWhere('gameTeam.teamKey IN(:teamKeys)');
         $qb->setParameter(     'teamKeys', $teamKeys);
+            
+        $gameIds = $qb->getQuery()->getScalarResult();
+        
+        $ids = array();
+        
+        array_walk($gameIds, function($row) use (&$ids) { $ids[] = $row['id']; });
+        
+        return $ids;
+        
+    }
+    // Note: chnge guid to key
+    public function findAllIdsByProjectPersonKeys($project,$personKeys)
+    {
+        if (count($personKeys) < 1) return array();
+        
+        $projectKey = is_object($project) ? $project->getKey() : $project;
+        
+        $qb = $this->createQueryBuilder('game');
+     
+        $qb->select('distinct game.id');
+        $qb->leftJoin('game.officials','gameOfficial');
+        
+        $qb->andWhere('game.projectKey = :projectKey');
+        $qb->setParameter('projectKey',$projectKey);
+        
+        $qb->andWhere('gameOfficial.personGuid IN(:personKeys)');
+        $qb->setParameter('personKeys',$personKeys);
             
         $gameIds = $qb->getQuery()->getScalarResult();
         

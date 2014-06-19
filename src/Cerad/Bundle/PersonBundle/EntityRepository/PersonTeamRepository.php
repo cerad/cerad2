@@ -10,10 +10,18 @@ class PersonTeamRepository extends EntityRepository
     /* ==========================================================
      * Find stuff
      */
-    public function findAllByProjectPerson($project,$person)
+    public function findAllByProjectPerson($project,$persons)
     {
         $projectKey = is_object($project) ? $project->getKey() : $project;
-        $personGuid = is_object($person)  ? $person->getGuid() : $person;
+        
+        if (!is_array($persons)) $persons = array($persons);
+        
+        $personGuids = array();
+        foreach($persons as $person)
+        {
+            $personGuids[] = is_object($person)  ? $person->getGuid() : $person;
+        }
+        if (count($personGuids) < 1) return array();
         
         $qb = $this->createQueryBuilder('personTeam');
         
@@ -24,8 +32,8 @@ class PersonTeamRepository extends EntityRepository
         $qb->andWhere('personTeam.projectKey = :projectKey');
         $qb->setParameter('projectKey', $projectKey);
         
-        $qb->andWhere('person.guid = :personGuid');
-        $qb->setParameter('personGuid', $personGuid);
+        $qb->andWhere('person.guid IN (:personGuids)');
+        $qb->setParameter('personGuids', $personGuids);
         
       //$qb->orderBy('personTeam.projectKey,personTeam.levelKey,personTeam.teamDesc');
         

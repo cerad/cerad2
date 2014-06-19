@@ -12,6 +12,9 @@ class ScheduleTeamShowModel extends ActionModelFactory
     public $project;
     public $criteria;
     
+    public $teamKeys   = array();
+    public $personKeys = array();
+    
     protected $gameRepo;
     protected $teamRepo;
     protected $levelRepo;

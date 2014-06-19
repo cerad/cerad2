@@ -10,28 +10,31 @@ use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\Component\HttpKernel\Event\FilterControllerEvent;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
+use Cerad\Bundle\CoreBundle\Event\ControllerEventListenerPriority;
+
 use Cerad\Bundle\CoreBundle\Event\FindPersonEvent;
 use Cerad\Bundle\CoreBundle\Event\FindPersonPlanEvent;
 use Cerad\Bundle\CoreBundle\Event\FindOfficialsEvent;
 
 use Cerad\Bundle\CoreBundle\Event\Person\FindProjectPersonEvent;
+use Cerad\Bundle\CoreBundle\Event\Person\FindProjectPersonTeamsEvent;
 
 class PersonEventListener extends ContainerAware implements EventSubscriberInterface
 {
-    const ControllerPersonEventListenerPriority = -1400;
-    
     public static function getSubscribedEvents()
     {
         return array
         (
             KernelEvents::CONTROLLER => array(
-                array('onControllerPerson', self::ControllerPersonEventListenerPriority),
+                array('onControllerPerson', ControllerEventListenerPriority::CeradPerson),
             ),       
-            FindPersonEvent    ::FindByGuidEventName   => array('onFindPersonByGuid' ),
-            FindPersonEvent    ::FindByFedKeyEventName => array('onFindPersonByFedKey' ),
+            FindPersonEvent::FindByGuidEventName   => array('onFindPersonByGuid' ),
+            FindPersonEvent::FindByFedKeyEventName => array('onFindPersonByFedKey' ),
             
             FindProjectPersonEvent::ByGuid  => array('onFindProjectPersonByGuid' ),
             FindProjectPersonEvent::ByName  => array('onFindProjectPersonByName' ),
+            
+            FindProjectPersonTeamsEvent::ByGuid  => array('onFindProjectPersonTeams' ),
             
             FindPersonPlanEvent::FindByProjectGuidEventName  => array('onFindPersonPlanByProjectGuid' ),
             FindPersonPlanEvent::FindByProjectNameEventName  => array('onFindPersonPlanByProjectName' ),
@@ -39,15 +42,13 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             FindOfficialsEvent ::FindOfficialsEventName      => array('onFindOfficials' ),
         );
     }
-    protected $personRepositoryServiceId;
-    
-    public function __construct($personRepositoryServiceId)
-    {
-        $this->personRepositoryServiceId = $personRepositoryServiceId;
-    }
     protected function getPersonRepository()
     {
-        return $this->container->get($this->personRepositoryServiceId);
+        return $this->container->get('cerad_person__person_repository');
+    }
+    protected function getPersonTeamRepository()
+    {
+        return $this->container->get('cerad_person__person_team_repository');
     }
     public function onControllerPerson(FilterControllerEvent $event)
     {
@@ -213,6 +214,22 @@ class PersonEventListener extends ContainerAware implements EventSubscriberInter
             return;
         }
         $event->setPerson($person);
+    }
+    /* ===============================================================================
+     * Finds an aggrate person with attached project plan as well as project fed info
+     */
+    public function onFindProjectPersonTeams(FindProjectPersonTeamsEvent $event)
+    {
+        // Probably not needed
+        $personGuids = $event->getPersons();
+        
+        // Project
+        $project = $event->getProject();
+        
+        // Lookup
+        $personTeams = $this->getPersonTeamRepository()->findAllByProjectPerson($project,$personGuids);
+
+        $event->setPersonTeams($personTeams);
     }
     public function onFindProjectPersonByName(FindProjectPersonEvent $event)
     {
