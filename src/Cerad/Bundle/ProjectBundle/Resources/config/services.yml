@@ -4,9 +4,9 @@ parameters:
         Cerad\Bundle\ProjectBundle\EventListener\ProjectEventListener
         
     cerad_project__project_slug_default: null
-  
-    cerad_project__project_acl__class:
-        Cerad\Bundle\ProjectBundle\Model\ProjectACL
+          
+    cerad_project__project_voter__class:
+        Cerad\Bundle\ProjectBundle\Security\ProjectVoter
       
 services:
 
@@ -42,11 +42,13 @@ services:
             - 'cerad_project.project_repository'
             - '%cerad_project__project_slug_default%'
             
-    cerad_project__project_acl:
-        class: '%cerad_project__project_acl__class%'
+    cerad_project__project_voter:
+        class: '%cerad_project__project_voter__class%'
+        public: false
+        tags:
+           - { name: security.voter }        
         arguments:
-            - 'security_context'
-            - '%cerad_project__project_acl%'
+           - '%cerad_project__project_acl%'
            
     # Just to confuse things, try a synthetic service
     cerad_project__requested:

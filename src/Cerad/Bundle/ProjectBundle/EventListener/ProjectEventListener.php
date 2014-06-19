@@ -69,11 +69,7 @@ class ProjectEventListener extends ContainerAware implements EventSubscriberInte
         // Twig global
         $twig = $this->container->get('twig');
         $twig->addGlobal( 'project',$project);
-        $twig->addGlobal('_project',$projectSlug);
-        
-        // Set acl as well
-        $projectACL = $this->container->get('cerad_project__project_acl');
-        $twig->addGlobal('projectACL',$projectACL);
+        $twig->addGlobal('_project',$projectSlug);        
     }
     public function onFindProjectBySlug(FindProjectEvent $event)
     {
