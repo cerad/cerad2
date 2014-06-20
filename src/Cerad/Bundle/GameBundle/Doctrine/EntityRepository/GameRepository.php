@@ -412,6 +412,39 @@ class GameRepository extends EntityRepository
         return $ids;
         
     }
+    public function findAllIdsByProjectLevels($project,$levelKeys,$dates = null)
+    {        
+        $projectKey = is_object($project) ? $project->getKey() : $project;
+        
+        // TODO: Allow level objects
+        
+        $qb = $this->createQueryBuilder('game');
+     
+        $qb->select('distinct game.id');
+        
+        $qb->andWhere('game.projectKey = :projectKey');
+        $qb->setParameter('projectKey',$projectKey);
+        
+        if ($levelKeys && count($levelKeys))
+        {
+            $qb->andWhere('game.levelKey IN (:levelKeys)');
+            $qb->setParameter('levelKeys',$levelKeys);            
+        }
+        if ($dates && count($dates))
+        {
+            $qb->andWhere('DATE(game.dtBeg) IN (:dates)');
+            $qb->setParameter('dates',$dates);
+        }
+                  
+        $gameIds = $qb->getQuery()->getScalarResult();
+        
+        $ids = array();
+        
+        array_walk($gameIds, function($row) use (&$ids) { $ids[] = $row['id']; });
+        
+        return $ids;
+        
+    }
     public function findAllByGameIds($gameIds, $wantOfficials = false)
     {
         if (count($gameIds) < 1) return array();

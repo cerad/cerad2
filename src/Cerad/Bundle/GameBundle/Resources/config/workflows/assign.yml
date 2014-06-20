@@ -1,7 +1,29 @@
 
 # Mapping table for posted names vs internal names
 # TODO: Make these arrsys with clearPerson attribute
-#       and viewableBuUser 
+#       and viewableBuUser
+
+# Not all of these abbreviations will be used
+assignStateAbbreviations:
+  Open:      Open
+  Requested: Req
+  If_Needed: If_N
+  Accepted:  Acc
+  Declined:  Dec
+  Approved:  App
+  Rejected:  Rej
+  Reviewing: Rev
+  Pending:   Pend
+  Published: Pub
+  Notified:  Not
+ 
+  Turnback:         TB
+  TurnBackApproved: TBA
+  TurnBackRejected: TBR
+  
+  RemoveByAssignee: RBU
+  RemoveByAssignor: RBA
+  
 assignStateMap:
   
   StateOpen:                  Open  # clearPerson: true
@@ -36,7 +58,7 @@ assigneeStateTransitions:
   StateOpen:
     StateOpen:                { desc: 'Slot Is Open' }
     StateRequestedByAssignee: { desc: 'Request Assignment' }
-    StateIfNeededByAssignee:  { desc: 'Will Do If Needed'  }
+   #StateIfNeededByAssignee:  { desc: 'Will Do If Needed'  }
       
   StateRequestedByAssignee:
     StateRequestedByAssignee: { desc: 'Assignment Requested' }

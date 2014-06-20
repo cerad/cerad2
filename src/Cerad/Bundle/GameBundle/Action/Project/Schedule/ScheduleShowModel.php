@@ -121,7 +121,7 @@ class ScheduleShowModel extends ActionModelFactory
         
         $levelKeys = $event->getLevelKeys();
         
-        echo 'Levels ' . implode(',',$levelKeys) . '<br />';
+      //echo 'Levels ' . implode(',',$levelKeys) . '<br />';
         
         return $levelKeys;
     }

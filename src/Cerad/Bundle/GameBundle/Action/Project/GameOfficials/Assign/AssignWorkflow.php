@@ -15,10 +15,13 @@ class AssignWorkflow
 {
     protected $dispatcher;
     
+    protected $assignStateAbbreviations;
+    
     public function __construct($configFilePath)
     {
         $config = Yaml::parse(file_get_contents($configFilePath));
         
+        $this->assignStateAbbreviations  = $config['assignStateAbbreviations'];
         $this->assigneeStateTransitions  = $config['assigneeStateTransitions'];
         $this->assignorStateTransitions  = $config['assignorStateTransitions'];
         
@@ -35,6 +38,8 @@ class AssignWorkflow
         $this->mapPostedToInternalStates = $map;
     }
     public function setDispatcher(EventDispatcherInterface $dispatcher) { $this->dispatcher = $dispatcher; }
+    
+    public function getAssignStateAbbreviations() { return $this->assignStateAbbreviations; }
     
     public function mapInternalStateToPostedState($state)
     {

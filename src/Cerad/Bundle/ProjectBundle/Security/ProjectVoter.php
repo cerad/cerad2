@@ -43,7 +43,7 @@ class ProjectVoter implements VoterInterface
         ));
     }
     public function supportsClass($class)
-    {
+    {   
         $supportedClass = 'Cerad\Bundle\ProjectBundle\Model\Project';
 
         return $supportedClass === $class || is_subclass_of($class, $supportedClass);
@@ -63,7 +63,9 @@ class ProjectVoter implements VoterInterface
     }
     public function vote(TokenInterface $token, $project, array $attrs)
     {
-        // check if class of this object is supported by this voter
+         if (!is_object($project)) return $this->accessAbstain;
+         
+       // check if class of this object is supported by this voter
         if (!$this->supportsClass(get_class($project))) {
             return $this->accessAbstain;
         }

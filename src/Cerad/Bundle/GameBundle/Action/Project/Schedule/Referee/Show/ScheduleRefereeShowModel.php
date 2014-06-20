@@ -24,18 +24,16 @@ class ScheduleRefereeShowModel extends ScheduleShowModel
             $dates
         );
         
-        // The real query
+        // Level Games
         $levelKeys = $this->loadLevelKeys();
         
-        /*
-        $criteria = array(
-            'projects'      => $project->getKey(),
-            'teamKeys'      => $this->teamKeys,
-            'wantOfficials' => true,
+        $levelGameIds = $this->gameRepo->findAllIdsByProjectLevels(
+            $project,
+            $levelKeys,
+            $dates
         );
-        */
-        $gameIds = array_merge($teamGameIds,$personGameIds);
         
+        $gameIds = array_merge($levelGameIds,$teamGameIds,$personGameIds);
         
         $this->games = $this->gameRepo->findAllByGameIds($gameIds,true);
         
