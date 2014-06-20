@@ -1,0 +1,17 @@
+parameters:
+  
+services:
+  # =======================================================================
+  # Repos
+  cerad_person__person_fed_repository__doctrine:
+        class:  Cerad\Bundle\PersonBundle\Entity\PersonFedRepository
+        factory_service: 'cerad_person.entity_manager.doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\PersonBundle\Entity\PersonFed'
+            
+  cerad_person__person_fed_repository:
+        alias: cerad_person__person_fed_repository__doctrine
+  
+  # =======================================================================
+  # Readers and savers
