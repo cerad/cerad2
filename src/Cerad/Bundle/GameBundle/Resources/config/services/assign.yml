@@ -104,4 +104,9 @@ services:
           - '@event_dispatcher'
           - '@cerad_game__game_repository'
           
+    cerad_game__game_official__voter:
+        class:  Cerad\Bundle\GameBundle\Action\GameOfficial\GameOfficialVoter
+        public: false
+        tags:
+           - { name: security.voter }        
     

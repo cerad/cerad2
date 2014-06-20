@@ -59,6 +59,7 @@ class Person extends BaseModel implements PersonInterface
      */
   //public function getId       () { return $this->id;     }
     public function getDob      () { return $this->dob;    }
+    public function getKey      () { return $this->guid;   }
     public function getGuid     () { return $this->guid;   }
     public function getIcon     () { return $this->icon;   }
     public function getNotes    () { return $this->notes;  }

@@ -41,6 +41,7 @@ class GameOfficial
     public function getAssignRole     () { return $this->assignRole;      }
     public function getAssignState    () { return $this->assignState;     }
     
+    public function getPersonName     () { return $this->personNameFull;  }
     public function getPersonNameFull () { return $this->personNameFull;  }
     
     public function getPersonNameLast () { return $this->personNameLast;  }
@@ -49,6 +50,7 @@ class GameOfficial
     public function getPersonPhone    () { return $this->personPhone;     }
     public function getPersonBadge    () { return $this->personBadge;     }
     public function getPersonGuid     () { return $this->personGuid;      }
+    public function getPersonKey      () { return $this->personGuid;      }
     
     public function getReport()          { return $this->report;          }
     public function getStatus()          { return $this->status;          }

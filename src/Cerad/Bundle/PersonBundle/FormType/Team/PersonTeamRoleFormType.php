@@ -23,7 +23,7 @@ class PersonTeamRoleFormType extends AbstractType
             'required' => true,
             
             'empty_value' => 'Team Relation',
-            'empty_data'  => null
+            'empty_data'  => 'Parent',
             
         ));
     }    

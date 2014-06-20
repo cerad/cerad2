@@ -32,7 +32,8 @@ class PersonTeamsShowModel extends ActionModelFactory
      */
     public function process($formData)
     {   
-        $role = $formData['role'];
+        $role = isset($formData['role']) ? $formData['role'] : 'Parent';
+        
         $person = $this->person;
         
         // Add teams
