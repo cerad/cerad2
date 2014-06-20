@@ -3,15 +3,22 @@ parameters:
 services:
   # =======================================================================
   # Repos
-  cerad_person__person_fed_repository__doctrine:
-        class:  Cerad\Bundle\PersonBundle\Entity\PersonFedRepository
-        factory_service: 'cerad_person.entity_manager.doctrine'
-        factory_method:  'getRepository'
-        arguments:  
-            - 'Cerad\Bundle\PersonBundle\Entity\PersonFed'
+  cerad_person__person_fed__repository_doctrine:
+    class:  Cerad\Bundle\PersonBundle\Entity\PersonFedRepository
+    factory_service: 'cerad_person.entity_manager.doctrine'
+    factory_method:  'getRepository'
+    arguments:  
+      - 'Cerad\Bundle\PersonBundle\Entity\PersonFed'
             
-  cerad_person__person_fed_repository:
-        alias: cerad_person__person_fed_repository__doctrine
+  cerad_person__person_fed__repository:
+    alias: cerad_person__person_fed__repository_doctrine
   
   # =======================================================================
   # Readers and savers
+  cerad_person__person_fed__reader_karen:
+    class:  Cerad\Bundle\PersonBundle\Action\PersonFed\Reader\PersonFedReaderKaren
+        
+  cerad_person__person_fed__saver_karen:
+    class:  Cerad\Bundle\PersonBundle\Action\PersonFed\Saver\PersonFedSaverKaren
+    arguments:
+      - '@cerad_person__person_fed__repository'

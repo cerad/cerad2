@@ -10,11 +10,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 use Symfony\Component\Yaml\Yaml;
 
-class PersonFedsImportCommand extends ContainerAwareCommand
+class PersonFedImportCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
-        $this->setName       ('cerad_person__person_feds__import');
+        $this->setName       ('cerad_person__person_fed__import');
         $this->setDescription('Import Teams');
         $this->addArgument   ('type', InputArgument::REQUIRED, 'karen');
         $this->addArgument   ('file', InputArgument::REQUIRED, 'file');
@@ -29,25 +29,25 @@ class PersonFedsImportCommand extends ContainerAwareCommand
         
         switch($type)
         {
-            case 'karen': $this->importPersonFedsKaren($file); break;
+            case 'karen': $this->importPersonFedKaren($file); break;
         }        
         return; if ($output);
     }
-    protected function importPersonFedsKaren($file)
+    protected function importPersonFedKaren($file)
     {   
         echo "import karen\n";
-        return;
-        $reader = $this->getService('cerad_game__project__teams__reader_eayso');
+        
+        $reader = $this->getService('cerad_person__person_fed__reader_karen');
          
-        $teams = $reader->read($project,$file);
+        $items = $reader->read($file);
         
-        echo sprintf("Eayso Teams: %d\n",count($teams));
+        echo sprintf("Person Feds: %d\n",count($items));
         
-        file_put_contents($file . '.yml',Yaml::dump($teams,10));
+        file_put_contents($file . '.yml',Yaml::dump($items,10));
 
-        $saver = $this->getService('cerad_game__project__teams__saver_eayso');
+        $saver = $this->getService('cerad_person__person_fed__saver_karen');
 
-        $results = $saver->save($teams,true);
+        $results = $saver->save($items,true);
         
         print_r($results);   
     }
