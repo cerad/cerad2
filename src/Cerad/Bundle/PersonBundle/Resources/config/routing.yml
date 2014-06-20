@@ -6,3 +6,4 @@ cerad_person__project__person_teams__show:
         _model:      cerad_person__project__person_teams__show_model_factory
         _form:       cerad_person__project__person_teams__show_form_factory
         _template: '@CeradPerson\Project\PersonTeams\Show\PersonTeamsShowTwigPage.html.twig'
+        _userPerson: required

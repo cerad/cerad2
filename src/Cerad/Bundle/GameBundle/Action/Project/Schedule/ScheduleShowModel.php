@@ -5,6 +5,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
+use Cerad\Bundle\CoreBundle\Event\Level\FindProjectLevelsEvent;
+
+use Cerad\Bundle\CoreBundle\Event\Person\FindProjectPersonTeamsEvent;
+
 class ScheduleShowModel extends ActionModelFactory
 {   
     public $project;
@@ -19,8 +23,6 @@ class ScheduleShowModel extends ActionModelFactory
     protected $gameRepo;
     protected $levelRepo;
     
-    protected $program = null;
-    
     public function __construct($gameRepo,$levelRepo,$sessionName = 'ScheduleShow',$wantOfficials = true)
     {
         $this->gameRepo  = $gameRepo;
@@ -31,13 +33,12 @@ class ScheduleShowModel extends ActionModelFactory
     }
     public function create(Request $request)
     {   
-        /* =============================================
-         * Check to see if program was passed as a request parameter
-         * This if for the one click export
+        /* ===============================================
+         * Pull the current person if the route asked for it
          */
-        if ($request->query->has('program'))
-        {
-            $this->program = $request->query->get('program');
+        $user = $request->attributes->get('user');
+        if ($user) {
+            $this->personKeys = array($user->getPersonGuid() => true);
         }
         
         // From form
@@ -66,6 +67,18 @@ class ScheduleShowModel extends ActionModelFactory
             $criteriaSession = $session->get($this->sessionName);
             $criteria = array_merge($criteria,$criteriaSession);
         }
+        /* =============================================
+         * Check to see if program was passed as a request parameter
+         * This if for the one click export
+         */
+        if ($request->query->has('program'))
+        {
+            $criteria['programs'] = array($request->query->get('program'));
+        }
+
+        // Maybe should get the levels here
+        
+        // So much fun
         $this->criteria = $criteria;
         
         return $this;
@@ -90,5 +103,54 @@ class ScheduleShowModel extends ActionModelFactory
         $this->games = $this->gameRepo->queryGameSchedule($criteria);
         
         return $this->games;
+    }
+    /* =========================================================================
+     * Get all the game ids for teams linked to the current person
+     */
+    protected function loadLevelKeys()
+    {
+        $criteria = $this->criteria;
+        
+        $event = new FindProjectLevelsEvent(
+            $criteria['projects'],
+            $criteria['programs'],
+            $criteria['genders'],
+            $criteria['ages']
+        );
+        $this->dispatcher->dispatch(FindLevelKeysEvent::Find,$event);
+        
+        return $event->getLevelKeys();
+    }
+    /* =========================================================================
+     * Get all the game ids for teams linked to the current person
+     */
+    protected function loadTeamGameIds()
+    {
+        // NA if we don't have any
+        if (count($this->personKeys) < 1) return array();
+        
+        // Restrict to selected dates
+        $dates = $this->criteria['dates'];
+        
+        // Grab all the personTeams for the person
+        $findPersonTeamsEvent = new FindProjectPersonTeamsEvent(
+            $this->project,
+            array_keys($this->personKeys),
+            $dates
+        );
+        $this->dispatcher->dispatch(FindProjectPersonTeamsEvent::ByGuid,$findPersonTeamsEvent);
+        
+        $personTeams = $findPersonTeamsEvent->getPersonTeams();
+        
+        // Index list of team keys for the template
+        $teamKeys = array();
+        array_walk($personTeams, function($item) use (&$teamKeys) { 
+            $teamKeys[$item->getTeamKey()] = true; 
+        });
+        $this->teamKeys = $teamKeys;
+        
+        $teamGameIds = $this->gameRepo->findAllIdsByTeamKeys(array_keys($teamKeys),$dates);
+      //echo sprintf('Count Team Games %d<br />',count($teamGameIds));
+        return $teamGameIds;
     }
 }

@@ -380,7 +380,7 @@ class GameRepository extends EntityRepository
         
     }
     // Note: chnge guid to key
-    public function findAllIdsByProjectPersonKeys($project,$personKeys)
+    public function findAllIdsByProjectPersonKeys($project,$personKeys,$dates = null)
     {
         if (count($personKeys) < 1) return array();
         
@@ -394,6 +394,12 @@ class GameRepository extends EntityRepository
         $qb->andWhere('game.projectKey = :projectKey');
         $qb->setParameter('projectKey',$projectKey);
         
+        if ($dates)
+        {
+            $qb->andWhere('DATE(game.dtBeg) IN (:dates)');
+            $qb->setParameter('dates',$dates);
+        }
+        
         $qb->andWhere('gameOfficial.personGuid IN(:personKeys)');
         $qb->setParameter('personKeys',$personKeys);
             
@@ -406,7 +412,7 @@ class GameRepository extends EntityRepository
         return $ids;
         
     }
-    public function findAllByGameIds($gameIds,$wantOfficials = false)
+    public function findAllByGameIds($gameIds, $wantOfficials = false)
     {
         if (count($gameIds) < 1) return array();
         

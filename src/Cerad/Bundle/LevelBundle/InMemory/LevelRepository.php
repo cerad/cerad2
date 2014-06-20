@@ -42,7 +42,7 @@ class LevelRepository implements LevelRepositoryInterface
         {
             if (in_array('VIP',$params['ages']))
             {
-                $params['genders'] = array();
+                $params['genders'][] = 'VIP';
             }
         }
         $keys = array();

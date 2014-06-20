@@ -79,7 +79,7 @@ class PersonTeamsShowModel extends ActionModelFactory
         $this->_project  = $requestAttrs->get('_project');
         $this->_template = $requestAttrs->get('_template');
         
-        $this->person  = $requestAttrs->get('person');
+        $this->person  = $requestAttrs->get('userPerson');
         $this->project = $requestAttrs->get('project');
         
         $this->personTeams = $this->personTeamRepo->findAllByProjectPerson($this->project,$this->person);
