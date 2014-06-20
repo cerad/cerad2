@@ -9,7 +9,8 @@ class PersonFedSaverKarenResults
     public $total   = 0;
     public $missing = 0;
     
-    public $updatedMemYear = 0;
+    public $updatedMemYear   = 0;
+    public $updatedSafeHaven = 0;
   //public $updatedRegion  = 0;
 }
 class PersonFedSaverKaren
@@ -44,11 +45,18 @@ class PersonFedSaverKaren
         {
           //print_r($item); die();
             $personFed->setMemYear($memYear);
-            $results->updated++;
+            $results->updatedMemYear++;
         }
         $personFed->setFedKeyVerified('Yes');
         $personFed->setPersonVerified('Yes');
         
+        $certSafeHaven = $personFed->getCertSafeHaven(true);
+        if (!$certSafeHaven->getBadge()) 
+        {
+          //print_r($item); die();
+            $certSafeHaven->setBadge($item['safeHaven']);
+            $results->updatedSafeHaven++;
+        }
     }
     /* ==============================================================
      * Main entry point

@@ -24,10 +24,11 @@ class PersonFedReaderKaren extends ExcelReader
         if ($checked != 'Cleared') return;
         
         $this->items[] = array(
-            'fedKey'  => 'AYSOV' . $aysoId,
-            'name'    => $item['name'],
-            'email'   => $item['email'],
-            'memYear' => 'MY2013'
+            'fedKey'    => 'AYSOV' . $aysoId,
+            'name'      => $item['name'],
+            'email'     => $item['email'],
+            'memYear'   => 'MY2013',
+            'safeHaven' => 'AYSO',
         );
     }
     /* ==============================================================
