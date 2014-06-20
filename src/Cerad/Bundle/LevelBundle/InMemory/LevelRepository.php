@@ -90,6 +90,42 @@ class LevelRepository implements LevelRepositoryInterface
         }
         return false;
     }
+    /* ============================================================
+     * 20 June 2014
+     * Rewrote to use arguments instead of criteria array
+     */
+    public function findAllByPGA($project,$programs,$genders,$ages)
+    {
+        // Ignore project
+        if ($project);
+        
+        // Hack for VIP genders
+        if (in_array('VIP',$ages)) {
+            if (!in_array('VIP',$genders)) $genders[] = 'VIP';
+        }
+        $levels = array();
+        foreach($this->levels as $level)
+        {
+            if ($this->keep($level,$programs,$genders,$ages)) $levels[] = $level;
+        }
+        return count($levels) != count($this->levels) ? $levels : array();
+    }
+    protected function keep($level,$programs,$genders,$ages)
+    {
+        if (!$this->keepProperty($level->getProgram(),$programs)) return false;
+        if (!$this->keepProperty($level->getGender (),$genders))  return false;
+        if (!$this->keepProperty($level->getAge    (),$ages))     return false;
+        return true;
+    }
+    protected function keepProperty($value,$props)
+    {
+        $value = strtolower($value);
+        foreach($props as $prop)
+        {
+            if (strtolower(trim($prop)) == $value) return true;
+        }
+        return false;
+    }
 }
 
 ?>

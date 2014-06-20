@@ -117,9 +117,13 @@ class ScheduleShowModel extends ActionModelFactory
             $criteria['genders'],
             $criteria['ages']
         );
-        $this->dispatcher->dispatch(FindLevelKeysEvent::Find,$event);
+        $this->dispatcher->dispatch(FindProjectLevelsEvent::Find,$event);
         
-        return $event->getLevelKeys();
+        $levelKeys = $event->getLevelKeys();
+        
+        echo 'Levels ' . implode(',',$levelKeys) . '<br />';
+        
+        return $levelKeys;
     }
     /* =========================================================================
      * Get all the game ids for teams linked to the current person

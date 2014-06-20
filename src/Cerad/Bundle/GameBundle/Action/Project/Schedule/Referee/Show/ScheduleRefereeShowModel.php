@@ -24,6 +24,9 @@ class ScheduleRefereeShowModel extends ScheduleShowModel
             $dates
         );
         
+        // The real query
+        $levelKeys = $this->loadLevelKeys();
+        
         /*
         $criteria = array(
             'projects'      => $project->getKey(),

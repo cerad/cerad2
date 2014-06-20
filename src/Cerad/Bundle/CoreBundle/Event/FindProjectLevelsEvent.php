@@ -6,6 +6,7 @@ use Symfony\Component\EventDispatcher\Event;
 
 // TODO: Project or Projects?
 // TODO: Maybe criteria might be better
+// A level bundle event is now available so delete this.
 class FindProjectLevelsEvent extends Event
 {
     const FindProjectLevels = 'CeradProjectFindProjectLevels';

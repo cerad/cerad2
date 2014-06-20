@@ -1,12 +1,24 @@
+parameters:
 
+    cerad_level__level_event_listener__class:
+        Cerad\Bundle\LevelBundle\EventListener\LevelEventListener
+ 
 services:
+  
     cerad_level__level_repository__in_memory:
         class:  Cerad\Bundle\LevelBundle\InMemory\LevelRepository
         arguments:  
             - '%cerad_level_level_files%'
-
-#   cerad_level.level_repository:
-#       alias: cerad_level.repository.in_memory
         
     cerad_level__level_repository:
         alias: cerad_level__level_repository__in_memory
+        
+    cerad_level__level_event_listener:
+        class: '%cerad_level__level_event_listener__class%'
+        calls:
+             - [setContainer, ['@service_container']]
+        tags:
+            - { name: kernel.event_subscriber }
+        arguments:
+            - 'cerad_level__level_repository'
+
