@@ -99,6 +99,11 @@ class LevelRepository implements LevelRepositoryInterface
         // Ignore project
         if ($project);
         
+        // Need this but shouldn't
+        //$programs = is_array($programs) ? $programs : array();
+        //$genders  = is_array($genders)  ? $genders  : array();
+        //$ages     = is_array($ages)     ? $ages     : array();
+        
         // Hack for VIP genders
         if (in_array('VIP',$ages)) {
             if (!in_array('VIP',$genders)) $genders[] = 'VIP';
@@ -119,6 +124,8 @@ class LevelRepository implements LevelRepositoryInterface
     }
     protected function keepProperty($value,$props)
     {
+        if (!is_array($props) || count($props) < 1) return true;
+        
         $value = strtolower($value);
         foreach($props as $prop)
         {

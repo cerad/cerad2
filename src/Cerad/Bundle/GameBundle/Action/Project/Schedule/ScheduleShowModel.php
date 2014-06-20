@@ -47,6 +47,10 @@ class ScheduleShowModel extends ActionModelFactory
         $this->project = $project = $request->attributes->get('project');
         $criteria['projects'] = array($project->getKey());
 
+        $criteria['programs'] = array();
+        $criteria['genders' ] = array();
+        $criteria['ages'    ] = array();
+        
         $criteria['teams' ]  = array();
         $criteria['fields']  = array();
         
