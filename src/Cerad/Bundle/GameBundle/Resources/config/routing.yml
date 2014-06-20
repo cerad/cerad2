@@ -71,7 +71,7 @@ cerad_game__project__schedule_assignor__show:
     path:  /project/{_project}/schedule-assignor.{_format}
     defaults: 
         _controller: cerad_game__project__schedule_referee__show_controller:action
-        _model:      cerad_game__project__schedule_referee__show_model_factory
+        _model:      cerad_game__project__schedule_assignor__show_model_factory
         _form:       cerad_game__project__schedule_referee__show_form_factory
         _template: '@CeradGame\Project\Schedule\Assignor\Show\ScheduleAssignorShowTwigPage.html.twig'
         _format:     html

@@ -140,6 +140,19 @@ services:
       - '@cerad_game__project__schedule_game__util_dump_xls'
       - 'ScheduleReferee'
       - true # Want Referees
+      
+# =======================================================================
+# Action: ScheduleAssignorShow
+#
+  cerad_game__project__schedule_assignor__show_model_factory:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_game__game_repository'
+      - '@cerad_level__level_repository'
+      - 'ScheduleRefereeShow'
+      - true
           
 # =======================================================================
 # Action: ScheduleTeamShow
