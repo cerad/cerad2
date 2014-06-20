@@ -24,3 +24,6 @@ services:
         class:  '%cerad_core__p3p_response_listener__class%'
         tags:
             - { name: kernel.event_subscriber }
+            
+    cerad_core__role_hierarchy:
+        alias: security.role_hierarchy

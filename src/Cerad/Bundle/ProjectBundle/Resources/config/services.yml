@@ -48,6 +48,8 @@ services:
         tags:
            - { name: security.voter }        
         arguments:
+           - '@cerad_core__role_hierarchy'     # security.role_hierarchy
+           - '%security.role_hierarchy.roles%'
            - '%cerad_project__project_acl%'
            
     # Just to confuse things, try a synthetic service

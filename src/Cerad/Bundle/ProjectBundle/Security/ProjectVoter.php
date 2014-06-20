@@ -6,24 +6,32 @@ use Symfony\Component\Security\Core\Exception\InvalidArgumentException;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+
 use Symfony\Component\Security\Core\Role\Role;
+use Symfony\Component\Security\Core\Role\RoleHierarchy;
 
 /* ==================================================
  * 19 June 2014
  * Check out the voter stuff
+ * 
+ * See CoreBundle RolesCommand
  */
 class ProjectVoter implements VoterInterface
 {
     protected $acl;
+    protected $roleHeir;
+    protected $roleHeirRoles;
     
     // Just because
     protected $accessAbstain = VoterInterface::ACCESS_ABSTAIN;
     protected $accessGranted = VoterInterface::ACCESS_GRANTED;
     protected $accessDenied  = VoterInterface::ACCESS_DENIED;
     
-    public function __construct($acl)
+    public function __construct(RoleHierarchy $roleHeir,$roleHeirRoles,$acl)
     {
         $this->acl = $acl;
+        $this->roleHeir = $roleHeir;        
+        $this->roleHeirRoles = $roleHeirRoles;        
     }
     public function supportsAttribute($attribute)
     {
