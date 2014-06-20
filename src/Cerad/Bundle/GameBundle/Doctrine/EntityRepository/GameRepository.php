@@ -346,12 +346,13 @@ class GameRepository extends EntityRepository
     /* ==============================================================
      * Used to grab gameIds for physical teams
      * TODO: Fix method name
+     * TODO: Probably want project as well even though team keys are project independent
      */
-    public function findAllIdsForTeamKeys($teamKeys)
+    public function findAllIdsForTeamKeys($teamKeys, $dates = null)
     {
-        return $this->findAllIdsByTeamKeys($teamKeys);
+        return $this->findAllIdsByTeamKeys($teamKeys, $dates);
     }
-    public function findAllIdsByTeamKeys($teamKeys)
+    public function findAllIdsByTeamKeys($teamKeys,$dates = null)
     {
         if (count($teamKeys) < 1) return array();
         
@@ -359,6 +360,12 @@ class GameRepository extends EntityRepository
      
         $qb->select('distinct game.id');
         $qb->leftJoin('game.teams','gameTeam');
+        
+        if ($dates)
+        {
+            $qb->andWhere('DATE(game.dtBeg) IN (:dates)');
+            $qb->setParameter('dates',$dates);
+        }
         
         $qb->andWhere('gameTeam.teamKey IN(:teamKeys)');
         $qb->setParameter(     'teamKeys', $teamKeys);

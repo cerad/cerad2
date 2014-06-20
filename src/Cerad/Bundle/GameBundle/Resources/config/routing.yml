@@ -58,7 +58,22 @@ cerad_game__project__schedule_referee__show:
         _controller: cerad_game__project__schedule_referee__show_controller:action
         _model:      cerad_game__project__schedule_referee__show_model_factory
         _form:       cerad_game__project__schedule_referee__show_form_factory
-        _template: '@CeradGame\Project\Schedule\Referee\Show\Twig\ScheduleRefereeShowPage.html.twig'
+        _template: '@CeradGame\Project\Schedule\Referee\Show\ScheduleRefereeShowTwigPage.html.twig'
+        _user:       required
+        _format:     html
+        _view_csv:   cerad_game__project__schedule_referee__show_view_csv
+        _view_xls:   cerad_game__project__schedule_referee__show_view_xls
+        _view_html:  cerad_game__project__schedule_referee__show_view_html
+    requirements:
+        _format:  html|csv|xls|pdf
+        
+cerad_game__project__schedule_assignor__show:
+    path:  /project/{_project}/schedule-assignor.{_format}
+    defaults: 
+        _controller: cerad_game__project__schedule_referee__show_controller:action
+        _model:      cerad_game__project__schedule_referee__show_model_factory
+        _form:       cerad_game__project__schedule_referee__show_form_factory
+        _template: '@CeradGame\Project\Schedule\Assignor\Show\ScheduleAssignorShowTwigPage.html.twig'
         _format:     html
         _view_csv:   cerad_game__project__schedule_referee__show_view_csv
         _view_xls:   cerad_game__project__schedule_referee__show_view_xls

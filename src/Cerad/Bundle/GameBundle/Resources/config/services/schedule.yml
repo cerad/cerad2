@@ -102,7 +102,7 @@ services:
 # Action: ScheduleRefereeShow
 #
   cerad_game__project__schedule_referee__show_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowModel
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Referee\Show\ScheduleRefereeShowModel
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:

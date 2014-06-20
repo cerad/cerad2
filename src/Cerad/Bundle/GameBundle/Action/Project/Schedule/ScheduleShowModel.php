@@ -33,6 +33,7 @@ class ScheduleShowModel extends ActionModelFactory
     {   
         /* =============================================
          * Check to see if program was passed as a request parameter
+         * This if for the one click export
          */
         if ($request->query->has('program'))
         {
