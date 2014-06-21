@@ -26,5 +26,6 @@ class CeradPersonExtension extends Extension
         $loader->load('services.yml');
         $loader->load('services/feds.yml');
         $loader->load('services/teams.yml');
+        $loader->load('services/persons.yml');
     }
 }

@@ -7,3 +7,12 @@ cerad_person__project__person_teams__show:
         _form:       cerad_person__project__person_teams__show_form_factory
         _template: '@CeradPerson\Project\PersonTeams\Show\PersonTeamsShowTwigPage.html.twig'
         _userPerson: required
+        
+cerad_person__project__person_persons__show:
+    path:  /project/{_project}/person/{_person}/persons
+    defaults: 
+        _controller: cerad_person__project__person_persons__show_controller:action
+        _model:      cerad_person__project__person_persons__show_model_factory
+        _form:       cerad_person__project__person_persons__show_form_factory
+        _template: '@CeradPerson\Project\PersonPersons\Show\PersonPersonsShowTwigPage.html.twig'
+        _userPerson: required

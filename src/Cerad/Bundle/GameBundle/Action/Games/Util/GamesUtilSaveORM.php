@@ -63,7 +63,7 @@ class GamesUtilSaveORM
             // Can we link?
             $team = $this->teamRepo->findOneByProjectLevelName($projectKey,$levelKey,$gameTeamx['name']);
             $teamNum = $team ? $team->getNum(): null;
-            $gameTeam->setTeamNum($teamNum);
+          //$gameTeam->setTeamNum($teamNum);
         }
         
         // Optional Officials
