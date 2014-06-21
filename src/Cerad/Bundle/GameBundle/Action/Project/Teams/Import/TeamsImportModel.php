@@ -11,6 +11,7 @@ class TeamsImportModel extends ActionModelFactory
     public $project;
     public $attachment;
     
+    public $op = 0;
     public $commit = 0;
     
     protected $reader;
@@ -34,7 +35,7 @@ class TeamsImportModel extends ActionModelFactory
         
         $teams = $this->reader->read($this->project,$file->getPathname());
 
-        $saveResults = $this->saver->save($teams,$this->commit);
+        $saveResults = $this->saver->save($teams,$this->commit,$this->op);
         $saveResults->basename = $file->getClientOriginalName();
                 
         return $saveResults;

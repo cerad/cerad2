@@ -26,6 +26,13 @@ class TeamsImportFormFactory extends ActionFormFactory
             'label' => 'Update',
             'choices' => array(0 => 'Test run - no updates', 1  => 'Update database')
         ));
+        $builder->add('op','choice',array(
+            'label' => 'Operation',
+            'choices' => array(
+                0 => 'Select Operation',
+                1 => 'Update team names and soccerfest points', 
+                2 => 'Update team slots')
+        ));
                 
         $builder->add('import', 'submit', array(
             'label' => 'Import Teams',

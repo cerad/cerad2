@@ -110,7 +110,7 @@ class TeamsSaverZayso
      * 21 June 2014
      * update game_teams set teamKey = null, teamName = null, teamPoints = null;
      */
-    public function save($teams,$commit = false)
+    public function save($teams,$commit = false,$op = 0)
     {
         $this->results = $results = new TeamsSaverZaysoResults();
         
@@ -120,14 +120,8 @@ class TeamsSaverZayso
         // Updated Team information
         foreach($teams as $item)
         {
-            $this->saveTeam($item);
-        }
-        if ($results->commit) $this->teamRepo->commit();
-        
-        // Updated GameTeam links
-        foreach($teams as $item)
-        {   
-            $this->syncTeam($item);
+            if ($op == 1) $this->saveTeam($item);
+            if ($op == 2) $this->syncTeam($item);
         }
         if ($results->commit) $this->teamRepo->commit();
          
