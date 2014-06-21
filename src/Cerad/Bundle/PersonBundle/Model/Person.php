@@ -298,6 +298,16 @@ class Person extends BaseModel implements PersonInterface
             
         return $personPerson;
     }
+    public function removePersonPerson($personPerson)
+    {
+        // TODO: Use a look or index by person id
+
+        $this->persons->removeElement($personPerson);
+        
+        $personPerson->setParent(null);
+        
+        $this->onPropertyChanged('persons');
+    }
     /* ========================================================
      * 08 June 2014
      * PersonTeam Relation

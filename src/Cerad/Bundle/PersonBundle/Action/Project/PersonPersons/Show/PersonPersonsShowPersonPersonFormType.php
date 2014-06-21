@@ -7,7 +7,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 // Really should be GameTeam
-class PersonPersonShowPersonFormType extends AbstractType
+class PersonPersonsShowPersonPersonFormType extends AbstractType
 {
     public function getName() { return 'cerad_person__person_persons__person_person_show'; }
     

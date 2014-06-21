@@ -20,54 +20,48 @@ class PersonPersonsShowModel extends ActionModelFactory
     public $personPersons;
     public $project;
     
+    protected $personRepo;
     protected $personPersonRepo;
     
-    public function __construct($personPersonRepo)
+    public function __construct($personRepo,$personPersonRepo)
     {   
+        $this->personRepo       = $personRepo;
         $this->personPersonRepo = $personPersonRepo;
     }
-    /* =====================================================
-     * Process a posted model
-     * Turn everything over to the workflow
-     */
     public function process($formData)
     {   
-        $role = isset($formData['role']) ? $formData['role'] : 'Family';
-        
         $person = $this->person;
         
-        // Add teams
-        $teamKeys = array();
-        foreach($this->project->getPrograms() as $program)
+        $role = isset($formData['role']) ? $formData['role'] : 'Family';
+        $name = $formData['name'];
+        if ($name)
         {
-            $teamKeys = array_merge($teamKeys,$formData[$program . 'Teams']);
-        }
-        foreach($teamKeys as $teamKey)
-        {
-            // Skip if already have one
-            if ($person->hasPersonTeam($teamKey)) continue;
-            
-            // Find it
-            $event = new FindTeamEvent($teamKey);
-            $this->dispatcher->dispatch(FindTeamEvent::ByKey,$event);
-            $team = $event->getTeam();
-            if ($team)
+            // Search
+            $personAdd = $this->personRepo->findOneByProjectName($this->project->getKey(),$name);
+            if ($personAdd)
             {
-                $personTeam = $person->createPersonTeam();
-                $personTeam->setRole($role);
-                $personTeam->setTeam($team);
-                $person->addPersonTeam($personTeam);
+                // Add
+                $personPerson = $person->createPersonPerson();
+                $personPerson->setRole  ($role);
+                $personPerson->setChild ($personAdd);
+                $personPerson->setParent($person);
+                $person->addPersonPerson($personPerson);
             }
         }
-        // Remove teams
-        foreach($formData['personTeams'] as $personTeamx)
+        
+        // Remove preple
+        foreach($formData['personPersons'] as $personPersonx)
         {
-            if ($personTeamx['remove'])
+            if ($personPersonx['remove'])
             {
-                $person->removePersonTeam($personTeamx['personTeam']);
+                $personPerson = $personPersonx['personPerson'];
+                if (!$personPerson->isRolePrimary())
+                {
+                    $person->removePersonPerson($personPerson);
+                }
             }
         }
-        $this->personTeamRepo->flush();
+        $this->personPersonRepo->flush();
     }
     public function create(Request $request)
     {   
@@ -83,8 +77,8 @@ class PersonPersonsShowModel extends ActionModelFactory
         $this->person  = $requestAttrs->get('userPerson');
         $this->project = $requestAttrs->get('project');
         
-        $this->personTeams = $this->personTeamRepo->findAllByProjectPerson($this->project,$this->person);
-      //die('Count ' . count($this->personTeams));
+        $this->personPersons = $this->person->getPersonPersons();
+        
         return $this;
     }
 }

@@ -17,20 +17,15 @@ class PersonPersonsShowFormFactory extends ActionFormFactory
     protected function genFormData($model)
     {
         $formData = array(
+            'name'          =>  null,
             'role'          => 'Family',
-            'personPersons' => array(),
+            'personPersons' =>  array(),
         );
         
-        // Divide teams by programs
-        $programs = $model->project->getPrograms();
-        foreach($programs as $program)
+        // Remove options
+        foreach($model->personPersons as $personPerson)
         {
-            $formData[$program . 'Teams' ] = array();
-        }
-        // Wrap teams with delete options
-        foreach($model->personTeams as $personTeam)
-        {
-            $formData['personTeams'][] = array('personTeam' => $personTeam, 'remove' => false);
+            $formData['personPersons'][] = array('personPerson' => $personPerson, 'remove' => false);
         }
         // Done
         return $formData;
@@ -44,50 +39,26 @@ class PersonPersonsShowFormFactory extends ActionFormFactory
             '_back'    => $model->_back,
         ));
         $formOptions = array(
-            'method' => 'POST',
-            'action' => $actionUrl,
-            'attr'   => array(
-                'class' => 'cerad_common_form1',
-            ),
+            'method'   => 'POST',
+            'action'   => $actionUrl,
             'required' => false,
+            'attr'     => array('class' => 'cerad_common_form1'),
         );
         $formData = $this->genFormData($model);
         
-        // Try using a name just for grins
         $builder = $this->formFactory->create('form',$formData,$formOptions);
         
         $builder->add('personPersons','collection',array('type' => new PersonPersonFormType()));
         
-        foreach($model->project->getPrograms() as $program)
-        {
-            $event = new FindProjectTeamsEvent($model->project,$program);
-            $this->dispatcher->dispatch(FindProjectTeamsEvent::Find,$event);
-            $teamChoices = array(0 => 'Select Team(s)');
-            foreach($event->getTeams() as $team)
-            {
-                $teamChoices[$team->getKey()] = $team->getDesc();
-            }
-            $builder->add($this->formFactory->createNamed($program . 'Teams', 'choice', null, array(
-                'label'     => $program . ' Teams',
-                'required'  => false,
-                'choices'   => $teamChoices,
-                'expanded'  => false,
-                'multiple'  => true,
-                'auto_initialize' => false,
-                
-              // No impact with multiple = true
-              //'empty_data'  => null,
-              //'empty_value' => 'Choose Team(s)',
-            )));
-        }
-        $builder->add('role','cerad_person__person_team__role');
+        $builder->add('role','cerad_person__person_person__role');
+        $builder->add('name','text');
         
         $builder->add('add', 'submit', array(
-            'label' => 'Add Team(s)',
+            'label' => 'Add Person',
             'attr'  => array('class' => 'submit'),
         ));  
         $builder->add('remove', 'submit', array(
-            'label' => 'Remove Selected Team(s)',
+            'label' => 'Remove Selected Person(s)',
             'attr'  => array('class' => 'submit'),
         ));  
         return $builder; //->getForm();

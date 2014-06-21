@@ -1,6 +1,8 @@
 Cerad\Bundle\PersonBundle\Entity\PersonPerson:
     type:  entity
     table: person_persons
+    repositoryClass: Cerad\Bundle\PersonBundle\EntityRepository\PersonPersonRepository
+    
     changeTrackingPolicy: NOTIFY
     
     id:

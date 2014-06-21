@@ -36,8 +36,8 @@ class PersonPerson extends BaseModel
     public function setStatus  ($value) { $this->onPropertySet('status',  $value); }
     public function setVerified($value) { $this->onPropertySet('verified',$value); }
     
-    public function setParent  (Person $parent) { $this->onPropertySet('parent',  $parent); }
-    public function setChild   (Person $child ) { $this->onPropertySet('child',   $child);  }
+    public function setParent  ($parent) { $this->onPropertySet('parent',  $parent); }
+    public function setChild   ($child ) { $this->onPropertySet('child',   $child);  }
     
     public function __construct() {}
     

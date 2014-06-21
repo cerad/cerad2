@@ -135,6 +135,13 @@ services:
             - { name: form.type, alias: cerad_person__person_team__role }
             
 # =======================================================
+# Person Persons
+    cerad_person__person_person__role_form_type:
+        class: Cerad\Bundle\PersonBundle\FormType\Person\PersonPersonRoleFormType
+        tags:
+            - { name: form.type, alias: cerad_person__person_person__role }
+            
+# =======================================================
 # Person Plans
     cerad_person.plan_will_attend.form_type:
         class: Cerad\Bundle\PersonBundle\FormType\Plan\WillAttendFormType
