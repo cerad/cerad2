@@ -11,7 +11,7 @@ use Cerad\Bundle\CoreBundle\Event\Person\FindProjectPersonTeamsEvent;
 
 class ScheduleShowModel extends ActionModelFactory
 {   
-    public $program;
+    public $program; // Should not be used
     
     public $project;
     public $criteria;
@@ -77,11 +77,12 @@ class ScheduleShowModel extends ActionModelFactory
          * Check to see if program was passed as a request parameter
          * This if for the one click export
          */
-        if ($request->query->has('program'))
+        $this->program = $request->query->get('program');
+        
+        if ($this->program)
         {
-            $criteria['programs'] = array($request->query->get('program'));
+            $criteria = array('programs' => array($this->program));
         }
-
         // Maybe should get the levels here
         
         // So much fun
@@ -99,7 +100,7 @@ class ScheduleShowModel extends ActionModelFactory
     {
         $criteria = $this->criteria;
         
-        if ($this->program) $criteria = array('programs' => $this->program);
+        // if ($this->program) $criteria = array('programs' => $this->program);
         
         // Could be an event
         $criteria['levelKeys'] = $this->levelRepo->queryKeys($criteria);
