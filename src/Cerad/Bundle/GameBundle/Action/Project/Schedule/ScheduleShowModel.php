@@ -11,6 +11,8 @@ use Cerad\Bundle\CoreBundle\Event\Person\FindProjectPersonTeamsEvent;
 
 class ScheduleShowModel extends ActionModelFactory
 {   
+    public $program;
+    
     public $project;
     public $criteria;
     

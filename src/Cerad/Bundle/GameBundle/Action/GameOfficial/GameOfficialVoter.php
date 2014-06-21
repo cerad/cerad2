@@ -51,7 +51,7 @@ class GameOfficialVoter implements VoterInterface
         
          // Either no role or role user
          $officialAssignRole = $official->getAssignRole();
-         if ($officialAssignRole && $officialAssignRole() != 'ROLE_USER') return $this->accessDenied;
+         if ($officialAssignRole && $officialAssignRole != 'ROLE_USER') return $this->accessDenied;
         
          $officialPersonKey = $official->getPersonKey();
          
