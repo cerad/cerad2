@@ -18,11 +18,11 @@ class TeamsReaderZayso extends ExcelReader
         'name'   => array('cols' => 'Name',   'req' => true),
         'points' => array('cols' => 'SfP',    'req' => true),
 
-        'slot1' => array('cols' => 'Slots', 'req' => true),
-        'slot2' => array('cols' => 'Slots', 'req' => true, 'plus' => 1),
-        'slot3' => array('cols' => 'Slots', 'req' => true, 'plus' => 2),
-        'slot4' => array('cols' => 'Slots', 'req' => true, 'plus' => 3),
-        'slot5' => array('cols' => 'Slots', 'req' => true, 'plus' => 4),
+        'slot1' => array('cols' => 'SfP', 'req' => true, 'plus' => 1),
+        'slot2' => array('cols' => 'SfP', 'req' => true, 'plus' => 2),
+        'slot3' => array('cols' => 'SfP', 'req' => true, 'plus' => 3),
+        'slot4' => array('cols' => 'SfP', 'req' => true, 'plus' => 4),
+      //'slot5' => array('cols' => 'Slots', 'req' => true, 'plus' => 4),
     );
     protected function transformName($name,$levelKey)
     {
@@ -66,6 +66,7 @@ class TeamsReaderZayso extends ExcelReader
         for($i = 1; $i < 6; $i++)
         {
             $itemSlotKey = 'slot' . $i;
+            if (!isset($item[$itemSlotKey])) continue;
             if ($item[$itemSlotKey]) $slots[] = $item[$itemSlotKey];
         }
         $team['slots'] = $slots;

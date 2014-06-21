@@ -233,6 +233,12 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         $team = $teamRepo->findOneByKey($gameTeam->getTeamKey());
         $gameTeamNext->setTeam($team);
     }
+    /* ============================================================
+     * Depending on groupSlot we eithe update all the gameteam with aparticular team
+     * or update for all game teams with a given group slot
+     * 
+     * Trying to do both at once does not work.  Not sure why.
+     */
     public function onChangedTeam(ChangedTeamEvent $event)
     {
         $team      = $event->getTeam();
@@ -245,7 +251,7 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
        
         foreach($gameTeams as $gameTeam)
         {
-            $gameTeam->setTeam($team);
+            if (!$groupSlot) $gameTeam->setTeam($team);
         }
         
         // Different processing for setting the slot
@@ -259,6 +265,17 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         foreach($gameTeamsGS as $gameTeam)
         {
             $gameTeam->setTeam($team);
+            /*
+            if ($team->getLevelKey() == 'AYSO_U12B_Core' && $groupSlot == 'PP:B:B4')
+            {
+                echo sprintf("%s %s  %s %s %s\n",
+                        $team->getName(),
+                        $groupSlot,
+                        $gameTeam->getGame()->getGroupType(),
+                        $gameTeam->getGame()->getGroupName(),
+                        $gameTeam->getGroupSlot());
+            }
+            */
         }
         return;
         

@@ -39,6 +39,8 @@ class GameTeamRepository extends EntityRepository
         $groupParts = explode(':',$group);
         if (count($groupParts) != 3)
         {
+            // OK because the import can be bogus
+            return array();
             throw new \Exception('Invalid group arg: ' . $group);
         }
         $groupType = $groupParts[0];

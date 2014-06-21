@@ -21,6 +21,8 @@ class TeamsSaverZayso
     
     protected $teamRepo;
         
+    protected $dispatcher;
+    
     public function __construct($teamRepo)
     {
         $this->teamRepo = $teamRepo;
@@ -30,6 +32,7 @@ class TeamsSaverZayso
     protected function dispatch($team,$groupSlot = null)
     {
         $event = new ChangedTeamEvent($team,$groupSlot);
+        
         $this->dispatcher->dispatch(ChangedTeamEvent::Changed,$event);
     }
     /* =============================================
@@ -91,8 +94,12 @@ class TeamsSaverZayso
     /* ==============================================================
      * The syncer just sends an event out for each slot
      */
-    protected function syncTeam($item,$team)
+    protected function syncTeam($item)
     {
+        $team = $this->teamRepo->findOneByKey($item['key']);
+        
+        if (!$team) return;
+        
         foreach($item['slots'] as $slot)
         {
             $this->dispatch($team,$slot);
@@ -100,6 +107,8 @@ class TeamsSaverZayso
     }
     /* ==============================================================
      * Main entry point
+     * 21 June 2014
+     * update game_teams set teamKey = null, teamName = null, teamPoints = null;
      */
     public function save($teams,$commit = false)
     {
@@ -108,15 +117,20 @@ class TeamsSaverZayso
         $results->commit = $commit;
         $results->total = count($teams);
         
+        // Updated Team information
         foreach($teams as $item)
         {
-            $team = $this->saveTeam($item);
-            
-            $this->syncTeam($item,$team);
+            $this->saveTeam($item);
         }
-         
         if ($results->commit) $this->teamRepo->commit();
         
+        // Updated GameTeam links
+        foreach($teams as $item)
+        {   
+            $this->syncTeam($item);
+        }
+        if ($results->commit) $this->teamRepo->commit();
+         
         return $results;
     }
 }
