@@ -6,7 +6,7 @@ services:
 # Action: ScheduleGameShow
 #
   cerad_game__project__schedule_game__show_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowModel
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Game\Show\ScheduleGameShowModel
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
@@ -36,12 +36,14 @@ services:
     arguments:
       - '@cerad_game__project__schedule_game__util_dump_csv'
       - 'GameSchedule'
+      - false
       
   cerad_game__project__schedule_game__show_view_xls:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
     arguments:
       - '@cerad_game__project__schedule_game__util_dump_xls'
       - 'ScheduleGame'
+      - false
       
   # ==========================================================
   # Utilities
@@ -197,13 +199,15 @@ services:
     arguments:
       - '@cerad_game__project__schedule_game__util_dump_xls'
       - 'ScheduleTeam'
+      - false
       
   cerad_game__project__schedule_team__show_view_xls:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
     arguments:
       - '@cerad_game__project__schedule_game__util_dump_xls'
       - 'ScheduleTeam'
-    
+      - false
+      
 # =======================================================================
 # Action: ScheduleUserShow
 #

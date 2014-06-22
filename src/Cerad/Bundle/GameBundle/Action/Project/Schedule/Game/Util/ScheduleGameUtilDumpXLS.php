@@ -77,12 +77,14 @@ class ScheduleGameUtilDumpXLS extends ExcelDump
             $ws->setCellValueByColumnAndRow($col++,$row,$homeTeam->getName());
             $ws->setCellValueByColumnAndRow($col++,$row,$awayTeam->getName());
             
-            if (!$dumpOfficials) return;
-            
-            $officials = $game->getOfficials();
-            foreach($officials as $official)
+            if ($dumpOfficials) 
             {
-                $ws->setCellValueByColumnAndRow($col++,$row,$official->getPersonNameFull());
+            
+                $officials = $game->getOfficials();
+                foreach($officials as $official)
+                {
+                    $ws->setCellValueByColumnAndRow($col++,$row,$official->getPersonNameFull());
+                }
             }
         }        
     }
