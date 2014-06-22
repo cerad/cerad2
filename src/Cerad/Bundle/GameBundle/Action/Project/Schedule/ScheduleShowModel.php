@@ -84,7 +84,7 @@ class ScheduleShowModel extends ActionModelFactory
         
         if ($this->program)
         {
-            $criteria = array('programs' => array($this->program));
+            //$criteria = array('programs' => array($this->program));
         }
         // Maybe should get the levels here
         

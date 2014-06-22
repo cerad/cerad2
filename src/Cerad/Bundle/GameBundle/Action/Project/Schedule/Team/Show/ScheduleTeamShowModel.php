@@ -25,21 +25,6 @@ class ScheduleTeamShowModel extends ActionModelFactory
         $this->teamRepo  = $teamRepo;
         $this->levelRepo = $levelRepo;
     }
-    public function getPrograms()
-    {
-        $programs = $this->project->getPrograms();
-        print_r($programs); die();
-        
-        $programs = array();
-        $searches = $this->project->getSearches();
-        $programSearch = $searches['programs'];
-        
-        foreach($programSearch['choices'] as $key => $value)
-        {
-            if ($key != 'All') $programs[] = $key;
-        }
-        print_r($programs); die();
-    }
     public function create(Request $request)
     {   
         $criteria = array();
