@@ -44,7 +44,7 @@ class GamesUnloadCommand extends ContainerAwareCommand
         $games = array();
         foreach($gamesx as $game)
         {
-            $game['report'] = unserialize($game['report']);
+          //$game['report'] = unserialize($game['report']);
             
             $gameId = $game['id'];
             unset($game['id']);
@@ -60,7 +60,7 @@ class GamesUnloadCommand extends ContainerAwareCommand
             $teamsx = $teamsStmt->fetchAll();
             foreach($teamsx as $team)
             {
-                $team['report'] = unserialize($team['report']);
+              //$team['report'] = unserialize($team['report']);
                 
                 unset($team['id']);
                 unset($team['gameId']);
