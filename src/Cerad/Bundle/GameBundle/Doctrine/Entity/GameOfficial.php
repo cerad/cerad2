@@ -85,6 +85,7 @@ class GameOfficial
     // Copies or clears person info
     public function setPersonFromPlan($personPlan)
     {
+        die('GameOfficial::setPersonFromPlan');
         if (!$personPlan)
         {
             $this->setPersonGuid    (null);

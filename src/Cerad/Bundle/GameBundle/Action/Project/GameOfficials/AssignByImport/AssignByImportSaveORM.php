@@ -67,7 +67,7 @@ class AssignByImportSaveORM
                 $results->clearedSlots[] = $log;
             }
             // Not really required
-            $slot->setPersonFromPlan(null);
+            $slot->changePerson(null);
             $slot->setAssignState('Open');
             return;
         }
@@ -91,13 +91,14 @@ class AssignByImportSaveORM
                 $results->commit = false;
                 return;
             }
-            $slot->setPersonFromPlan(null);
+            $slot->changePerson(null);
             $slot->setPersonNameFull($slotPersonNameFull);
             $slot->setAssignState($state);
             
+          //if (strpos())
             return;
         }
-        $slot->setPersonFromPlan($personPlan);
+        $slot->changePerson($personPlan);
         $slot->setAssignState($state);
 
         $results->modifiedSlots[] = $log;
