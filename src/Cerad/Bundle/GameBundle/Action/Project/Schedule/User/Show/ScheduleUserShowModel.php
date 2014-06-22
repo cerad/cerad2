@@ -3,39 +3,42 @@ namespace Cerad\Bundle\GameBundle\Action\Project\Schedule\User\Show;
 
 use Symfony\Component\HttpFoundation\Request;
 
-use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
-
 use Cerad\Bundle\CoreBundle\Event\Person\FindProjectPersonTeamsEvent;
 
-class ScheduleUserShowModel extends ActionModelFactory
+use Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowModel;
+
+class ScheduleUserShowModel extends ScheduleShowModel
 {   
-    public $project;
-    public $personGuid;
+    // No form, Should never be called
+    public function process(Request $request,$criteria) { return; }
     
-    public $teamKeys;
-    public $personKeys;
-    
-    protected $gameRepo;
-    
-    public function __construct($gameRepo)
-    {
-        $this->gameRepo = $gameRepo;
-    }
     public function create(Request $request)
     {   
-        $this->project = $request->attributes->get('project');
-        
-        $user = $request->attributes->get('user');
-        
-        $this->personGuid = $user->getPersonGuid();
-                
+        parent::create($request);
+        $this->criteria['dates'] = array();
         return $this;
     }
-    public function process(Request $request)
-    {
-        return;
-    }
     public function loadGames()
+    {
+        $project = $this->project;
+        
+        // Person Teams
+        $teamGameIds = $this->loadTeamGameIds();
+        
+        // Official Games
+        $personGameIds = $this->gameRepo->findAllIdsByProjectPersonKeys(
+            $project,
+            array_keys($this->personKeys)
+        );
+        
+        $gameIds = array_merge($teamGameIds,$personGameIds);
+        
+        $this->games = $this->gameRepo->findAllByGameIds($gameIds,true);
+        
+        return $this->games;
+    }
+    
+    public function loadGamesOld()
     {
         $project = $this->project;
         

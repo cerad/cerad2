@@ -33,17 +33,38 @@ class AssignByUserSlotSubscriber implements EventSubscriberInterface
         
         $states = $this->workflow->getStateOptions($gameOfficial->getAssignState());
         
+        if ($gameOfficial->getAssignState() == 'Open')
+        {
+            $gameOfficial->setAssignState('Requested');
+        }
         $form->add($this->factory->createNamed('assignState','choice', null, array(
             'required'        => true,
             'auto_initialize' => false,
             'choices'         => $states,
         )));
         
+        // Select list
+        $personChoices = array();
+        $personPersons = $this->projectOfficial->getPerson()->getPersonPersons();
+        foreach($personPersons as $personPerson)
+        {
+            $person = $personPerson->getChild();
+            $personChoices[$person->getKey()] = $person->getName()->full;
+        }
         // Fill in user name if empty
         if (!$gameOfficial->getPersonNameFull())
         {
-            $gameOfficial->setPersonNameFull($this->projectOfficial->getPersonName());
+          //$gameOfficial->setPersonNameFull($this->projectOfficial->getPersonName());
         }
+        $form->add($this->factory->createNamed('personGuid', 'choice', null, array(
+            'choices'  => $personChoices,
+            'expanded' => false,
+            'multiple' => false,
+            'required' => true,
+            'auto_initialize' => false,
+        )));
+        return;
+        
         $form->add($this->factory->createNamed('personNameFull', 'text', null, array(
             'attr'      => array('size' => 30),
             'required'  => false,

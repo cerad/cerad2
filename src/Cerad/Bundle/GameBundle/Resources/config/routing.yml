@@ -60,6 +60,7 @@ cerad_game__project__schedule_referee__show:
         _form:       cerad_game__project__schedule_referee__show_form_factory
         _template: '@CeradGame\Project\Schedule\Referee\Show\ScheduleRefereeShowTwigPage.html.twig'
         _user:       required
+        _userPerson: required
         _format:     html
         _view_csv:   cerad_game__project__schedule_referee__show_view_csv
         _view_xls:   cerad_game__project__schedule_referee__show_view_xls
@@ -107,6 +108,8 @@ cerad_game__project__schedule_game__show:
         _view_csv:   cerad_game__project__schedule_game__show_view_csv
         _view_xls:   cerad_game__project__schedule_game__show_view_xls
         _view_html:  cerad_game__project__schedule_game__show_view_html
+        _user:       required
+        _userPerson: required
     requirements:
         _format:  html|csv|xls|pdf
          
@@ -129,6 +132,7 @@ cerad_game__project__schedule_user__show:
         _view_xls:   cerad_game__project__schedule_user__show_view_xls
         _view_html:  cerad_game__project__schedule_user__show_view_html
         _user:       required
+        _userPerson: required
         
 # =====================================================================
 # Results

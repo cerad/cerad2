@@ -38,9 +38,12 @@ class ScheduleShowModel extends ActionModelFactory
         /* ===============================================
          * Pull the current person if the route asked for it
          */
-        $user = $request->attributes->get('user');
-        if ($user) {
-            $this->personKeys = array($user->getPersonGuid() => true);
+        $userPerson = $request->attributes->get('userPerson');
+        if ($userPerson) {
+            foreach($userPerson->getPersonPersons() as $personPerson)
+            {
+                $this->personKeys[$personPerson->getChild()->getKey()] = true;
+            }
         }
         
         // From form

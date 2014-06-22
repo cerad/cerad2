@@ -5,6 +5,8 @@ namespace Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign;
 use Cerad\Bundle\GameBundle\GameEvents;
 use Cerad\Bundle\GameBundle\Event\GameOfficial\AssignSlotEvent;
 
+use Cerad\Bundle\CoreBundle\Event\Person\FindProjectPersonEvent;
+
 /* =========================================================
  * TODO: Should be possible to have project specific workflows?
  * 
@@ -20,17 +22,29 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
     /* =========================
      * Returns false if unchanged
      */
-    public function process($project,$gameOfficialOrg,$gameOfficialNew,$projectOfficial)
+    public function process($project,$gameOfficialOrg,$gameOfficialNew,$projectPerson)
     {   
         $assignStateNew = $this->mapPostedStateToInternalState($gameOfficialNew->getAssignState());
         $assignStateOrg = $this->mapPostedStateToInternalState($gameOfficialOrg->getAssignState());
         
-        if ($assignStateNew == $assignStateOrg) 
+        $personKeyNew = $gameOfficialNew->getPersonGuid();
+        $personKeyOrg = $gameOfficialOrg->getPersonGuid();
+        
+        // Should always have one before getting here
+        if (!$personKeyNew) return false;
+        
+        // Changed the person then should change the info
+        if ($personKeyNew != $personKeyOrg)
         {
-            // Reset orginal info
-            // $gameOfficial->restoreOriginalInfo();
-            return false;
+            $event = new FindProjectPersonEvent($project,$personKeyNew);
+            $this->dispatcher->dispatch(FindProjectPersonEvent::ByGuid,$event);
+            $person = $event->getPerson();
+            if (!$person) return false;
+            $gameOfficialNew->changePerson($person);
         }
+        // Neither key not state changed
+        else if ($assignStateNew == $assignStateOrg) return false;
+        
         $transition = $this->assigneeStateTransitions[$assignStateOrg][$assignStateNew];
         
         // Normally go directly to new state but sometimes want a different state
@@ -43,10 +57,10 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
         switch($assignStateMod)
         {
             case 'StateOpen':
-                $gameOfficialNew->setPersonFromPlan(null);
+                $gameOfficialNew->changePerson(null);
                 break;
             default:
-                $gameOfficialNew->setPersonFromPlan($projectOfficial);
+              //$gameOfficialNew->setPersonFromPlan($projectOfficial);
         }
         // Notify the world
         $event = new AssignSlotEvent;
@@ -58,7 +72,7 @@ class AssignByAssigneeWorkflow extends AssignWorkflow
         $event->transition      = $transition;
         $event->by              = 'Assignee';
         
-        $this->dispatcher->dispatch(GameEvents::GameOfficialAssignSlot,$event);
+      //$this->dispatcher->dispatch(GameEvents::GameOfficialAssignSlot,$event);
         
         return true;
     }

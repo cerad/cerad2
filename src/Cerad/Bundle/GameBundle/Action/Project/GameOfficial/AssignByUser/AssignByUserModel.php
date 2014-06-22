@@ -67,6 +67,8 @@ class AssignByUserModel extends ActionModelFactory
         $this->gameOfficial = $gameOfficial = $requestAttrs->get('gameOfficial');
         $this->userPerson   = $userPerson   = $requestAttrs->get('userPerson');
         
+        // Not checking permission right now
+        // Need a better redirect plan
         if (!$gameOfficial->isAssignableByUser()) 
         {
           //throw new AccessDeniedException(sprintf('Game Slot %d, %d is not user assignable.',$game->getNum(),$gameOfficial->getSlot()));
@@ -81,9 +83,11 @@ class AssignByUserModel extends ActionModelFactory
        
         // Adjust the official
         $this->gameOfficialClone = clone $gameOfficial;
+        
+        // This is done in the form
         if (!$gameOfficial->getPersonNameFull())
         {
-            $gameOfficial->setPersonNameFull($userPersonPlan->getPersonName());
+          //$gameOfficial->setPersonNameFull($userPersonPlan->getPersonName());
         }
         // I am a factory
         return $this;
