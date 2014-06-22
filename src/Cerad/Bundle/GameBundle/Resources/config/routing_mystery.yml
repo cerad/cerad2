@@ -1,0 +1,22 @@
+# ============================================
+# These are mystery routes generating error emails
+
+cerad_game__project__referee_schedule__show:
+    path:  /project/{_project}/referee-schedule.{_format}
+    defaults: 
+        _controller: cerad_game__project__schedule_referee__show_controller:action
+        _model:      cerad_game__project__schedule_referee__show_model_factory
+        _form:       cerad_game__project__schedule_referee__show_form_factory
+        _template: '@CeradGame\Project\Schedule\Referee\Show\ScheduleRefereeShowTwigPage.html.twig'
+        _user:       required
+        _userPerson: required
+        _format:     html
+        _view_csv:   cerad_game__project__schedule_referee__show_view_csv
+        _view_xls:   cerad_game__project__schedule_referee__show_view_xls
+        _view_html:  cerad_game__project__schedule_referee__show_view_html
+    requirements:
+        _format:  html|csv|xls|pdf
+
+cerad_tourn__project__home:
+    pattern:  /project/{_project}/home
+    defaults: { _controller: CeradTournBundle:Tourn/TournHome:home }
