@@ -31,22 +31,29 @@ class PersonPersonsShowModel extends ActionModelFactory
     public function process($formData)
     {   
         $person = $this->person;
+        $personAdd = null;
         
         $role = isset($formData['role']) ? $formData['role'] : 'Family';
+        
         $name = $formData['name'];
         if ($name)
         {
             // Search
             $personAdd = $this->personRepo->findOneByProjectName($this->project->getKey(),$name);
-            if ($personAdd)
-            {
-                // Add
-                $personPerson = $person->createPersonPerson();
-                $personPerson->setRole  ($role);
-                $personPerson->setChild ($personAdd);
-                $personPerson->setParent($person);
-                $person->addPersonPerson($personPerson);
-            }
+        }
+        $fedNum = $formData['fedNum'];
+        if ($fedNum)
+        {
+            // Search
+            $personAdd = $this->personRepo->findOneByFedKey($this->project->getFedRole() . $fedNum);
+        }
+        if ($personAdd)
+        {
+            $personPerson = $person->createPersonPerson();
+            $personPerson->setRole  ($role);
+            $personPerson->setChild ($personAdd);
+            $personPerson->setParent($person);
+            $person->addPersonPerson($personPerson);
         }
         
         // Remove preple

@@ -51,7 +51,8 @@ class PersonPersonsShowFormFactory extends ActionFormFactory
         $builder->add('personPersons','collection',array('type' => new PersonPersonFormType()));
         
         $builder->add('role','cerad_person__person_person__role');
-        $builder->add('name','text');
+        $builder->add('name',  'text');
+        $builder->add('fedNum','text',array('attr' => array('size' => 10)));
         
         $builder->add('add', 'submit', array(
             'label' => 'Add Person',
