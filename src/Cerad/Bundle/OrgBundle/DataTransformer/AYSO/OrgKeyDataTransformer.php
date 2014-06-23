@@ -27,15 +27,23 @@ class OrgKeyDataTransformer implements DataTransformerInterface
         
         return sprintf('%02u-%s-%04u',$section,$area,$region);
     }
-    public function reverseTransform($value)
+    public function reverseTransform($sar)
     {
-        die('OrgKeyDataTransformer::reverseTransform ' . $value);
+    
+    }
+    public function transformToParts($orgKey)
+    {
+        $sar = $this->transform($orgKey);
+        if (!$sar) return null;
         
-        $id = (int)preg_replace('/\D/','',$value);
+        $sarParts = explode('-',$sar);
+        if (count($sarParts) != 3) return null;
         
-        if (!$id) return null;
-        
-        return sprintf('AYSOR%04u',$id);
+        return array(
+            'section' => (int) $sarParts[0],
+            'area'    =>       $sarParts[1],
+            'region'  => (int) $sarParts[2],
+        );
     }
 }
 ?>
