@@ -52,6 +52,9 @@ class GameOfficial
     public function getPersonGuid     () { return $this->personGuid;      }
     public function getPersonKey      () { return $this->personGuid;      }
     
+    public function getPersonFedKey   () { return $this->personFedKey; }
+    public function getPersonOrgKey   () { return $this->personOrgKey; }
+    
     public function getReport()          { return $this->report;          }
     public function getStatus()          { return $this->status;          }
 
@@ -75,34 +78,8 @@ class GameOfficial
     public function setReport         ($value) { $this->report = $value; }
     public function setStatus         ($value) { $this->status = $value; }
     
-    /* ===================================================
-     * Are users allowed to self assign?
-     */
-    public function isAssignableByUser()
-    {
-        return strpos($this->assignRole,'ROLE_USER') !== false ? true : false;
-    }
-    // Copies or clears person info
-    public function setPersonFromPlan($personPlan)
-    {
-        die('GameOfficial::setPersonFromPlan');
-        if (!$personPlan)
-        {
-            $this->setPersonGuid    (null);
-            $this->setPersonEmail   (null);
-            $this->setPersonBadge   (null);
-            $this->setPersonPhone   (null);
-            $this->setPersonNameFull(null);
-            return;
-        }
-        $person = $personPlan->getPerson();
-        $this->setPersonGuid    ($person->getGuid());
-        $this->setPersonEmail   ($person->getEmail());
-        $this->setPersonPhone   ($person->getPhone());
-        $this->setPersonNameFull($personPlan->getPersonName());
-    }
     // Some actual business logic
-    // Person is an ar with one plan and one fed
+    // Person is an official with one plan and one fed
     public function changePerson($person)
     {
         if (!$person)
@@ -143,6 +120,35 @@ class GameOfficial
         {
             $this->personBadge = $refereeCert->getBadge();
         }
+    }
+    /* ===================================================
+     * *** Everything below is depreciated ***
+     */
+    /* ===================================================
+     * Are users allowed to self assign?
+     */
+    public function isAssignableByUser()
+    {
+        return strpos($this->assignRole,'ROLE_USER') !== false ? true : false;
+    }
+    // Copies or clears person info
+    public function setPersonFromPlan($personPlan)
+    {
+        die('GameOfficial::setPersonFromPlan');
+        if (!$personPlan)
+        {
+            $this->setPersonGuid    (null);
+            $this->setPersonEmail   (null);
+            $this->setPersonBadge   (null);
+            $this->setPersonPhone   (null);
+            $this->setPersonNameFull(null);
+            return;
+        }
+        $person = $personPlan->getPerson();
+        $this->setPersonGuid    ($person->getGuid());
+        $this->setPersonEmail   ($person->getEmail());
+        $this->setPersonPhone   ($person->getPhone());
+        $this->setPersonNameFull($personPlan->getPersonName());
     }
     /* =========================================
      * Used to highlite objects

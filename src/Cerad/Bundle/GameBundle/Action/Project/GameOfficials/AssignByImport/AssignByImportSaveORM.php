@@ -59,14 +59,16 @@ class AssignByImportSaveORM
         }
         $slotPersonNameFull = $official['personNameFull'];
         
-        // No name, clear slot
-        if (!$slotPersonNameFull)
+        // Do nothing for no name, prevent mass unassigning
+        if (!$slotPersonNameFull) return;
+        
+        // Remove means clear the person and open it up
+        if (strtolower($slotPersonNameFull) == 'remove')
         {
             if ($slot->getPersonNameFull())
             {
                 $results->clearedSlots[] = $log;
             }
-            // Not really required
             $slot->changePerson(null);
             $slot->setAssignState('Open');
             return;
@@ -75,6 +77,7 @@ class AssignByImportSaveORM
         if ($slot->getPersonNameFull() == $slotPersonNameFull)
         {
             // Just in case have name but no guid
+            // assignState is NOT currently updated
             if ($slot->getPersonGuid()) return;
         }
         // Link to person

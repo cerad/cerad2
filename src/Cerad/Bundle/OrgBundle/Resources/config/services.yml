@@ -15,6 +15,9 @@ services:
     cerad_org.org_repository:
         alias: cerad_org.org_repository.doctrine
         
+    cerad_org__org__repository:
+        alias: cerad_org.org_repository.doctrine
+        
     cerad_org.orgs.export_xls:
         class: Cerad\Bundle\OrgBundle\Services\Orgs\OrgsExportXLS
         
@@ -29,3 +32,8 @@ services:
             - '@cerad_org.org_repository'
         tags:
             - { name: twig.extension }
+            
+    cerad_org__org_key__data_transformer:
+        class:  Cerad\Bundle\OrgBundle\DataTransformer\AYSO\OrgKeyDataTransformer
+        arguments:  
+            - '@cerad_org__org__repository'
