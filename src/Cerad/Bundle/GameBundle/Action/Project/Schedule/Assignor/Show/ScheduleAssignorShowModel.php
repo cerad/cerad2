@@ -35,8 +35,10 @@ class ScheduleAssignorShowModel extends ScheduleShowModel
         
         $gameIds = array_merge($levelGameIds);
         
-        $this->games = $this->gameRepo->findAllByGameIds($gameIds,true);
+        $games = $this->gameRepo->findAllByGameIds($gameIds,true);
         
-        return $this->games;
+        // Filter games here
+        
+        return $games;
     }
 }

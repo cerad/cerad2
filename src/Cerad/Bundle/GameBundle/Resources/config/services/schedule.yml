@@ -1,5 +1,11 @@
 parameters:
   
+  cerad_game__project__schedule_assignor__show_model_factory__class:
+    Cerad\Bundle\GameBundle\Action\Project\Schedule\Assignor\Show\ScheduleAssignorShowModel
+    
+  cerad_game__project__schedule_assignor__show_form_factory__class:
+    Cerad\Bundle\GameBundle\Action\Project\Schedule\Assignor\Show\ScheduleAssignorShowFormFactory
+  
 services:
   
 # =======================================================================
@@ -147,7 +153,7 @@ services:
 # Action: ScheduleAssignorShow
 #
   cerad_game__project__schedule_assignor__show_model_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Assignor\Show\ScheduleAssignorShowModel
+    class: '%cerad_game__project__schedule_assignor__show_model_factory__class%'
     calls:
       - [setDispatcher,['@event_dispatcher']]
     arguments:
@@ -157,7 +163,7 @@ services:
       - true
       
   cerad_game__project__schedule_assignor__show_form_factory:
-    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Assignor\Show\ScheduleAssignorShowFormFactory
+    class: '%cerad_game__project__schedule_assignor__show_form_factory__class%'
     calls:
       - [setRouter,      ['@router']]
       - [setFormFactory, ['@form.factory']]
