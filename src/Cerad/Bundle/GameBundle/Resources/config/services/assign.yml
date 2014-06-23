@@ -73,6 +73,8 @@ services:
              
     cerad_game__game_official__person_name__choice_tpl:
         class: '%cerad_game__game_official__person_name__choice_tpl__class%'
+        arguments:
+          - '@cerad_org__org_key__data_transformer'
 
     # ====================================================
     # Assign game officials by import
