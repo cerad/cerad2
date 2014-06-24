@@ -92,7 +92,7 @@ class AssignRolesCommand extends ContainerAwareCommand
     protected function setRedondoAssignRoles($gameRepo,$projectKey)
     {
         $criteria = array(
-            'levelKeys'     => array('AYSO_U16G_Core'),
+          //'levelKeys'     => array('AYSO_U16G_Core'),
             'projectKeys'   => $projectKey,
             'wantOfficials' => true,
         );
