@@ -3,6 +3,7 @@
 namespace Cerad\Bundle\PersonBundle\Action\Project\Persons\Show;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Role\Role;
 
 use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
@@ -23,12 +24,22 @@ class PersonsShowModel extends ActionModelFactory
     protected $projectPersonRepo;
     protected $orgKeyDataTransformer;
     
-    public function __construct($personRepo,$projectPersonRepo,$userRepo,$orgKeyDataTransformer)
+    protected $roleHeirarchy;
+    protected $roles;
+    
+    public function __construct(
+        $personRepo,$projectPersonRepo,$userRepo,
+        $orgKeyDataTransformer,
+        $roleHeirarchy,$roles)
     {   
         $this->userRepo              = $userRepo;
         $this->personRepo            = $personRepo;
         $this->projectPersonRepo     = $projectPersonRepo;
         $this->orgKeyDataTransformer = $orgKeyDataTransformer;
+        
+        $this->roles = $roles;
+        $this->roleHeirarchy = $roleHeirarchy;
+        
     }
     public function process($formData)
     {   
@@ -65,7 +76,7 @@ class PersonsShowModel extends ActionModelFactory
         $criteria  = $this->criteria;
         
         // User Roles
-        if ($criteria['roles'] == 'Roles1')
+        if ($criteria['roles'] != 'ROLE_NONE')
         {
             return $this->loadProjectPersonsForRoles($criteria);
         }
@@ -82,15 +93,16 @@ class PersonsShowModel extends ActionModelFactory
     public function loadProjectPersonsForRoles($criteria = null)
     {
         // Find users for roles
+        $roleTarget = $criteria['roles'];
         $users = $this->userRepo->findAll();
         $personUser = array();
         $personKeys = array();
         foreach($users as $user)
         {
-            $roles = $user->getRoles();
-            if (count($roles) > 1)
+            if ($this->hasRole($user->getRoles(),$roleTarget))
             {
-                if ($user->getPersonKey()) {
+                if ($user->getPersonKey()) 
+                {
                     $personKeys[] = $personKey = $user->getPersonKey();
                     
                     $personUser[$personKey] = $user;
@@ -112,4 +124,20 @@ class PersonsShowModel extends ActionModelFactory
         // Done
         return $projectPersons; if ($criteria);
     }
+    protected function hasRole($roleNames,$roleTarget)
+    {
+        $roleObjects = array();
+        foreach($roleNames as $roleName)
+        {
+            $roleObjects[] = is_object($roleName) ? $roleName : new Role($roleName);
+        }
+        $reachableRoles = $this->roleHeirarchy->getReachableRoles($roleObjects);
+        
+        foreach($reachableRoles as $role)
+        {
+            if ($role->getRole() == $roleTarget) return true;
+        }
+        return false;
+    }
+
 }

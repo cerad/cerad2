@@ -8,6 +8,12 @@ use Cerad\Bundle\CoreBundle\Action\ActionFormFactory;
 
 class PersonsShowFormFactory extends ActionFormFactory
 {   
+    protected $roles;
+    
+    public function __construct($roles)
+    {
+        $this->roles = $roles;
+    }
     protected function genFormData($model)
     {
         return $model->criteria;
@@ -28,9 +34,14 @@ class PersonsShowFormFactory extends ActionFormFactory
         
         $builder = $this->formFactory->createNamed('projectPersonsSearch','form',$formData,$formOptions);
         
+        $roleChoices = array('ROLE_NONE' => 'Specific Role');
+        foreach(array_keys($this->roles) as $role)
+        {
+            $roleChoices[$role] = $role;
+        }
         $builder->add('roles','choice',array(
             'label'   => 'Roles',
-            'choices' => array('All Roles' => 'All Roles','Roles1' => 'Roles Above User'),
+            'choices' => $roleChoices,
         ));
         $builder->add('search', 'submit', array(
             'label' => 'Search',
