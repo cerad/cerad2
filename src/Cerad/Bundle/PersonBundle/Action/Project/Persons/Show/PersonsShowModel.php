@@ -21,12 +21,14 @@ class PersonsShowModel extends ActionModelFactory
     protected $userRepo;
     protected $personRepo;
     protected $projectPersonRepo;
+    protected $orgKeyDataTransformer;
     
-    public function __construct($personRepo,$projectPersonRepo,$userRepo)
+    public function __construct($personRepo,$projectPersonRepo,$userRepo,$orgKeyDataTransformer)
     {   
-        $this->userRepo   = $userRepo;
-        $this->personRepo = $personRepo;
-        $this->projectPersonRepo = $projectPersonRepo;
+        $this->userRepo              = $userRepo;
+        $this->personRepo            = $personRepo;
+        $this->projectPersonRepo     = $projectPersonRepo;
+        $this->orgKeyDataTransformer = $orgKeyDataTransformer;
     }
     public function process($formData)
     {   
@@ -103,6 +105,9 @@ class PersonsShowModel extends ActionModelFactory
         {
             $person = $projectPerson->getPerson();
             $person->setUser($personUser[$person->getKey()]);
+            
+            $fed = $person->getProjectFed();
+            $fed->sar = $this->orgKeyDataTransformer->transform($fed->getOrgKey());
         }
         // Done
         return $projectPersons; if ($criteria);

@@ -12,6 +12,7 @@ services:
       - '@cerad_person__person_repository'
       - '@cerad_person__project_person__repository'
       - '@cerad_user__user_repository'
+      - '@cerad_org__org_key__data_transformer'
   
   cerad_person__project__persons__show_form_factory:
     class: Cerad\Bundle\PersonBundle\Action\Project\Persons\Show\PersonsShowFormFactory

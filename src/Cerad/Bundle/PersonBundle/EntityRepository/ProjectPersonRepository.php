@@ -23,18 +23,16 @@ class ProjectPersonRepository extends EntityRepository
         $qb->andWhere('person.guid IN (:personKeys)');
         $qb->setParameter('personKeys',$personKeys);
         
-        /*
-        if ($fedRole)
-        {
-            $qb->addSelect('personFed');
-            $qb->leftJoin ('person.feds','personFed');
+        $fedRole = $project->getFedRole();
+        
+        $qb->addSelect('personFed');
+        $qb->leftJoin ('person.feds','personFed');
             
-            $qb->addSelect('personFedCert');
-            $qb->leftJoin ('personFed.certs','personFedCert');
+        $qb->addSelect('personFedCert');
+        $qb->leftJoin ('personFed.certs','personFedCert');
             
-            $qb->andWhere('personFed.fedRole IN (:fedRole)');
-            $qb->setParameter('fedRole',$fedRole);
-        }*/
+        $qb->andWhere('personFed.fedRole = :fedRole');
+        $qb->setParameter('fedRole',$fedRole);
  
         $qb->orderBy('projectPerson.personName');
         

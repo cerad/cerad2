@@ -1,6 +1,6 @@
 <table>
-  <tr><th colspan="2">Project Persons: {{ projectPersons | length }}</th></tr>
-  <tr><th>Accounts</th><th>Persons</th></tr>
+  <tr><th colspan="3">Project Persons: {{ projectPersons | length }}</th></tr>
+  <tr><th>Accounts</th><th>Persons</th><th>AYSO Info</th></tr>
   {% for projectPerson in projectPersons %}
     {% include '@CeradPerson/Project/Persons/Show/PersonsShowTwigPerson.html.twig' %}
   {% endfor %}
