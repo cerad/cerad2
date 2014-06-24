@@ -1,0 +1,17 @@
+{% set person = projectPerson.person %}
+{% set user = person.user %}
+<tr id="project-person-{{ projectPerson.id }}" style="border:2px solid black;">
+  <td><table>
+    <tr><td>Name </td><td>{{ user.accountName }}</td></tr>
+    <tr><td>User </td><td>{{ user.username | slice(0,20) }}</td></tr>
+    <tr><td>Email</td><td>{{ user.email    | slice(0,20) }}</td></tr>
+    {% for role in user.roles %}
+      {% if role != 'ROLE_USER' %}
+        <tr><td>Role</td><td>{{ role }}</td></tr>
+      {% endif %}
+    {% endfor %}
+  </table></td>
+  <td><table>
+    <tr><td>Name</td><td>{{ projectPerson.personName }}</td></tr>
+  </table></td>
+</tr>

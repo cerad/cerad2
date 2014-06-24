@@ -71,17 +71,23 @@ class ModelEventListener extends ContainerAware implements EventSubscriberInterf
     }
     /* =============================================================
      * Allows protecting each route while defining the route
-     * Question: Should this also take care of grabbing and injecting the user
+     * http://local.zayso.org/natgames2014x/project/natgames/persons/show
+     * 
+     * 24 June 2014 - Using _ROLE_ to prevent breakage
      */
     public function onControllerRole(FilterControllerEvent $event)
     {
-        if (!$event->getRequest()->attributes->has('_role')) return;
+        if (!$event->getRequest()->attributes->has('_role_')) return;
         
-        $role = $event->getRequest()->attributes->get('_role');
+        $role = $event->getRequest()->attributes->get('_role_');
         
         $securityContext = $this->container->get('security.context');
+        
         if (!$securityContext->isGranted($role))
         {
+            // For public it redirects
+            // For users we see the exception
+            // die('access denied ' . $event->getRequest()->attributes->get('_route'));
             throw new AccessDeniedException(); 
         }
     }

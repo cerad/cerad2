@@ -24,8 +24,9 @@ class CeradPersonExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
-        $loader->load('services/feds.yml');
-        $loader->load('services/teams.yml');
         $loader->load('services/persons.yml');
+        $loader->load('services/person_feds.yml');
+        $loader->load('services/person_teams.yml');
+        $loader->load('services/person_persons.yml');
     }
 }

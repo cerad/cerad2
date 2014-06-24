@@ -55,6 +55,16 @@ services:
             
     cerad_person__person_person_repository:
         alias: cerad_person__person_person_repository__doctrine
+        
+    cerad_person__project_person__repository__doctrine:
+        class:  Cerad\Bundle\PersonBundle\Entity\ProjectPersonRepository
+        factory_service: 'cerad_person.entity_manager.doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\PersonBundle\Entity\PersonPlan'
+            
+    cerad_person__project_person__repository:
+        alias: cerad_person__project_person__repository__doctrine
 
 # ====================================================
 # Data transformers

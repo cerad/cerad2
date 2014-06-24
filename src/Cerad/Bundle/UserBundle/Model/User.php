@@ -94,6 +94,7 @@ class User extends BaseModel implements CeradUserInterface, \Serializable //, FO
     /* =======================================================
      * My person link
      */
+    public function getPersonKey()      { return $this->personGuid;     }
     public function getPersonGuid()     { return $this->personGuid;     }
   //public function getPersonFedId()    { return $this->personFedId;    }
     public function getPersonStatus()   { return $this->personStatus;   }

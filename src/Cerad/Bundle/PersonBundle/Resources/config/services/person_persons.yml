@@ -1,0 +1,26 @@
+parameters:
+  
+services:
+  # =======================================================================
+  # Action: Project Person Persons Show
+  #
+  cerad_person__project__person_persons__show_model_factory:
+    class: Cerad\Bundle\PersonBundle\Action\Project\PersonPersons\Show\PersonPersonsShowModel
+    calls:
+      - [setDispatcher,['@event_dispatcher']]
+    arguments:
+      - '@cerad_person__person_repository'
+      - '@cerad_person__person_person_repository'
+  
+  cerad_person__project__person_persons__show_form_factory:
+    class: Cerad\Bundle\PersonBundle\Action\Project\PersonPersons\Show\PersonPersonsShowFormFactory
+    calls:
+      - [setRouter,      ['@router']]
+      - [setFormFactory, ['@form.factory']]
+      - [setDispatcher,  ['@event_dispatcher']]
+             
+  cerad_person__project__person_persons__show_controller:
+    class: Cerad\Bundle\PersonBundle\Action\Project\PersonPersons\Show\PersonPersonsShowController
+    calls:
+      - [setRouter,     ['@router']]
+      - [setTemplating, ['@templating']]

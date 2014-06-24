@@ -16,3 +16,12 @@ cerad_person__project__person_persons__show:
         _form:       cerad_person__project__person_persons__show_form_factory
         _template: '@CeradPerson\Project\PersonPersons\Show\PersonPersonsShowTwigPage.html.twig'
         _userPerson: required
+        
+cerad_person__project__persons__show:
+    path:  /project/{_project}/persons/show
+    defaults: 
+        _controller: cerad_person__project__persons__show_controller:action
+        _model:      cerad_person__project__persons__show_model_factory
+        _form:       cerad_person__project__persons__show_form_factory
+        _template: '@CeradPerson\Project\Persons\Show\PersonsShowTwigPage.html.twig'
+        _role_:      ROLE_ADMIN
