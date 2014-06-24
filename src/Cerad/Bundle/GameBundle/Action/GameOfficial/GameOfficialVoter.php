@@ -17,35 +17,36 @@ class GameOfficialVoter implements VoterInterface
     protected $accessGranted = VoterInterface::ACCESS_GRANTED;
     protected $accessDenied  = VoterInterface::ACCESS_DENIED;
     
-    public function __construct()
+    protected $roleHeirarchy;
+    
+    public function __construct($roleHeirarchy)
     {  
+        $this->roleHeirarchy = $roleHeirarchy;
     }
     public function supportsAttribute($attribute) 
     { 
         switch($attribute)
         {
-            case 'AssignableByUser': return true;
+            case 'AssignableByUser':     return true;
+            case 'AssignableByAssignor': return true;
         }
         return false;
     }
     public function supportsClass($class) { if ($class); return false;}
     
     public function vote(TokenInterface $token, $info, array $attrs)
-    {
-         if (!is_array($info)) return $this->accessAbstain;
-         
+    {         
          $attr = $attrs[0];
          if (!$this->supportsAttribute($attr)) return $this->accessAbstain;
          
          switch($attr)
          {
-             case 'AssignableByUser': return $this->isAssignableBuUser($info);
+             case 'AssignableByUser':     return $this->isAssignableByUser    ($info);
+             case 'AssignableByAssignor': return $this->isAssignableByAssignor($info,$token);
          }
-         $official = $info['official'];
-        
-         if ($official->getAssignRole() != 'ROLE_USER') return $this->accessDenied;
+         return $this->accessDenied;
     }
-    protected function isAssignableBuUser($info)
+    protected function isAssignableByUser($info)
     {
          $official = $info['official'];
         
@@ -68,6 +69,42 @@ class GameOfficialVoter implements VoterInterface
          $personKeys = $info['personKeys'];
          
          return isset($personKeys[$officialPersonKey]) ? $this->accessGranted : $this->accessDenied;
+    }
+    protected function hasRole($token,$target)
+    {
+        $reachableRoles = $this->roleHeirarchy->getReachableRoles($token->getRoles());
+        foreach($reachableRoles as $role)
+        {
+            if ($role->getRole() == $target) return true;
+        }
+        return false;
+    }
+    protected function isAssignableByAssignor($gameOfficial,$token)
+    {
+        // Must be at least an assignor
+        if (!$this->hasRole($token,'ROLE_ASSIGNOR')) return $this->accesDenied;
+        
+        // ROLE_USER
+        $assignRole = $gameOfficial->getAssignRole();
+        switch($assignRole)
+        {
+            case 'ROLE_USER':
+            case 'ROLE_ASSIGNOR':
+                $levelKey = $gameOfficial->getGame()->getLevelKey();
+                if (strpos($levelKey,'Core') !== false)
+                {
+                    return !$this->hasRole($token,'ROLE_ASSIGNOR_CORE') ? $this->accessGranted : $this->accessDenied;
+                }
+                if (strpos($levelKey,'Extra') !== false)
+                {
+                    return !$this->hasRole($token,'ROLE_ASSIGNOR_EXTRA') ? $this->accessGranted : $this->accessDenied;
+                }
+                return $this->accessDenied;
+                
+            case 'ROLE_ASSIGNOR_KAC':
+                return !$this->hasRole($token,'ROLE_ASSIGNOR_KAC') ? $this->accessGranted : $this->accessDenied;
+        }
+        return $this->accessDenied;
     }
 }
 ?>

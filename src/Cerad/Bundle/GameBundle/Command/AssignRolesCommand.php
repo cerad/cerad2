@@ -29,28 +29,109 @@ class AssignRolesCommand extends ContainerAwareCommand
         
         $projectKey = 'AYSONationalGames2014';
         
-        $groupTypes = array('QF','SF','FM');
+      //$this->setMedalRoundAssignStates($gameRepo,$projectKey);
+      //
+        $this->setKACAssignRoles($gameRepo,$projectKey);
+        $this->setSoccerFestAssignRoles($gameRepo,$projectKey);
+        $this->setVIPAssignRoles($gameRepo,$projectKey);
+                        
+        return; if ($output);
+    }
+    protected function setKACAssignRoles($gameRepo,$projectKey)
+    {
+       $groupTypes = array('PP');
         
         $criteria = array(
             'groupTypes'    => $groupTypes,
-            'projectKeys'   => array($projectKey),
+            'projectKeys'   => $projectKey,
             'wantOfficials' => true,
         );
         $games = $gameRepo->queryGameSchedule($criteria);
         
-        echo sprintf("Fix Roles Game Count %d\n",count($games));
+        $count = 0;
+        foreach($games as $game)
+        {
+            foreach($game->getOfficials() as $official)
+            {
+                $name = $official->getPersonName();
+                if (strpos($name,'KAC') !== false)
+                {
+                    $official->setAssignRole('ROLE_ASSIGNOR_KAC');
+                    $count++;
+                }
+            }
+        }
+        echo sprintf("KAC Count %d\n",$count);
+        $gameRepo->flush();
+        
+    }
+    protected function setSoccerFestAssignRoles($gameRepo,$projectKey)
+    {
+       $groupTypes = array('SOF');
+        
+        $criteria = array(
+            'groupTypes'    => $groupTypes,
+            'projectKeys'   => $projectKey,
+            'wantOfficials' => true,
+        );
+        $games = $gameRepo->queryGameSchedule($criteria);
         
         foreach($games as $game)
         {
-            $gameOfficials = $game->getOfficials();
-            foreach($gameOfficials as $gameOfficial)
+            foreach($game->getOfficials() as $official)
+            {
+                $official->setAssignRole('ROLE_USER');
+            }
+        }
+        echo sprintf("SOF Game Count %d\n",count($games));
+        $gameRepo->flush();
+        
+    }
+    protected function setVIPAssignRoles($gameRepo,$projectKey)
+    {
+        $levelKeys = array('AYSO_VIP_Core','AYSO_VIP_Extra');
+        
+        $criteria = array(
+            'levelKeys'     => $levelKeys,
+            'projectKeys'   => $projectKey,
+            'wantOfficials' => true,
+        );
+        $games = $gameRepo->queryGameSchedule($criteria);
+        
+        echo sprintf("VIP Game Count %d\n",count($games));
+       
+        foreach($games as $game)
+        {
+            $game->setGroupType('VIP');
+            
+            foreach($game->getOfficials() as $official)
+            {
+                $official->setAssignRole('ROLE_USER');
+            }
+        }
+        $gameRepo->flush();        
+    }
+    protected function setMedalRoundAssignRoles($gameRepo,$projectKey)
+    {
+        $groupTypes = array('QF','SF','FM');
+        
+        $criteria = array(
+            'groupTypes'    => $groupTypes,
+            'projectKeys'   => $projectKey,
+            'wantOfficials' => true,
+        );
+        $games = $gameRepo->queryGameSchedule($criteria);
+        
+        echo sprintf("Medal Round Game Count %d\n",count($games));
+        
+        foreach($games as $game)
+        {
+            foreach($game->getOfficials() as $gameOfficial)
             {
                 $gameOfficial->setAssignRole('ROLE_ASSIGNOR');
             }
         }
-        $gameRepo->flush();
-                
-        return; if ($output);
+        $gameRepo->flush();        
     }
 }
 ?>

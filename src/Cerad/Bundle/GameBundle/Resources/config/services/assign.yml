@@ -109,6 +109,8 @@ services:
     cerad_game__game_official__voter:
         class:  Cerad\Bundle\GameBundle\Action\GameOfficial\GameOfficialVoter
         public: false
+        arguments:
+          - '@cerad_core__role_hierarchy'
         tags:
            - { name: security.voter }        
     
