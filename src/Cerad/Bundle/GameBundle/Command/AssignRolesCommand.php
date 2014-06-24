@@ -54,7 +54,7 @@ class AssignRolesCommand extends ContainerAwareCommand
             foreach($game->getOfficials() as $official)
             {
                 $name = $official->getPersonName();
-                if (strpos($name,'KAC') !== false)
+                if (strpos($name,'KAC') !== false || $name == 'Standby')
                 {
                     $official->setAssignRole('ROLE_ASSIGNOR_KAC');
                     $count++;
