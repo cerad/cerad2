@@ -65,9 +65,17 @@ class ScheduleTeamShowModel extends ActionModelFactory
         {
             $teamKeys = array_merge($teamKeys,$criteria[$program . 'Teams']);
         }
-
+        // Quick hack, selecting None gives key of 0
+        // Which in turn gives us all the games?
+        $teamKeysx = array();
+        foreach($teamKeys as $teamKey)
+        {
+            if ($teamKey) $teamKeysx[] = $teamKey;
+        }
+        if (count($teamKeysx) < 1) return array();
+        
         // Need gameIds for each physical team
-        $gameIds = $this->gameRepo->findAllIdsForTeamKeys($teamKeys);
+        $gameIds = $this->gameRepo->findAllIdsForTeamKeys($teamKeysx);
         
         // Then the games
         $this->games = $this->gameRepo->findAllByGameIds($gameIds);
