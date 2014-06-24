@@ -93,16 +93,16 @@ class GameOfficialVoter implements VoterInterface
                 $levelKey = $gameOfficial->getGame()->getLevelKey();
                 if (strpos($levelKey,'Core') !== false)
                 {
-                    return !$this->hasRole($token,'ROLE_ASSIGNOR_CORE') ? $this->accessGranted : $this->accessDenied;
+                    return $this->hasRole($token,'ROLE_ASSIGNOR_CORE') ? $this->accessGranted : $this->accessDenied;
                 }
                 if (strpos($levelKey,'Extra') !== false)
                 {
-                    return !$this->hasRole($token,'ROLE_ASSIGNOR_EXTRA') ? $this->accessGranted : $this->accessDenied;
+                    return $this->hasRole($token,'ROLE_ASSIGNOR_EXTRA') ? $this->accessGranted : $this->accessDenied;
                 }
                 return $this->accessDenied;
                 
             case 'ROLE_ASSIGNOR_KAC':
-                return !$this->hasRole($token,'ROLE_ASSIGNOR_KAC') ? $this->accessGranted : $this->accessDenied;
+                return $this->hasRole($token,'ROLE_ASSIGNOR_KAC') ? $this->accessGranted : $this->accessDenied;
         }
         return $this->accessDenied;
     }
