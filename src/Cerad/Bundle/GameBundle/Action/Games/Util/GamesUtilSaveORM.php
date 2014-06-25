@@ -6,8 +6,6 @@ class GamesUtilSaveORMResults
 {
     public $commit = false;
     
-    public $basename;
-    
     public $total    = 0;
     public $created  = 0;
     public $updated  = 0;
@@ -41,6 +39,7 @@ class GamesUtilSaveORM
             $game->setProjectKey($projectKey);
             
             $this->gameRepo->save($game);
+            $this->results->created++;
         }
         $game->setDtBeg(new \DateTime($gamex['dtBeg']));
         $game->setDtEnd(new \DateTime($gamex['dtEnd']));
@@ -82,9 +81,20 @@ class GamesUtilSaveORM
                 $official->setPersonNameFull($gameOfficialName);
                 $official->setAssignState('Open');
                
-                if ($game->getGroupType() == 'PP')
+                switch($game->getGroupType())
                 {
-                    $official->setAssignRole('ROLE_USER');
+                    case 'PP':
+                    case 'VIP':
+                    case 'SOF':
+                        $official->setAssignRole('ROLE_USER');
+                        break;
+                    case 'QF':
+                    case 'SF':
+                    case 'FM':
+                        $official->setAssignRole('ROLE_ASSIGNOR');
+                        break;
+                    default:
+                        die('No assign role for group type ' . $game->getGroupType());
                 }
                 $game->addOfficial($official);
             }

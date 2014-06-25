@@ -81,7 +81,7 @@ class TeamsReaderZayso extends ExcelReader
      */
     public function read($project,$filePath,$workSheetName = null)
     {
-        $this->projectKey = $project->getKey();   
+        $this->projectKey = is_object($project) ? $project->getKey() : $project;
         
         return $this->load($filePath,$workSheetName);
     }
