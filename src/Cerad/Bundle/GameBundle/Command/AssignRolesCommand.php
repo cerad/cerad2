@@ -35,8 +35,10 @@ class AssignRolesCommand extends ContainerAwareCommand
       //$this->setSoccerFestAssignRoles($gameRepo,$projectKey);
       //$this->setVIPAssignRoles($gameRepo,$projectKey);
       //
-        $this->setRedondoAssignRoles($gameRepo,$projectKey);
-                        
+      //$this->setRedondoAssignRoles($gameRepo,$projectKey);
+                     
+        $this->disableU16Signups($gameRepo,$projectKey);
+        
         return; if ($output);
     }
     protected function setKACAssignRoles($gameRepo,$projectKey)
@@ -110,6 +112,26 @@ class AssignRolesCommand extends ContainerAwareCommand
             }
         }
         echo sprintf("Redondo HS Game Count %d\n",$count);
+        $gameRepo->flush();
+    }
+    protected function disableU16Signups($gameRepo,$projectKey)
+    {
+        $criteria = array(
+            'levelKeys'     => array('AYSO_U16G_Core','AYSO_U16B_Core'),
+            'groupTypes'    => array('SOF','PP'),
+            'projectKeys'   => $projectKey,
+            'wantOfficials' => true,
+        );
+        $games = $gameRepo->queryGameSchedule($criteria);
+        
+        foreach($games as $game)
+        {
+            foreach($game->getOfficials() as $official)
+            {
+                $official->setAssignRole('ROLE_DISABLED');
+            }
+        }
+        echo sprintf("U16 Game Count %d\n",count($games));
         $gameRepo->flush();
     }
     protected function setVIPAssignRoles($gameRepo,$projectKey)
