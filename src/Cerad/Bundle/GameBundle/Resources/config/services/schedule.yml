@@ -168,7 +168,19 @@ services:
       - [setRouter,      ['@router']]
       - [setFormFactory, ['@form.factory']]
       - [setDispatcher,  ['@event_dispatcher']]
-          
+      
+  cerad_game__project__schedule_assignor__show_view_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
+    arguments:
+      - '@cerad_game__project__schedule_assignor__dumper_xls'
+      - 'ScheduleReferee'
+      - true # Want Referees
+      
+  cerad_game__project__schedule_assignor__dumper_xls:
+    class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Assignor\Show\ScheduleAssignorShowDumperXLS
+    arguments:
+      - '@cerad_org__org_key__data_transformer'
+    
 # =======================================================================
 # Action: ScheduleTeamShow
 #

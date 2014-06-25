@@ -77,7 +77,7 @@ cerad_game__project__schedule_assignor__show:
         _template: '@CeradGame\Project\Schedule\Assignor\Show\ScheduleAssignorShowTwigPage.html.twig'
         _format:     html
         _view_csv:   cerad_game__project__schedule_referee__show_view_csv
-        _view_xls:   cerad_game__project__schedule_referee__show_view_xls
+        _view_xls:   cerad_game__project__schedule_assignor__show_view_xls
         _view_html:  cerad_game__project__schedule_referee__show_view_html
     requirements:
         _format:  html|csv|xls|pdf
