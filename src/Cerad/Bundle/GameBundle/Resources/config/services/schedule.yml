@@ -179,6 +179,7 @@ services:
   cerad_game__project__schedule_assignor__dumper_xls:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\Assignor\Show\ScheduleAssignorShowDumperXLS
     arguments:
+      - '@cerad_person.phone.datatransformer'
       - '@cerad_org__org_key__data_transformer'
     
 # =======================================================================

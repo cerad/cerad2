@@ -8,10 +8,12 @@ class ScheduleAssignorShowDumperXLS extends ExcelDump
 {
     protected $skipOnTimeChange = false;
     
+    protected $phoneDataTransformer;
     protected $orgKeyDataTransformer;
     
-    public function __construct($orgKeyDataTransformer)
+    public function __construct($phoneDataTransformer,$orgKeyDataTransformer)
     {
+        $this->phoneDataTransformer  = $phoneDataTransformer;
         $this->orgKeyDataTransformer = $orgKeyDataTransformer;
     }
     /* =======================================================================
@@ -150,6 +152,72 @@ class ScheduleAssignorShowDumperXLS extends ExcelDump
             }
         }        
     }
+    protected function dumpOfficials($ws,$games)
+    {
+        $items = array();
+        foreach($games as $game)
+        {
+            foreach($game->getOfficials() as $official)
+            {
+                $name = $official->getPersonNameFull();
+                if ($name)
+                {
+                    if (!isset($items[$name]))
+                    {
+                        $item = array(
+                            'name'  => $name,
+                            'total' => 0,
+                            'Wed'   => 0,
+                            'Thu'   => 0,
+                            'Fri'   => 0,
+                            'Sat'   => 0,
+                            'Sun'   => 0,
+                        );
+                        $items[$name] = $item;
+                    }
+                    $item = $items[$name];
+                    
+                    $item['total']++;
+                    
+                    $dow  = $game->getDtBeg()->format('D');
+                    $item[$dow]++;
+                    
+                    $item['email'] = $official->getPersonEmail();
+                    $item['phone'] = $this->phoneDataTransformer->transform($official->getPersonPhone());
+                    $item['skip']  = null;
+                    
+                    $items[$name] = $item;                    
+                }
+            }
+        }
+        ksort($items);
+        
+        $ws->setTitle('Referees');
+
+        $metas = array(
+            array('hdr' => 'Name','key' => 'name',  'width' => 26),
+            array('hdr' => 'All', 'key' => 'total', 'width' =>  6),
+            array('hdr' => 'Wed', 'key' => 'Wed',   'width' =>  6),
+            array('hdr' => 'Thu', 'key' => 'Thu',   'width' =>  6),
+            array('hdr' => 'Fri', 'key' => 'Fri',   'width' =>  6),
+            array('hdr' => 'Sat', 'key' => 'Sat',   'width' =>  6),
+            array('hdr' => 'Sun', 'key' => 'Sun',   'width' =>  6),
+            
+            array('hdr' => 'Skip',  'key' => 'skip',  'width' =>   6),
+            array('hdr' => 'Email', 'key' => 'email', 'width' =>  26),
+            array('hdr' => 'Phone', 'key' => 'phone', 'width' =>  26),
+        );
+        $row = $this->setHeaders($ws,$metas);
+        
+        foreach($items as $item)
+        {   
+            $row++; $col = 0;
+            foreach($metas as $meta)
+            {
+                $ws->setCellValueByColumnAndRow($col++,$row,$item[$meta['key']]);
+            }
+        }
+    }
     /* =======================================================================
      * Main entry point
      */
@@ -168,8 +236,12 @@ class ScheduleAssignorShowDumperXLS extends ExcelDump
         $ws1 = $this->createWorkSheet($ss,1);
         $this->dumpSlots($ws1,$items);
         
+        // By Referees
+        $ws2 = $this->createWorkSheet($ss,2);
+        $this->dumpOfficials($ws2,$games);
+        
         // Output
-        $ss->setActiveSheetIndex(1);
+        $ss->setActiveSheetIndex(2);
         return $this->getBuffer($ss);
     }
     public function setSkipOnTimeChange($value)
