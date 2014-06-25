@@ -30,13 +30,28 @@ class GamesUtilSaveORM
         
         $levelKey   = $gamex['levelKey'];
         $projectKey = $gamex['projectKey'];
+        
+        // Delete for negative nums
+        if ($num < 0)
+        {
+            $num *= -1;
+            $game = $this->gameRepo->findOneByProjectNum($projectKey,$num);
+            if ($game)
+            {
+                $this->gameRepo->remove($game);
+                $this->results->deleted++;
+            }
+            return;
+        }
         $game = $this->gameRepo->findOneByProjectNum($projectKey,$num);
         if (!$game)
-        {
+        {die('new game . ' . $num);
             $game = $this->gameRepo->createGame();
             $game->setNum($num);
             $game->setStatus('Active');
             $game->setProjectKey($projectKey);
+            
+            // TODO: Add officials?
             
             $this->gameRepo->save($game);
             $this->results->created++;
@@ -63,15 +78,18 @@ class GamesUtilSaveORM
             $team = $this->teamRepo->findOneByProjectLevelName($projectKey,$levelKey,$gameTeamx['name']);
             $teamNum = $team ? $team->getNum(): null;
           //$gameTeam->setTeamNum($teamNum);
-        }
+        }      
+        return; // This should not be updating referees
         
         // Optional Officials
         $gameOfficials = isset($gamex['officials']) ? $gamex['officials'] : array();
-        
+print_r($gameOfficials); die();        
         $gameOfficialSlot = 0;
-        foreach($gameOfficials as $gameOfficialRole => $gameOfficialName)
+        foreach($gameOfficials as $gameOfficial)
         {
-            $gameOfficialSlot++;
+            $slot = $gameOfficial['slot'];
+            $name = $gameOfficial['name'];
+            
             $official = $game->getOfficialForSlot($gameOfficialSlot);
             if (!$official)
             {

@@ -29,9 +29,9 @@ class GamesUtilReadZaysoXLS extends ExcelLoader
         'homeTeamGroupSlot' => array('cols' => array('HT Slot','Home Team Group'), 'req' => true),
         'awayTeamGroupSlot' => array('cols' => array('AT Slot','Away Team Group'), 'req' => true),
         
-        'referee' => array('cols' => 'Referee', 'req' => false),
-        'ar1'     => array('cols' => 'Referee', 'req' => false, 'plus' => 1),
-        'ar2'     => array('cols' => 'Referee', 'req' => false, 'plus' => 2),
+        'Referee' => array('cols' => 'Referee', 'req' => false),
+        'AR1'     => array('cols' => 'Referee', 'req' => false, 'plus' => 1),
+        'AR2'     => array('cols' => 'Referee', 'req' => false, 'plus' => 2),
         
     );
     public function __construct($levelRepo,$gameSlotDurations)
@@ -103,13 +103,16 @@ class GamesUtilReadZaysoXLS extends ExcelLoader
         $game['gameTeams'] = $teams;
         
         // Officials if have them
-        if (isset($item['referee']))
+        if (isset($item['Referee']))
         {
             $officials = array();
             $slot = 1;
-            foreach(array('referee','ar1','ar2') as $key)
+            foreach(array('Referee','AR1','AR2') as $key)
             {
-                $officials[] = array('slot' => $slot++, 'personNameFull' => $item[$key]);
+                $officials[] = array(
+                    'slot' => $slot++, 
+                    'role' => $key, 
+                    'personNameFull' => $item[$key]);
             }
             $game['officials'] = $officials;
         }
