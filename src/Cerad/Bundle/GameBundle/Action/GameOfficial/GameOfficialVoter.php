@@ -84,6 +84,12 @@ class GameOfficialVoter implements VoterInterface
         // Must be at least an assignor
         if (!$this->hasRole($token,'ROLE_ASSIGNOR')) return $this->accesDenied;
         
+        // Lock medal rounds
+        $groupType = $gameOfficial->getGame()->getGroupType();
+        switch($groupType)
+        {
+            case 'QF': case 'SF': case 'FM': return $this->accessDenied;
+        }
         // ROLE_USER
         $assignRole = $gameOfficial->getAssignRole();
         switch($assignRole)

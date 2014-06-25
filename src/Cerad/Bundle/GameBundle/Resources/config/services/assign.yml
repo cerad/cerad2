@@ -38,7 +38,8 @@ services:
     cerad_game__project__game_officials__assign_by_assignor__model_factory:
         class: Cerad\Bundle\GameBundle\Action\Project\GameOfficials\AssignByAssignor\AssignByAssignorModel
         calls:
-             - [setDispatcher,['@event_dispatcher']]
+             - [setDispatcher,     ['@event_dispatcher']]
+             - [setSecurityContext,['@security.context']]
         arguments:
             - '@cerad_game__project__game_official__assign_by_assignor__workflow'
             - '@cerad_game__game_repository'

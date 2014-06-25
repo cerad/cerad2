@@ -11,6 +11,8 @@ use Cerad\Bundle\CoreBundle\Event\FindPersonPlanEvent;
 
 use Cerad\Bundle\GameBundle\Action\Project\GameOfficials\Assign\AssignWorkflow;
 
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+
 class AssignByAssignorModel extends ActionModelFactory
 {   
     public $game;
@@ -38,6 +40,10 @@ class AssignByAssignorModel extends ActionModelFactory
     {   
         foreach($this->gameOfficials as $gameOfficial)
         {
+            if (!$this->securityContext->isGranted('AssignableByAssignor',$gameOfficial))
+            {
+                throw new AccessDeniedException();
+            }
             $personGuid = $gameOfficial->getPersonGuid();
             if ($personGuid)
             {
