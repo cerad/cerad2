@@ -10,6 +10,20 @@ use Cerad\Bundle\CoreBundle\Doctrine\EntityRepository;
  */
 class ProjectPersonRepository extends EntityRepository
 {
+    public function findAllByProjectKey($projectKey)
+    {
+        $qb = $this->createQueryBuilder('projectPerson');
+        
+        $qb->addSelect('person');
+        $qb->leftJoin ('projectPerson.person','person');
+        
+        $qb->andWhere('projectPerson.projectId = :projectKey');
+        $qb->setParameter('projectKey',$projectKey);
+         
+        $qb->orderBy('projectPerson.personName');
+        
+        return $qb->getQuery()->getResult();
+    }
     public function findAllByProjectPersonKeys($project, $personKeys)
     {
         $qb = $this->createQueryBuilder('projectPerson');

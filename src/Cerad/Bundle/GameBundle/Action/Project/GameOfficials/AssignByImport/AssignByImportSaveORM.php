@@ -101,7 +101,7 @@ class AssignByImportSaveORM
           //if (strpos())
             return;
         }
-        $slot->changePerson($personPlan);
+        $slot->changePerson($personPlan->getPerson());
         $slot->setAssignState($state);
 
         $results->modifiedSlots[] = $log;
