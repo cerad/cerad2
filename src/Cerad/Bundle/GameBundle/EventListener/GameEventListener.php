@@ -18,6 +18,8 @@ use Cerad\Bundle\GameBundle\Event\FindResultsEvent;
 use Cerad\Bundle\CoreBundle\Event\Team\ChangedTeamEvent;
 use Cerad\Bundle\CoreBundle\Event\Game\UpdatedGameReportEvent;
 
+use Cerad\Bundle\CoreBundle\Event\Person\ChangedProjectPersonEvent;
+
 //  Cerad\Bundle\CoreBundle\Event\FindProjectLevelsEvent;
 
 class GameEventListener extends ContainerAware implements EventSubscriberInterface
@@ -37,6 +39,8 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
             UpdatedGameReportEvent::Updated  => array('onUpdatedGameReport'),
             
             GameEvents::GameOfficialAssignSlot  => array('onGameOfficialAssignSlot'),
+            
+            ChangedProjectPersonEvent::Changed => array('onChangedProjectPerson'),
         );
     }
     protected function getGameRepository()
@@ -281,6 +285,30 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         
         echo sprintf("%s %s %d\n",$team->getName(),$groupSlot,count($gameTeams));
         die();
+    }
+    /* ==================================================================
+     * The project person changed which means updating the game official names
+     * Need a similiar one for changing person
+     */
+    public function onChangedProjectPerson(ChangedProjectPersonEvent $event)
+    {
+        $projectPerson = $event->getProjectPerson();
+        $projectPersonName = $projectPerson->getPersonName();
+        
+        $gameOfficialRepo = $this->container->get('cerad_game__game_official__repository');
+        
+        $gameOfficials = $gameOfficialRepo->findAllByProjectPerson($projectPerson);
+        
+        $flush = false;
+        foreach($gameOfficials as $gameOfficial)
+        {
+            if ($gameOfficial->getPersonNameFull() != $projectPersonName)
+            {
+                $gameOfficial->setPersonNameFull($projectPersonName);
+                $flush = true;
+            }
+        }
+        if ($flush) $gameOfficialRepo->flush();
     }
 }
 ?>

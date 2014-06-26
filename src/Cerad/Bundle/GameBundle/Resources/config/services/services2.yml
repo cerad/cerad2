@@ -61,6 +61,18 @@ services:
              - [setContainer, ['@service_container']]
         tags:
             - { name: kernel.event_subscriber }
+            
+# ==========================================
+# Game Official
+    cerad_game__game_official__repository_doctrine:
+        class:  Cerad\Bundle\GameBundle\Doctrine\EntityRepository\GameOfficialRepository
+        factory_service: 'cerad_game__entity_manager__doctrine'
+        factory_method:  'getRepository'
+        arguments:  
+            - 'Cerad\Bundle\GameBundle\Doctrine\Entity\GameOfficial'
+        
+    cerad_game__game_official__repository:
+        alias: cerad_game__game_official__repository_doctrine
         
 # ====================================================================
 # Some data transformers

@@ -1,6 +1,8 @@
 Cerad\Bundle\GameBundle\Doctrine\Entity\GameOfficial:
     type:  entity
     table: game_officials
+    repositoryClass: Cerad\Bundle\GameBundle\Doctrine\EntityRepository\GameOfficialRepository
+   
     uniqueConstraints:
        game_official_game_slot_index:
            columns: gameId, slot

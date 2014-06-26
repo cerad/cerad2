@@ -4,24 +4,15 @@ namespace Cerad\Bundle\CoreBundle\Event\Person;
 
 use Symfony\Component\EventDispatcher\Event;
 
-class FindProjectPersonEvent extends Event
+class ChangedProjectPersonEvent extends Event
 {
-    const ByName = 'CeradPersonFindProjectPersonByName';
-    const ByGuid = 'CeradPersonFindProjectPersonByGuid';
+    const Changed = 'CeradPersonChangedProjectPerson';
     
-    protected $search;
-    protected $person = null;
-    protected $project;
+    protected $projectPerson;
     
-    public function __construct($project,$search)
+    public function __construct($projectPerson)
     {
-        $this->search  = $search;
-        $this->project = $project;
+        $this->projectPerson = $projectPerson;
     }
-    public function getSearch () { return $this->search;  }
-    public function getProject() { return $this->project; }
-
-    public function getPerson()  { return $this->person;  }
-    
-    public function setPerson($person) { $this->person = $person; }
+    public function getProjectPerson() { return $this->projectPerson; }
 }

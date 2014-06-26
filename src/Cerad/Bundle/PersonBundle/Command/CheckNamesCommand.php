@@ -7,6 +7,8 @@ use Symfony\Component\Console\Input\InputInterface;
 //  Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+use Cerad\Bundle\CoreBundle\Event\Person\ChangedProjectPersonEvent;
+
 class CheckNamesCommand extends ContainerAwareCommand
 {
     protected function configure()
@@ -26,6 +28,10 @@ class CheckNamesCommand extends ContainerAwareCommand
         $projectKey = 'AYSONationalGames2014';
         
         $this->checkNames($projectKey);
+        
+      //$this->dispatchChangedProjectPersonEvent($projectKey);
+        
+        return; if ($input && $output);
     }
     protected function checkNames($projectKey)
     {
@@ -55,6 +61,19 @@ class CheckNamesCommand extends ContainerAwareCommand
             }
         }
         $projectPersonRepo->flush();
+    }
+    protected function dispatchChangedProjectPersonEvent($projectKey)
+    {
+        $projectPersonRepo = $this->getService('cerad_person__project_person__repository');
+        $projectPersons = $projectPersonRepo->findAllByProjectkey($projectKey);
+ 
+        $dispatcher = $this->getService('event_dispatcher');
+        
+        foreach($projectPersons as $projectPerson)
+        {
+            $event = new ChangedProjectPersonEvent($projectPerson);
+            $dispatcher->dispatch(ChangedProjectPersonEvent::Changed,$event);
+        }
     }
 }
 ?>
