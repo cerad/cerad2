@@ -126,7 +126,7 @@ class GamesUtilReadZaysoXLS extends ExcelLoader
      */
     public function read($filePath, $project, $workSheetName = null)
     {
-        $this->projectKey = $project->getKey();   
+        $this->projectKey = is_object($project) ? $project->getKey() : $project;   
         
         return $this->load($filePath,$workSheetName);
     }
