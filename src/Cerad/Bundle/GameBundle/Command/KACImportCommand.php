@@ -13,7 +13,7 @@ class KACImportCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
-        $this->setName       ('cerad_game__kac_import');
+        $this->setName       ('cerad_game__import_kac');
         $this->setDescription('Fix up assign roles');
         $this->addArgument   ('token', InputArgument::REQUIRED, 'Token');
         $this->addArgument   ('file',  InputArgument::REQUIRED, 'File');
@@ -41,7 +41,7 @@ class KACImportCommand extends ContainerAwareCommand
         
         $this->saveKACGames($gameRepo,$games);
         
-        $this->enableU16Signups($gameRepo,$projectKey);
+      //$this->enableU16Signups($gameRepo,$projectKey);
         
         return; if ($output);
     }
