@@ -35,5 +35,10 @@ class TeamsExportModel extends ActionModelFactory
         return $this->gameTeamRepo->findAllByTeam($team);
     }
     // Should be injected or come from project
-    public function getPrograms() { return $this->project->getPrograms(); }
+    public function getPrograms() 
+    { 
+        if ($this->program) return array($this->program);
+        
+        return $this->project->getPrograms(); 
+    }
 }

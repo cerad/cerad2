@@ -185,7 +185,7 @@ cerad_game__project__teams__show:
     path:  /project/{_project}/teams.{_format}
     defaults: 
         _controller: cerad_game__project__teams__show_controller:action
-        _model:      cerad_game__project__teama__show_model_factory
+        _model:      cerad_game__project__teams__show_model_factory
         _form:       cerad_game__project__teams__show_form_factory
         _template: '@CeradGame\Project\Teams\Show\TeamsShowTwigPage.html.twig'
         _format:     html
