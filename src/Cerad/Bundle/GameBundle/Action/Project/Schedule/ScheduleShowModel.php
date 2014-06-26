@@ -135,8 +135,7 @@ class ScheduleShowModel extends ActionModelFactory
         // Grab all the personTeams for the person
         $findPersonTeamsEvent = new FindProjectPersonTeamsEvent(
             $this->project,
-            array_keys($this->personKeys),
-            $dates
+            array_keys($this->personKeys)
         );
         $this->dispatcher->dispatch(FindProjectPersonTeamsEvent::ByGuid,$findPersonTeamsEvent);
         
