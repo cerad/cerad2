@@ -132,18 +132,16 @@ class GamesReaderNG2014
             'away' => array('slot' => 2, 'name' => null, 'groupSlot' => null),
         );
         
-        switch($age)
+        // Game officials
+        $roles = array('Referee','AR1','AR2');
+        $officials = array();
+        $slot = 1;
+        foreach($roles as $role)
         {
-            case 'VIP':
-                $game['officials'] = array('Referee' => null);
-                break;
-            
-            default:
-                $game['officials'] = array(
-                    'Referee' => null,
-                    'AR1'     => null,
-                    'AR2'     => null);
+            $officials[] = array('slot' => $slot++, 'role' => $role, 'personNameFull' => null);
         }
+        $game['gameOfficials'] = $officials;
+        
         return $game;
     }
     /* ===================================================
