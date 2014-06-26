@@ -49,7 +49,15 @@ class PersonFedImportCommand extends ContainerAwareCommand
 
         $results = $saver->save($items,true);
         
-        print_r($results);   
+        echo sprintf("Total %d, MemYear %d, SafeHaven %d\n",
+            $results->total,
+            $results->updatedMemYear,
+            $results->updatedSafeHaven);
+        
+        foreach($results->missing as $missing)
+        {
+            echo sprintf("Missing %s %s %s\n",$missing['fedKey'],$missing['name'],$missing['email']);
+        } 
     }
 }
 ?>

@@ -7,7 +7,7 @@ class PersonFedSaverKarenResults
     public $commit  = false;
     
     public $total   = 0;
-    public $missing = 0;
+    public $missing = array();
     
     public $updatedMemYear   = 0;
     public $updatedSafeHaven = 0;
@@ -38,7 +38,7 @@ class PersonFedSaverKaren
         $personFed = $this->personFedRepo->findOneByFedKey($fedKey);
         if (!$personFed)
         {
-            $results->missing++;
+            $results->missing[] = $item;
             return;
         }
         if ($memYear > $personFed->getMemYear())

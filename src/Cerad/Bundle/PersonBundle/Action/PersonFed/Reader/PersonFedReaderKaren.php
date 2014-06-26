@@ -21,7 +21,14 @@ class PersonFedReaderKaren extends ExcelReader
         if (!$aysoId) return;
         
         $checked = $item['checked'];
-        if ($checked != 'Cleared') return;
+        switch ($checked)
+        {
+            case 'Cleared':
+            case 'Youth':
+                break;
+            default:
+                return;
+        }
         
         $this->items[] = array(
             'fedKey'    => 'AYSOV' . $aysoId,
