@@ -14,6 +14,8 @@ use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\AYSO\RegionFormType
 use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\AYSO\RefereeCertFormType;
 use Cerad\Bundle\TournAdminBundle\FormType\PersonPlan\Update\AYSO\SafeHavenCertFormType;
 
+use Cerad\Bundle\CoreBundle\Event\Person\ChangedProjectPersonEvent;
+
 /* =================================================================
  * Currently only the pool play games are exported
  * But eventually want to add playoffs/champions as well
@@ -61,6 +63,15 @@ class PersonPlanUpdateController extends MyBaseController
                 die('AYSOID already exists');
             }
         }
+        // Push name changes down and notify the schedule
+        if ($model['personName'] != $model['person']->getName()->full)
+        {
+            $model['plan']->setPersonName($model['person']->getName()->full);
+            
+            $dispatcher = $this->get('event_dispatcher');
+            $event = new ChangedProjectPersonEvent($model['plan']);
+            $dispatcher->dispatch(ChangedProjectPersonEvent::Changed,$event);
+        }
         // Commit
         $personRepo->commit();
         
@@ -98,6 +109,7 @@ class PersonPlanUpdateController extends MyBaseController
             return $model;
         }
         $model['person'] = $person;
+        $model['personName'] = $person->getName()->full;
         
         // Any account
         $userRepo = $this->get('cerad_user.user_repository');
