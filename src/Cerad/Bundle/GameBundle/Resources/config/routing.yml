@@ -120,7 +120,7 @@ cerad_game__project__schedule_game__import:
         _model:      cerad_game__project__schedule_game__import_model_factory
         _form:       cerad_game__project__schedule_game__import_form_factory
         _template: '@CeradGame\Project\Schedule\Game\Import\ScheduleGameImportTwigPage.html.twig'
-        _rolex:      ROLE_SUPER_ADMIN
+        _role_:      ROLE_SUPER_ADMIN
         
 cerad_game__project__schedule_user__show:
     path:  /project/{_project}/schedule-user.{_format}
