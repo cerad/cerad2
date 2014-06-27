@@ -24,7 +24,7 @@ class ImportExtraCommand extends ContainerAwareCommand
     protected function getService($id)     { return $this->getContainer()->get($id); }
     protected function getParameter($name) { return $this->getContainer()->getParameter($name); }
     
-    protected $extraGamesFile = 'data/ScheduleExtra20140625.txt';
+    protected $extraGamesFile = 'data/ScheduleExtra20140627.txt';
     protected $extraTeamsFile = 'data/TeamsExtra20140627.xlsx';
     
     protected function execute(InputInterface $input, OutputInterface $output)
