@@ -25,20 +25,102 @@ class ImportExtraCommand extends ContainerAwareCommand
     protected function getParameter($name) { return $this->getContainer()->getParameter($name); }
     
     protected $extraGamesFile = 'data/ScheduleExtra20140625.txt';
-    protected $extraTeamsFile = 'data/TeamsExtra20140620.xlsx';
+    protected $extraTeamsFile = 'data/TeamsExtra20140627.xlsx';
     
     protected function execute(InputInterface $input, OutputInterface $output)
-    {
-      //$gameRepo = $this->getService('cerad_game__game_repository');
-        
+    {   
         $projectKey = 'AYSONationalGames2014';
                 
         $this->importExtraGames($projectKey);
         $this->importExtraTeams($projectKey);
         $this->linkExtraTeams  ($projectKey);
-                
+        
+        $this->setUserAssignRoles($projectKey);   
+        
+        $this->setMedalRoundAssignRoles($projectKey);   
+
+        $this->setVIPAssignRoles($projectKey);
+        
         // Done
         return; if ($input && $output);
+    }
+    protected function setVIPAssignRoles($projectKey)
+    {
+        $gameRepo = $this->getService('cerad_game__game_repository');
+        
+        $levelKeys = array('AYSO_VIP_Core','AYSO_VIP_Extra');
+        
+        $criteria = array(
+            'levelKeys'     => $levelKeys,
+            'projectKeys'   => $projectKey,
+            'wantOfficials' => true,
+        );
+        $games = $gameRepo->queryGameSchedule($criteria);
+        
+        echo sprintf("VIP Game Count %d\n",count($games));
+       
+        foreach($games as $game)
+        {
+            $game->setGroupType('VIP');
+            
+            foreach($game->getOfficials() as $official)
+            {
+                $official->setAssignRole('ROLE_USER');
+            }
+        }
+        $gameRepo->flush();        
+    }
+    protected function setUserAssignRoles($projectKey)
+    {
+        $gameRepo = $this->getService('cerad_game__game_repository');
+       
+        $groupTypes = array('SOF','PP');
+        
+        $criteria = array(
+            'groupTypes'    => $groupTypes,
+            'projectKeys'   => $projectKey,
+            'wantOfficials' => true,
+        );
+        $games = $gameRepo->queryGameSchedule($criteria);
+        
+        echo sprintf("Pool Play Game Count %d\n",count($games));
+        
+        foreach($games as $game)
+        {
+            $levelKey = $game->getLevelKey();
+            if (strpos($levelKey,'Extra'))
+            {
+                foreach($game->getOfficials() as $gameOfficial)
+                {
+                    $gameOfficial->setAssignRole('ROLE_USER');
+                }
+            }
+        }
+        $gameRepo->flush();        
+    }
+   protected function setMedalRoundAssignRoles($projectKey)
+    {
+       $gameRepo = $this->getService('cerad_game__game_repository');
+       
+        $groupTypes = array('QF','SF','FM');
+        
+        $criteria = array(
+            'groupTypes'    => $groupTypes,
+            'projectKeys'   => $projectKey,
+            'wantOfficials' => true,
+        );
+        $games = $gameRepo->queryGameSchedule($criteria);
+        
+        echo sprintf("Medal Round Game Count %d\n",count($games));
+        
+        foreach($games as $game)
+        {
+            foreach($game->getOfficials() as $gameOfficial)
+            {
+                $gameOfficial->setAssignRole('ROLE_ASSIGNOR');
+            }
+        }
+        $gameRepo->flush();        
     }
     protected function linkExtraTeams($projectKey)
     {
