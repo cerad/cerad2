@@ -222,7 +222,7 @@ services:
   cerad_game__project__schedule_team__show_view_csv:
     class: Cerad\Bundle\GameBundle\Action\Project\Schedule\ScheduleShowViewFile
     arguments:
-      - '@cerad_game__project__schedule_game__util_dump_xls'
+      - '@cerad_game__project__schedule_game__util_dump_csv'
       - 'ScheduleTeam'
       - false
       
