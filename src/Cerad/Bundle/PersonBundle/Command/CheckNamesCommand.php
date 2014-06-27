@@ -2,7 +2,7 @@
 namespace Cerad\Bundle\PersonBundle\Command;
 
 use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-//  Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 //  Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,11 +13,10 @@ class CheckNamesCommand extends ContainerAwareCommand
 {
     protected function configure()
     {
-        $this
-            ->setName       ('cerad_person__check_names')
-            ->setDescription('Check Names');
+        $this->setName       ('cerad_person__check_names');
+        $this->setDescription('Check Names');
           //->addArgument   ('importFile', InputArgument::REQUIRED, 'Import File')
-          //->addArgument   ('truncate',   InputArgument::OPTIONAL, 'Truncate')
+        $this->addArgument   ('cmd',InputArgument::OPTIONAL, 'sync')
         ;
     }
     protected function getService  ($id)   { return $this->getContainer()->get($id); }
@@ -31,8 +30,10 @@ class CheckNamesCommand extends ContainerAwareCommand
         
         $this->checkNames($projectKey);
         
-      //$this->dispatchChangedProjectPersonEvent($projectKey);
-        
+        if ($input->getArgument('cmd') == 'sync')
+        {
+            $this->dispatchChangedProjectPersonEvent($projectKey);
+        }
         return; if ($input && $output);
     }
     protected function checkNames($projectKey)
