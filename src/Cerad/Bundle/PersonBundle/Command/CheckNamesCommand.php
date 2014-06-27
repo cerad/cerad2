@@ -25,6 +25,8 @@ class CheckNamesCommand extends ContainerAwareCommand
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->dispatcher = $this->getService('event_dispatcher');
+        
         $projectKey = 'AYSONationalGames2014';
         
         $this->checkNames($projectKey);
@@ -58,6 +60,9 @@ class CheckNamesCommand extends ContainerAwareCommand
             {
                 echo sprintf("Name Mismatch '%s' '%s'\n",$personName,$projectPersonName);
                 $projectPerson->setPersonName($personName);
+                
+                $event = new ChangedProjectPersonEvent($projectPerson);
+                $this->dispatcher->dispatch(ChangedProjectPersonEvent::Changed,$event);
             }
         }
         $projectPersonRepo->flush();
@@ -66,13 +71,11 @@ class CheckNamesCommand extends ContainerAwareCommand
     {
         $projectPersonRepo = $this->getService('cerad_person__project_person__repository');
         $projectPersons = $projectPersonRepo->findAllByProjectkey($projectKey);
- 
-        $dispatcher = $this->getService('event_dispatcher');
         
         foreach($projectPersons as $projectPerson)
         {
             $event = new ChangedProjectPersonEvent($projectPerson);
-            $dispatcher->dispatch(ChangedProjectPersonEvent::Changed,$event);
+            $this->dispatcher->dispatch(ChangedProjectPersonEvent::Changed,$event);
         }
     }
 }

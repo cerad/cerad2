@@ -28,7 +28,7 @@ cerad_game__project__game_official__assign_by_user:
         _form:       cerad_game__project__game_official__assign_by_user__form_factory
         _view:       cerad_game__project__game_official__assign_by_user__view_factory
         _template: '@CeradGame/Project/GameOfficial/AssignByUser/AssignByUserTwigPage.html.twig'
-        _role:       ROLE_USER
+        _role_:      ROLE_USER
         _userPerson: required
 
 # Game Officials (plural) implies multiple all officials for the game
@@ -40,7 +40,7 @@ cerad_game__project__game_officials__assign_by_assignor:
         _form:       cerad_game__project__game_officials__assign_by_assignor__form_factory
         _view:       cerad_game__project__game_officials__assign_by_assignor__view_factory
         _template: '@CeradGame/Project/GameOfficials/AssignByAssignor/AssignByAssignorTwigPage.html.twig'
-        _role:       ROLE_ASSIGNOR
+        _role_:      ROLE_ASSIGNOR
         
 cerad_game__project__game_officials__assign_by_import:
     path:  /project/{_project}/officials/assign-by-import
@@ -49,7 +49,7 @@ cerad_game__project__game_officials__assign_by_import:
         _model:      cerad_game__project__game_officials__assign_by_import__model_factory
         _form:       cerad_game__project__game_officials__assign_by_import__form_factory
         _template: '@CeradGame/Project/GameOfficials/AssignByImport/AssignByImportTwigPage.html.twig'
-        _role_:      ROLE_ASSIGNOR_ADMIN
+        _role_:      ROLE_SUPER_ADMIN
         
 # Schedules
 cerad_game__project__schedule_referee__show:
@@ -120,6 +120,7 @@ cerad_game__project__schedule_game__import:
         _model:      cerad_game__project__schedule_game__import_model_factory
         _form:       cerad_game__project__schedule_game__import_form_factory
         _template: '@CeradGame\Project\Schedule\Game\Import\ScheduleGameImportTwigPage.html.twig'
+        _role_:      ROLE_SUPER_ADMIN
         
 cerad_game__project__schedule_user__show:
     path:  /project/{_project}/schedule-user.{_format}
@@ -210,4 +211,4 @@ cerad_game__project__teams__import:
         _model:      cerad_game__project__teams__import_model_factory
         _form:       cerad_game__project__teams__import_form_factory
         _template: '@CeradGame\Project\Teams\Import\TeamsImportTwigPage.html.twig'
-
+        _role_:      ROLE_SUPER_ADMIN
