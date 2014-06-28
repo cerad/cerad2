@@ -118,7 +118,7 @@ class AssignRolesCommand extends ContainerAwareCommand
     {
         $criteria = array(
             'levelKeys'     => array('AYSO_U16G_Core','AYSO_U16B_Core'),
-            'groupTypes'    => array('SOF','PP'),
+            'groupTypes'    => array('SOF'),
             'projectKeys'   => $projectKey,
             'wantOfficials' => true,
         );
