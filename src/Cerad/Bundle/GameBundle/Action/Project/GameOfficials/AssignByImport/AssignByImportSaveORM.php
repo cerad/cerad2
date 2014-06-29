@@ -41,7 +41,7 @@ class AssignByImportSaveORM
      * Need it for KAC stuff
      */
     protected function saveGameOfficial($game,$official,$state,$verify)
-    {   
+    {
         $results = $this->results;
         
         $log = array(
@@ -116,9 +116,9 @@ class AssignByImportSaveORM
             print_r($gamex); die('Missing game ' . $gamex['num']);;
             return;
         }
-        if (!isset($gamex['officials'])) return;
+        if (!isset($gamex['gameOfficials'])) return;
         
-        foreach($gamex['officials'] as $official)
+        foreach($gamex['gameOfficials'] as $official)
         {
             $this->saveGameOfficial($game,$official,$state,$verify);
         }
