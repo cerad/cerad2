@@ -295,6 +295,9 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         $projectPerson = $event->getProjectPerson();
         $projectPersonName = $projectPerson->getPersonName();
         
+        $person = $projectPerson->getPerson();
+        $personBadge = $person->getProjectFed()->getCertReferee()->getBadge();
+        
         $gameOfficialRepo = $this->container->get('cerad_game__game_official__repository');
         
         $gameOfficials = $gameOfficialRepo->findAllByProjectPerson($projectPerson);
@@ -304,7 +307,21 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         {
             if ($gameOfficial->getPersonNameFull() != $projectPersonName)
             {
+                echo sprintf("Updating name %s => %s\n",
+                    $gameOfficial->getPersonNameFull(),
+                    $projectPersonName);
+                
                 $gameOfficial->setPersonNameFull($projectPersonName);
+                $flush = true;
+            }
+            if ($gameOfficial->getPersonBadge() != $personBadge)
+            {
+                echo sprintf("Updating badge for %s: %s => %s\n",
+                    $projectPersonName,
+                    $gameOfficial->getPersonBadge(),
+                    $personBadge);
+                
+                $gameOfficial->setPersonBadge($personBadge);
                 $flush = true;
             }
         }

@@ -63,14 +63,27 @@ class PersonPlanUpdateController extends MyBaseController
                 die('AYSOID already exists');
             }
         }
+        /* ====================================
+         * 29 June 2014
+         * Late add, control the changed event to avoid possible breakage
+         */
         // Push name changes down and notify the schedule
+        $changed = false;
         if ($model['personName'] != $model['person']->getName()->full)
         {
             $model['plan']->setPersonName($model['person']->getName()->full);
-            
+            $changed = true;
+        }
+        if ($model['personBadge'] != $model['person']->getProjectFed()->getCertReferee()->getBadge())
+        {
+            $model['plan']->setPersonName($model['person']->getName()->full);
+            $changed = true;
+        }
+        if ($changed)
+        {
             $dispatcher = $this->get('event_dispatcher');
             $event = new ChangedProjectPersonEvent($model['plan']);
-            $dispatcher->dispatch(ChangedProjectPersonEvent::Changed,$event);
+            $dispatcher->dispatch(ChangedProjectPersonEvent::Changed,$event);            
         }
         // Commit
         $personRepo->commit();
