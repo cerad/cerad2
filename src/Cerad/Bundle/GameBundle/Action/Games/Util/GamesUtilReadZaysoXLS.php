@@ -114,7 +114,7 @@ class GamesUtilReadZaysoXLS extends ExcelLoader
                     'role' => $key, 
                     'personNameFull' => $item[$key]);
             }
-            $game['officials'] = $officials;
+            $game['gameOfficials'] = $officials;
         }
         // Stash
         $this->items[] = $game;
