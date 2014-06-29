@@ -14,21 +14,26 @@ class AssignRolesCommand extends ContainerAwareCommand
     {
         $this->setName       ('cerad_game__assign_roles');
         $this->setDescription('Fix up assign roles');
-        $this->addArgument   ('token', InputArgument::REQUIRED, 'Token');
+        $this->addArgument   ('cmd', InputArgument::REQUIRED, 'cmd');
     }
     protected function getService($id)     { return $this->getContainer()->get($id); }
     protected function getParameter($name) { return $this->getContainer()->getParameter($name); }
     
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        // Little security
-        $token = $input->getArgument('token');
-        if ($token != 894) return;
-        
         $gameRepo = $this->getService('cerad_game__game_repository');
         
         $projectKey = 'AYSONationalGames2014';
         
+        $cmd = (int)$input->getArgument('cmd');
+        switch($cmd)
+        {
+            case 5:
+                $this->setSoccerFestAssignRoles($gameRepo,$projectKey);
+                break;
+            default:
+                echo "5 - Set Soccer Fest to ROLE_USER\n";
+        }
       //$this->setMedalRoundAssignStates($gameRepo,$projectKey);
       //
       //$this->setKACAssignRoles($gameRepo,$projectKey);
@@ -37,7 +42,7 @@ class AssignRolesCommand extends ContainerAwareCommand
       //
       //$this->setRedondoAssignRoles($gameRepo,$projectKey);
                      
-        $this->disableU16Signups($gameRepo,$projectKey);
+      //$this->disableU16Signups($gameRepo,$projectKey);
         
         return; if ($output);
     }
