@@ -109,7 +109,8 @@ class PersonPlanUpdateController extends MyBaseController
             return $model;
         }
         $model['person'] = $person;
-        $model['personName'] = $person->getName()->full;
+        $model['personName']  = $person->getName()->full;
+        $model['personBadge'] = $person->getProjectFed()->getCertReferee()->getBadge();
         
         // Any account
         $userRepo = $this->get('cerad_user.user_repository');
