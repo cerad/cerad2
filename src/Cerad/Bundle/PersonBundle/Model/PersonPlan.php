@@ -163,6 +163,7 @@ class PersonPlan extends BaseModel
         switch(strtolower($willAttend))
         {
             case 'yes':
+            case 'yesx':
             case 'we1';
             case 'we2';
             case 'we12':
