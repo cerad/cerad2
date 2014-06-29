@@ -296,7 +296,10 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
         $projectPersonName = $projectPerson->getPersonName();
         
         $person = $projectPerson->getPerson();
-        $personBadge = $person->getProjectFed()->getCertReferee()->getBadge();
+        $personFed = $person->getProjectFed();
+        
+        $personOrgKey = $personFed->getOrgKey();
+        $personBadge  = $personFed->getCertReferee()->getBadge();
         
         $gameOfficialRepo = $this->container->get('cerad_game__game_official__repository');
         
@@ -322,6 +325,16 @@ class GameEventListener extends ContainerAware implements EventSubscriberInterfa
                     $personBadge);
                 
                 $gameOfficial->setPersonBadge($personBadge);
+                $flush = true;
+            }
+            if ($gameOfficial->getPersonOrgKey() != $personOrgKey)
+            {
+                echo sprintf("Updating sar for %s: %s => %s\n",
+                    $projectPersonName,
+                    $gameOfficial->getPersonOrgKey(),
+                    $personOrgKey);
+                
+                $gameOfficial->setPersonOrgKey($personOrgKey);
                 $flush = true;
             }
         }

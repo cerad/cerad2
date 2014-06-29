@@ -68,7 +68,7 @@ class PersonPlanUpdateController extends MyBaseController
          * Late add, control the changed event to avoid possible breakage
          */
         // Push name changes down and notify the schedule
-        $changed = false;
+        $changed = true;
         if ($model['personName'] != $model['person']->getName()->full)
         {
             $model['plan']->setPersonName($model['person']->getName()->full);
