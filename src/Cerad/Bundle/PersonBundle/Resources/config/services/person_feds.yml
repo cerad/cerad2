@@ -17,8 +17,16 @@ services:
   # Readers and savers
   cerad_person__person_fed__reader_karen:
     class:  Cerad\Bundle\PersonBundle\Action\PersonFed\Reader\PersonFedReaderKaren
+    
+  cerad_person__person_fed__reader_them:
+    class:  Cerad\Bundle\PersonBundle\Action\PersonFed\Reader\PersonFedReaderThem
         
   cerad_person__person_fed__saver_karen:
     class:  Cerad\Bundle\PersonBundle\Action\PersonFed\Saver\PersonFedSaverKaren
+    arguments:
+      - '@cerad_person__person_fed__repository'
+      
+  cerad_person__person_fed__saver_them:
+    class:  Cerad\Bundle\PersonBundle\Action\PersonFed\Saver\PersonFedSaverThem
     arguments:
       - '@cerad_person__person_fed__repository'

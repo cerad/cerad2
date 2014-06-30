@@ -15,7 +15,7 @@ class PersonFedImportCommand extends ContainerAwareCommand
     protected function configure()
     {
         $this->setName       ('cerad_person__person_fed__import');
-        $this->setDescription('Import Teams');
+        $this->setDescription('Import Fed Info');
         $this->addArgument   ('type', InputArgument::REQUIRED, 'karen');
         $this->addArgument   ('file', InputArgument::REQUIRED, 'file');
     }
@@ -29,9 +29,34 @@ class PersonFedImportCommand extends ContainerAwareCommand
         
         switch($type)
         {
+            case 'them':  $this->importPersonFedThem ($file); break;
             case 'karen': $this->importPersonFedKaren($file); break;
         }        
         return; if ($output);
+    }
+    protected function importPersonFedThem($file)
+    {   
+        $reader = $this->getService('cerad_person__person_fed__reader_them');
+         
+        $items = $reader->read($file);
+        
+        echo sprintf("Them Person Feds: %d\n",count($items));
+        
+        file_put_contents($file . '.yml',Yaml::dump($items,10));
+        
+        $saver = $this->getService('cerad_person__person_fed__saver_them');
+
+        $results = $saver->save($items,true);
+        
+        echo sprintf("Them Total %d, MemYear %d, SafeHaven %d\n",
+            $results->total,
+            $results->updatedMemYear,
+            $results->updatedSafeHaven);
+        
+        foreach($results->missing as $missing)
+        {
+            echo sprintf("Missing %s %s %s\n",$missing['fedKey'],$missing['name'],$missing['email']);
+        } 
     }
     protected function importPersonFedKaren($file)
     {   
