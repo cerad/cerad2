@@ -107,6 +107,28 @@ class ScheduleShowModel extends ActionModelFactory
     {
         $criteria = $this->criteria;
         
+        // Hack for U16/U19 soccerfest
+        $dates = $this->criteria['dates'];
+        $programs = $criteria['programs'];
+        
+      //print_r($dates);
+      //print_r($programs);
+        if (
+            (count($dates)    == 1) && ($dates   [0] == '2014-07-02') && 
+            (count($programs) == 1) && ($programs[0] == 'Extra')
+        )
+        {
+            $ages = $criteria['ages'];
+            
+            if (in_array('U16',$ages) && !in_array('U19',$ages)) $ages[] = 'U19';
+            if (in_array('U19',$ages) && !in_array('U16',$ages)) $ages[] = 'U16';
+            
+            print_r($ages);
+            
+            $criteria['ages'] = $ages;
+            
+          //print_r($ages);
+        }
         $event = new FindProjectLevelsEvent(
             $criteria['projects'],
             $criteria['programs'],
