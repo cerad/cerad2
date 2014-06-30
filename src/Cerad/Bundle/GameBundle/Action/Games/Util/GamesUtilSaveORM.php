@@ -45,14 +45,24 @@ class GamesUtilSaveORM
         }
         $game = $this->gameRepo->findOneByProjectNum($projectKey,$num);
         if (!$game)
-        {die('new game . ' . $num);
+        {// die('new game . ' . $num);
             $game = $this->gameRepo->createGame();
             $game->setNum($num);
             $game->setStatus('Active');
             $game->setProjectKey($projectKey);
             
             // TODO: Add officials?
-            
+            $slot = 1;
+            foreach(array('Referee','AR1','AR2') as $role)
+            {
+                $gameOfficial = $game->createGameOfficial();
+                $gameOfficial->setSlot($slot++);
+                $gameOfficial->setRole($role);
+                $gameOfficial->setAssignRole('ROLE_USER');
+                $gameOfficial->setAssignState('Open');
+                
+                $game->addOfficial($gameOfficial);
+            }
             $this->gameRepo->save($game);
             $this->results->created++;
         }
