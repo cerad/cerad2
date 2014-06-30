@@ -123,7 +123,7 @@ class ScheduleShowModel extends ActionModelFactory
             if (in_array('U16',$ages) && !in_array('U19',$ages)) $ages[] = 'U19';
             if (in_array('U19',$ages) && !in_array('U16',$ages)) $ages[] = 'U16';
             
-            print_r($ages);
+          //print_r($ages);
             
             $criteria['ages'] = $ages;
             
