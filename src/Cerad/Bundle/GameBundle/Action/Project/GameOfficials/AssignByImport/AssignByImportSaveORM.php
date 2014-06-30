@@ -63,7 +63,7 @@ class AssignByImportSaveORM
         if (!$slotPersonNameFull) return;
         
         // Remove means clear the person and open it up
-        if (strtolower($slotPersonNameFull) == 'remove')
+        if (strpos(strtolower($slotPersonNameFull),'remove') !== false)
         {
             if ($slot->getPersonNameFull())
             {
@@ -108,6 +108,9 @@ class AssignByImportSaveORM
     }
     protected function saveGame($gamex,$state,$verify)
     {
+        $num = (int)$gamex['num'];
+        if ($num < 0) return; // Game was deleted
+        
         $game = $this->gameRepo->findOneByProjectNum($gamex['projectKey'],(int)$gamex['num']);
         
         if (!$game) 
