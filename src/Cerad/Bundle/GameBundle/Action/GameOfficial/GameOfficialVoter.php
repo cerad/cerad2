@@ -29,6 +29,7 @@ class GameOfficialVoter implements VoterInterface
         {
             case 'AssignableByUser':     return true;
             case 'AssignableByAssignor': return true;
+            case 'ViewOfficialName':     return true;
         }
         return false;
     }
@@ -41,10 +42,22 @@ class GameOfficialVoter implements VoterInterface
          
          switch($attr)
          {
+             case 'ViewOfficialName':     return $this->canViewOfficialName   ($info,$token);
              case 'AssignableByUser':     return $this->isAssignableByUser    ($info);
              case 'AssignableByAssignor': return $this->isAssignableByAssignor($info,$token);
          }
          return $this->accessDenied;
+    }
+    protected function canViewOfficialName($official,$token)
+    {    
+         // Pending is the only one protected against for now
+         if ($official->getAssignState() != 'Pending') return $this->accessGranted;
+         
+         // Assignors can always see
+         if ($this->hasRole($token,'ROLE_ASSIGNOR')) return $this->accessGranted;
+         
+         return $this->accessDenied;
+         
     }
     protected function isAssignableByUser($info)
     {
