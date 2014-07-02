@@ -55,6 +55,10 @@ class ResultsPlayoffsShowView extends ActionView
         $tplData['shows']  = $shows;
         $tplData['games']  = $games;
         $tplData['routes'] = $routes;
-        return $this->regularResponse($request->attributes->get('_template'),$tplData);
+        
+        
+        $response =  $this->regularResponse($request->attributes->get('_template'),$tplData);
+        $response->setPublic();
+        $response->setMaxAge(6);
     }
 }
