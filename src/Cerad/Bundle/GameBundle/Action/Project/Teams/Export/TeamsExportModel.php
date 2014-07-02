@@ -7,6 +7,7 @@ use Cerad\Bundle\CoreBundle\Action\ActionModelFactory;
 
 class TeamsExportModel extends ActionModelFactory
 {
+    protected $program;
     protected $project;
     
     protected $teamRepo;
