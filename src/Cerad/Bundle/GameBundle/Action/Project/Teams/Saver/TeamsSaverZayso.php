@@ -43,14 +43,17 @@ class TeamsSaverZayso
         $results = $this->results;
         
         $key        = $item['key'];
-        $num        = $item['num'];
+        $num        = (int)$item['num'];
         $levelKey   = $item['levelKey'];
         $projectKey = $item['projectKey'];
-        
+       
         $team = $this->teamRepo->findOneByKey($key);
         
         if (!$team)
         {
+            // Its been deleted
+            if ($num < 0) return;
+
             $team = $this->teamRepo->createTeam();
             $team->setKey       ($key);
             $team->setNum       ($num);
@@ -64,7 +67,15 @@ class TeamsSaverZayso
             $results->created++;
             $this->teamRepo->persist($team);
             $this->dispatch($team);
-            return $team;
+            return;
+        }
+        if ($num < 0)
+        {
+            // Delete
+            // TODO: Dispatch a RemovedTeam message
+            $this->teamRepo->remove($team);
+            $results->deleted++;
+            return;
         }
         $changed = false;
 
@@ -89,7 +100,6 @@ class TeamsSaverZayso
             $changed = true;
         }
         if ($changed) $this->dispatch($team);
-        return $team;
     }
     /* ==============================================================
      * The syncer just sends an event out for each slot

@@ -50,7 +50,7 @@ class TeamsReaderZayso extends ExcelReader
         $name = $this->transformName($item['name'],$levelKey);
         
         $team = array();
-        $team['key']      = sprintf('%s:%s:%02d',$projectKey,$item['levelKey'],$num);
+        $team['key']      = sprintf('%s:%s:%02d',$projectKey,$item['levelKey'],abs($num));
         $team['num']      = $num;
         $team['role']     = 'Physical';
         $team['status']   = 'Active';
