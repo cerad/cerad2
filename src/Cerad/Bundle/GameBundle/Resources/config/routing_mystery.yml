@@ -20,3 +20,15 @@ cerad_game__project__referee_schedule__show:
 cerad_tourn__project__home:
     pattern:  /project/{_project}/home
     defaults: { _controller: CeradTournBundle:Tourn/TournHome:home }
+    
+cerad_tourn__project__root:
+    pattern:  /project/{_project}
+    defaults:
+      _controller: FrameworkBundle:Redirect:urlRedirect
+      path: /home
+    
+cerad_tourn__project__root_slash:
+    pattern:  /project/{_project}/
+    defaults:
+      _controller: FrameworkBundle:Redirect:urlRedirect
+      path: /home
