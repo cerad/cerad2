@@ -28,6 +28,9 @@ class AssignRolesCommand extends ContainerAwareCommand
         $cmd = (int)$input->getArgument('cmd');
         switch($cmd)
         {
+            case 4:
+                $this->setQFAssignRoles($gameRepo,$projectKey);
+                break;
             case 5:
                 $this->setSoccerFestAssignRoles($gameRepo,$projectKey);
                 break;
@@ -35,6 +38,7 @@ class AssignRolesCommand extends ContainerAwareCommand
                 $this->setU16ExtraAssignRoles($gameRepo,$projectKey);
                 break;
             default:
+                echo "4 - Set QF to ROLE_USER\n";
                 echo "5 - Set Soccer Fest to ROLE_USER\n";
                 echo "6 - Set U16 Extra to ROLE_USER\n";
         }
@@ -77,6 +81,27 @@ class AssignRolesCommand extends ContainerAwareCommand
         echo sprintf("KAC Count %d\n",$count);
         $gameRepo->flush();
         
+    }
+    protected function setQFAssignRoles($gameRepo,$projectKey)
+    {
+       $groupTypes = array('QF');
+        
+        $criteria = array(
+            'groupTypes'    => $groupTypes,
+            'projectKeys'   => $projectKey,
+            'wantOfficials' => true,
+        );
+        $games = $gameRepo->queryGameSchedule($criteria);
+        
+        foreach($games as $game)
+        {
+            foreach($game->getOfficials() as $official)
+            {
+                $official->setAssignRole('ROLE_USER');
+            }
+        }
+        echo sprintf("QF Game Count %d\n",count($games));
+        $gameRepo->flush();
     }
     protected function setSoccerFestAssignRoles($gameRepo,$projectKey)
     {
