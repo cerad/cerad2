@@ -101,7 +101,7 @@ class GameOfficialVoter implements VoterInterface
         $groupType = $gameOfficial->getGame()->getGroupType();
         switch($groupType)
         {
-            case 'QF': case 'SF': case 'FM': return $this->accessDenied;
+            //case 'QF': case 'SF': case 'FM': return $this->accessDenied;
         }
         // ROLE_USER
         $assignRole = $gameOfficial->getAssignRole();
