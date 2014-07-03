@@ -31,8 +31,12 @@ class AssignRolesCommand extends ContainerAwareCommand
             case 5:
                 $this->setSoccerFestAssignRoles($gameRepo,$projectKey);
                 break;
+           case 6:
+                $this->setU16ExtraAssignRoles($gameRepo,$projectKey);
+                break;
             default:
                 echo "5 - Set Soccer Fest to ROLE_USER\n";
+                echo "6 - Set U16 Extra to ROLE_USER\n";
         }
       //$this->setMedalRoundAssignStates($gameRepo,$projectKey);
       //
@@ -134,6 +138,26 @@ class AssignRolesCommand extends ContainerAwareCommand
             foreach($game->getOfficials() as $official)
             {
                 $official->setAssignRole('ROLE_DISABLED');
+            }
+        }
+        echo sprintf("U16 Game Count %d\n",count($games));
+        $gameRepo->flush();
+    }
+    protected function setU16ExtraAssignRoles($gameRepo,$projectKey)
+    {
+        $criteria = array(
+            'levelKeys'     => array('AYSO_U16G_Extra','AYSO_U16B_Extra'),
+            'groupTypes'    => array('PP'),
+            'projectKeys'   => $projectKey,
+            'wantOfficials' => true,
+        );
+        $games = $gameRepo->queryGameSchedule($criteria);
+        
+        foreach($games as $game)
+        {
+            foreach($game->getOfficials() as $official)
+            {
+                $official->setAssignRole('ROLE_USER');
             }
         }
         echo sprintf("U16 Game Count %d\n",count($games));
