@@ -9,7 +9,7 @@ class NatGamesResults extends AbstractResults
     protected $pointsEarnedForWin     = 6;
     protected $pointsEarnedForTie     = 3;
     protected $pointsEarnedForLoss    = 0;
-    protected $pointsEarnedForShutout = 0;
+    protected $pointsEarnedForShutout = 1;
     
     protected $pointsEarnedForGoalsMax = 3;
     
