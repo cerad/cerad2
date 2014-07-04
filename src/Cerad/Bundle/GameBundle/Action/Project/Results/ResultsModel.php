@@ -156,7 +156,7 @@ class ResultsModel extends ActionModelFactory
                     $teams[$teamKey]['gameCntTotal']++;
                     
                     $gameTeamReport = $gameTeam->getReport();
-                    if ($gameTeamReport->getGoalsAllowed() != null)
+                    if ($gameTeamReport->getGoalsAllowed() !== null)
                     {
                         $teams[$teamKey]['gameCntPlayed']++;
                         $teams[$teamKey]['spTotal'] += $gameTeamReport->getSportsmanship();
