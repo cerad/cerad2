@@ -58,7 +58,6 @@ class ResultsPlayoffsShowView extends ActionView
         
         
         $response =  $this->regularResponse($request->attributes->get('_template'),$tplData);
-        $response->setPublic();
-        $response->setMaxAge(6);
+        return $response;
     }
 }
