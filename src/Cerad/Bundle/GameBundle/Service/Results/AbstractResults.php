@@ -182,7 +182,7 @@ class AbstractResults
         {   
             $sfPoints = $poolTeamReport->getTeam()->getTeamPoints();
             
-            $wpf = ($poolTeamReport->getPointsEarned()) + $sfPoints / (($poolTeamReport->getGamesPlayed() * 10) + 6);
+            $wpf = ($poolTeamReport->getPointsEarned() + $sfPoints) / (($poolTeamReport->getGamesPlayed() * 10) + 6);
             
             $winPercent = sprintf('%.3f',$wpf);
         }
