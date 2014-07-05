@@ -84,7 +84,7 @@ class AssignRolesCommand extends ContainerAwareCommand
     }
     protected function setQFAssignRoles($gameRepo,$projectKey)
     {
-       $groupTypes = array('QF');
+       $groupTypes = array('QF','SF','FM');
         
         $criteria = array(
             'groupTypes'    => $groupTypes,
