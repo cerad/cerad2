@@ -55,7 +55,7 @@ class ResultsSportsmanshipShowView extends ActionView
         $tplData = array();
         $tplData['shows']  = $shows;
         $tplData['teamsPoolplay']  = $teamsPoolplay;
-        $tplData['teamsPlayoffs']  = $teamsPlayoffs;
+        $tplData['teamsPlayoffs']  = array(); //$teamsPlayoffs;
         $tplData['routes'] = $routes;
         return $this->regularResponse($request->attributes->get('_template'),$tplData);
     }
